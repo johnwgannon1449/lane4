@@ -1,0 +1,258 @@
+Lane4 — Full Output Schema
+This document describes every output the system produces: the Search result, the Deep Dive, the Coach Email, and the computed school data that drives UI display.
+
+1. Search Result Object
+The search call returns a results object stored in React state with this structure:
+{
+  answer: string,
+  schools: Array<SchoolResult>
+}
+answer
+Type: string
+Constraint: 1–2 sentences, under 30 words (enforced via system prompt instruction)
+Content: A plain-English response to the exact question the family asked. Speaks directly to the swimmer by name and references the specific question topic.
+Example: "For STEM plus swimming credibility, these three programs give James the best combination of career signal and pool fit."
+schools
+Type: Array of 3 SchoolResult objects
+Content: The 3 schools the AI selected from the pre-scored, pre-sorted list as best answering the query.
+
+2. SchoolResult Object
+This object is computed by scoreAllSchools() and then enriched by the AI search response. It is the core data structure passed throughout the application.
+{
+  school: string,
+  conference: string,
+  tier: string,
+  psf: float,
+  rawPts: float,
+  adjPts: float,
+  adjTier: string,
+  top3: Array<EventScore>,
+  allEvents: Array<EventScore>,
+  admission: AdmissionResult,
+  meta: SchoolMeta,
+  aiWhy: string  // only present on search results, not in master list
+}
+school
+Type: string
+Content: Full school name, exactly matching the TEAMS dataset entry.
+Example: "Kenyon College"
+conference
+Type: string
+Content: The D3 conference this program competes in.
+Example: "NCAC"
+tier
+Type: string
+Content: "Tier 1", "Tier 2", or "Tier 3". Informational only; not used in scoring calculations. Reflects approximate conference standing of the program.
+psf
+Type: float
+Content: The Program Strength Factor for this school. Exact values used: 0.70, 0.78, 0.85, 1.00, 1.10.
+Meaning: A multiplier applied to rawPts to produce adjPts. Lower PSF = stronger program = harder to have a meaningful impact on the roster = lower adjusted score. Higher PSF = weaker program = swimmer would have more impact = higher adjusted score.
+PSF assignment logic:
+
+0.70: Conference champion at dominant programs (Ithaca, Johns Hopkins, Whitworth, Pomona-Pitzer)
+0.78: Conference champion at competitive conferences (Williams, Denison, MIT)
+0.85: Conference runner-up at strong conferences (RIT, Kenyon, Tufts, CMS)
+1.00: Mid-tier programs (typically conference 3rd–7th)
+1.10: Lower-tier programs (typically conference 8th+)
+
+rawPts
+Type: float
+Content: Sum of the point values from the swimmer's top 3 scoring events at this conference, before PSF adjustment. Computed by: top3.reduce((s, e) => s + e.pts, 0)
+adjPts
+Type: float
+Content: rawPts × psf. This is the primary sort key for the master school list. Lower values mean the swimmer is either genuinely weaker at this conference OR the program is strong enough that the swimmer's contribution matters less.
+adjTier
+Type: string
+Content: The swim fit tier label for this swimmer at this program. Derived from adjPts using tierLabel():
+adjPts < 1   → "Moonshot"
+adjPts < 4   → "Reach"
+adjPts < 10  → "Recruitable"
+adjPts < 20  → "Priority Recruit"
+adjPts < 35  → "Likely Commit"
+adjPts < 50  → "Conference Star"
+adjPts >= 50 → "High-Point Contender"
+top3
+Type: Array of up to 3 EventScore objects
+Content: The swimmer's top 3 scoring events at this conference, sorted by pts descending. These 3 events drive the rawPts calculation.
+allEvents
+Type: Array of EventScore objects
+Content: All of the swimmer's scored events at this conference, sorted by pts descending. Used for display purposes in the UI (though currently only top3 is shown in cards and deep dives).
+EventScore object structure:
+{
+  event: string,   // event name, e.g. "1650 Free"
+  sec: float,      // swimmer's time in decimal seconds
+  place: float,    // estimated decimal finish place (e.g. 3.2 = slightly faster than 3rd-place pace)
+  pts: integer     // points awarded for this place (0-20)
+}
+admission
+Type: AdmissionResult object
+Content: The system's computed admission outlook for this swimmer at this school.
+AdmissionResult object structure:
+{
+  label: string,   // one of 9 possible labels (see below)
+  color: string    // hex color for UI rendering
+}
+Admission label values and their hex colors:
+"Virtual Lock"            → #059669 (dark green)
+"Very Strong Chance"      → #10B981 (medium green)
+"Strong Chance"           → #34D399 (light green)
+"Realistic Shot"          → #2563EB (blue)
+"Possible"                → #3B82F6 (lighter blue)
+"Reach with Support"      → #F59E0B (amber)
+"Major Reach"             → #EF4444 (red)
+"Extreme Reach"           → #DC2626 (dark red)
+"Moonshot — Apply for Fun"→ #6B7280 (gray, special case for MIT and Caltech)
+Admission scoring logic (exact implementation):
+satDiff = swimmer.sat - school.satMedian
+acadScore = satDiff >= 80 ? 4 : satDiff >= 30 ? 3 : satDiff >= -30 ? 2 : satDiff >= -80 ? 1 : 0
+if (gpa >= 3.9) acadScore += 1
+if (school.accept > 60) acadScore += 1
+
+swimBoost = psf <= 0.78 ? 1 : psf <= 0.85 ? 2 : psf <= 1 ? 3 : 4
+swimScore = swimBoost + (swimTier is "High-Point Contender" or "Conference Star" ? 2 : swimTier is "Likely Commit" or "Priority Recruit" ? 1 : 0)
+
+total = acadScore + swimScore
+
+total >= 9 → Virtual Lock
+total >= 8 → Very Strong Chance
+total >= 7 → Strong Chance
+total >= 6 → Realistic Shot
+total >= 5 → Possible
+total >= 4 → Reach with Support
+total >= 3 → Major Reach
+total < 3  → Extreme Reach
+meta
+Type: SchoolMeta object
+Content: Static metadata from the SCHOOL_META dataset.
+SchoolMeta object structure:
+{
+  accept: integer,       // acceptance rate %
+  satMedian: integer,    // SAT composite median
+  hiddenIvy: boolean,    // true = Hidden Ivy classification
+  stem: boolean,         // true = strong STEM programs
+  merit: string,         // "none" | "moderate" | "high"
+  location: string,      // "City, State"
+  vibe: string,          // one-line campus culture description
+  moonshot: boolean      // optional, only true for MIT and Caltech
+}
+aiWhy
+Type: string (only present on search results)
+Content: The AI's micro-rationale for recommending this school for the specific query asked. Constrained to under 15 words by system prompt. Displayed as "✦ [aiWhy]" above the result card.
+
+3. Place Label Display
+The placeLabel() function converts a decimal estimated finish place to a human-readable display string used in result cards and the deep dive:
+place <= 1.5  → "🥇 Winner"
+place <= 3.5  → "🏅 Podium"
+place <= 8.5  → "A Final"
+place <= 16.5 → "B Final"
+place <= 20   → "Bubble"
+otherwise     → "Out of range"
+
+4. Deep Dive — 8-Section Narrative Output
+The deep dive is AI-generated text split into 8 sections. The raw response is split on the regex /^## /m (applied to the full response text with the multiline flag). Each resulting segment has its first line as the section title and the remaining lines as the body.
+Section 1: Your Honest Shot
+Content: A candid, direct assessment of how realistic this school is for the swimmer. Combines the computed admission outlook label and swim tier into one coherent paragraph. Must not hedge — must take a position. 2–3 sentences maximum.
+What it should answer: Is this school actually reachable? Is the swim fit real?
+Section 2: What This School Is Actually Like
+Content: A vivid, honest description of the campus culture, student body feel, geographic setting, and what daily life is actually like. 4–5 sentences (this section is intentionally longer than the others — expanded during development for richer context). Must not read like a brochure. Must reference what the school's vibe actually means for someone like this swimmer. If vibe answers are present, speak to them naturally here without listing them.
+What it should answer: Would this swimmer actually be happy here?
+Section 3: How [Name] Fits on the Swim Team
+Content: What the swimmer's projected place and tier means in practice — what role he would play on this team, whether he would score points at conference, what it would feel like to be him on that roster. 2–3 sentences.
+What it should answer: Is this swimmer a recruit or a walk-on? Would he matter to the team?
+Section 4: Why a Coach Would Want to Call
+Content: Written from the coach's perspective. What makes this swimmer a genuine recruitment target. Must be specific to the swimmer's actual times and events — not generic. 2–3 sentences.
+What it should answer: Would a coach at this program actually pick up the phone?
+Section 5: Getting In — The Real Picture
+Content: Academic admission analysis. References the swimmer's GPA, SAT (current and projected if provided), and compares them honestly to the school's SAT median. Must address the role that swim recruiting plays in a D3 context (D3 coaches cannot offer athletic scholarships and have limited official recruiting leverage, but can advocate with admissions). Must not promise outcomes. 2–3 sentences.
+What it should answer: What does the admissions conversation actually look like?
+Section 6: The Money Conversation
+Content: Financial analysis. Must include three labeled line items:
+
+Estimated COA: annual all-in cost of attendance estimate
+Estimated Merit Aid: estimated merit aid range for a swimmer with this academic profile
+Estimated Net Cost: COA minus merit aid estimate
+
+The merit field from SCHOOL_META (none / moderate / high) drives the AI's estimate of what merit aid to project. The AI uses its training knowledge of actual school costs. All figures are estimates and should be labeled as such. May include additional context about the school's financial aid philosophy (need-based vs. merit). 3–5 sentences total including the three line items.
+What it should answer: What would this school actually cost our family?
+Section 7: Your Next Three Moves
+Content: Exactly three specific, actionable steps the family can take this week. Must not be generic. Must reference this specific school, the specific coach context, and the swimmer's specific times and profile. Each move should be something a real family can actually do in 7 days.
+Format: A numbered or bulleted list of three items.
+What it should answer: What do we do next?
+Section 8: The Bottom Line
+Content: One sentence. No hedging. Specific to this swimmer and this school. Must land with weight. This is the last thing the family reads in the deep dive — it must matter.
+Rendering: Special UI treatment — dark navy (#0F172A) background card, white/blue text, uppercase label, rendered separately from other sections.
+What it should answer: If you had to say one thing about this school for this swimmer, what is it?
+
+5. Coach Email — Deterministic Output
+The coach email is not AI-generated. It is a template populated with computed and hardcoded values. Full structure:
+Subject: Prospective Student-Athlete Inquiry — Class of [year] | Distance Freestyle
+
+Dear Coach,
+
+My name is [name] and I'm a junior in the Class of [year] with strong interest in [school]'s swim program.
+
+At the [conference] conference level, I'm [perf].[second] My current bests include a [1650 time] in the 1650 free, [500 time] in the 500, and a [50 breast split] relay split in the 50 breast.
+
+Academically I carry a [gpa] GPA with a heavy AP load including Calc BC and scored a [sat] SAT with a retake planned.[stemNote][meritNote]
+
+I'd love to connect about your program. Would you have time for a brief call or campus visit?
+
+Thank you,
+[name]
+Where:
+
+perf is: "projected to win the [event]" if best.place <= 1.5; "projected to podium in the [event]" if best.place <= 3.5; "projected as a conference A finalist in the [event]" otherwise
+second is: " I also project to score in the [event2]." if result.top3[1] exists; "" otherwise
+stemNote is: " Your programs in engineering and CS align directly with my academic direction." if meta.stem === true; "" otherwise
+meritNote is: " I've also been looking closely at your merit scholarship opportunities." if meta.merit === "high"; "" otherwise
+Swim times in the email body are currently hardcoded to James's specific values. In a generalized implementation, these must come from the profile object.
+
+
+6. CRM Record — Per-School Output
+Each school tracked in My List has a CRM record. The complete structure:
+{
+  status: string,      // one of 6 status IDs (see below)
+  notes: Array<Note>,  // newest first
+  reminders: Array<Reminder>  // sorted ascending by date
+}
+Status values (in display order):
+"researching"  → "Researching"       → #64748B (slate)
+"emailed"      → "Emailed Coach"     → #2563EB (blue)
+"visit"        → "Visit Scheduled"   → #7C3AED (purple)
+"applied"      → "Applied"           → #D97706 (amber)
+"committed"    → "Committed 🎉"      → #059669 (green)
+"pass"         → "Not the Right Fit" → #94A3B8 (light gray)
+Note object:
+{
+  id: integer,       // Date.now() at creation time
+  cat: string,       // "Email" | "Coach Call" | "Campus Visit" | "General"
+  text: string,      // full note body, supports multi-line (pre-wrap)
+  date: string       // human-formatted: "Mar 15, 2025"
+}
+Reminder object:
+{
+  id: integer,       // Date.now() at creation time
+  text: string,      // task description
+  date: string       // ISO format: "YYYY-MM-DD"
+}
+Reminder urgency classification (computed at render time):
+date < today's ISO string  → Overdue  → red styling, "⚠ Overdue" label
+date === today's ISO string → Today   → amber styling, "⚡ Today" label
+date > today's ISO string  → Upcoming → neutral styling, "📅 Month Day" label
+urgentCount = number of reminders where date <= today's ISO string. When urgentCount > 0, a 🔴 indicator is appended to the Reminders tab label in the nav.
+
+7. PDF Export — Generated HTML Document
+Clicking "Save PDF" in the deep dive opens a new browser window containing a self-contained HTML document and immediately triggers window.print(). The document contains:
+
+Campus hero photo (from CAMPUS_PHOTOS or PHOTO_FALLBACK)
+School name (h1, Fraunces font)
+Conference and location
+Admission outlook badge (color-coded)
+Hidden Ivy badge (if applicable)
+STEM badge (if applicable)
+Swim snapshot block: "Swim Fit: [event] — [place label] · ..." and "Program tier: [adjTier]"
+All 8 deep dive sections rendered as section-title + section-body pairs
+The Bottom Line section rendered with dark navy background (#0F172A), blue title (#93C5FD), light body text (#E2E8F0)
+Footer: "Generated by Lane4 · lane4.co"
+
+The PDF document uses Google Fonts (Fraunces + Figtree) loaded from the CDN. Sections are rendered from the sections array produced by splitting the deep dive response on /^## /m.

@@ -1,0 +1,168 @@
+Lane4 — Full Product Specification
+What This Product Is
+Lane4 is a D3 college swim recruiting advisor application. It takes a swimmer's real competition times and academic profile, runs them against real D3 conference championship benchmark data, produces a ranked analysis of 76 schools across 9 conferences, and uses AI to generate personalized, honest school-by-school deep dives.
+It is not a directory. It is not a search engine. It is an opinionated advisor that tells a family exactly where the swimmer fits, at which programs, with what realistic admission outlook, and what to do about it.
+The current implementation is designed for one swimmer at a time. The swimmer profile is hardcoded in the source file (the JAMES constant). A multi-family version would require authentication and a persistent database layer.
+
+Who This Product Is For
+Primary users: A high school swimmer (junior or senior) and his or her parent(s), working together on the D3 college swimming recruiting process.
+The product assumes:
+
+The swimmer competes in events that map to the D3 conference championship event set: freestyle distances (200, 500, 1000, 1650), IM (200, 400), breaststroke (100), and 50 breast relay split
+The family wants honest, data-backed analysis — not a list of every school in America
+The family is navigating athletic fit, academic fit, and financial fit simultaneously
+The family does not have a recruiting consultant and needs the product to function as one
+
+Secondary users (implied by product design): The family's college counselor or coach, who might use the exported PDFs or the My List feature to coordinate outreach.
+
+What Problem This Solves
+D3 swim recruiting has no equivalent of the recruiting rankings services that exist for D1 sports. A family has no reliable way to know:
+
+Whether their swimmer's times are competitive at any given program
+Which programs would genuinely want to recruit them
+How athletic fit interacts with admission likelihood at selective schools
+Which schools offer merit aid that changes the financial picture
+
+Lane4 solves all four of these problems simultaneously, in one session, without requiring the family to contact 50 schools to find out.
+
+Full Workflow: Swimmer Input to Final Output
+Phase 0 — Profile Definition (Hardcoded for current implementation)
+The swimmer profile is defined in the JAMES constant in the source file:
+javascriptconst JAMES = {
+  name: "James",
+  gpa: 4.0,
+  sat: 1460,
+  satProjected: 1500,
+  mathSat: 720,
+  mathSatProjected: 760,
+  times: {
+    "1650 Free": "16:06",
+    "1000 Free": "9:30",
+    "500 Free": "4:37",
+    "200 Free": "1:43",
+    "400 IM": "4:09",
+    "200 IM": "1:56",
+    "100 Breast": "59.5",
+    "50 Breast (Relay Split)": "25.68"
+  },
+  vibe: {
+    campus: "Small and tight-knit — everyone knows everyone",
+    friday: "Library with 2–3 close friends",
+    academic: "Genuinely want to be well-rounded",
+    compete: "Love pushing myself inside a team environment",
+    location: null,
+    career: null
+  }
+};
+To rebuild this for a different swimmer, every field in this object must be replaced. The vibe fields with null values indicate questions the swimmer has not yet answered.
+Phase 1 — Scoring Engine Runs on App Load
+Immediately when the app loads, scoreAllSchools(JAMES.times, JAMES.sat, JAMES.gpa) runs. This is a fully deterministic computation with no API calls. It iterates over all 76 teams in the TEAMS dataset and for each team:
+
+Filters the BENCHMARKS dataset to only benchmarks for that team's conference
+For every event in the swimmer's times object:
+
+Skips null, empty, or whitespace values
+Converts the time string to decimal seconds via parseTimeToSec()
+Finds the matching benchmark row by event name + conference
+If no benchmark exists for this event in this conference, skips
+Computes estimated finish place via estimatePlace()
+Converts place to points via placeToPoints()
+Stores result as { event, sec, place, pts }
+
+
+Sorts all scored events by pts descending
+Takes the top 3 events
+Computes rawPts = sum of top3 point values
+If rawPts === 0 (swimmer has no scorable events at this conference), skips the school entirely
+Computes adjPts = rawPts × team.psf (Program Strength Factor)
+Computes adjTier = tierLabel(adjPts)
+Computes admission = admissionChance(school, sat, gpa, adjTier, psf)
+Attaches full school metadata from SCHOOL_META
+Pushes complete result object to results array
+
+Final output is sorted by adjPts descending. This produces the master ranked list of all schools.
+DATASET DEPENDENCY: This phase requires BENCHMARKS (127 rows), TEAMS (76 rows), and SCHOOL_META (one entry per school name). None of these can be absent.
+Phase 2 — Explore / Search
+The family types a natural language question into the search bar, or taps one of the 6 pre-set suggested queries. The system:
+
+Filters the master ranked list to exclude eliminated schools and schools already on myList
+Detects query intent via keyword matching (see SYSTEM_PROMPT.md for exact keyword rules)
+Re-sorts the filtered list according to the detected intent
+Takes the top 35 schools from the sorted list
+Formats each as a numbered line containing: school name, conference, swimTier, admission label, hiddenIvy flag, stem flag, merit tier, acceptance rate, and first 60 characters of vibe description
+Constructs the full user prompt (see SYSTEM_PROMPT.md for exact template)
+Calls the Claude API (model: claude-sonnet-4-20250514, max_tokens: 600)
+Parses the JSON response
+Maps the AI's 3 numbered picks back to full school result objects from the sorted array
+Attaches aiWhy text to each result
+Renders the results
+
+Phase 3 — Result Cards
+Each of the 3 returned school results renders as a card showing:
+
+School name
+Hidden Ivy badge (if hiddenIvy === true)
+STEM badge (if stem === true)
+Admission outlook badge with color coding
+Conference and location
+Vibe quote in italics
+Swim tier badge
+Top 2 projected events with place labels (Winner / Podium / A Final / B Final / Bubble / Out of range)
+AI micro-rationale (aiWhy text) displayed above the card
+Three action buttons: Deep Dive →, + List (or ✓ Added), ✕ (eliminate)
+
+Phase 4 — Deep Dive
+Clicking "Deep Dive →" on any result card triggers an API call. The system:
+
+Looks up the campus photo for this school in CAMPUS_PHOTOS, or falls back to PHOTO_FALLBACK
+Constructs the vibeLines string from all non-null vibe answers in the profile
+Constructs top3Text from result.top3 using placeLabel() for each event
+Constructs the full deep dive prompt (see SYSTEM_PROMPT.md for exact template)
+Calls the Claude API (model: claude-sonnet-4-20250514, max_tokens: 1000)
+Receives the response and splits it on ^##  (multiline regex) to produce section array
+Renders sections, with Bottom Line receiving special dark-background treatment
+
+The deep dive view also exposes:
+
+A "Save PDF" button that opens window.open('', '_blank'), writes a self-contained HTML document with the full deep dive content, and calls window.print() automatically
+A "Draft coach email for [school] →" button that generates the deterministic email template (no API call)
+A "+ Add to List" button
+
+Phase 5 — My List and CRM
+Schools added to the list appear in the My List tab. Each school on the list has a CRM record in the crmData state object with:
+
+status: one of six recruiting stages (researching, emailed, visit, applied, committed, pass)
+notes: array of note objects (id, category, text, date)
+reminders: array of reminder objects (id, text, date in YYYY-MM-DD format)
+
+Schools in My List are grouped by status. Tapping a school opens the SchoolCRM panel where the family can change status, add/delete notes (categorized as Email, Coach Call, Campus Visit, or General), and add/delete date-based reminders.
+Phase 6 — Reminders
+The Reminders tab shows all reminders across all schools in the crmData object, flattened, sorted by date ascending. Reminders are classified at render time as: Today (date === today's ISO string), Overdue (date < today), or Upcoming (date > today). When urgentCount (today + overdue) > 0, a red dot indicator appears on the Reminders nav tab.
+Phase 7 — Profile
+The Profile tab shows the swimmer's full academic stats, all current event times, and all vibe questions. Answered vibe questions display as interactive pill buttons (the selected answer is highlighted; clicking it deselects it; clicking a different option updates it). Unanswered vibe questions display in a separate dashed-border section encouraging the family to complete them for sharper deep dives.
+
+How the System Combines Data and AI Reasoning
+The system is a hybrid of deterministic scoring and AI narrative generation:
+Deterministic layer (no AI):
+
+All swim place projections
+All swim tier labels
+All admission outlook labels
+All school sorting and pre-filtering
+The school list that the AI sees
+The coach email draft
+
+AI layer (Claude API):
+
+Which 3 schools best answer the family's question (Search)
+The 8-section narrative deep dive for each school (Deep Dive)
+
+This architecture means the AI cannot invent swim data, benchmark comparisons, or admission likelihood. Those computations are done first, in code, and the AI receives them as facts in its prompt. The AI's job is to reason about those facts and translate them into honest, warm, specific narrative.
+The vibe answers create a third layer: they are collected from the swimmer and injected into the deep dive prompt verbatim, allowing the AI to speak to the swimmer's personality without the AI having to guess anything about who the swimmer is.
+
+Datasets the System Requires
+The system will not function without three embedded datasets:
+BENCHMARKS — 127 rows of D3 conference championship performance data. Fields: conference, event, first (winning time in seconds), eighth (8th-place time in seconds), sixteenth (16th-place time in seconds), secPerPlace (seconds per place beyond 16th). Source: actual D3 conference championship results. Referenced in: scoreAllSchools() via estimatePlace().
+TEAMS — 76 rows of D3 swim program data. Fields: conference, finish (championship finish position), school (full school name), tier (Tier 1 / Tier 2 / Tier 3), psf (Program Strength Factor, float). Referenced in: scoreAllSchools(). The school name in TEAMS must exactly match the school name key in SCHOOL_META.
+SCHOOL_META — One object per school (55 schools currently defined). Fields: accept (integer, acceptance rate %), satMedian (integer), hiddenIvy (boolean), stem (boolean), merit (string: "none" | "moderate" | "high"), location (string), vibe (string — one-line campus culture description), moonshot (boolean, optional — only true for MIT and Caltech). Referenced in: admissionChance(), search prompt construction, deep dive prompt construction.
+Additionally, CAMPUS_PHOTOS contains Wikimedia Commons image URLs for 24 schools. PHOTO_FALLBACK provides a fallback Unsplash URL for schools without a defined photo.

@@ -1,0 +1,398 @@
+Lane4 — Logic Rules
+This document describes every deterministic and semi-deterministic rule used in the Lane4 system. Where the AI makes a judgment call, that is noted explicitly. Where the output is computed entirely in code, that is the default assumption.
+All logic below is sourced directly from Lane4Advisor.jsx. No behavior has been inferred or invented.
+
+1. Time Parsing
+Function: parseTimeToSec(str)
+Input: A string representing a swim time. May be null, empty, or whitespace.
+Behavior:
+
+If the input is null, empty string, or whitespace only, return null.
+Trim whitespace from the string.
+If the trimmed string contains a colon (:), split on the first colon. Parse the left side as minutes (float) and the right side as seconds (float). Return minutes * 60 + seconds.
+If the string contains no colon, parse the entire string as a float and return it.
+
+Edge cases:
+
+A value like "59.5" returns 59.5 (sub-60 time).
+A value like "4:37" returns 277.0.
+A value like "16:06" returns 966.0.
+A value like "1:43" returns 103.0.
+An empty string or null returns null. The caller must handle null returns by skipping that event.
+If parseFloat returns NaN (e.g. malformed string), the caller checks for isNaN(sec) and skips.
+
+This function is purely deterministic. No AI involvement.
+
+2. Place Estimation
+Function: estimatePlace(sec, b)
+Input:
+
+sec: swimmer's time in decimal seconds (output of parseTimeToSec)
+b: a benchmark object from the BENCHMARKS dataset with fields: first, eighth, sixteenth, secPerPlace
+
+DATASET DEPENDENCY: Requires the BENCHMARKS dataset. The caller is responsible for finding the correct benchmark row by matching b.conference === team.conference and b.event === event.
+Behavior — three zones:
+Zone 1: At or faster than first-place time
+if (sec <= b.first)
+Return: 1 + ((sec - b.first) / (b.eighth - b.first || 1)) * 7
+Note: When sec === b.first exactly, the numerator is 0, result is 1.0. When sec < b.first (swimmer is faster than the winning time), the numerator is negative, so the result will be less than 1.0. This is intentional — it correctly indicates a time faster than the conference champion.
+The || 1 guard prevents division by zero if b.eighth === b.first.
+Zone 2: Between first and eighth place
+if (sec <= b.eighth)
+Return: 1 + ((sec - b.first) / (b.eighth - b.first)) * 7
+This is linear interpolation between 1st and 8th place. At sec === b.first, returns 1.0. At sec === b.eighth, returns 8.0.
+Zone 3: Between eighth and sixteenth place
+if (sec <= b.sixteenth)
+Return: 8 + ((sec - b.eighth) / (b.sixteenth - b.eighth)) * 8
+Linear interpolation between 8th and 16th. At sec === b.eighth, returns 8.0. At sec === b.sixteenth, returns 16.0.
+Zone 4: Slower than sixteenth place
+return 16 + (sec - b.sixteenth) / (b.secPerPlace || 1)
+Extrapolation beyond 16th place using the conference's average seconds-per-place figure. The || 1 guard prevents division by zero if secPerPlace is missing or zero.
+Example: If b.sixteenth = 1027.55, b.secPerPlace = 6.015, and sec = 1033.57, result = 16 + (1033.57 - 1027.55) / 6.015 = 16 + 1.0 = 17.0.
+Notes:
+
+The result is a continuous float, not an integer. A place of 3.2 means slightly faster than 3rd-place pace.
+There is no upper ceiling on the result. A very slow swimmer may get a place of 40, 60, or higher.
+Zone 1 and Zone 2 use the same formula and are listed separately in the code as two consecutive if-statements. In practice, Zone 1 only triggers when sec < b.first (swimmer is faster than the champion), since sec === b.first satisfies both conditions but the first if catches it.
+
+This function is purely deterministic. No AI involvement.
+
+3. Points Conversion
+Function: placeToPoints(p)
+Input: p — a float estimated finish place (output of estimatePlace)
+Behavior: Returns an integer point value using D3 championship scoring conventions.
+p <= 1  → 20 points
+p <= 2  → 17 points
+p <= 3  → 16 points
+p <= 4  → 15 points
+p <= 5  → 14 points
+p <= 6  → 13 points
+p <= 7  → 12 points
+p <= 8  → 11 points
+p <= 9  → 9 points
+p <= 10 → 7 points
+p <= 11 → 6 points
+p <= 12 → 5 points
+p <= 13 → 4 points
+p <= 14 → 3 points
+p <= 15 → 2 points
+p <= 16 → 1 point
+p > 16  → 0 points
+Notes:
+
+The gap between 1st and 2nd place (20 vs 17) is intentionally larger than all other gaps to emphasize championship value.
+The gap between 8th and 9th place (11 vs 9) also has a jump, reflecting the A-final / B-final boundary.
+A swimmer slower than 16th place scores 0 points at this conference.
+Because place is a float, a swimmer with an estimated place of 8.3 gets 11 points (the value for place <= 9), not 9.
+
+This function is purely deterministic. No AI involvement.
+
+4. Place Label (Display)
+Function: placeLabel(place)
+Input: place — a float estimated finish place
+Behavior: Returns a human-readable label used in result cards and deep dive snapshots.
+place <= 1.5  → "🥇 Winner"
+place <= 3.5  → "🏅 Podium"
+place <= 8.5  → "A Final"
+place <= 16.5 → "B Final"
+place <= 20   → "Bubble"
+otherwise     → "Out of range"
+Notes:
+
+Thresholds use 0.5 offsets (1.5, 3.5, 8.5, 16.5) so that a place of exactly 1.0, 2.0, 3.0 etc. correctly maps to the more favorable category rather than the boundary of the next one.
+"Out of range" is used for places above 20, meaning the swimmer's time is substantially slower than the 16th-place benchmark and their estimated finish is beyond 20th overall.
+
+This function is purely deterministic. No AI involvement.
+
+5. Swim Tier Label
+Function: tierLabel(pts)
+Input: pts — a float. This is called with both rawPts (before PSF) and adjPts (after PSF) at different points in the system. The deep dive prompt uses tierLabel(result.rawPts) for the "raw" tier and result.adjTier (which is tierLabel(adjPts)) for the adjusted tier.
+Behavior:
+pts < 1   → "Moonshot"
+pts < 4   → "Reach"
+pts < 10  → "Recruitable"
+pts < 20  → "Priority Recruit"
+pts < 35  → "Likely Commit"
+pts < 50  → "Conference Star"
+pts >= 50 → "High-Point Contender"
+Notes:
+
+These thresholds are applied to adjPts (rawPts × PSF) when computing adjTier in scoreAllSchools. Lower PSF compresses a strong swimmer's points downward, pushing them into a lower tier at a dominant program. Higher PSF expands points upward, giving a strong swimmer a better tier at a weaker program.
+"Moonshot" at adjPts < 1 indicates the swimmer scores fewer than 1 adjusted point at this program — effectively not a realistic swim fit.
+"High-Point Contender" at adjPts >= 50 indicates the swimmer is likely to be a top individual scorer at the conference championships for this program.
+
+This function is purely deterministic. No AI involvement.
+
+6. Master School Scoring
+Function: scoreAllSchools(times, sat, gpa)
+Input:
+
+times: object mapping event name strings to time strings (from swimmer profile)
+sat: integer SAT composite score
+gpa: float unweighted GPA
+
+DATASET DEPENDENCY: Requires the TEAMS dataset (76 rows) and the BENCHMARKS dataset (127 rows). Requires SCHOOL_META for the admissionChance call within the loop.
+Behavior — executed once on app load, result cached in allSchoolResults:
+For each team in TEAMS (76 iterations):
+
+Filter BENCHMARKS to only rows where b.conference === team.conference. This produces the conference-specific benchmark set.
+For each entry in the swimmer's times object:
+
+Skip if the time value is null, empty, or whitespace.
+Convert time string to seconds via parseTimeToSec().
+Skip if result is null or NaN.
+Find the benchmark row where b.event === event within the conference benchmarks.
+Skip if no benchmark exists for this event in this conference (not all events are benchmarked in all conferences).
+Call estimatePlace(sec, bench) to get decimal place.
+Call placeToPoints(place) to get integer points.
+Push { event, sec, place, pts } to eventScores.
+
+
+Sort eventScores by pts descending.
+Take the top 3 entries as top3.
+Compute rawPts = sum of pts values in top3.
+Skip the school entirely if rawPts === 0. This means the swimmer has no scorable events at this conference (all zero-point results or no matching benchmarks). The school is omitted from all results — it will not appear in searches or lists.
+Compute adjPts = rawPts * team.psf.
+Compute adjTier = tierLabel(adjPts).
+Compute admission = admissionChance(team.school, sat, gpa, adjTier, team.psf).
+Look up meta = SCHOOL_META[team.school] || {}. The empty object fallback means a school with no SCHOOL_META entry will show no badges, no vibe quote, no merit/accept data — but will still appear in results if it scores points.
+Push the full result object to results array.
+
+Final output: Sort all results by adjPts descending. Return the array. This is the master ranked list used everywhere in the application.
+This function is purely deterministic. No AI involvement.
+
+7. Program Strength Factor (PSF)
+PSF is a multiplier stored in the TEAMS dataset. It is applied as: adjPts = rawPts * psf.
+DATASET DEPENDENCY: PSF values are stored per row in the TEAMS dataset.
+PSF assignment logic (by conference finish and program strength):
+psf = 0.70  — Conference champion at dominant programs
+              (Ithaca, Johns Hopkins, Whitworth, Pomona-Pitzer)
+              Interpretation: These programs are so strong that even a top-scoring swimmer
+              contributes less marginal recruiting value. The score compression is maximal.
+
+psf = 0.78  — Conference champion at competitive conferences
+              (Williams, Denison, MIT, Whitworth in some years)
+              Interpretation: Elite programs where conference championships are closely fought.
+
+psf = 0.85  — Conference runner-up at strong conferences
+              (RIT, Kenyon, Tufts, Claremont-Mudd-Scripps)
+              Interpretation: Very strong programs, runner-up status, high standards.
+
+psf = 1.00  — Mid-tier programs (conference 3rd–7th approximately)
+              (Most Tier 2 schools)
+              Interpretation: Competitive programs where a strong swimmer would be a
+              meaningful recruit. rawPts = adjPts. No adjustment.
+
+psf = 1.10  — Lower-tier programs (conference 8th+, Tier 3)
+              Interpretation: Programs where a strong swimmer would have outsized impact.
+              Points are amplified, reflecting higher relative recruiting value.
+Effect of PSF on swim tier:
+A swimmer with rawPts = 40 (which would be "Likely Commit" if unadjusted) scores:
+
+adjPts = 28.0 at a psf=0.70 school → "Priority Recruit"
+adjPts = 31.2 at a psf=0.78 school → "Priority Recruit"
+adjPts = 34.0 at a psf=0.85 school → "Priority Recruit" (borderline Likely Commit)
+adjPts = 40.0 at a psf=1.00 school → "Likely Commit"
+adjPts = 44.0 at a psf=1.10 school → "Likely Commit"
+
+This is fully deterministic. PSF values are data, not computed.
+
+8. Admission Chance Scoring
+Function: admissionChance(school, sat, gpa, swimTier, psf)
+DATASET DEPENDENCY: Requires SCHOOL_META for satMedian, accept, and moonshot fields.
+Special case — moonshot schools:
+If meta.moonshot === true, immediately return { label: "Moonshot — Apply for Fun", color: "#6B7280" } without any further calculation. Currently applies to MIT and Caltech only.
+Special case — unknown school:
+If SCHOOL_META[school] is undefined, return { label: "Unknown", color: "#94A3B8" }.
+Academic Score computation:
+Step 1 — SAT differential:
+satDiff = swimmer.sat - school.satMedian
+satDiff >= 80  → acadScore = 4  (well above median — strong academic signal)
+satDiff >= 30  → acadScore = 3  (meaningfully above median)
+satDiff >= -30 → acadScore = 2  (within range of median — typical applicant zone)
+satDiff >= -80 → acadScore = 1  (somewhat below median — borderline)
+satDiff < -80  → acadScore = 0  (significantly below median — academic weakness)
+Step 2 — GPA bonus:
+if (gpa >= 3.9) acadScore += 1
+This bonus is additive. A 4.0 GPA swimmer gets +1 regardless of their SAT differential.
+Step 3 — Acceptance rate bonus:
+if (meta.accept > 60) acadScore += 1
+Schools with acceptance rates above 60% get an additional point added to the academic score, reflecting that admission is more accessible and the bar is lower even without swim support.
+Academic Score range after all bonuses: 0 to 6.
+Swim Score computation:
+Step 1 — Base swim boost (from PSF):
+psf <= 0.78 → swimBoost = 1  (elite program: coach has least leverage with admissions)
+psf <= 0.85 → swimBoost = 2  (strong program: moderate coach leverage)
+psf <= 1.00 → swimBoost = 3  (mid-tier program: coach has real leverage)
+psf >  1.00 → swimBoost = 4  (weaker program: coach has maximum leverage)
+Note: The inverse relationship between program strength and swim boost reflects the D3 reality that coaches at elite programs with strong admissions offices have less ability to advocate for borderline applicants. Coaches at less selective programs have more effective leverage.
+Step 2 — Swim tier bonus:
+swimTier is "High-Point Contender" or "Conference Star" → swimBoost += 2
+swimTier is "Likely Commit" or "Priority Recruit"       → swimBoost += 1
+all other tiers                                          → swimBoost += 0
+Swim Score = swimBoost (base) + swim tier bonus. Range: 1 to 6.
+Total score = acadScore + swimScore. Range: 1 to 12.
+Admission label mapping:
+total >= 9 → "Virtual Lock"             (#059669 dark green)
+total >= 8 → "Very Strong Chance"       (#10B981 medium green)
+total >= 7 → "Strong Chance"            (#34D399 light green)
+total >= 6 → "Realistic Shot"           (#2563EB blue)
+total >= 5 → "Possible"                 (#3B82F6 lighter blue)
+total >= 4 → "Reach with Support"       (#F59E0B amber)
+total >= 3 → "Major Reach"              (#EF4444 red)
+total < 3  → "Extreme Reach"            (#DC2626 dark red)
+This function is purely deterministic. No AI involvement.
+
+9. Anti-Drift and Over-Optimism Rules
+The following rules are built into the deterministic layer to prevent the system from producing misleadingly optimistic results:
+Rule 1: Zero-score exclusion.
+Any school where rawPts === 0 is excluded entirely from results. The AI never sees these schools. This ensures the AI cannot recommend schools where the swimmer has no competitive presence.
+Rule 2: PSF compression at elite programs.
+The PSF multiplier actively compresses a strong swimmer's score at elite programs. A swimmer who would be a "Conference Star" at a Tier 3 program may only be a "Priority Recruit" at a Tier 1 program. This forces the system to reflect actual recruiting reality rather than flattering the swimmer with inflated tier labels at schools where they would not be a top recruit.
+Rule 3: Swim boost is inversely scaled to program prestige.
+In admissionChance, coaches at elite programs (psf <= 0.78) receive a swimBoost of only 1, reflecting the documented reality that D3 coaches at highly selective schools have limited formal leverage with admissions offices. Coaches at weaker programs (psf > 1.00) receive swimBoost of 4. This prevents the system from overrating a swimmer's admission chances at elite schools purely because they are a strong swimmer.
+Rule 4: Moonshot override.
+MIT and Caltech return "Moonshot — Apply for Fun" unconditionally. The admission scoring formula is bypassed entirely. No swim performance, however strong, changes this label.
+Rule 5: Search pre-sort limits to top 35.
+The AI only sees the top 35 schools from the pre-sorted list. Schools ranked 36–76 in the sorted list never appear in search results. This means very weak swim fits are structurally excluded from recommendations regardless of what the user asks.
+Rule 6: AI prompt framing labels admission honestly.
+The admission label values passed to the AI in the search prompt are the exact output of admissionChance() — labels like "Major Reach" and "Extreme Reach" are passed verbatim. The AI cannot upgrade a school's admission outlook on its own because the label is computed, not generated.
+Rule 7: Deep dive tone guardrails.
+The deep dive system prompt instructs the AI: "Never make promises about admission. Use probabilistic language." The user prompt instructs: "Label all financial figures as estimates." These are soft guardrails enforced by prompt instruction rather than code.
+Rule 8: The Bottom Line is one sentence.
+The constraint that the Bottom Line must be exactly one sentence prevents the AI from burying a difficult truth in hedging language. A single sentence must take a position.
+
+10. Search Pre-Sort Logic
+Location: runSearch() function, before AI call.
+Purpose: Re-sort the master school list based on keyword detection in the user's query to bias the top 35 schools toward the user's stated interest. This is not AI logic — it runs in deterministic code before the AI call.
+Query keyword detection (lowercased query, first-match-wins):
+Contains "prestig" OR "best school" OR "academic"
+→ Sort by accept ascending (lowest acceptance rate = most selective = most prestigious first)
+
+Contains "stem" OR "engineer" OR "tech" OR "med" OR "science"
+→ Filter: move all schools where meta.stem === true to front of list.
+  Append all non-STEM schools after.
+  Within each group, relative order is preserved from the default adjPts sort.
+
+Contains "money" OR "cost" OR "afford" OR "save"
+→ Sort by merit tier:
+  merit === "high"     → rank 0 (appears first)
+  merit === "moderate" → rank 1
+  merit === "none"     → rank 2 (appears last)
+  Within ties, original order preserved.
+
+Contains "star" OR "podium" OR "win" OR "lead"
+→ Sort by adjPts descending (highest swim impact first).
+  This is the same as the default master sort order.
+
+Contains "fun" OR "social" OR "happy" OR "vibe"
+→ Sort by accept descending (highest acceptance rate = most accessible = most social/fun first).
+  This is the inverse of the prestige sort.
+
+Contains "hidden ivy" OR "ivy"
+→ Filter: move all schools where meta.hiddenIvy === true to front.
+  Append all non-Hidden-Ivy schools after.
+  Within each group, relative order is preserved.
+
+No keyword match
+→ No re-sort. List stays in default adjPts descending order from scoreAllSchools().
+Pre-filter before sort:
+Before keyword detection runs, the list is filtered to exclude:
+
+Schools in the eliminated array (user has clicked ✕ on them in a prior search).
+Schools in the myList array (already saved; don't show in search results).
+
+List size passed to AI: Top 35 from the sorted/filtered list.
+This logic is purely deterministic. No AI involvement.
+
+11. Merit Aid Estimation
+Merit aid estimation is AI-generated, not deterministic. The system passes the merit field from SCHOOL_META to the deep dive prompt as one of three string values:
+
+"none" → prompt says "Need-based only"
+"high" → prompt says "Strong merit aid available"
+"moderate" → prompt says "Moderate merit aid"
+
+The AI is then responsible for estimating a dollar range based on its training knowledge of the school's actual financial aid practices and the swimmer's academic profile (GPA 4.0, SAT 1460 projected 1500). The prompt section is:
+## The Money Conversation
+Include: Estimated COA, Estimated Merit Aid for this profile, Estimated Net Cost
+There is no deterministic merit aid calculation in the codebase. The AI generates these estimates using its own knowledge. All figures are instructed to be labeled as estimates.
+Calibration note: The merit field in SCHOOL_META was manually curated to reflect real-world patterns. Schools with merit: "none" are predominantly need-based-only institutions (most Hidden Ivies). Schools with merit: "high" are schools known to use merit aid aggressively to attract strong students. This field gives the AI an accurate prior before it generates estimates.
+
+12. Total Cost / Net Cost Estimation
+Also AI-generated. The AI estimates:
+
+Estimated COA (annual total cost of attendance including room, board, fees)
+Estimated Merit Aid (range for this swimmer's academic profile at this school)
+Estimated Net Cost (COA minus merit aid estimate)
+
+The AI uses its training knowledge of each school's published COA figures. No deterministic COA table exists in the codebase. These figures are estimates and the prompt instructs they be labeled as such.
+Anti-drift guardrail in prompt: "Never invent swim times, benchmark figures, or financial aid amounts. Label all financial figures as estimates." This is a prompt-level instruction, not a code check.
+
+13. Coach Email Logic
+The coach email is entirely deterministic — no AI call is made.
+Performance descriptor (perf) logic:
+if (best.place <= 1.5)  → "projected to win the {best.event}"
+if (best.place <= 3.5)  → "projected to podium in the {best.event}"
+otherwise               → "projected as a conference A finalist in the {best.event}"
+Where best = result.top3[0] (the swimmer's highest-scoring event at this school/conference).
+Second event mention (second) logic:
+if (result.top3[1] exists) → " I also project to score in the {result.top3[1].event}."
+otherwise                   → "" (empty string, no mention)
+STEM note (stemNote) logic:
+if (meta.stem === true) → " Your programs in engineering and CS align directly with my academic direction."
+otherwise               → ""
+Merit note (meritNote) logic:
+if (meta.merit === "high") → " I've also been looking closely at your merit scholarship opportunities."
+otherwise                  → ""
+Note: The swim times quoted in the email body ("16:06 in the 1650 free, 4:37 in the 500, and a 25.68 relay split in the 50 breast") are hardcoded to James's specific values in the current implementation. For a generalized multi-swimmer system, these must be drawn from the profile object at runtime.
+
+14. Urgency Classification for Reminders
+Location: Computed in the main Lane4Advisor component and in SchoolCRM.
+today is computed as: new Date().toISOString().split("T")[0]
+This produces a date string in YYYY-MM-DD format representing today's local date at the moment the component renders.
+Per-reminder classification:
+r.date < today  → isPast = true  (Overdue)
+r.date === today → isToday = true  (Today)
+r.date > today  → upcoming
+Display labels:
+isToday → "⚡ Today"   (amber styling, background #FFFBEB, border #FCD34D)
+isPast  → "⚠ Overdue" (red styling, background #FEF2F2, border #FECACA)
+upcoming → "📅 {Month Day}" (neutral white, border #E2E8F0)
+Global urgentCount:
+urgentCount = allReminders.filter(r => r.date <= today).length
+Counts both today and overdue reminders. When urgentCount > 0, the Reminders nav tab displays "Reminders 🔴".
+allReminders construction:
+Object.entries(crmData).flatMap(([school, d]) => (d.reminders||[]).map(r => ({...r, school})))
+Then sorted ascending by r.date.localeCompare(r.date) — i.e., earliest date first.
+
+15. Note Ordering
+Notes within a school's CRM record are stored newest-first. When addNote() is called, the new note is prepended to the notes array:
+notes: [note, ...data.notes]
+This means the most recently added note always appears at the top of the notes list in the SchoolCRM view. There is no sort control available to the user.
+
+16. Reminder Ordering
+Reminders within a school's CRM record are stored sorted ascending by date. When addReminder() is called, the new reminder is inserted and the array is re-sorted:
+reminders: [...data.reminders, r].sort((a,b) => a.date.localeCompare(b.date))
+This means reminders always appear in chronological order regardless of the order they were added. The global allReminders list on the Reminders tab also displays in chronological order (earliest first).
+
+17. Elimination Behavior
+When a user clicks ✕ on a result card:
+
+The school is added to the eliminated array in React state.
+The current search results are immediately updated to remove that school: setResults(r => r ? {...r, schools: r.schools.filter(s=>s.school!==school)} : r). The card disappears instantly without re-running the search.
+On all future searches, the eliminated school is filtered out before the pre-sort and before the AI call.
+Elimination persists for the entire session but resets on page refresh (React state only, no persistence layer).
+
+
+18. My List Behavior
+When a user clicks "+ List" on a result card:
+
+The school is added to myList array if not already present: setMyList(l => l.includes(school) ? l : [...l, school]).
+The button on that card immediately changes to "✓ Added" (disabled, grey, no action on click).
+On all future searches, schools in myList are filtered out before the pre-sort and AI call — they no longer appear in search results.
+The school is added to My List tab with default CRM status of "researching".
+
+The inverse of this: removing a school from My List via the Remove button in the old MyList component (or SchoolCRM close with status "pass") only removes it from myList. It does not add it to eliminated. The school would reappear in future searches after removal.
+
+19. Data Persistence Limitation
+All state — myList, eliminated, crmData, vibe answers — is stored in React component state only. There is no localStorage, sessionStorage, database, or any other persistence mechanism in the current implementation. All data resets on page refresh.

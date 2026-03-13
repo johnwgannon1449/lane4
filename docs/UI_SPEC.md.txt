@@ -1,0 +1,430 @@
+Lane4 — UI Specification
+This document describes every screen, component, interaction, and display behavior in the Lane4 application as implemented in Lane4Advisor.jsx.
+
+Global Layout
+Container: min-height: 100vh, background #F8FAFC (near-white blue-grey), font-family: 'Figtree', sans-serif.
+Max content width: 640px, centered with margin: 0 auto. All screens share this constraint.
+Content padding: 1.5rem on left and right.
+Global styles (injected via <style> tag in JSX):
+
+Google Fonts loaded: Fraunces (weights 300, 600, 700, 800, including italic) and Figtree (weights 400, 500, 600, 700)
+* { box-sizing: border-box; margin: 0; padding: 0; }
+@keyframes fadeUp: from { opacity: 0; transform: translateY(14px) } to { opacity: 1; transform: translateY(0) } — used on all major view transitions
+@keyframes spin: full rotation — used on the search loading spinner
+Scrollbar: width: 3px, thumb color #CBD5E1, border-radius: 2px
+
+Typography system:
+
+Fraunces serif is used for all headings, school names, numbers, tier labels, and the "Ask →" button text.
+Figtree sans-serif is used for all body text, labels, badges, vibe quotes, metadata, and UI controls.
+
+
+Navigation Bar
+Position: sticky, top: 0, z-index: 10. Always visible while scrolling.
+Background: white, border-bottom: 1px solid #E2E8F0.
+Left side: Lane4 logo (SVG: blue rect with three white bars, resembling a lane chart) + wordmark "Lane4" (Fraunces, weight 800, 1rem) + "· James" (Figtree, 0.78rem, #64748B slate).
+Right side: Four tab buttons rendered as pill-shaped buttons.
+Tab labels and logic:
+
+"Explore" — maps to view "search"
+"My List (N)" — maps to view "list". Shows (N) count when myList.length > 0; shows nothing when myList is empty.
+"Reminders" or "Reminders 🔴" — maps to view "reminders". Shows 🔴 when urgentCount > 0 (any reminder is today or overdue).
+"Profile" — maps to view "profile".
+
+Active tab styling: border-color: #2563EB, background: #EFF6FF, color: #2563EB, font-weight: 600.
+Inactive tab styling: border-color: #E2E8F0, background: white, color: #64748B.
+All tabs: padding: 5px 14px, border-radius: 20px, border: 1.5px solid, font-size: 0.78rem, transition all 0.2s.
+
+Screen 1: Explore (Search)
+Rendered when: view === "search" AND deepDive === null.
+Sub-states within this screen:
+
+Default state (no results, not loading) — shows hero text + search bar + suggested queries
+Loading state — shows spinner
+Results state — shows answer banner + 3 result cards + "Ask something else" button
+
+1a. Default State
+Hero block (only shown when !results && !loading):
+
+Headline: "Ask me anything, James." — Fraunces weight 800, clamp(1.5rem, 4vw, 2rem), #0F172A, letter-spacing: -0.03em
+Subtext: "Your scores are loaded. I know where you fit. Ask me to find your schools." — Figtree 0.875rem, #64748B, line-height: 1.65
+
+Search bar (always visible in Explore):
+
+Text input: flex: 1, padding: 0.8rem 1rem, border: 1.5px solid #E2E8F0, border-radius: 12px, Figtree 0.9rem, #0F172A, no outline, white background
+Placeholder: "Ask anything — best STEM schools, most fun campus, where I save money..."
+Submits on Enter key or Ask button click
+Submit button: padding: 0.8rem 1.25rem, active = background: #2563EB, white text, Fraunces weight 700 0.875rem; inactive (empty query or loading) = background: #E2E8F0, color: #94A3B8, cursor: not-allowed
+Button label: "..." while loading, "Ask →" otherwise
+
+Suggested queries (only shown when !results && !loading):
+
+Section label: "TRY ASKING" — Figtree 0.7rem weight 700, #94A3B8, uppercase, letter-spacing: 0.08em
+Six pre-built query buttons:
+
+🏆 "Most prestigious schools where James is a lock"
+⚗️ "Best STEM programs where he'd be a star"
+🎉 "Most fun campus where he can podium"
+💰 "Where would we save the most money?"
+✨ "Hidden Ivy options only"
+🌊 "Schools where he'd lead the distance squad"
+
+
+Each button: padding: 0.7rem 1rem, white background, border: 1.5px solid #E2E8F0, border-radius: 10px, Figtree 0.85rem, #374151, emoji on left, label text (weight 500) in middle, → arrow (color #CBD5E1, 0.8rem) on right auto-pushed, gap: 0.6rem
+Clicking any suggested query immediately triggers runSearch() with that label as the query string.
+
+1b. Loading State
+
+Centered spinner: 28×28px circle, border: 3px solid #E2E8F0, border-top-color: #2563EB, animation: spin 0.8s linear infinite, margin auto
+Loading text below spinner: "Finding the right schools for James..." — Figtree #64748B 0.875rem
+
+1c. Results State
+Answer banner:
+
+Background: #EFF6FF (light blue), border: 1px solid #BFDBFE, border-radius: 12px, padding: 0.85rem 1rem, margin-bottom: 1rem
+Text: font-size: 0.875rem, color: #1D4ED8 (dark blue), line-height: 1.65
+Contains the AI's natural-language answer to the family's query (max 30 words)
+
+Session stats line (shown only when eliminated.length > 0):
+
+"N school(s) eliminated · M on your list" — Figtree 0.72rem, #94A3B8
+
+Result cards: Rendered as a vertical stack, gap: 0.65rem. Each card is preceded by its AI micro-rationale line.
+AI micro-rationale line (above each card, when r.aiWhy exists):
+
+"✦ [aiWhy text]" — Figtree 0.75rem, weight 600, #2563EB, padding: 0 0.25rem 0.3rem
+
+"Ask something else" button:
+
+Full width, padding: 10px, transparent background, color: #64748B, border: 1.5px solid #E2E8F0, border-radius: 10px, Figtree weight 500 0.85rem
+Clears results and query, returns to default state
+
+
+Component: Result Card
+Container: white background, border: 1.5px solid #E2E8F0, border-radius: 14px, padding: 1.1rem, animation: fadeUp 0.4s ease both
+Hover state: transform: translateY(-2px), box-shadow: 0 8px 24px rgba(15,23,42,0.09)
+Default shadow: 0 1px 4px rgba(15,23,42,0.04)
+Row 1 (top):
+
+Left: School name (Fraunces weight 700, 0.95rem, #0F172A) + optional "Hidden Ivy" badge (background #FEF3C7, color #92400E, 0.6rem weight 700) + optional "STEM" badge (background #EFF6FF, color #2563EB, 0.6rem weight 700)
+Below school name: Conference · Location (Figtree 0.75rem, #64748B)
+Right: Admission outlook badge — background: admissionColor + "18" (10% opacity), color: admissionColor, padding: 2px 8px, border-radius: 20px, 0.68rem weight 700, Figtree, nowrap
+
+Row 2 (vibe quote):
+
+"[meta.vibe]" — Figtree 0.78rem, #475569, italic, line-height: 1.5, margin-bottom: 0.6rem
+
+Row 3 (swim badges):
+
+Swim tier badge: background: #EFF6FF, color: #2563EB, 0.68rem weight 700, padding: 2px 7px, border-radius: 6px
+Up to 2 event badges (top2 events): "{event} · {placeLabel}" — background: #F1F5F9, color: #64748B, 0.68rem, same border-radius
+
+Row 4 (action buttons):
+
+"Deep Dive →" (flex: 2): hover = background: #2563EB, white text; default = background: #F8FAFC, color: #2563EB, border: 1px solid #BFDBFE; Fraunces weight 700 0.75rem
+"+ List" (flex: 1) — shown when not in myList: background: #ECFDF5, color: #059669, border: 1px solid #A7F3D0; Figtree weight 600 0.75rem
+"✓ Added" (flex: 1) — shown when in myList: background: #F1F5F9, color: #94A3B8, border: 1px solid #E2E8F0, cursor: default
+"✕" (fixed width) — padding: 8px 10px, background: #FEF2F2, color: #EF4444, border: 1px solid #FECACA, title="Remove from future searches"
+
+
+Screen 2: Deep Dive
+Rendered when: view === "search" AND deepDive !== null.
+Entry: Clicking "Deep Dive →" on any result card calls setDeepDive(result).
+Exit: Clicking "← Back" calls setDeepDive(null), returns to search results if they exist.
+Campus photo hero:
+
+Container: margin: 0 -1.5rem 1.25rem (bleeds edge-to-edge beyond content padding), height: 180px, overflow: hidden, position: relative
+Image: width: 100%, height: 100%, object-fit: cover; onError hides the element silently
+Gradient overlay: position: absolute, inset: 0, background: linear-gradient(to bottom, transparent 40%, rgba(15,23,42,0.7))
+School name overlay: position: absolute, bottom: 1rem, left: 1.5rem, right: 1.5rem
+
+School name: Fraunces weight 700, 1.4rem, white, letter-spacing: -0.02em, text-shadow: 0 1px 4px rgba(0,0,0,0.4)
+Conference · Location: Figtree 0.75rem, rgba(255,255,255,0.85)
+
+
+
+Top control row (no-print):
+
+Left: "← Back" — no background, no border, Figtree 0.85rem, #64748B
+Right: "⬇ Save PDF" — padding: 6px 14px, background: #F8FAFC, border: 1.5px solid #E2E8F0, border-radius: 8px, Figtree weight 600 0.78rem, #0F172A
+
+Badges row:
+
+"Hidden Ivy ✦" badge (if applicable): background: #FEF3C7, color: #92400E, 0.68rem weight 700
+"STEM" badge (if applicable): background: #EFF6FF, color: #2563EB, 0.68rem weight 700
+Admission pill: contains colored dot (7×7px, border-radius: 50%) + label text; background: admissionColor + "18", border: 1px solid admissionColor + "40", border-radius: 8px, padding: 5px 12px; label in Fraunces weight 700 0.82rem in admissionColor
+
+Swim snapshot block:
+
+Background #F8FAFC, border: 1px solid #E2E8F0, border-radius: 12px, padding: 0.9rem, margin-bottom: 1rem
+Section label: "SWIM SNAPSHOT" — Figtree 0.68rem weight 700, #94A3B8, uppercase, letter-spacing: 0.08em
+Left column: Large adjusted points number — Fraunces weight 800, 1.5rem, #2563EB, plus "adj pts" label below in Figtree 0.65rem #64748B
+Right column: Event list — one line per top3 event: "{event} — {placeLabel(place)}", Figtree 0.75rem #475569, line-height: 1.8
+
+Loading state: "Building deep dive for {school}..." — Figtree #94A3B8, centered, padding: 2rem 0
+Content sections (rendered after load):
+
+Response text is split on /^## /m (multiline regex), filtering empty strings
+Each section's first line = section title, remaining lines = body
+Standard section: margin-bottom: 0.9rem
+
+Title: Fraunces weight 700, 0.88rem, #0F172A, margin-bottom: 0.25rem
+Body: Figtree 0.875rem, #475569, line-height: 1.72
+
+
+Bottom Line section (detected via title.trim().includes("Bottom Line")):
+
+Container: background: #0F172A, border-radius: 12px, padding: 1rem 1.1rem
+Title: Fraunces weight 700, 0.8rem, #93C5FD (light blue), uppercase, letter-spacing: 0.07em
+Body: Figtree 0.875rem, #E2E8F0 (light grey-white)
+
+
+
+Coach email section (below a top border at 1.25rem padding):
+
+Default state: Full-width button "✉ Draft coach email for {school} →" — background: #EFF6FF, color: #2563EB, border: 1.5px solid #BFDBFE, border-radius: 12px, padding: 12px, Fraunces weight 700 0.9rem
+After clicking:
+
+Header row: "Coach email draft" (Fraunces weight 700 0.88rem #0F172A) + "Copy" / "✓ Copied!" button
+Copy button: active = background: #ECFDF5, color: #059669, border: 1px solid #A7F3D0; default = background: #F1F5F9, color: #2563EB; auto-resets after 2 seconds
+Email content box: background: #F8FAFC, border: 1px solid #E2E8F0, border-radius: 10px, padding: 1rem, Figtree 0.82rem, #374151, line-height: 1.75, white-space: pre-wrap
+Disclaimer below: "Review before sending · Personalize with details James knows about the program" — Figtree 0.72rem #94A3B8, centered
+
+
+
+
+Screen 3: My List
+Rendered when: view === "list" AND selected === null (within MyList component).
+Header: "James's List" — Fraunces weight 800, 1.4rem, #0F172A, letter-spacing: -0.02em
+Subtext: "N school(s) saved · Tap any school to manage" — Figtree 0.82rem, #64748B
+Empty state: "No schools added yet. Run a search and tap '+ List' on schools you like." — Figtree #94A3B8 0.875rem, centered, padding: 2rem 1rem
+Grouped by status:
+
+Schools are grouped into the 6 status buckets (STATUSES array order: researching, emailed, visit, applied, committed, pass)
+Empty status groups are hidden (if (schools.length === 0) return null)
+Group header: "{Status Label} · {count}" — Figtree 0.68rem weight 700, color: status.color, uppercase, letter-spacing: 0.08em
+
+Per-school row:
+
+background: white, border: 1.5px solid ${status.color}30 (15% opacity), border-left: 3px solid ${status.color} (solid status color left accent), border-radius: 10px, padding: 0.75rem 0.9rem, cursor: pointer
+Hover: box-shadow: 0 4px 12px rgba(0,0,0,0.07)
+Left content:
+
+School name (Fraunces weight 700 0.88rem #0F172A) + "Hidden Ivy" badge if applicable
+Second line: Swim tier · Admission label (in admission color, weight 600) · "📝 N note(s)" (purple, if notes exist) · "⚠ N overdue" (red, if overdue reminders) · "📅 N upcoming" (blue, if upcoming reminders and no overdue)
+
+
+Right: "→" arrow in #CBD5E1
+Clicking any row sets selected = school, opening the SchoolCRM detail panel
+
+
+Screen 4: School CRM Detail
+Rendered when: view === "list" AND selected !== null.
+Entry: Clicking any school row in My List.
+Exit: "← Back" button returns to My List (setSelected(null)).
+Header:
+
+School name: Fraunces weight 800, 1.1rem, #0F172A
+Conference · Location: Figtree 0.72rem #64748B
+"← Back" button on right: Figtree 0.82rem #64748B
+
+Status Selector
+Label: "STATUS" — Figtree 0.68rem weight 700 #94A3B8 uppercase
+Six status pill buttons (always all visible):
+
+Active status: border-color: status.color, background: status.bg, color: status.color, font-weight: 700
+Inactive statuses: border-color: #E2E8F0, background: white, color: #94A3B8, font-weight: 500
+All: padding: 5px 12px, border-radius: 20px, border: 1.5px solid, Figtree 0.75rem, transition: all 0.15s
+
+Status options in order:
+
+"Researching" — #64748B / #F1F5F9
+"Emailed Coach" — #2563EB / #EFF6FF
+"Visit Scheduled" — #7C3AED / #F5F3FF
+"Applied" — #D97706 / #FFFBEB
+"Committed 🎉" — #059669 / #ECFDF5
+"Not the Right Fit" — #94A3B8 / #F8FAFC
+
+Reminders Section
+Label: "REMINDERS" + "+ Add" button (right-aligned, Figtree 0.75rem #2563EB weight 600)
+Add reminder form (visible when showReminderForm === true):
+
+Background #F8FAFC, border: 1px solid #E2E8F0, border-radius: 10px, padding: 0.75rem
+Date input: type="date", min={today} (past dates blocked), full width, Figtree 0.8rem
+Task text input: placeholder "What do you need to do?", full width, Figtree 0.8rem
+"Set Reminder" button: background: #2563EB, white, full flex, Figtree weight 600 0.75rem
+"Cancel" button: background: #F1F5F9, #64748B
+
+Empty state: "No reminders set" — Figtree 0.78rem #CBD5E1
+Each reminder row:
+
+Background and border vary by urgency:
+
+Today: background: #FFFBEB, border: 1px solid #FCD34D (amber)
+Overdue: background: #FEF2F2, border: 1px solid #FECACA (red)
+Upcoming: background: white, border: 1px solid #E2E8F0
+
+
+Reminder text: Figtree 0.78rem, color = #EF4444 if overdue, #0F172A otherwise, weight 500
+Date label: "⚡ Today" (amber) / "⚠ Overdue — {date}" (red) / "📅 {date}" (blue #94A3B8)
+Delete button: × in #CBD5E1, no border, no background
+
+Notes Section
+Label: "NOTES" + "+ New Note" button (right-aligned, Figtree 0.75rem #2563EB weight 600)
+Add note form (visible when showNoteForm === true):
+
+Background #F8FAFC, border: 1px solid #E2E8F0, border-radius: 10px, padding: 0.75rem
+Category selector: 4 pill buttons — "Email", "Coach Call", "Campus Visit", "General"
+
+Active: border: 1px solid #2563EB, background: #EFF6FF, color: #2563EB, weight 700
+Inactive: border: 1px solid #E2E8F0, white, #94A3B8
+Default category: "General"
+
+
+Textarea: placeholder: "Paste email, jot down notes from a call, log visit impressions...", min-height: 90px, resize: vertical, line-height: 1.6
+"Save Note" button: background: #2563EB, white, Figtree weight 600 0.75rem
+"Cancel" button: clears form and hides it
+
+Empty state: "No notes yet — paste emails, call notes, visit impressions" — Figtree 0.78rem #CBD5E1
+Each note card:
+
+background: white, border: 1px solid #E2E8F0, border-radius: 8px, padding: 0.65rem 0.75rem
+Top row: Category badge (left) + Date string + × delete button (right)
+
+Category badge: background: #F1F5F9, color: #475569, 0.65rem weight 700, padding: 1px 6px
+Date: Figtree 0.65rem #94A3B8
+
+
+Note body: Figtree 0.82rem #374151, line-height: 1.65, white-space: pre-wrap
+
+
+Screen 5: Reminders (Global)
+Rendered when: view === "reminders".
+Header: "Reminders" — Fraunces weight 800, 1.4rem
+Subtext: "All upcoming next steps across your list" — Figtree 0.82rem #64748B
+Empty state: "No reminders yet. Open a school in My List and set one." — Figtree #94A3B8 0.875rem, centered
+Each reminder row:
+
+Background and border by urgency (same as SchoolCRM view)
+Reminder task text (left): Figtree 0.82rem #0F172A weight 500
+School name below task (left): Figtree 0.7rem #64748B
+Urgency label (right): Figtree 0.72rem weight 700
+
+Overdue: #EF4444 "⚠ Overdue"
+Today: #D97706 "⚡ Today"
+Upcoming: #2563EB "📅 {Month Day}" (e.g. "📅 Apr 15")
+
+
+
+Date formatting for upcoming reminders: new Date(r.date + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric" }). The T12:00:00 prevents off-by-one day errors due to timezone handling.
+Sorted: All reminders from all schools, ascending by date (earliest first).
+
+Screen 6: Profile
+Rendered when: view === "profile".
+Header: "{name}'s Profile" — Fraunces weight 800, 1.4rem
+Subtext: "This is how Lane4 understands you. More answers = sharper advice." — Figtree 0.82rem #64748B
+Academics Card
+White card, border: 1.5px solid #E2E8F0, border-radius: 14px, padding: 1.1rem
+Section label: "ACADEMICS" — Figtree 0.68rem weight 700 #94A3B8 uppercase
+2×2 grid of stat tiles:
+
+GPA (unweighted): value
+SAT: value
+Projected SAT: value
+Math SAT: "{mathSat} → {mathSatProjected}"
+
+Each tile: background: #F8FAFC, border-radius: 10px, padding: 0.65rem 0.85rem; label in Figtree 0.65rem #94A3B8; value in Fraunces weight 700, 1.05rem, #0F172A
+Current Bests Card
+White card, same border/radius/padding.
+Section label: "CURRENT BESTS" — same style
+List of events: one row per entry in profile.times. Rows have border-bottom: 1px solid #F1F5F9.
+
+Event name (left): Figtree 0.82rem #475569
+Time value (right): Fraunces weight 700 0.88rem #0F172A
+
+Your Vibe Card (answered questions)
+Shown only when answered.length > 0.
+White card, same border/radius/padding.
+Section label: "YOUR VIBE" — same style
+For each answered vibe question:
+
+Question label: Figtree 0.72rem #94A3B8, margin-bottom: 0.35rem
+Options rendered as pill buttons:
+
+Selected option: border: 1.5px solid #2563EB, background: #EFF6FF, color: #2563EB, weight 700, shows "✓ " prefix
+Unselected options: border: 1.5px solid #E2E8F0, background: #F8FAFC, #64748B, weight 400
+Clicking the selected option: calls onVibeChange(q.id, null) — deselects (sets to null)
+Clicking an unselected option: calls onVibeChange(q.id, opt) — selects it
+All options always visible, user can switch at any time
+
+
+
+Tell Us More Card (unanswered questions)
+Shown only when unanswered.length > 0.
+Background #FAFAFA, border: 1.5px dashed #E2E8F0, border-radius: 14px — visually distinct from answered card.
+Section label: "TELL US MORE — SHARPER ADVICE AWAITS" — same uppercase style
+Helper text: "The more you share, the more personal your deep dives get." — Figtree 0.78rem #94A3B8, line-height: 1.5
+For each unanswered question:
+
+Question label: Figtree 0.78rem #475569 weight 600 (bolder than answered question labels)
+Options as pill buttons: border: 1.5px solid #E2E8F0, white background, #475569
+Hover effect: border color changes to #2563EB, text color changes to #2563EB (inline onMouseEnter/onMouseLeave)
+Clicking any option calls onVibeChange(q.id, opt) — selects it and moves the question from unanswered to answered card
+
+
+PDF Export Behavior
+Triggered by: "⬇ Save PDF" button in Deep Dive.
+Behavior:
+
+window.open("", "_blank") opens a new browser tab
+A self-contained HTML document is written to the new window via win.document.write()
+The document auto-triggers window.print() via window.onload
+
+PDF document structure:
+
+Campus hero image (height: 220px, object-fit: cover, border-radius: 12px); hides on error
+School name (h1, Fraunces 2rem)
+Conference · Location (Figtree 0.85rem #64748B)
+Admission badge + optional Hidden Ivy badge + optional STEM badge (inline-block with dynamic color backgrounds)
+Swim snapshot block: "Swim Fit: {event} — {placeLabel} · ..." and "Program tier: {adjTier}"
+All 8 deep dive sections: .section class (standard) or .bottom-line class (for Bottom Line)
+Footer: "Generated by Lane4 · lane4.co" — Figtree 0.72rem #94A3B8, centered, margin-top: 2rem
+Google Fonts loaded via @import in the style block
+@media print { body { padding: 0; } } removes padding in print mode
+
+
+Navigation / State Flow Summary
+App loads
+  → view = "search"
+  → allSchoolResults computed (scoreAllSchools, deterministic)
+  → vibe state initialized from JAMES.vibe
+
+Explore tab (search):
+  → Default: hero + search + suggested queries
+  → User types or taps a query → runSearch() called
+  → Loading spinner shown during API call
+  → Results: answer banner + 3 result cards
+    → "Deep Dive →" on any card → deepDive state set → DeepDive screen shown
+      → "← Back" → clears deepDive → returns to results
+      → "Save PDF" → new window opens → auto-prints
+      → "Draft coach email" → email form shown → Copy button
+    → "+ List" → adds to myList → button becomes "✓ Added"
+    → "✕" → eliminates school → card disappears immediately
+  → "← Ask something else" → clears results and query
+
+My List tab:
+  → Grouped school rows by status
+  → Click any school → SchoolCRM panel shown
+    → Change status → status updated live
+    → Add/delete notes and reminders
+    → "← Back" → returns to My List
+
+Reminders tab:
+  → All reminders from all schools, sorted by date
+  → Read-only view (no editing here; edit from My List)
+
+Profile tab:
+  → Academic stats, swim times, vibe questions
+  → Answered vibe: toggle/deselect live
+  → Unanswered vibe: tap any option to answer
+  → Changes immediately affect next deep dive prompt

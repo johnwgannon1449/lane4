@@ -1,0 +1,260 @@
+{
+"_comment": "This is the full input schema for the Lane4 swim recruiting system. All fields in swimmer_profile correspond to the JAMES constant in Lane4Advisor.jsx. The datasets section documents the three required static datasets embedded in the source file.",
+"swimmer_profile": {
+"name": {
+"type": "string",
+"description": "Swimmer's first name. Used in UI display, deep dive section headers, and coach email salutation.",
+"example": "James",
+"required": true
+},
+"gpa": {
+"type": "float",
+"description": "Unweighted GPA on a 4.0 scale. Used in admissionChance() and injected into deep dive prompt.",
+"example": 4.0,
+"required": true,
+"used_in": ["admissionChance()", "deep dive prompt", "Profile tab display"]
+},
+"sat": {
+"type": "integer",
+"description": "Current SAT composite score. Used in admissionChance() to compute satDiff against school median. Injected into deep dive prompt and coach email.",
+"example": 1460,
+"required": true,
+"used_in": ["admissionChance()", "deep dive prompt", "coach email template", "Profile tab display"]
+},
+"satProjected": {
+"type": "integer",
+"description": "Projected SAT score after a planned retake. Injected into deep dive prompt for AI context. NOT used in the deterministic admissionChance() calculation — only the current sat value is used there.",
+"example": 1500,
+"required": false,
+"used_in": ["deep dive prompt", "Profile tab display"]
+},
+"mathSat": {
+"type": "integer",
+"description": "Current SAT Math section score. Injected into deep dive prompt for AI context.",
+"example": 720,
+"required": false,
+"used_in": ["deep dive prompt", "Profile tab display"]
+},
+"mathSatProjected": {
+"type": "integer",
+"description": "Projected SAT Math section score after retake. Injected into deep dive prompt for AI context.",
+"example": 760,
+"required": false,
+"used_in": ["deep dive prompt", "Profile tab display"]
+},
+"times": {
+"type": "object",
+"description": "Map of event names to time strings. Keys must exactly match event names used in the BENCHMARKS dataset. Values are strings in one of two formats: 'M:SS.ss' for times >= 60 seconds (e.g. '16:06', '4:37', '1:43'), or 'SS.ss' for times < 60 seconds (e.g. '59.5', '25.68'). Null or empty string means the swimmer has no time for that event and it will be skipped in scoring.",
+"required": true,
+"parsing": "parseTimeToSec() converts these strings to decimal seconds. If the string contains ':', it splits on ':' and returns parseFloat(minutes)*60 + parseFloat(seconds). Otherwise returns parseFloat(str). Returns null if input is null, empty, or whitespace.",
+"events": {
+"1650 Free": {
+"type": "string | null",
+"format": "M:SS.ss",
+"example": "16:06",
+"description": "1650-yard freestyle. Primary distance event. Highest scoring event for James. Benchmark exists in all 9 conferences."
+},
+"1000 Free": {
+"type": "string | null",
+"format": "M:SS.ss",
+"example": "9:30",
+"description": "1000-yard freestyle. Benchmark exists in Liberty League, MIAC, NESCAC, and SCIAC. Not present in all conferences — will be skipped for conferences without this benchmark."
+},
+"500 Free": {
+"type": "string | null",
+"format": "M:SS.ss",
+"example": "4:37",
+"description": "500-yard freestyle. Benchmark exists in all 9 conferences."
+},
+"200 Free": {
+"type": "string | null",
+"format": "M:SS.ss",
+"example": "1:43",
+"description": "200-yard freestyle. Benchmark exists in all 9 conferences."
+},
+"400 IM": {
+"type": "string | null",
+"format": "M:SS.ss",
+"example": "4:09",
+"description": "400-yard individual medley. Benchmark exists in all 9 conferences."
+},
+"200 IM": {
+"type": "string | null",
+"format": "M:SS.ss",
+"example": "1:56",
+"description": "200-yard individual medley. Benchmark exists in all 9 conferences."
+},
+"100 Breast": {
+"type": "string | null",
+"format": "SS.ss",
+"example": "59.5",
+"description": "100-yard breaststroke. Benchmark exists in all 9 conferences."
+},
+"50 Breast (Relay Split)": {
+"type": "string | null",
+"format": "SS.ss",
+"example": "25.68",
+"description": "50-yard breaststroke relay split. Benchmark exists in all 9 conferences. This is a relay split time, not a standalone event, but is scored using the same estimatePlace() function as individual events."
+},
+"50 Free": {
+"type": "string | null",
+"format": "SS.ss",
+"example": null,
+"description": "50-yard freestyle. Benchmark exists in Liberty League only. James has no time entered for this event in the current implementation."
+},
+"100 Free": {
+"type": "string | null",
+"format": "SS.ss",
+"example": null,
+"description": "100-yard freestyle. Benchmark exists in Liberty League only. James has no time entered for this event in the current implementation."
+}
+}
+},
+"vibe": {
+"type": "object",
+"description": "Optional personality and preference answers collected from the swimmer via the Profile tab. All fields are nullable. Null means the swimmer has not answered that question. Non-null values are the exact option string the swimmer selected. All answered vibe fields are injected into the deep dive prompt to personalize the AI narrative. They are not used in any deterministic scoring calculation.",
+"required": false,
+"injection_logic": "At deep dive time, Object.entries(profile.vibe) is filtered to exclude null values, then mapped to '  - {question label}: {answer}' format lines and joined with newlines. This block is labeled 'PERSONALITY & PREFERENCES (use these to personalize every section)' in the prompt.",
+"fields": {
+"campus": {
+"type": "string | null",
+"question_label": "Campus feel",
+"valid_options": [
+"Big university energy, even at a small school",
+"Small and tight-knit — everyone knows everyone",
+"Honestly don't care, just fit the swim program"
+],
+"example": "Small and tight-knit — everyone knows everyone"
+},
+"friday": {
+"type": "string | null",
+"question_label": "Friday night default",
+"valid_options": [
+"Out — game, party, something social",
+"Library with 2–3 close friends",
+"Depends on the week",
+"I honestly don't know yet"
+],
+"example": "Library with 2–3 close friends"
+},
+"academic": {
+"type": "string | null",
+"question_label": "Academic identity",
+"valid_options": [
+"Here to master my major",
+"Genuinely want to be well-rounded",
+"Strong in one area, curious in others"
+],
+"example": "Genuinely want to be well-rounded"
+},
+"compete": {
+"type": "string | null",
+"question_label": "How I compete best",
+"valid_options": [
+"Thrive on pressure and individual achievement",
+"Love pushing myself inside a team environment",
+"Both — depends on the context"
+],
+"example": "Love pushing myself inside a team environment"
+},
+"location": {
+"type": "string | null",
+"question_label": "Geography preference",
+"valid_options": [
+"East Coast or bust",
+"Open to anywhere",
+"Prefer warm weather / West Coast",
+"Midwest is fine with me"
+],
+"example": null,
+"_note": "Not answered in James's current profile"
+},
+"career": {
+"type": "string | null",
+"question_label": "Career direction",
+"valid_options": [
+"Engineering or CS — locked in",
+"Pre-med track",
+"Still figuring it out",
+"Business / entrepreneurship"
+],
+"example": null,
+"_note": "Not answered in James's current profile"
+}
+}
+}
+},
+"static_datasets": {
+"_comment": "These three datasets are embedded in the source file as JavaScript constants. They are not fetched at runtime. They must be present for the application to function.",
+"BENCHMARKS": {
+  "description": "D3 conference championship performance benchmarks. 127 rows total across 9 conferences and up to 15 event types. Derived from actual D3 conference championship results.",
+  "schema": {
+    "conference": "string — one of: Liberty League, Centennial, MIAC, NCAC, NESCAC, NEWMAC, NWC, SCIAC, UAA",
+    "event": "string — must exactly match event key names used in swimmer times object",
+    "first": "float — winning time at conference championships, in decimal seconds",
+    "eighth": "float — 8th-place time at conference championships, in decimal seconds",
+    "sixteenth": "float — 16th-place time at conference championships, in decimal seconds",
+    "secPerPlace": "float — average seconds per finishing place beyond 16th position, used for extrapolation"
+  },
+  "used_in": "estimatePlace() — called once per event per school per swimmer profile",
+  "conferences_present": ["Liberty League", "Centennial", "MIAC", "NCAC", "NESCAC", "NEWMAC", "NWC", "SCIAC", "UAA"],
+  "events_present_note": "Not every event appears in every conference. The 1000 Free benchmark only exists for Liberty League, MIAC, NESCAC, and SCIAC. The 50 Free and 100 Free benchmarks only exist for Liberty League. The remaining events (200 Free, 500 Free, 1650 Free, 100 Breast, 200 IM, 400 IM, 50 Breast Relay Split) exist across all 9 conferences."
+},
+
+"TEAMS": {
+  "description": "All 76 D3 swim programs in scope. Each row represents one program. The school name field must exactly match the key used in SCHOOL_META for that school.",
+  "schema": {
+    "conference": "string — must match a conference present in BENCHMARKS",
+    "finish": "integer — conference championship finish position for this program",
+    "school": "string — full school name, must match SCHOOL_META key exactly",
+    "tier": "string — Tier 1 | Tier 2 | Tier 3 (not used in scoring; informational)",
+    "psf": "float — Program Strength Factor. Valid values: 0.70, 0.78, 0.85, 1.00, 1.10. See PSF logic in LOGIC_RULES.md."
+  },
+  "used_in": "scoreAllSchools() — iterated over in full for every scoring run",
+  "schools_by_conference": {
+    "Centennial": ["Johns Hopkins University", "Gettysburg College", "Swarthmore College", "Dickinson College", "Franklin & Marshall College", "Ursinus College", "Washington College", "McDaniel College"],
+    "Liberty League": ["Ithaca College", "Rochester Institute of Technology", "Rensselaer Polytechnic Institute", "Clarkson University", "Union College", "Skidmore College", "Vassar College", "St. Lawrence University", "Hobart and William Smith", "Bard College"],
+    "NCAC": ["Denison University", "Kenyon College", "John Carroll University", "DePauw University", "Wabash College", "College of Wooster", "Oberlin College", "Ohio Wesleyan University", "Wittenberg University"],
+    "NESCAC": ["Williams College", "Tufts University", "Amherst College", "Connecticut College", "Bates College", "Hamilton College", "Bowdoin College", "Middlebury College", "Colby College", "Trinity College", "Wesleyan University"],
+    "NEWMAC": ["MIT", "U.S. Coast Guard Academy", "Worcester Polytechnic Institute", "Babson College", "Wheaton College (MA)", "Springfield College", "Clark University"],
+    "NWC": ["Whitworth University", "University of Puget Sound", "Linfield University", "Whitman College", "Pacific Lutheran University", "Lewis & Clark College", "Willamette University", "George Fox University"],
+    "SCIAC": ["Pomona-Pitzer", "Claremont-Mudd-Scripps", "Chapman University", "Caltech", "Whittier College", "Cal Lutheran University", "Occidental College", "University of Redlands", "University of La Verne"]
+  }
+},
+
+"SCHOOL_META": {
+  "description": "Per-school metadata for 55 schools currently defined. Used in admissionChance() scoring and injected into deep dive and search prompts. School name key must exactly match the school field in TEAMS.",
+  "schema": {
+    "accept": "integer — admission acceptance rate as a whole number percentage (e.g. 9 means 9%)",
+    "satMedian": "integer — SAT composite median for enrolled students",
+    "hiddenIvy": "boolean — true if the system classifies this school as a Hidden Ivy (academically elite, employer-respected, without Ivy League rejection rates). Used in search sorting and displayed as a badge in the UI.",
+    "stem": "boolean — true if the school has strong STEM programs relevant to the swimmer's interests. Used in search sorting, displayed as a badge, and conditionally injects a STEM note into the deep dive prompt and coach email.",
+    "merit": "string — 'none' (need-based aid only), 'moderate' (some merit available), or 'high' (aggressive merit for strong academic profiles). Used in search sorting and injected into deep dive prompt.",
+    "location": "string — City, State. Displayed in UI and injected into deep dive prompt.",
+    "vibe": "string — One-line campus culture description. Displayed as a quote in result cards and injected into deep dive prompt. Truncated to 60 characters in the search list passed to the AI.",
+    "moonshot": "boolean (optional) — if true, admissionChance() returns 'Moonshot — Apply for Fun' regardless of all other scores. Currently true only for MIT and Caltech."
+  },
+  "hidden_ivy_schools": ["Johns Hopkins University", "Swarthmore College", "Vassar College", "Denison University", "Kenyon College", "Oberlin College", "Williams College", "Tufts University", "Amherst College", "Bates College", "Hamilton College", "Bowdoin College", "Middlebury College", "Colby College", "Wesleyan University", "Pomona-Pitzer", "Claremont-Mudd-Scripps"],
+  "stem_schools": ["Johns Hopkins University", "Swarthmore College", "Rochester Institute of Technology", "Rensselaer Polytechnic Institute", "Clarkson University", "Union College", "Tufts University", "MIT", "U.S. Coast Guard Academy", "Worcester Polytechnic Institute", "Clark University", "Pomona-Pitzer", "Claremont-Mudd-Scripps", "Caltech"],
+  "moonshot_schools": ["MIT", "Caltech"]
+}
+},
+"runtime_state_inputs": {
+"_comment": "These are not profile inputs but runtime state values that affect scoring and search behavior within a session.",
+"eliminated": {
+"type": "array of strings",
+"description": "School names the user has eliminated via the ✕ button on result cards. Eliminated schools are filtered out of all future searches and never passed to the AI.",
+"default": []
+},
+"myList": {
+"type": "array of strings",
+"description": "School names the user has added to their list. Schools on myList are filtered out of search results (they are already tracked and don't need to appear in new search results).",
+"default": []
+},
+"vibe": {
+"type": "object",
+"description": "Live vibe state managed in React. Initialized from profile.vibe but can be updated in the Profile tab at any time. Updated values immediately affect the next deep dive prompt constructed.",
+"default": "JAMES.vibe initial values"
+}
+}
+}

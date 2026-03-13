@@ -1,0 +1,517 @@
+Lane4 — Test Cases
+This document provides 5 complete swimmer profiles with representative system outputs in the style Lane4 is designed to produce. Each test case shows:
+
+The full swimmer profile input
+The deterministic scoring outputs (what scoreAllSchools and admissionChance would compute)
+Representative AI narrative output for one Deep Dive (showing correct tone, section structure, and behavior)
+Representative search result output for one query
+
+These cases are designed to verify that a rebuild produces outputs consistent with the system's intended behavior, tone, and logic.
+DATASET DEPENDENCY NOTE: All point estimates, place projections, and admission scores below rely on the BENCHMARKS and TEAMS datasets. A rebuild must have those datasets loaded to reproduce any of these outputs. The narrative outputs are representative — exact AI wording will vary, but section structure, tone, and content topics must remain consistent.
+
+Test Case 1: James (Reference Profile)
+This is the current live swimmer. All values are hardcoded in the source.
+Input Profile
+json{
+  "name": "James",
+  "gpa": 4.0,
+  "sat": 1460,
+  "satProjected": 1500,
+  "mathSat": 720,
+  "mathSatProjected": 760,
+  "times": {
+    "1650 Free": "16:06",
+    "1000 Free": "9:30",
+    "500 Free": "4:37",
+    "200 Free": "1:43",
+    "400 IM": "4:09",
+    "200 IM": "1:56",
+    "100 Breast": "59.5",
+    "50 Breast (Relay Split)": "25.68"
+  },
+  "vibe": {
+    "campus": "Small and tight-knit — everyone knows everyone",
+    "friday": "Library with 2–3 close friends",
+    "academic": "Genuinely want to be well-rounded",
+    "compete": "Love pushing myself inside a team environment",
+    "location": null,
+    "career": null
+  }
+}
+Deterministic Scoring Outputs (DATASET REQUIRED)
+UAA Conference (strongest conference in dataset):
+
+1650 Free (966 sec): estimatePlace against UAA 1650 (first=888.11, eighth=933.74, sixteenth=971.82)
+
+sec=966 > sixteenth=971.82 → falls in Zone 4
+place = 16 + (966 - 971.82) / 4.76 = 16 + (-1.22) ≈ 14.8
+pts = placeToPoints(14.8) = 3 points
+
+
+500 Free (277 sec): UAA 500 first=255.94, eighth=270.61, sixteenth=286.03
+
+270.61 < 277 < 286.03 → Zone 3
+place = 8 + (277 - 270.61) / (286.03 - 270.61) × 8 = 8 + 6.39/15.42 × 8 ≈ 8 + 3.32 ≈ 11.3
+pts = placeToPoints(11.3) = 5 points
+
+
+At Emory (UAA, psf=1.00): rawPts likely ~8-12, adjPts ≈ same
+adjTier: likely "Recruitable" to "Priority Recruit" at UAA schools
+
+NCAC Conference:
+
+1650 Free: NCAC first=905.11, eighth=953.88, sixteenth=996.77
+
+953.88 < 966 < 996.77 → Zone 3
+place = 8 + (966 - 953.88) / (996.77 - 953.88) × 8 = 8 + 12.12/42.89 × 8 ≈ 8 + 2.26 ≈ 10.3
+pts = placeToPoints(10.3) = 7 points
+
+
+500 Free: NCAC first=263.54, eighth=277.92, sixteenth=293.81
+
+263.54 < 277 < 277.92 → Zone 2 (borderline 8th)
+place = 1 + (277 - 263.54) / (277.92 - 263.54) × 7 = 1 + 13.46/14.38 × 7 ≈ 1 + 6.55 ≈ 7.55
+pts = placeToPoints(7.55) = 12 points
+
+
+At Kenyon (NCAC, psf=0.85): top3 might include 1650(7pts) + 500(12pts) + 400IM or Breast
+
+rawPts ≈ 25-30, adjPts ≈ 21-26 at psf=0.85
+adjTier: "Priority Recruit" to "Likely Commit"
+
+
+At Denison (NCAC, psf=0.78): adjPts slightly lower, similar tier
+
+Admission — Kenyon College (psf=0.85, satMedian=1400, accept=31%, hiddenIvy=true):
+
+satDiff = 1460 - 1400 = 60 → satDiff >= 30 → acadScore = 3
+gpa >= 3.9 → acadScore += 1 → acadScore = 4
+accept=31 (not > 60) → no bonus → acadScore = 4
+swimBoost: psf=0.85 → swimBoost = 2
+swimTier: "Likely Commit" → swimScore = 2 + 1 = 3
+total = 4 + 3 = 7 → "Strong Chance"
+
+Representative Deep Dive: Kenyon College
+This is representative of correct tone and structure. Exact wording varies.
+
+Your Honest Shot
+James is a genuine Strong Chance at Kenyon — the scoring model puts him at conference A-finalist level in the 500 and 1650, and his 4.0 GPA is comfortably above their 1400 SAT median. Kenyon coaches have real influence with admissions, and a swimmer who projects to A-final range in distance is exactly what they want to recruit.
+What This School Is Actually Like
+Kenyon is one of those places that's hard to explain until you visit. It's a literary powerhouse in rural Ohio — the town is literally the college, there's nowhere to go but the campus, and that isolation creates one of the most intense communities in American higher education. For someone who defaults to the library with two or three close friends on a Friday night, Kenyon's small-and-intense culture will either feel like home or feel claustrophobic — and James should know that upfront. The swim program is genuinely legendary; past Kenyon swimmers are known across the D3 world, and the team culture reflects that pride. Academic life centers on writing, reading, and discussion rather than problem sets, which means James will be pushed intellectually in a different direction than a STEM school, and that challenge might be exactly what well-rounded means to him.
+How James Fits on the Swim Team
+At the NCAC level, James projects to A finalist in the 500 and 1650 and adds value in the 50 breast relay split — that's a real contributor, not a depth piece. Kenyon wins conference championships and uses every point. He wouldn't be the star, but he'd be someone the coach is genuinely counting on at the conference meet.
+Why a Coach Would Want to Call
+A 4:37 in the 500 and 16:06 in the 1650 at a 4.0 GPA is a profile Kenyon coaches see and call back. The academic credentials remove the friction that makes many recruiting conversations complicated. James is the kind of recruit who makes a coach's job easier, not harder.
+Getting In — The Real Picture
+Kenyon's median SAT is 1400 — James is 60 points above that with a 4.0 GPA, which means he's a competitive academic applicant even without the swim credential. At a school with 31% acceptance, that's meaningful. The swim coach has genuine advocacy weight with admissions at Kenyon, and a swimmer projecting to conference A final is the kind of candidate that advocacy is used for. This is a real shot, not a hope-and-pray situation.
+The Money Conversation
+Kenyon is a need-based-only school — no merit scholarships. That's the honest starting point.
+
+Estimated COA: ~$82,000/year (tuition, room, board, fees)
+Estimated Merit Aid: $0 (Kenyon does not award merit aid)
+Estimated Net Cost: ~$82,000/year for a family that doesn't qualify for need-based aid; substantially lower if the family demonstrates financial need
+
+If financial aid matters, James's family should run the Net Price Calculator on Kenyon's website before falling in love with the school.
+Your Next Three Moves
+
+Email Kenyon's swim coach this week with James's 1650 and 500 times, his GPA, and a note that he's looking at the school academically. Keep it to 4 sentences.
+Request an application fee waiver if Kenyon offers one — many schools do for student-athletes whose coaches request it.
+Plan an overnight visit to Kenyon if possible. The campus experience is unlike any other school on this list, and James needs to feel whether the isolation works for him before he commits.
+
+The Bottom Line
+Kenyon gives James a real shot at a legendary swim program, a Hidden Ivy credential, and a campus experience that rewards exactly the kind of intellectual curiosity he's describing — but the price tag and the rural isolation are facts, not footnotes.
+
+Representative Search Output
+Query: "Most prestigious schools where James is a lock"
+Pre-sort: sorted by accept ascending (most selective first).
+Expected answer from AI (representative):
+
+"For James's profile, the most prestigious realistic targets combine Hidden Ivy academics with programs where his distance times genuinely matter to a coach."
+
+Expected picks (representative, may vary by dataset state):
+
+Hamilton College — "Strong swimmer at a Hidden Ivy where 4.0 GPA is a real differentiator"
+Bowdoin College — "NESCAC elite academics, distance fit, beautiful campus"
+Colby College — "Top-tier NESCAC, strong athletics culture, real admission chance"
+
+
+Test Case 2: Emma — Sprint Freestyler, Strong Academic, Limited IM
+Input Profile
+json{
+  "name": "Emma",
+  "gpa": 3.85,
+  "sat": 1390,
+  "satProjected": 1420,
+  "mathSat": 680,
+  "mathSatProjected": 710,
+  "times": {
+    "50 Free": "23.5",
+    "100 Free": "51.8",
+    "200 Free": "1:54",
+    "500 Free": null,
+    "1650 Free": null,
+    "1000 Free": null,
+    "200 IM": "2:15",
+    "400 IM": null,
+    "100 Breast": null,
+    "50 Breast (Relay Split)": "28.1"
+  },
+  "vibe": {
+    "campus": "Big university energy, even at a small school",
+    "friday": "Out — game, party, something social",
+    "academic": "Strong in one area, curious in others",
+    "compete": "Thrive on pressure and individual achievement",
+    "location": "East Coast or bust",
+    "career": "Still figuring it out"
+  }
+}
+Deterministic Scoring Notes (DATASET REQUIRED)
+Key scoring dynamic: Emma's best events (50 Free and 100 Free) only have benchmark data in the Liberty League. In all other conferences, her sprint events will be skipped (no benchmark match found), and her scoring will depend entirely on 200 Free, 200 IM, and 50 Breast relay split.
+
+Liberty League: 50 Free (first=20.41, eighth=21.17) and 100 Free (first=44.88, eighth=46.59) both present
+
+50 Free (23.5 sec): Zone 4 extrapolation, likely place 20+ (well outside top 16)
+100 Free (51.8 sec): Zone 4, likely place 12-14 range at Liberty League
+200 Free (114 sec) at Liberty League: Zone 4 (first=99.33), very slow for this conference
+
+
+NESCAC/UAA/NCAC: No 50 Free or 100 Free benchmarks → only 200 Free, 200 IM scored
+
+200 Free (114 sec): significantly slower than NESCAC first (95.78) → Zone 4, very weak
+This profile would score poorly at elite conferences and likely not appear in top recommendations for NESCAC schools
+
+
+Implication: Emma's strongest scoring conferences will be those where her sprint times are benchmarked AND her relative speed is most competitive. She will score much better at Tier 3 Liberty League schools (where her 100 Free is more competitive) than at UAA or NESCAC schools.
+
+Admission — Ithaca College (Liberty League, psf=0.70, satMedian=1210, accept=67%):
+
+satDiff = 1390 - 1210 = 180 → >= 80 → acadScore = 4
+gpa=3.85 < 3.9 → no GPA bonus
+accept=67 > 60 → acadScore += 1 → acadScore = 5
+swimBoost: psf=0.70 → swimBoost = 1 (elite program, max compression)
+swimTier: likely "Recruitable" or "Priority Recruit" for Emma at Ithaca → swimScore = 1 + 0 or 1
+total = 5 + 1 or 2 = 6 or 7 → "Realistic Shot" or "Strong Chance"
+
+Representative Deep Dive Sections: Skidmore College
+Skidmore is a Tier 3 Liberty League school with psf=1.10 and accept=28%, satMedian=1310, hiddenIvy=false, stem=false, merit="moderate". Emma's sprint times would score better here relative to the conference than at Tier 1 programs.
+Your Honest Shot
+Emma is a realistic candidate at Skidmore where the combination of her sprint speed and academics puts her in genuine recruiting range. She's above Skidmore's SAT median, and for a school with 28% acceptance, being on a coach's recruiting list meaningfully improves those odds. The sprint-focused profile is less common in D3 distance-heavy lineups, which actually makes Emma more interesting to programs that need relay contributions.
+What This School Is Actually Like
+Skidmore is one of the genuinely enjoyable small colleges in the Northeast — Saratoga Springs is a real college town with horses, good restaurants, and an actual social scene, which is uncommon for schools this size. The arts culture runs deep here; even students who aren't artists tend to appreciate it. For someone who wants energy and a social life alongside serious academics, Skidmore sits in a different tier than the monastic New England liberal arts schools. The academics are rigorous without being relentless.
+How Emma Fits on the Swim Team
+Emma's 100 Free and relay split make her a relay contributor from day one, which is how most coaches think about sprint recruits. At the Liberty League level she projects as a B finalist in the 100 Free with room to develop — a coach sees a swimmer who scores points now and might break into the A final with a season of focused training. The 200 IM adds event flexibility, which coaches value.
+Why a Coach Would Want to Call
+Sprint freestylers who can relay are a specific need that many D3 coaches can't fill with distance recruits. Emma's times are competitive for the Liberty League without being so dominant that she's already a Tier 1 target — she's exactly in the range where a Skidmore coach would invest real recruiting effort.
+Getting In — The Real Picture
+Skidmore accepts 28% of applicants. Emma's SAT is 80 points above their median, and swim support at Tier 3 programs carries meaningful weight in admissions. This is a Real Shot — not a certainty, but genuinely in play if the coach advocates for her and her application is solid.
+The Money Conversation
+Skidmore offers moderate merit aid for strong academic profiles.
+
+Estimated COA: ~$78,000/year
+Estimated Merit Aid: $8,000–$15,000/year for Emma's academic profile
+Estimated Net Cost: ~$63,000–$70,000/year before need-based aid
+
+Your Next Three Moves
+
+Email Skidmore's coach this week — mention the relay split specifically, coaches think in relay terms first.
+Visit Saratoga Springs if you're making an East Coast tour; the town matters here more than at most schools.
+Run Skidmore's Net Price Calculator — their merit aid range has significant variance and the actual offer will depend on your income.
+
+The Bottom Line
+Skidmore gives Emma a college town she'd actually enjoy, a swim program that would recruit her seriously for relay contributions, and a realistic path through admissions — it's not a glamour school but it's a genuinely good fit.
+
+Test Case 3: Marcus — Elite Distance Swimmer, Below-Average Academics
+Input Profile
+json{
+  "name": "Marcus",
+  "gpa": 3.2,
+  "sat": 1180,
+  "satProjected": 1220,
+  "mathSat": 590,
+  "mathSatProjected": 620,
+  "times": {
+    "1650 Free": "15:22",
+    "500 Free": "4:24",
+    "1000 Free": "8:58",
+    "200 Free": "1:40",
+    "400 IM": null,
+    "200 IM": null,
+    "100 Breast": null,
+    "50 Breast (Relay Split)": null
+  },
+  "vibe": {
+    "campus": "Honestly don't care, just fit the swim program",
+    "friday": "Depends on the week",
+    "academic": "Here to master my major",
+    "compete": "Thrive on pressure and individual achievement",
+    "location": "Open to anywhere",
+    "career": "Engineering or CS — locked in"
+  }
+}
+Deterministic Scoring Notes (DATASET REQUIRED)
+Key scoring dynamic: Marcus's times are genuinely elite. A 15:22 1650 Free and 4:24 500 Free are well inside the winning times at most conferences. He will score at or near 20 points in both events across most conferences.
+
+NESCAC 1650: first=908.32 (15:08.32). Marcus's time = 15:22 = 922 sec.
+
+908.32 < 922 < 958.14 → Zone 2
+place = 1 + (922 - 908.32) / (958.14 - 908.32) × 7 = 1 + 13.68/49.82 × 7 ≈ 1 + 1.92 ≈ 2.92
+pts = placeToPoints(2.92) = 16 points
+
+
+UAA 1650: first=888.11 (14:48.11). Marcus's time = 922 sec.
+
+888.11 < 922 < 933.74 → Zone 2
+place = 1 + (922 - 888.11) / (933.74 - 888.11) × 7 = 1 + 33.89/45.63 × 7 ≈ 1 + 5.2 ≈ 6.2
+pts = placeToPoints(6.2) = 13 points
+
+
+UAA 500: first=255.94 (4:15.94). Marcus's time = 264 sec (4:24).
+
+255.94 < 264 < 270.61 → Zone 2
+place = 1 + (264 - 255.94) / (270.61 - 255.94) × 7 = 1 + 8.06/14.67 × 7 ≈ 1 + 3.85 ≈ 4.85
+pts = placeToPoints(4.85) = 14 points
+
+
+At Williams (NESCAC, psf=0.78):
+
+rawPts ≈ 16 + 17 + some third event ≈ 40-45
+adjPts = ~31-35 at psf=0.78 → adjTier: "Likely Commit"
+
+
+At Tier 3 schools (psf=1.10):
+
+adjPts could reach 50+ → "High-Point Contender"
+
+
+
+Admission — Williams College (satMedian=1530, accept=9%, hiddenIvy=true, psf=0.78):
+
+satDiff = 1180 - 1530 = -350 → < -80 → acadScore = 0
+gpa=3.2 < 3.9 → no bonus
+accept=9 (not > 60) → no bonus → acadScore = 0
+swimBoost: psf=0.78 → swimBoost = 1
+swimTier: "Likely Commit" → swimScore = 1 + 1 = 2
+total = 0 + 2 = 2 → "Extreme Reach"
+
+Admission — Colby College (satMedian=1480, accept=14%, psf=1.00):
+
+satDiff = 1180 - 1480 = -300 → < -80 → acadScore = 0
+gpa=3.2 < 3.9 → no bonus
+accept=14 (not > 60) → no bonus → acadScore = 0
+swimBoost: psf=1.00 → swimBoost = 3
+swimTier: "Conference Star" → swimScore = 3 + 2 = 5
+total = 0 + 5 = 5 → "Possible"
+
+Admission — Ursinus College (satMedian=1180, accept=72%, psf=1.10):
+
+satDiff = 1180 - 1180 = 0 → >= -30 → acadScore = 2
+gpa=3.2 < 3.9 → no GPA bonus
+accept=72 > 60 → acadScore += 1 → acadScore = 3
+swimBoost: psf=1.10 → swimBoost = 4
+swimTier: "High-Point Contender" → swimScore = 4 + 2 = 6
+total = 3 + 6 = 9 → "Virtual Lock"
+
+Correct system behavior for Marcus
+The system should produce a tension-filled profile: Marcus is arguably the fastest swimmer of any test case, but his academic profile is a genuine obstacle at selective schools. The system should clearly surface:
+
+Several "Virtual Lock" / "Very Strong Chance" outcomes at accessible schools (Tier 3, accept > 60%)
+"Possible" or "Reach with Support" at mid-tier selective schools where his swim is exceptional
+"Extreme Reach" at NESCAC schools despite "Likely Commit" swim tier
+The deep dive must not paper over the academic gap — it must address it directly
+
+Anti-optimism check
+The admissionChance function correctly prevents over-optimism here. Even though Marcus would be a "Likely Commit" swimmer at Williams (adjPts ~32 with psf=0.78), the academic score of 0 keeps the total at 2, producing "Extreme Reach." The system does not allow exceptional swim talent to override a severe academic deficit at selective schools. This is correct and intentional.
+Representative Deep Dive: Denison University
+Denison (NCAC, psf=0.78, satMedian=1360, accept=28%, hiddenIvy=true, merit="high")
+Your Honest Shot
+Here's the honest version: Marcus's swim times are exceptional — he would win or podium in the 1650 and 500 at NCAC conference, and that matters enormously to a Denison coach. The obstacle is academic. His SAT sits 180 points below Denison's median, and at a Hidden Ivy with 28% acceptance, that gap doesn't disappear because of a fast 1650. What it can do is get a coach to pick up the phone and start a conversation with admissions — and that conversation is worth having.
+What This School Is Actually Like
+Denison is the rare D3 school where athletics actually has cultural cachet — it's known across the conference for being a serious athletic institution and a serious academic one at the same time. The campus is beautiful in rural Ohio, the social scene is active, and the swim program has produced conference champions. For Marcus, who cares more about fitting the program than the setting, Denison checks that box — this is a program that wins, cares about winning, and would want a swimmer with his times on the roster.
+How Marcus Fits on the Swim Team
+At the NCAC level, Marcus is a top-3 finisher in the 1650 and 500 — that's championship-round performance, not depth. Denison coaches know that a swimmer who can win individual events at conference is a recruiting priority regardless of where they're ranked academically. He would be one of the most impactful distance recruits they've seen in a cycle.
+Why a Coach Would Want to Call
+A 15:22 in the 1650 is a time Denison coaches would recruit hard. They would advocate in admissions, arrange visits, and do everything in their power to get this swimmer into the class. The real question isn't whether the coach wants to call — it's whether admissions will listen when they do.
+Getting In — The Real Picture
+This is the hardest section to write honestly. Denison's median SAT is 1360, Marcus is 180 points below that, and at 28% acceptance, academic credentials matter even with swim support. Denison coaches have advocacy leverage — but not unlimited leverage. The family should have a candid early conversation with the coach about whether admissions would entertain a student at this academic level with this swim profile. That conversation needs to happen before Marcus falls in love with the school.
+The Money Conversation
+Denison offers strong merit aid, which creates a silver lining.
+
+Estimated COA: ~$80,000/year
+Estimated Merit Aid: $20,000–$30,000/year for a strong student; for Marcus's academic profile the range is uncertain and highly dependent on admissions outcome
+Estimated Net Cost: $50,000–$60,000/year if admitted, but this is speculative until the actual offer is seen
+
+Your Next Three Moves
+
+Email the Denison swim coach this week with his times and a brief academic overview — let the coach know the SAT is below their median and ask directly whether that's workable.
+Do not apply early decision here without that conversation. ED at a school where you're an academic risk without confirmed coach support is a mistake.
+Build a parallel list of 4-6 schools with acceptance rates above 55% where Marcus's times produce "Virtual Lock" or "Very Strong Chance" outcomes — those schools are the foundation of a realistic list.
+
+The Bottom Line
+Marcus has the swim times to be one of Denison's most impactful recruits in years, but getting in will require the coach to fight for him — and the family needs to know early whether that fight is winnable.
+
+Test Case 4: Sofia — Breaststroke / IM Specialist, First-Gen, Budget-Sensitive
+Input Profile
+json{
+  "name": "Sofia",
+  "gpa": 3.75,
+  "sat": 1280,
+  "satProjected": 1310,
+  "mathSat": 640,
+  "mathSatProjected": 660,
+  "times": {
+    "100 Breast": "1:04.5",
+    "200 IM": "2:14",
+    "400 IM": "4:52",
+    "50 Breast (Relay Split)": "30.1",
+    "500 Free": "5:20",
+    "200 Free": "1:58",
+    "1650 Free": null,
+    "1000 Free": null,
+    "50 Free": null
+  },
+  "vibe": {
+    "campus": "Small and tight-knit — everyone knows everyone",
+    "friday": "Library with 2–3 close friends",
+    "academic": "Genuinely want to be well-rounded",
+    "compete": "Love pushing myself inside a team environment",
+    "location": "Open to anywhere",
+    "career": "Pre-med track"
+  }
+}
+Deterministic Scoring Notes (DATASET REQUIRED)
+Key dynamic: Sofia's 100 Breast (64.5 sec) is near the border of competitive at mid-level conferences. Her 200 IM (134 sec) and 400 IM (292 sec) add multi-event value.
+
+NCAC 100 Breast: first=53.64, eighth=56.73, sixteenth=60.08
+
+64.5 > sixteenth (60.08) → Zone 4
+place = 16 + (64.5 - 60.08) / 0.41875 = 16 + 4.42/0.41875 ≈ 16 + 10.6 ≈ 26.6
+pts = 0 (> 16)
+
+
+Liberty League 100 Breast: first=55.49, eighth=57.88, sixteenth=61.68
+
+61.68 < 64.5 → Zone 4
+place = 16 + (64.5 - 61.68) / 0.475 = 16 + 2.82/0.475 ≈ 16 + 5.9 ≈ 21.9
+pts = 0 (> 16)
+
+
+NWC 100 Breast: first=55.42, eighth=58.26, sixteenth=62.31
+
+62.31 < 64.5 → Zone 4
+place = 16 + (64.5 - 62.31) / 0.50625 = 16 + 2.19/0.50625 ≈ 16 + 4.3 ≈ 20.3
+pts = 0 (> 16)
+
+
+NWC / MIAC / NEWMAC: Sofia's times are likely competitive enough to score some points in 200 IM and 400 IM at Tier 3 NWC and MIAC schools, even if 100 Breast doesn't score. These conferences will be her realistic range.
+Implication: Sofia's profile produces modest scores. She will not appear in top-10 results for most conferences but will be Recruitable to Priority Recruit at Tier 3 NWC, MIAC, and NEWMAC schools.
+
+Budget sensitivity:
+
+Sofia's merit="high" schools will score highest in money-focused queries.
+Pre-sort for "money" queries floats high-merit schools first.
+NWC schools like Pacific Lutheran, Willamette, and Whitworth offer substantial merit for strong GPAs.
+
+Representative admission — Pacific Lutheran University (psf=1.10, satMedian=1190, accept=76%, merit="high"):
+
+satDiff = 1280 - 1190 = 90 → >= 80 → acadScore = 4
+gpa=3.75 < 3.9 → no bonus
+accept=76 > 60 → acadScore += 1 → acadScore = 5
+swimBoost: psf=1.10 → swimBoost = 4
+swimTier (estimate): "Recruitable" or "Priority Recruit" → swimScore = 4 + 0 or 1 = 4 or 5
+total = 9 or 10 → "Virtual Lock"
+
+Representative Search Output
+Query: "Where would we save the most money?"
+Pre-sort: sorted by merit tier (merit="high" first).
+Expected AI answer (representative):
+
+"For pre-med with Sofia's academic profile, these schools combine strong merit aid with programs that would genuinely recruit her."
+
+Expected picks from high-merit Tier 3 schools where Sofia scores: Pacific Lutheran, Willamette, or Wheaton College (MA).
+
+Test Case 5: David — All-Around STEM Senior, Late in Recruiting Process
+Input Profile
+json{
+  "name": "David",
+  "gpa": 3.95,
+  "sat": 1500,
+  "satProjected": 1500,
+  "mathSat": 780,
+  "mathSatProjected": 780,
+  "times": {
+    "200 Free": "1:44",
+    "500 Free": "4:42",
+    "1650 Free": "16:30",
+    "200 IM": "1:57",
+    "400 IM": "4:15",
+    "100 Breast": "1:01",
+    "50 Breast (Relay Split)": "26.8",
+    "1000 Free": "9:40"
+  },
+  "vibe": {
+    "campus": "Small and tight-knit — everyone knows everyone",
+    "friday": "Library with 2–3 close friends",
+    "academic": "Here to master my major",
+    "compete": "Both — depends on the context",
+    "location": "East Coast or bust",
+    "career": "Engineering or CS — locked in"
+  }
+}
+Deterministic Scoring Notes (DATASET REQUIRED)
+Key dynamic: David is a slightly weaker swimmer than James but a slightly stronger academic (SAT 1500 vs 1460). His swim profile is similar — multi-event distance and IM — but his times are a step slower across the board.
+
+NESCAC 1650: 16:30 = 990 sec. NESCAC first=908.32, sixteenth=999.74.
+
+958.14 < 990 < 999.74 → Zone 3
+place = 8 + (990 - 958.14) / (999.74 - 958.14) × 8 = 8 + 31.86/41.6 × 8 ≈ 8 + 6.1 ≈ 14.1
+pts = placeToPoints(14.1) = 3 points
+
+
+NCAC 500 Free: 282 sec (4:42). NCAC first=263.54, eighth=277.92, sixteenth=293.81.
+
+277.92 < 282 < 293.81 → Zone 3
+place = 8 + (282 - 277.92) / (293.81 - 277.92) × 8 = 8 + 4.08/15.89 × 8 ≈ 8 + 2.06 ≈ 10.1
+pts = placeToPoints(10.1) = 7 points
+
+
+At STEM NESCAC schools (MIT, WPI, Coast Guard): David's SAT of 1500 is right at NESCAC median and well above NEWMAC schools. His swim fit at NEWMAC is in "Priority Recruit" range.
+Admission — WPI (satMedian=1400, accept=49%, stem=true, merit="high", psf=1.10):
+
+satDiff = 1500 - 1400 = 100 → >= 80 → acadScore = 4
+gpa >= 3.9 → acadScore += 1 → acadScore = 5
+accept=49 (not > 60) → no bonus → acadScore = 5
+swimBoost: psf=1.10 → swimBoost = 4
+swimTier (estimate): "Conference Star" or "Likely Commit" at NEWMAC → swimScore = 4 + 1 or 2 = 5 or 6
+total = 10 or 11 → "Virtual Lock"
+
+
+
+Representative search output
+Query: "Best STEM programs where he'd be a star"
+Pre-sort: STEM schools moved to front.
+Expected AI answer (representative):
+
+"David's academic-and-swim profile lines up best with three STEM programs where he'd be both a strong recruit and a genuine engineering or CS student."
+
+Expected picks: WPI, Clarkson, and one of RIT/Clark/RPI — the STEM schools where David's swim points are strongest relative to the program.
+Correct system behavior notes for David
+
+MIT returns "Moonshot — Apply for Fun" unconditionally. The AI should never recommend MIT as a realistic option regardless of David's 1500 SAT, because meta.moonshot === true overrides all admission scoring.
+WPI, Clarkson, and Clark are the realistic STEM targets. The system should surface these prominently in STEM-focused queries.
+David's slightly weaker swim vs. James means he'll be "Priority Recruit" rather than "Conference Star" at the top NESCAC schools, with admission outlooks of "Possible" rather than "Strong Chance" — a meaningful step down.
+The deep dive for David at any NESCAC school should address the swim fit gap honestly (B-Final or lower at the 1650) while acknowledging his exceptional academic profile.
+
+
+Test Case Verification Checklist
+When rebuilding and testing Lane4, use these cases to verify correct behavior:
+
+Time parsing: Test "16:06" → 966.0, "4:37" → 277.0, "59.5" → 59.5, null → null, "" → null.
+Place estimation boundary conditions: Verify Zone 1 (faster than first), Zone 2 (first to eighth), Zone 3 (eighth to sixteenth), Zone 4 (slower than sixteenth) all compute correctly.
+Points scoring: Verify the non-linear point gap between 1st (20pts) and 2nd (17pts), and between 8th (11pts) and 9th (9pts).
+PSF compression: Confirm that a swimmer with rawPts=45 receives adjPts=31.5 at psf=0.70, adjPts=45 at psf=1.00, adjPts=49.5 at psf=1.10.
+Moonshot override: Confirm MIT and Caltech always return "Moonshot — Apply for Fun" regardless of swimmer profile.
+Zero-score exclusion: Confirm that a school where the swimmer scores 0 rawPts (no scorable events in that conference) does not appear in any results.
+Elimination persistence: Confirm that after clicking ✕ on a school, that school never appears in subsequent searches in the same session.
+Merit pre-sort: Confirm that "Where would we save the most money?" causes merit="high" schools to appear at the top of the numbered list passed to the AI.
+Vibe injection: Confirm that answered vibe questions appear in the deep dive prompt under "PERSONALITY & PREFERENCES" and null answers are omitted.
+Bottom Line rendering: Confirm the Bottom Line section receives dark navy background styling and is detected correctly via title.trim().includes("Bottom Line").

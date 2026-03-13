@@ -1,0 +1,209 @@
+Lane4 — CRM Specification (My List Feature)
+This document describes the complete behavior of the My List and CRM features in Lane4Advisor.jsx. All data structures, state management rules, UI behaviors, and intended recruiting workflow use cases are documented here.
+
+Purpose
+The My List / CRM feature converts Lane4 from a search tool into a recruiting workflow manager. Once a family decides they are genuinely interested in a school, they add it to their list. From that point, My List becomes the place where they track all recruiting activity: coach contact, campus visits, applications, notes from calls, and upcoming tasks.
+The feature is designed to reduce the amount of information a family needs to hold in their head and to prevent schools from "falling through the cracks" during a recruiting process that may span 12–18 months.
+
+Data Structure
+CRM data is stored in a single React state object called crmData. Its type is:
+crmData: {
+  [schoolName: string]: CRMRecord
+}
+Where schoolName is the full school name string exactly as it appears in the TEAMS dataset (e.g. "Kenyon College", "Bowdoin College").
+CRMRecord
+{
+  status: string,         // one of 6 valid status IDs (see below)
+  notes: Note[],          // array, newest first
+  reminders: Reminder[]   // array, sorted ascending by date
+}
+Default record
+When a school is first accessed in SchoolCRM and no record exists yet:
+javascriptcrmData[school] || { status: "researching", notes: [], reminders: [] }
+Default status is "researching". Notes and reminders start empty.
+Note
+{
+  id: number,     // Date.now() at creation time — unique ID, also used as React key
+  cat: string,    // one of: "Email" | "Coach Call" | "Campus Visit" | "General"
+  text: string,   // full note body (trimmed of leading/trailing whitespace)
+  date: string    // human-readable: "Mar 15, 2025" format
+                  // generated as: new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
+}
+Reminder
+{
+  id: number,    // Date.now() at creation time — unique ID, also used as React key
+  text: string,  // task description (trimmed)
+  date: string   // ISO format: "YYYY-MM-DD"
+                 // entered by user via <input type="date" min={today}>
+}
+
+State Management
+Where state lives
+crmData is managed in the root Lane4Advisor component via useState({}). It is passed down to MyList and SchoolCRM via props.
+Update function:
+javascriptfunction updateCrm(school, data) {
+  setCrmData(prev => ({ ...prev, [school]: data }));
+}
+Every update replaces the entire record for a school. The SchoolCRM component always passes a full updated record to onUpdate(school, { ...data, [field]: newValue }).
+Persistence
+There is no persistence. crmData lives entirely in React state. All CRM data — statuses, notes, reminders — is lost on page refresh.
+For a production rebuild, crmData must be persisted to an external store (Supabase, Firebase, or at minimum localStorage) keyed by swimmer identity.
+myList relationship
+Schools in crmData do not automatically appear in myList. The reverse is also true: a school in myList may not yet have a CRMRecord (the record is created lazily on first access).
+A school is added to myList in two ways:
+
+Clicking "+ List" on a ResultCard in the Explore tab
+Clicking "+ Add to List" in the DeepDive view (if that button is wired)
+
+A school is removed from myList via the Remove button in the old MyList implementation. Removing from myList does NOT delete the CRMRecord. If the school is re-added, its previous CRM data would be restored (since crmData persists in the same session).
+
+Status / Stage Tracking
+Six statuses
+javascriptconst STATUSES = [
+  { id: "researching", label: "Researching",         color: "#64748B", bg: "#F1F5F9" },
+  { id: "emailed",     label: "Emailed Coach",        color: "#2563EB", bg: "#EFF6FF" },
+  { id: "visit",       label: "Visit Scheduled",      color: "#7C3AED", bg: "#F5F3FF" },
+  { id: "applied",     label: "Applied",              color: "#D97706", bg: "#FFFBEB" },
+  { id: "committed",   label: "Committed 🎉",         color: "#059669", bg: "#ECFDF5" },
+  { id: "pass",        label: "Not the Right Fit",    color: "#94A3B8", bg: "#F8FAFC" },
+];
+Status semantics
+Researching (default): The school is on the list. The family is learning about it. No coach contact has been made yet. Typically the state when a school is first added from Explore.
+Emailed Coach: The family has sent an initial recruiting email to the coach. This is typically the first active recruiting step after adding to the list.
+Visit Scheduled: A campus visit (official or unofficial) has been scheduled. This is a significant positive signal in D3 recruiting.
+Applied: The swimmer has submitted an application. The school is now in the formal admissions process.
+Committed 🎉: The swimmer has committed to this school. This is the terminal positive state.
+Not the Right Fit: The family has decided this school is not right. The school remains on the list for reference but is visually de-emphasized (grey color scheme). It does not get eliminated from search results like the ✕ button does — it just moves to a separate group in My List.
+Status UI behavior
+In SchoolCRM, all 6 status buttons are always visible simultaneously. Clicking any button immediately updates the status:
+javascriptfunction setStatus(id) {
+  onUpdate(school, { ...data, status: id });
+}
+In MyList, schools are grouped by status. The group order follows the STATUSES array order: Researching → Emailed Coach → Visit Scheduled → Applied → Committed → Not the Right Fit. Empty groups are hidden.
+Each school row in MyList has a left border accent in the status color (border-left: 3px solid ${status.color}) and a light border in 15% opacity of that color (border: 1.5px solid ${status.color}30).
+
+Notes
+Four categories
+javascriptconst NOTE_CATS = ["Email", "Coach Call", "Campus Visit", "General"];
+Email: For pasting outgoing or incoming email exchanges. The textarea supports multi-line paste and white-space:pre-wrap rendering.
+Coach Call: For logging notes from a phone or Zoom call with a coach.
+Campus Visit: For impressions from an official or unofficial visit.
+General: Catch-all for anything else — research notes, forum posts, advice from other families, etc.
+Adding a note
+
+User clicks "+ New Note" — shows the note form.
+User selects a category (default: "General"). Only one category can be active at a time.
+User types or pastes text into the textarea.
+User clicks "Save Note":
+
+Validation: if (!noteText.trim()) return — empty notes are rejected.
+New note object created: { id: Date.now(), cat: noteCat, text: noteText.trim(), date: [formatted date] }
+Note is prepended to the notes array: notes: [note, ...data.notes]
+noteText is cleared and form is hidden.
+
+
+User clicks "Cancel": form is hidden, text is NOT cleared until next open.
+
+Actually, on cancel: setShowNoteForm(false) only. setNoteText("") is NOT called on cancel — only on successful save. However, because setShowNoteForm(false) hides the form, the unsaved text persists in state and will reappear if the user clicks "+ New Note" again without a page refresh. This is a minor UX inconsistency in the current implementation.
+Deleting a note
+Each note has a × button. Clicking it:
+javascriptfunction deleteNote(id) {
+  onUpdate(school, { ...data, notes: data.notes.filter(n => n.id !== id) });
+}
+Deletion is immediate, no confirmation prompt.
+Note display order
+Notes are stored and displayed newest-first (prepended on add). No sorting control available.
+
+Reminders
+Adding a reminder
+
+User clicks "+ Add" — shows the reminder form.
+User selects a date via <input type="date" min={today}>. Past dates are blocked by the HTML min attribute.
+User types a task description.
+User clicks "Set Reminder":
+
+Validation: if (!reminderText.trim() || !reminderDate) return — both fields must be non-empty.
+New reminder object: { id: Date.now(), text: reminderText.trim(), date: reminderDate } where date is a YYYY-MM-DD string.
+Reminder appended and array re-sorted ascending by date:
+
+
+
+javascript     reminders: [...data.reminders, r].sort((a,b) => a.date.localeCompare(b.date))
+
+Text and date fields cleared, form hidden.
+
+
+User clicks "Cancel": setShowReminderForm(false). Text and date are NOT explicitly cleared.
+
+Deleting a reminder
+Each reminder has a × button:
+javascriptfunction deleteReminder(id) {
+  onUpdate(school, { ...data, reminders: data.reminders.filter(r => r.id !== id) });
+}
+Immediate, no confirmation.
+Urgency classification
+today is defined as new Date().toISOString().split("T")[0] — a YYYY-MM-DD string representing the current local date.
+r.date < today   → Overdue  (isPast = true)
+r.date === today → Today    (isToday = true)
+r.date > today   → Upcoming
+In SchoolCRM:
+
+Overdue: row background #FEF2F2, border #FECACA (red); text #EF4444; label "⚠ Overdue — {formatted date}"
+Today: row background #FFFBEB, border #FCD34D (amber); label "⚡ Today"
+Upcoming: white background, border #E2E8F0; label "📅 {formatted date}"
+
+Date formatting for display in SchoolCRM: new Date(r.date + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
+The T12:00:00 suffix is applied to prevent timezone-induced off-by-one day errors. Without it, new Date("2025-04-15") would be interpreted as midnight UTC, which in US timezones would display as April 14.
+Global reminders view
+The Reminders tab shows all reminders from all schools in one flat list.
+Construction:
+javascriptconst allReminders = Object.entries(crmData)
+  .flatMap(([school, d]) => (d.reminders || []).map(r => ({ ...r, school })))
+  .sort((a, b) => a.date.localeCompare(b.date));
+Each reminder in this view shows:
+
+Task text (top line)
+School name (below task text, #64748B)
+Urgency label (right side, color-coded)
+
+Date formatting for upcoming reminders in this view: new Date(r.date + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric" }) — note no year included (shorter format than SchoolCRM view).
+urgentCount:
+javascriptconst urgentCount = allReminders.filter(r => r.date <= today).length;
+Counts all overdue and today reminders. When urgentCount > 0, the nav tab shows "Reminders 🔴".
+The Reminders view is read-only. Reminders can only be deleted from within the SchoolCRM panel (My List → tap a school).
+
+Sorting and Filtering Behavior
+My List grouping
+Schools are grouped by status in the fixed STATUSES array order:
+
+Researching
+Emailed Coach
+Visit Scheduled
+Applied
+Committed 🎉
+Not the Right Fit
+
+Empty groups are omitted entirely from the view.
+Within each group, schools are displayed in the order they were added to myList (insertion order of the myList array). There is no alphabetical or performance-based sort within groups.
+No cross-school filtering
+There is no search, filter, or sort control within My List. The user cannot filter by conference, swim tier, or admission outlook within My List. All schools are shown in their status groups.
+Reminder prioritization
+The Reminders global view shows all reminders from all schools in ascending date order. Overdue and today reminders naturally appear first since their dates are earliest.
+
+Intended Recruiting Workflow
+The CRM is designed to support the following sequence for each school:
+Step 1 — Add to list (status: Researching)
+After running a search and getting a Deep Dive, the family adds a school they want to track. The school appears in My List under "Researching."
+Step 2 — Set a reminder to send a coach email (status: Researching)
+The family sets a reminder: "Send coach email." They use the Deep Dive coach email draft as a starting point.
+Step 3 — Send coach email (status: Emailed Coach)
+After sending, they update status to "Emailed Coach" and add a note (category: Email) with a copy of the email sent and any response received.
+Step 4 — Log coach calls (status: Emailed Coach or Visit Scheduled)
+If a coach calls or responds, the family logs the conversation in a "Coach Call" note: what was discussed, what the coach said about fit, any encouragement or discouragement.
+Step 5 — Schedule and log a campus visit (status: Visit Scheduled)
+After a visit is confirmed, update status. Add reminder for the visit date. After the visit, log impressions in a "Campus Visit" note.
+Step 6 — Apply (status: Applied)
+Update status when the application is submitted. Set a reminder for decision notification date.
+Step 7 — Committed or Not the Right Fit
+Final resolution. "Committed 🎉" is the positive terminal state. "Not the Right Fit" handles withdrawals, waitlist decisions, or the family deciding to move on.
+The Reminders tab provides a single cross-school view of everything that needs to happen across all schools in the recruiting funnel, so the family doesn't need to open each school individually to remember what's coming up.
