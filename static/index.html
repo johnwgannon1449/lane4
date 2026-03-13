@@ -3,465 +3,542 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Swim Recruiting Analyzer</title>
+  <title>Lane4 — Swim Scoring Engine</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,600;0,700;0,800;1,300;1,600&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --blue: #0066cc;
-      --blue-dark: #004fa3;
-      --blue-light: #e8f2ff;
-      --teal: #00a8b5;
-      --gray-50: #f8fafc;
-      --gray-100: #f1f5f9;
-      --gray-200: #e2e8f0;
-      --gray-400: #94a3b8;
-      --gray-600: #475569;
-      --gray-700: #334155;
-      --gray-900: #0f172a;
-      --white: #ffffff;
-      --radius: 12px;
-      --shadow: 0 4px 24px rgba(0,0,0,0.08);
+      --blue:       #2563EB;
+      --blue-light: #EFF6FF;
+      --blue-mid:   #BFDBFE;
+      --navy:       #0F172A;
+      --slate:      #475569;
+      --muted:      #64748B;
+      --border:     #E2E8F0;
+      --bg:         #F8FAFC;
+      --white:      #ffffff;
+      --green:      #059669;
+      --green-bg:   #ECFDF5;
+      --green-bd:   #A7F3D0;
+      --amber:      #D97706;
+      --amber-bg:   #FFFBEB;
+      --red:        #EF4444;
     }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-      background: var(--gray-50);
-      color: var(--gray-900);
+      font-family: 'Figtree', sans-serif;
+      background: var(--bg);
+      color: var(--navy);
       min-height: 100vh;
     }
 
-    header {
-      background: linear-gradient(135deg, var(--blue-dark) 0%, var(--teal) 100%);
-      color: white;
-      padding: 28px 24px;
-      text-align: center;
+    /* NAV */
+    nav {
+      position: sticky; top: 0; z-index: 10;
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      padding: 0 1.5rem;
+      height: 52px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .nav-logo {
+      display: flex; align-items: center; gap: 8px;
+    }
+    .nav-logo svg { flex-shrink: 0; }
+    .nav-wordmark {
+      font-family: 'Fraunces', serif;
+      font-weight: 800; font-size: 1rem;
+      color: var(--navy); letter-spacing: -0.02em;
+    }
+    .nav-sub {
+      font-family: 'Figtree', sans-serif;
+      font-size: 0.78rem; color: var(--muted);
     }
 
-    header h1 {
-      font-size: 2rem;
-      font-weight: 700;
-      letter-spacing: -0.5px;
-    }
-
-    header p {
-      margin-top: 8px;
-      opacity: 0.85;
-      font-size: 1.05rem;
-    }
-
+    /* LAYOUT */
     .container {
-      max-width: 860px;
+      max-width: 720px;
       margin: 0 auto;
-      padding: 32px 20px;
+      padding: 2rem 1.5rem 4rem;
     }
 
+    /* CARDS */
     .card {
       background: var(--white);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 28px 32px;
-      margin-bottom: 24px;
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      padding: 1.25rem 1.4rem;
+      margin-bottom: 1.25rem;
+    }
+    .card-label {
+      font-family: 'Figtree', sans-serif;
+      font-size: 0.68rem; font-weight: 700;
+      color: var(--muted); text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 1rem;
     }
 
-    .card h2 {
-      font-size: 1.15rem;
-      font-weight: 600;
-      color: var(--blue-dark);
-      margin-bottom: 20px;
-      padding-bottom: 12px;
-      border-bottom: 2px solid var(--blue-light);
+    /* SELECTORS */
+    .selector-row {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;
     }
-
-    .form-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
+    .field { display: flex; flex-direction: column; gap: 5px; }
+    .field label {
+      font-size: 0.78rem; font-weight: 600; color: var(--slate);
     }
-
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .form-group.full {
-      grid-column: 1 / -1;
-    }
-
-    label {
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: var(--gray-600);
-      text-transform: uppercase;
-      letter-spacing: 0.4px;
-    }
-
-    input, select, textarea {
-      padding: 10px 14px;
-      border: 1.5px solid var(--gray-200);
+    select, input[type="text"] {
+      padding: 9px 12px;
+      border: 1.5px solid var(--border);
       border-radius: 8px;
-      font-size: 0.95rem;
-      color: var(--gray-900);
+      font-family: 'Figtree', sans-serif;
+      font-size: 0.88rem;
+      color: var(--navy);
       background: var(--white);
       transition: border-color 0.15s, box-shadow 0.15s;
-      font-family: inherit;
     }
-
-    input:focus, select:focus, textarea:focus {
+    select:focus, input[type="text"]:focus {
       outline: none;
       border-color: var(--blue);
-      box-shadow: 0 0 0 3px rgba(0,102,204,0.1);
+      box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
     }
 
-    textarea { resize: vertical; min-height: 80px; }
-
-    .events-section { margin-top: 8px; }
-
-    .event-row {
+    /* EVENTS GRID */
+    .events-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr auto;
-      gap: 10px;
-      align-items: center;
-      margin-bottom: 10px;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.65rem;
+    }
+    .event-field { display: flex; flex-direction: column; gap: 4px; }
+    .event-field label {
+      font-size: 0.72rem; font-weight: 600; color: var(--slate);
+    }
+    .event-field input {
+      font-family: 'Fraunces', serif;
+      font-weight: 600; font-size: 0.9rem;
+    }
+    .event-field input::placeholder {
+      font-family: 'Figtree', sans-serif;
+      font-weight: 400; font-size: 0.8rem; color: #CBD5E1;
     }
 
-    .btn-icon {
-      width: 36px;
-      height: 36px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 1.1rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: background 0.15s;
-    }
-
-    .btn-remove { background: #fee2e2; color: #dc2626; }
-    .btn-remove:hover { background: #fecaca; }
-    .btn-add {
-      background: var(--blue-light);
-      color: var(--blue);
-      border: 1.5px dashed var(--blue);
-      width: 100%;
-      height: 38px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 0.9rem;
-      font-weight: 600;
-      transition: background 0.15s;
-      margin-top: 4px;
-    }
-    .btn-add:hover { background: #d0e7ff; }
-
-    .btn-submit {
-      width: 100%;
-      padding: 14px;
-      background: linear-gradient(135deg, var(--blue) 0%, var(--teal) 100%);
-      color: white;
-      border: none;
-      border-radius: var(--radius);
-      font-size: 1.05rem;
-      font-weight: 700;
+    /* BUTTON */
+    .btn-calculate {
+      width: 100%; padding: 13px;
+      background: var(--blue);
+      color: var(--white);
+      border: none; border-radius: 10px;
+      font-family: 'Fraunces', serif;
+      font-weight: 700; font-size: 1rem;
       cursor: pointer;
       transition: opacity 0.15s, transform 0.1s;
-      letter-spacing: 0.3px;
+      letter-spacing: -0.01em;
     }
-    .btn-submit:hover:not(:disabled) { opacity: 0.9; transform: translateY(-1px); }
-    .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+    .btn-calculate:hover:not(:disabled) { opacity: 0.9; transform: translateY(-1px); }
+    .btn-calculate:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
-    #result-card { display: none; }
+    /* RESULTS */
+    #results { display: none; }
 
     .result-header {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 20px;
+      display: flex; justify-content: space-between; align-items: flex-start;
+      margin-bottom: 1rem;
+    }
+    .result-school {
+      font-family: 'Fraunces', serif;
+      font-weight: 700; font-size: 1.2rem;
+      color: var(--navy);
+    }
+    .result-conf {
+      font-size: 0.75rem; color: var(--muted); margin-top: 2px;
+    }
+    .swim-tier-badge {
+      font-family: 'Fraunces', serif;
+      font-weight: 700; font-size: 0.82rem;
+      padding: 4px 12px;
+      border-radius: 20px;
+      background: var(--blue-light);
+      color: var(--blue);
+      white-space: nowrap;
     }
 
-    .result-name {
-      font-size: 1.3rem;
-      font-weight: 700;
+    /* SCORE SUMMARY */
+    .score-summary {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.5rem;
+      text-align: center;
+    }
+    .score-tile { padding: 0.5rem; }
+    .score-value {
+      font-family: 'Fraunces', serif;
+      font-weight: 800; font-size: 1.6rem;
+      color: var(--blue);
+      line-height: 1;
+    }
+    .score-label {
+      font-size: 0.65rem; font-weight: 700;
+      color: var(--muted); text-transform: uppercase;
+      letter-spacing: 0.06em; margin-top: 4px;
+    }
+    .score-divider {
+      width: 1px; background: var(--border);
+      align-self: stretch; margin: 8px 0;
     }
 
-    .result-body {
-      white-space: pre-wrap;
-      line-height: 1.75;
-      color: var(--gray-700);
-      font-size: 0.97rem;
+    /* EVENT TABLE */
+    .event-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+    }
+    .event-table th {
+      font-size: 0.65rem; font-weight: 700;
+      color: var(--muted); text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 0 0.5rem 0.6rem;
+      text-align: right;
+      border-bottom: 1px solid var(--border);
+    }
+    .event-table th:first-child { text-align: left; }
+    .event-table td {
+      padding: 0.55rem 0.5rem;
+      text-align: right;
+      border-bottom: 1px solid var(--bg);
+      color: var(--slate);
+    }
+    .event-table td:first-child { text-align: left; color: var(--navy); font-weight: 500; }
+    .event-table tr.top3-row td { background: #F0FDF4; }
+    .event-table tr.top3-row td:first-child { color: var(--green); font-weight: 700; }
+    .event-table tr.unscored td { color: #CBD5E1; }
+
+    .place-badge {
+      display: inline-block;
+      font-size: 0.68rem; font-weight: 700;
+      padding: 1px 7px; border-radius: 5px;
+      background: var(--blue-light); color: var(--blue);
+    }
+    .place-badge.winner   { background: #FEF3C7; color: #92400E; }
+    .place-badge.podium   { background: #FEF9C3; color: #854D0E; }
+    .place-badge.afinal   { background: var(--blue-light); color: var(--blue); }
+    .place-badge.bfinal   { background: #F1F5F9; color: var(--slate); }
+    .place-badge.bubble   { background: #FFF7ED; color: var(--amber); }
+    .place-badge.oor      { background: #FEF2F2; color: var(--red); }
+
+    .top3-label {
+      font-size: 0.65rem; font-weight: 700;
+      color: var(--green); text-transform: uppercase;
+      letter-spacing: 0.05em;
     }
 
-    .result-body strong, .result-body b {
-      color: var(--gray-900);
+    /* ERROR */
+    .error-msg {
+      background: #FEF2F2; color: var(--red);
+      padding: 12px 16px; border-radius: 8px;
+      font-size: 0.88rem; border-left: 3px solid var(--red);
+      margin-top: 1rem;
     }
 
-    .loading {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      color: var(--gray-600);
-      font-size: 0.97rem;
-    }
-
+    /* LOADING */
     .spinner {
-      width: 22px;
-      height: 22px;
-      border: 3px solid var(--gray-200);
+      width: 20px; height: 20px;
+      border: 2.5px solid var(--border);
       border-top-color: var(--blue);
       border-radius: 50%;
-      animation: spin 0.8s linear infinite;
+      animation: spin 0.7s linear infinite;
+      display: inline-block; vertical-align: middle;
+      margin-right: 8px;
     }
-
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    .error-msg {
-      background: #fee2e2;
-      color: #dc2626;
-      padding: 14px 18px;
-      border-radius: 8px;
-      font-size: 0.92rem;
-      border-left: 4px solid #dc2626;
-    }
-
-    @media (max-width: 600px) {
-      .form-grid { grid-template-columns: 1fr; }
-      .card { padding: 20px 18px; }
-      header h1 { font-size: 1.5rem; }
+    @media (max-width: 560px) {
+      .events-grid { grid-template-columns: repeat(2, 1fr); }
+      .selector-row { grid-template-columns: 1fr; }
+      .score-summary { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
 
-<header>
-  <h1>🏊 Swim Recruiting Analyzer</h1>
-  <p>AI-powered analysis to help swimmers find the right college program</p>
-</header>
+<nav>
+  <div class="nav-logo">
+    <!-- Lane4 logo: blue rectangle with 3 white bars -->
+    <svg width="22" height="18" viewBox="0 0 22 18" fill="none">
+      <rect width="22" height="18" rx="3" fill="#2563EB"/>
+      <rect x="3" y="4" width="16" height="2" rx="1" fill="white"/>
+      <rect x="3" y="8" width="16" height="2" rx="1" fill="white"/>
+      <rect x="3" y="12" width="16" height="2" rx="1" fill="white"/>
+    </svg>
+    <span class="nav-wordmark">Lane4</span>
+    <span class="nav-sub">· Swim Analysis Engine</span>
+  </div>
+</nav>
 
 <div class="container">
 
+  <!-- SCHOOL SELECTOR -->
   <div class="card">
-    <h2>Swimmer Profile</h2>
-    <form id="analyzeForm">
-
-      <div class="form-grid">
-        <div class="form-group">
-          <label>Full Name</label>
-          <input type="text" id="name" placeholder="e.g. Alex Johnson" />
-        </div>
-        <div class="form-group">
-          <label>Graduation Year</label>
-          <select id="gradYear">
-            <option value="">Select year</option>
-            <option>2025</option><option>2026</option><option>2027</option><option>2028</option><option>2029</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Gender</label>
-          <select id="gender">
-            <option value="">Select</option>
-            <option>Male</option>
-            <option>Female</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Primary Stroke</label>
-          <select id="primaryStroke">
-            <option value="">Select stroke</option>
-            <option>Freestyle</option>
-            <option>Backstroke</option>
-            <option>Breaststroke</option>
-            <option>Butterfly</option>
-            <option>Individual Medley</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Height</label>
-          <input type="text" id="height" placeholder='e.g. 6&apos;2"' />
-        </div>
-        <div class="form-group">
-          <label>Weight</label>
-          <input type="text" id="weight" placeholder="e.g. 175 lbs" />
-        </div>
+    <div class="card-label">Select a School</div>
+    <div class="selector-row">
+      <div class="field">
+        <label for="conf-select">Conference</label>
+        <select id="conf-select">
+          <option value="">Loading…</option>
+        </select>
       </div>
-
-      <div class="card" style="margin-top:20px;margin-bottom:0;box-shadow:none;border:1.5px solid var(--gray-200);padding:20px;">
-        <h2 style="margin-bottom:14px;">Best Times</h2>
-        <div class="events-section" id="eventsContainer">
-          <div class="event-row">
-            <select class="event-name">
-              <option value="">Select event</option>
-              <option>50 Free</option><option>100 Free</option><option>200 Free</option>
-              <option>500 Free</option><option>1000 Free</option><option>1650 Free</option>
-              <option>100 Back</option><option>200 Back</option>
-              <option>100 Breast</option><option>200 Breast</option>
-              <option>100 Fly</option><option>200 Fly</option>
-              <option>200 IM</option><option>400 IM</option>
-            </select>
-            <input type="text" class="event-time" placeholder="e.g. 1:45.32" />
-            <button type="button" class="btn-icon btn-remove" onclick="removeEvent(this)" title="Remove">✕</button>
-          </div>
-        </div>
-        <button type="button" class="btn-add" onclick="addEvent()">+ Add Event</button>
+      <div class="field">
+        <label for="team-select">Program</label>
+        <select id="team-select" disabled>
+          <option value="">Select conference first</option>
+        </select>
       </div>
-
-      <div class="card" style="margin-top:20px;margin-bottom:0;box-shadow:none;border:1.5px solid var(--gray-200);padding:20px;">
-        <h2 style="margin-bottom:14px;">Academics</h2>
-        <div class="form-grid">
-          <div class="form-group">
-            <label>GPA</label>
-            <input type="text" id="gpa" placeholder="e.g. 3.8" />
-          </div>
-          <div class="form-group">
-            <label>SAT / ACT Score</label>
-            <input type="text" id="satAct" placeholder="e.g. 1280 SAT or 28 ACT" />
-          </div>
-          <div class="form-group full">
-            <label>Intended Major / Academic Interests</label>
-            <input type="text" id="intendedMajor" placeholder="e.g. Engineering, Pre-Med, Business" />
-          </div>
-        </div>
-      </div>
-
-      <div class="card" style="margin-top:20px;margin-bottom:0;box-shadow:none;border:1.5px solid var(--gray-200);padding:20px;">
-        <h2 style="margin-bottom:14px;">Preferences</h2>
-        <div class="form-grid">
-          <div class="form-group">
-            <label>Location Preference</label>
-            <input type="text" id="locationPreference" placeholder="e.g. Southeast, West Coast, Open" />
-          </div>
-          <div class="form-group">
-            <label>School Size</label>
-            <select id="schoolSizePreference">
-              <option value="">No preference</option>
-              <option>Small (&lt;5,000)</option>
-              <option>Medium (5,000–15,000)</option>
-              <option>Large (&gt;15,000)</option>
-            </select>
-          </div>
-          <div class="form-group full">
-            <label>Additional Info</label>
-            <textarea id="additionalInfo" placeholder="Club team, coaches, awards, goals, anything else relevant..."></textarea>
-          </div>
-        </div>
-      </div>
-
-      <div style="margin-top:24px;">
-        <button type="submit" class="btn-submit" id="submitBtn">Analyze Recruiting Prospects</button>
-      </div>
-
-    </form>
+    </div>
   </div>
 
-  <div class="card" id="result-card">
-    <h2>Analysis Results</h2>
-    <div id="result-content"></div>
+  <!-- EVENT TIMES -->
+  <div class="card">
+    <div class="card-label">Swimmer Event Times (SCY — leave blank to skip)</div>
+    <div class="events-grid" id="events-grid">
+      <!-- populated by JS -->
+    </div>
   </div>
 
-</div>
+  <!-- CALCULATE -->
+  <button class="btn-calculate" id="calc-btn" disabled>
+    Calculate Conference Fit →
+  </button>
+  <div id="error-msg" class="error-msg" style="display:none;"></div>
+
+  <!-- RESULTS -->
+  <div id="results">
+    <div class="card" style="margin-top:1.25rem;">
+
+      <div class="result-header">
+        <div>
+          <div class="result-school" id="r-school"></div>
+          <div class="result-conf" id="r-conf"></div>
+        </div>
+        <div class="swim-tier-badge" id="r-tier"></div>
+      </div>
+
+      <!-- score summary tiles -->
+      <div class="score-summary">
+        <div class="score-tile">
+          <div class="score-value" id="r-rawpts">—</div>
+          <div class="score-label">Top-3 Raw Pts</div>
+        </div>
+        <div class="score-tile">
+          <div class="score-value" id="r-psf" style="font-size:1.3rem;">—</div>
+          <div class="score-label">PSF</div>
+        </div>
+        <div class="score-tile">
+          <div class="score-value" id="r-adjpts" style="color:#059669;">—</div>
+          <div class="score-label">Adj Swim Score</div>
+        </div>
+      </div>
+
+      <!-- per-event table -->
+      <div class="card-label" style="margin-bottom:0.6rem;">Event Breakdown</div>
+      <table class="event-table">
+        <thead>
+          <tr>
+            <th>Event</th>
+            <th>Time</th>
+            <th>Est. Place</th>
+            <th>Outcome</th>
+            <th>Pts</th>
+            <th>Conf</th>
+            <th>Adj Pts</th>
+          </tr>
+        </thead>
+        <tbody id="event-tbody"></tbody>
+      </table>
+
+      <div style="margin-top:0.75rem; font-size:0.72rem; color:var(--muted); line-height:1.6;">
+        <strong>Adj Pts</strong> = MAX(0, MIN(20, 21−place)) × confidence weight (1.0 / 0.85 / 0.65 based on proximity to bubble) · Top-3 summed, then × PSF.
+      </div>
+    </div>
+  </div>
+
+</div><!-- end container -->
 
 <script>
-  function addEvent() {
-    const container = document.getElementById('eventsContainer');
-    const row = document.createElement('div');
-    row.className = 'event-row';
-    row.innerHTML = `
-      <select class="event-name">
-        <option value="">Select event</option>
-        <option>50 Free</option><option>100 Free</option><option>200 Free</option>
-        <option>500 Free</option><option>1000 Free</option><option>1650 Free</option>
-        <option>100 Back</option><option>200 Back</option>
-        <option>100 Breast</option><option>200 Breast</option>
-        <option>100 Fly</option><option>200 Fly</option>
-        <option>200 IM</option><option>400 IM</option>
-      </select>
-      <input type="text" class="event-time" placeholder="e.g. 1:45.32" />
-      <button type="button" class="btn-icon btn-remove" onclick="removeEvent(this)" title="Remove">✕</button>
-    `;
-    container.appendChild(row);
-  }
+let META = null;
 
-  function removeEvent(btn) {
-    const rows = document.querySelectorAll('.event-row');
-    if (rows.length > 1) {
-      btn.closest('.event-row').remove();
-    }
-  }
+async function loadMeta() {
+  const res = await fetch('/api/meta');
+  META = await res.json();
 
-  function renderMarkdown(text) {
-    return text
-      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-      .replace(/\*(.+?)\*/g, '<em>$1</em>')
-      .replace(/^### (.+)$/gm, '<h4 style="color:var(--blue-dark);margin:16px 0 6px;font-size:1rem;">$1</h4>')
-      .replace(/^## (.+)$/gm, '<h3 style="color:var(--blue-dark);margin:18px 0 8px;font-size:1.1rem;">$1</h3>')
-      .replace(/^# (.+)$/gm, '<h2 style="color:var(--blue-dark);margin:20px 0 10px;font-size:1.2rem;">$1</h2>')
-      .replace(/^- (.+)$/gm, '&bull; $1<br/>')
-      .replace(/\n\n/g, '<br/><br/>');
-  }
-
-  document.getElementById('analyzeForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-
-    const events = [];
-    document.querySelectorAll('.event-row').forEach(row => {
-      const name = row.querySelector('.event-name').value;
-      const time = row.querySelector('.event-time').value;
-      if (name && time) events.push({ name, time });
-    });
-
-    const data = {
-      name: document.getElementById('name').value.trim(),
-      gradYear: document.getElementById('gradYear').value,
-      gender: document.getElementById('gender').value,
-      primaryStroke: document.getElementById('primaryStroke').value,
-      height: document.getElementById('height').value.trim(),
-      weight: document.getElementById('weight').value.trim(),
-      events,
-      gpa: document.getElementById('gpa').value.trim(),
-      satAct: document.getElementById('satAct').value.trim(),
-      intendedMajor: document.getElementById('intendedMajor').value.trim(),
-      locationPreference: document.getElementById('locationPreference').value.trim(),
-      schoolSizePreference: document.getElementById('schoolSizePreference').value,
-      additionalInfo: document.getElementById('additionalInfo').value.trim(),
-    };
-
-    const resultCard = document.getElementById('result-card');
-    const resultContent = document.getElementById('result-content');
-    const submitBtn = document.getElementById('submitBtn');
-
-    resultCard.style.display = 'block';
-    resultContent.innerHTML = '<div class="loading"><div class="spinner"></div>Analyzing recruiting prospects...</div>';
-    submitBtn.disabled = true;
-    submitBtn.textContent = 'Analyzing...';
-    resultCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
-
-    try {
-      const res = await fetch('/api/analyze', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-      });
-      const json = await res.json();
-      if (json.error) {
-        resultContent.innerHTML = `<div class="error-msg">${json.error}</div>`;
-      } else {
-        const name = data.name || 'Swimmer';
-        resultContent.innerHTML = `
-          <div class="result-header">
-            <div class="result-name">Analysis for ${name}</div>
-          </div>
-          <div class="result-body">${renderMarkdown(json.analysis)}</div>
-        `;
-      }
-    } catch (err) {
-      resultContent.innerHTML = `<div class="error-msg">Connection error. Please try again.</div>`;
-    } finally {
-      submitBtn.disabled = false;
-      submitBtn.textContent = 'Analyze Recruiting Prospects';
-    }
+  const confSel = document.getElementById('conf-select');
+  confSel.innerHTML = '<option value="">Select conference…</option>';
+  META.conferences.forEach(c => {
+    const opt = document.createElement('option');
+    opt.value = c; opt.textContent = c;
+    confSel.appendChild(opt);
   });
-</script>
 
+  // Build event inputs
+  const grid = document.getElementById('events-grid');
+  META.events.forEach(ev => {
+    const div = document.createElement('div');
+    div.className = 'event-field';
+    div.innerHTML = `
+      <label>${ev}</label>
+      <input type="text" data-event="${ev}" placeholder="e.g. 4:37.00" autocomplete="off" />
+    `;
+    grid.appendChild(div);
+  });
+
+  // Wire event inputs to enable/disable calc button
+  grid.querySelectorAll('input').forEach(inp => {
+    inp.addEventListener('input', checkCalcReady);
+  });
+
+  document.getElementById('calc-btn').disabled = false;
+}
+
+document.getElementById('conf-select').addEventListener('change', function() {
+  const conf = this.value;
+  const teamSel = document.getElementById('team-select');
+  teamSel.innerHTML = '<option value="">Select program…</option>';
+  teamSel.disabled = !conf;
+
+  if (conf && META && META.teams[conf]) {
+    META.teams[conf].forEach(t => {
+      const opt = document.createElement('option');
+      opt.value = t; opt.textContent = t;
+      teamSel.appendChild(opt);
+    });
+    teamSel.disabled = false;
+  }
+  checkCalcReady();
+});
+
+document.getElementById('team-select').addEventListener('change', checkCalcReady);
+
+function checkCalcReady() {
+  const conf = document.getElementById('conf-select').value;
+  const team = document.getElementById('team-select').value;
+  const hasTimes = [...document.querySelectorAll('#events-grid input')]
+    .some(i => i.value.trim());
+  document.getElementById('calc-btn').disabled = !(conf && team && hasTimes);
+}
+
+document.getElementById('calc-btn').addEventListener('click', async () => {
+  const conf = document.getElementById('conf-select').value;
+  const team = document.getElementById('team-select').value;
+  const times = {};
+  document.querySelectorAll('#events-grid input').forEach(inp => {
+    const v = inp.value.trim();
+    if (v) times[inp.dataset.event] = v;
+  });
+
+  const btn = document.getElementById('calc-btn');
+  const errDiv = document.getElementById('error-msg');
+  errDiv.style.display = 'none';
+  btn.innerHTML = '<span class="spinner"></span> Calculating…';
+  btn.disabled = true;
+
+  try {
+    const res = await fetch('/api/score', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ conference: conf, team, times })
+    });
+    const data = await res.json();
+
+    if (data.error) {
+      errDiv.textContent = data.error;
+      errDiv.style.display = 'block';
+    } else {
+      renderResults(data);
+    }
+  } catch (e) {
+    errDiv.textContent = 'Request failed. Is the server running?';
+    errDiv.style.display = 'block';
+  } finally {
+    btn.innerHTML = 'Calculate Conference Fit →';
+    btn.disabled = false;
+    checkCalcReady();
+  }
+});
+
+function renderResults(d) {
+  document.getElementById('results').style.display = 'block';
+  document.getElementById('r-school').textContent = d.team;
+  document.getElementById('r-conf').textContent = d.conference + (d.tier ? ' · ' + d.tier : '');
+  document.getElementById('r-tier').textContent = d.swim_tier;
+  document.getElementById('r-rawpts').textContent = d.raw_pts.toFixed(1);
+  document.getElementById('r-psf').textContent = '×' + d.psf.toFixed(2);
+  document.getElementById('r-adjpts').textContent = d.adj_pts.toFixed(1);
+
+  // Color the tier badge
+  const tierBadge = document.getElementById('r-tier');
+  const tierColors = {
+    'High-Point Contender': ['#059669','#ECFDF5'],
+    'Conference Star':      ['#2563EB','#EFF6FF'],
+    'Likely Commit':        ['#2563EB','#EFF6FF'],
+    'Priority Recruit':     ['#D97706','#FFFBEB'],
+    'Recruitable':          ['#64748B','#F1F5F9'],
+    'Reach':                ['#EF4444','#FEF2F2'],
+    'Moonshot':             ['#94A3B8','#F8FAFC'],
+  };
+  const [tc, tbg] = tierColors[d.swim_tier] || ['#64748B','#F1F5F9'];
+  tierBadge.style.color = tc;
+  tierBadge.style.background = tbg;
+
+  const tbody = document.getElementById('event-tbody');
+  tbody.innerHTML = '';
+
+  d.events.forEach(ev => {
+    const isTop3 = d.top3.includes(ev.event);
+    const tr = document.createElement('tr');
+    if (!ev.benchmarked) {
+      tr.className = 'unscored';
+      tr.innerHTML = `
+        <td>${ev.event}</td>
+        <td>${ev.time}</td>
+        <td colspan="5" style="text-align:left;font-size:0.72rem;color:#CBD5E1;">Not benchmarked in ${d.conference}</td>
+      `;
+    } else {
+      if (isTop3) tr.className = 'top3-row';
+      const plBadge = placeBadgeClass(ev.place_label);
+      tr.innerHTML = `
+        <td>
+          ${isTop3 ? `<div class="top3-label">▲ Top 3</div>` : ''}
+          ${ev.event}
+        </td>
+        <td style="font-family:'Fraunces',serif;font-weight:600;">${ev.time}</td>
+        <td>${ev.place.toFixed(1)}</td>
+        <td><span class="place-badge ${plBadge}">${ev.place_label}</span></td>
+        <td>${ev.exp_points.toFixed(1)}</td>
+        <td>${(ev.confidence * 100).toFixed(0)}%</td>
+        <td style="font-weight:700;color:${isTop3 ? '#059669' : 'inherit'};">${ev.adj_points.toFixed(2)}</td>
+      `;
+    }
+    tbody.appendChild(tr);
+  });
+
+  document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function placeBadgeClass(label) {
+  if (label.includes('Winner')) return 'winner';
+  if (label.includes('Podium')) return 'podium';
+  if (label === 'A Final') return 'afinal';
+  if (label === 'B Final') return 'bfinal';
+  if (label === 'Bubble') return 'bubble';
+  return 'oor';
+}
+
+loadMeta();
+</script>
 </body>
 </html>
