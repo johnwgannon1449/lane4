@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Swim Recruiting Analyzer</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue: #0066cc;
+      --blue-dark: #004fa3;
+      --blue-light: #e8f2ff;
+      --teal: #00a8b5;
+      --gray-50: #f8fafc;
+      --gray-100: #f1f5f9;
+      --gray-200: #e2e8f0;
+      --gray-400: #94a3b8;
+      --gray-600: #475569;
+      --gray-700: #334155;
+      --gray-900: #0f172a;
+      --white: #ffffff;
+      --radius: 12px;
+      --shadow: 0 4px 24px rgba(0,0,0,0.08);
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      background: var(--gray-50);
+      color: var(--gray-900);
+      min-height: 100vh;
+    }
+
+    header {
+      background: linear-gradient(135deg, var(--blue-dark) 0%, var(--teal) 100%);
+      color: white;
+      padding: 28px 24px;
+      text-align: center;
+    }
+
+    header h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    header p {
+      margin-top: 8px;
+      opacity: 0.85;
+      font-size: 1.05rem;
+    }
+
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 32px 20px;
+    }
+
+    .card {
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 28px 32px;
+      margin-bottom: 24px;
+    }
+
+    .card h2 {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--blue-dark);
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid var(--blue-light);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-group.full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--gray-600);
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+
+    input, select, textarea {
+      padding: 10px 14px;
+      border: 1.5px solid var(--gray-200);
+      border-radius: 8px;
+      font-size: 0.95rem;
+      color: var(--gray-900);
+      background: var(--white);
+      transition: border-color 0.15s, box-shadow 0.15s;
+      font-family: inherit;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(0,102,204,0.1);
+    }
+
+    textarea { resize: vertical; min-height: 80px; }
+
+    .events-section { margin-top: 8px; }
+
+    .event-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr auto;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .btn-icon {
+      width: 36px;
+      height: 36px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s;
+    }
+
+    .btn-remove { background: #fee2e2; color: #dc2626; }
+    .btn-remove:hover { background: #fecaca; }
+    .btn-add {
+      background: var(--blue-light);
+      color: var(--blue);
+      border: 1.5px dashed var(--blue);
+      width: 100%;
+      height: 38px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: background 0.15s;
+      margin-top: 4px;
+    }
+    .btn-add:hover { background: #d0e7ff; }
+
+    .btn-submit {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, var(--blue) 0%, var(--teal) 100%);
+      color: white;
+      border: none;
+      border-radius: var(--radius);
+      font-size: 1.05rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity 0.15s, transform 0.1s;
+      letter-spacing: 0.3px;
+    }
+    .btn-submit:hover:not(:disabled) { opacity: 0.9; transform: translateY(-1px); }
+    .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+    #result-card { display: none; }
+
+    .result-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .result-name {
+      font-size: 1.3rem;
+      font-weight: 700;
+    }
+
+    .result-body {
+      white-space: pre-wrap;
+      line-height: 1.75;
+      color: var(--gray-700);
+      font-size: 0.97rem;
+    }
+
+    .result-body strong, .result-body b {
+      color: var(--gray-900);
+    }
+
+    .loading {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--gray-600);
+      font-size: 0.97rem;
+    }
+
+    .spinner {
+      width: 22px;
+      height: 22px;
+      border: 3px solid var(--gray-200);
+      border-top-color: var(--blue);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .error-msg {
+      background: #fee2e2;
+      color: #dc2626;
+      padding: 14px 18px;
+      border-radius: 8px;
+      font-size: 0.92rem;
+      border-left: 4px solid #dc2626;
+    }
+
+    @media (max-width: 600px) {
+      .form-grid { grid-template-columns: 1fr; }
+      .card { padding: 20px 18px; }
+      header h1 { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>🏊 Swim Recruiting Analyzer</h1>
+  <p>AI-powered analysis to help swimmers find the right college program</p>
+</header>
+
+<div class="container">
+
+  <div class="card">
+    <h2>Swimmer Profile</h2>
+    <form id="analyzeForm">
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" id="name" placeholder="e.g. Alex Johnson" />
+        </div>
+        <div class="form-group">
+          <label>Graduation Year</label>
+          <select id="gradYear">
+            <option value="">Select year</option>
+            <option>2025</option><option>2026</option><option>2027</option><option>2028</option><option>2029</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Gender</label>
+          <select id="gender">
+            <option value="">Select</option>
+            <option>Male</option>
+            <option>Female</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Primary Stroke</label>
+          <select id="primaryStroke">
+            <option value="">Select stroke</option>
+            <option>Freestyle</option>
+            <option>Backstroke</option>
+            <option>Breaststroke</option>
+            <option>Butterfly</option>
+            <option>Individual Medley</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Height</label>
+          <input type="text" id="height" placeholder='e.g. 6&apos;2"' />
+        </div>
+        <div class="form-group">
+          <label>Weight</label>
+          <input type="text" id="weight" placeholder="e.g. 175 lbs" />
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:20px;margin-bottom:0;box-shadow:none;border:1.5px solid var(--gray-200);padding:20px;">
+        <h2 style="margin-bottom:14px;">Best Times</h2>
+        <div class="events-section" id="eventsContainer">
+          <div class="event-row">
+            <select class="event-name">
+              <option value="">Select event</option>
+              <option>50 Free</option><option>100 Free</option><option>200 Free</option>
+              <option>500 Free</option><option>1000 Free</option><option>1650 Free</option>
+              <option>100 Back</option><option>200 Back</option>
+              <option>100 Breast</option><option>200 Breast</option>
+              <option>100 Fly</option><option>200 Fly</option>
+              <option>200 IM</option><option>400 IM</option>
+            </select>
+            <input type="text" class="event-time" placeholder="e.g. 1:45.32" />
+            <button type="button" class="btn-icon btn-remove" onclick="removeEvent(this)" title="Remove">✕</button>
+          </div>
+        </div>
+        <button type="button" class="btn-add" onclick="addEvent()">+ Add Event</button>
+      </div>
+
+      <div class="card" style="margin-top:20px;margin-bottom:0;box-shadow:none;border:1.5px solid var(--gray-200);padding:20px;">
+        <h2 style="margin-bottom:14px;">Academics</h2>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>GPA</label>
+            <input type="text" id="gpa" placeholder="e.g. 3.8" />
+          </div>
+          <div class="form-group">
+            <label>SAT / ACT Score</label>
+            <input type="text" id="satAct" placeholder="e.g. 1280 SAT or 28 ACT" />
+          </div>
+          <div class="form-group full">
+            <label>Intended Major / Academic Interests</label>
+            <input type="text" id="intendedMajor" placeholder="e.g. Engineering, Pre-Med, Business" />
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:20px;margin-bottom:0;box-shadow:none;border:1.5px solid var(--gray-200);padding:20px;">
+        <h2 style="margin-bottom:14px;">Preferences</h2>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Location Preference</label>
+            <input type="text" id="locationPreference" placeholder="e.g. Southeast, West Coast, Open" />
+          </div>
+          <div class="form-group">
+            <label>School Size</label>
+            <select id="schoolSizePreference">
+              <option value="">No preference</option>
+              <option>Small (&lt;5,000)</option>
+              <option>Medium (5,000–15,000)</option>
+              <option>Large (&gt;15,000)</option>
+            </select>
+          </div>
+          <div class="form-group full">
+            <label>Additional Info</label>
+            <textarea id="additionalInfo" placeholder="Club team, coaches, awards, goals, anything else relevant..."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:24px;">
+        <button type="submit" class="btn-submit" id="submitBtn">Analyze Recruiting Prospects</button>
+      </div>
+
+    </form>
+  </div>
+
+  <div class="card" id="result-card">
+    <h2>Analysis Results</h2>
+    <div id="result-content"></div>
+  </div>
+
+</div>
+
+<script>
+  function addEvent() {
+    const container = document.getElementById('eventsContainer');
+    const row = document.createElement('div');
+    row.className = 'event-row';
+    row.innerHTML = `
+      <select class="event-name">
+        <option value="">Select event</option>
+        <option>50 Free</option><option>100 Free</option><option>200 Free</option>
+        <option>500 Free</option><option>1000 Free</option><option>1650 Free</option>
+        <option>100 Back</option><option>200 Back</option>
+        <option>100 Breast</option><option>200 Breast</option>
+        <option>100 Fly</option><option>200 Fly</option>
+        <option>200 IM</option><option>400 IM</option>
+      </select>
+      <input type="text" class="event-time" placeholder="e.g. 1:45.32" />
+      <button type="button" class="btn-icon btn-remove" onclick="removeEvent(this)" title="Remove">✕</button>
+    `;
+    container.appendChild(row);
+  }
+
+  function removeEvent(btn) {
+    const rows = document.querySelectorAll('.event-row');
+    if (rows.length > 1) {
+      btn.closest('.event-row').remove();
+    }
+  }
+
+  function renderMarkdown(text) {
+    return text
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*(.+?)\*/g, '<em>$1</em>')
+      .replace(/^### (.+)$/gm, '<h4 style="color:var(--blue-dark);margin:16px 0 6px;font-size:1rem;">$1</h4>')
+      .replace(/^## (.+)$/gm, '<h3 style="color:var(--blue-dark);margin:18px 0 8px;font-size:1.1rem;">$1</h3>')
+      .replace(/^# (.+)$/gm, '<h2 style="color:var(--blue-dark);margin:20px 0 10px;font-size:1.2rem;">$1</h2>')
+      .replace(/^- (.+)$/gm, '&bull; $1<br/>')
+      .replace(/\n\n/g, '<br/><br/>');
+  }
+
+  document.getElementById('analyzeForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const events = [];
+    document.querySelectorAll('.event-row').forEach(row => {
+      const name = row.querySelector('.event-name').value;
+      const time = row.querySelector('.event-time').value;
+      if (name && time) events.push({ name, time });
+    });
+
+    const data = {
+      name: document.getElementById('name').value.trim(),
+      gradYear: document.getElementById('gradYear').value,
+      gender: document.getElementById('gender').value,
+      primaryStroke: document.getElementById('primaryStroke').value,
+      height: document.getElementById('height').value.trim(),
+      weight: document.getElementById('weight').value.trim(),
+      events,
+      gpa: document.getElementById('gpa').value.trim(),
+      satAct: document.getElementById('satAct').value.trim(),
+      intendedMajor: document.getElementById('intendedMajor').value.trim(),
+      locationPreference: document.getElementById('locationPreference').value.trim(),
+      schoolSizePreference: document.getElementById('schoolSizePreference').value,
+      additionalInfo: document.getElementById('additionalInfo').value.trim(),
+    };
+
+    const resultCard = document.getElementById('result-card');
+    const resultContent = document.getElementById('result-content');
+    const submitBtn = document.getElementById('submitBtn');
+
+    resultCard.style.display = 'block';
+    resultContent.innerHTML = '<div class="loading"><div class="spinner"></div>Analyzing recruiting prospects...</div>';
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Analyzing...';
+    resultCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    try {
+      const res = await fetch('/api/analyze', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      const json = await res.json();
+      if (json.error) {
+        resultContent.innerHTML = `<div class="error-msg">${json.error}</div>`;
+      } else {
+        const name = data.name || 'Swimmer';
+        resultContent.innerHTML = `
+          <div class="result-header">
+            <div class="result-name">Analysis for ${name}</div>
+          </div>
+          <div class="result-body">${renderMarkdown(json.analysis)}</div>
+        `;
+      }
+    } catch (err) {
+      resultContent.innerHTML = `<div class="error-msg">Connection error. Please try again.</div>`;
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Analyze Recruiting Prospects';
+    }
+  });
+</script>
+
+</body>
+</html>
