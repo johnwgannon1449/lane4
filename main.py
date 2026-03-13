@@ -4,73 +4,540 @@ from dotenv import load_dotenv
 import openpyxl
 
 load_dotenv()
-
 app = Flask(__name__, static_folder='static', static_url_path='')
 
 # ---------------------------------------------------------------------------
-# Load dataset from Excel on startup
+# TEAM NAME NORMALIZATIONS
+# Workbook cell widths truncate long names and add trailing qualifiers.
+# These are the ONLY 9 places where workbook text differs from canonical names.
+# Flagged explicitly per guardrail — no silent guessing.
 # ---------------------------------------------------------------------------
+TEAM_NAME_MAP = {
+    "McDaniel College Swim Team":     ("McDaniel College",                 "trailing qualifier"),
+    "Rochester Institute of Technol": ("Rochester Institute of Technology", "truncated at 30 chars"),
+    "Rensselaer Polytechnic Institu": ("Rensselaer Polytechnic Institute",  "truncated at 30 chars"),
+    "Union College (New York)":        ("Union College",                     "parenthetical qualifier"),
+    "Massachusetts Institute of Tec": ("MIT",                               "truncated — schema uses 'MIT'"),
+    "Worcester Polytechnic Institut": ("Worcester Polytechnic Institute",   "truncated at 30 chars"),
+    "Wheaton College (Ma)":            ("Wheaton College (MA)",              "wrong casing"),
+    "Whitworth University Swim Team": ("Whitworth University",              "trailing qualifier"),
+    "California Institute of Techno": ("Caltech",                           "truncated — schema uses 'Caltech'"),
+    "Saint Johns University":          ("Saint John's University",           "missing apostrophe"),
+}
 
+# ---------------------------------------------------------------------------
+# JAMES — hardcoded swimmer profile (source of truth for all scoring runs)
+# ---------------------------------------------------------------------------
+JAMES = {
+    "name":             "James",
+    "gpa":              4.0,
+    "sat":              1460,
+    "satProjected":     1500,
+    "mathSat":          720,
+    "mathSatProjected": 760,
+    "times": {
+        "1650 Free":              "16:06",
+        "1000 Free":              "9:30",
+        "500 Free":               "4:37",
+        "200 Free":               "1:43",
+        "400 IM":                 "4:09",
+        "200 IM":                 "1:56",
+        "100 Breast":             "59.5",
+        "50 Breast (Relay Split)": "25.68",
+    },
+    "vibe": {
+        "campus":   "Small and tight-knit — everyone knows everyone",
+        "friday":   "Library with 2–3 close friends",
+        "academic": "Genuinely want to be well-rounded",
+        "compete":  "Love pushing myself inside a team environment",
+        "location": None,
+        "career":   None,
+    },
+}
+
+# ---------------------------------------------------------------------------
+# SCHOOL_META — per-school metadata for all 76 programs
+# Fields: accept (int %), satMedian (int), hiddenIvy (bool), stem (bool),
+#         merit ("none"|"moderate"|"high"), location (str), vibe (str),
+#         moonshot (bool, optional)
+# Keys must match canonical names after TEAM_NAME_MAP normalization.
+# ---------------------------------------------------------------------------
+SCHOOL_META = {
+    # ── CENTENNIAL ───────────────────────────────────────────────────────────
+    "Johns Hopkins University": {
+        "accept": 7, "satMedian": 1510, "hiddenIvy": True, "stem": True,
+        "merit": "none", "location": "Baltimore, MD",
+        "vibe": "Research powerhouse where pre-med and STEM culture run the campus",
+    },
+    "Gettysburg College": {
+        "accept": 43, "satMedian": 1230, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Gettysburg, PA",
+        "vibe": "Historic campus with strong Greek life and leadership culture",
+    },
+    "Swarthmore College": {
+        "accept": 7, "satMedian": 1505, "hiddenIvy": True, "stem": True,
+        "merit": "none", "location": "Swarthmore, PA",
+        "vibe": "Academically intense and collaborative with Quaker roots",
+    },
+    "Dickinson College": {
+        "accept": 48, "satMedian": 1235, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Carlisle, PA",
+        "vibe": "Sustainability-focused with strong international programs",
+    },
+    "Franklin & Marshall College": {
+        "accept": 34, "satMedian": 1280, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Lancaster, PA",
+        "vibe": "Pre-professional culture with strong pre-law and alumni network",
+    },
+    "Ursinus College": {
+        "accept": 67, "satMedian": 1130, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Collegeville, PA",
+        "vibe": "Warm undergraduate-focused campus with strong research access",
+    },
+    "Washington College": {
+        "accept": 75, "satMedian": 1095, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Chestertown, MD",
+        "vibe": "Small waterfront campus; close community and strong writing tradition",
+    },
+    "McDaniel College": {
+        "accept": 82, "satMedian": 1100, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Westminster, MD",
+        "vibe": "Friendly and personal campus with strong teacher education programs",
+    },
+    # ── LIBERTY LEAGUE ───────────────────────────────────────────────────────
+    "Ithaca College": {
+        "accept": 68, "satMedian": 1180, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "Ithaca, NY",
+        "vibe": "Creative and artsy; media, music, and performance everywhere",
+    },
+    "Rochester Institute of Technology": {
+        "accept": 73, "satMedian": 1295, "hiddenIvy": False, "stem": True,
+        "merit": "moderate", "location": "Rochester, NY",
+        "vibe": "Tech and project-driven culture built around co-ops and real careers",
+    },
+    "Rensselaer Polytechnic Institute": {
+        "accept": 63, "satMedian": 1410, "hiddenIvy": False, "stem": True,
+        "merit": "moderate", "location": "Troy, NY",
+        "vibe": "Pure engineering culture; hard-working students who live for problems",
+    },
+    "Clarkson University": {
+        "accept": 80, "satMedian": 1205, "hiddenIvy": False, "stem": True,
+        "merit": "high", "location": "Potsdam, NY",
+        "vibe": "Tight-knit STEM community in the North Country; outdoorsy and close",
+    },
+    "Union College": {
+        "accept": 38, "satMedian": 1335, "hiddenIvy": False, "stem": True,
+        "merit": "moderate", "location": "Schenectady, NY",
+        "vibe": "Liberal arts meets engineering; theme houses and strong traditions",
+    },
+    "Skidmore College": {
+        "accept": 29, "satMedian": 1300, "hiddenIvy": False, "stem": False,
+        "merit": "none", "location": "Saratoga Springs, NY",
+        "vibe": "Creative and arts-forward campus in a lively upstate NY town",
+    },
+    "Vassar College": {
+        "accept": 18, "satMedian": 1455, "hiddenIvy": True, "stem": False,
+        "merit": "none", "location": "Poughkeepsie, NY",
+        "vibe": "Progressive intellectual culture; students who love big ideas",
+    },
+    "St. Lawrence University": {
+        "accept": 60, "satMedian": 1230, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Canton, NY",
+        "vibe": "Outdoorsy North Country campus with a close community and athletics",
+    },
+    "Hobart and William Smith": {
+        "accept": 58, "satMedian": 1185, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Geneva, NY",
+        "vibe": "Lakeside dual-college campus with strong social scene and sailing",
+    },
+    "Bard College": {
+        "accept": 64, "satMedian": 1265, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "Annandale-on-Hudson, NY",
+        "vibe": "Artsy and progressive with discussion-heavy classes and bohemian feel",
+    },
+    # ── NCAC ─────────────────────────────────────────────────────────────────
+    "Denison University": {
+        "accept": 28, "satMedian": 1325, "hiddenIvy": True, "stem": False,
+        "merit": "high", "location": "Granville, OH",
+        "vibe": "Beautiful hilltop campus; ambitious academics and a strong social scene",
+    },
+    "Kenyon College": {
+        "accept": 33, "satMedian": 1370, "hiddenIvy": True, "stem": False,
+        "merit": "none", "location": "Gambier, OH",
+        "vibe": "Literary and deeply intellectual; famous writing program in rural Ohio",
+    },
+    "John Carroll University": {
+        "accept": 80, "satMedian": 1135, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "University Heights, OH",
+        "vibe": "Jesuit values; service-oriented with strong business programs",
+    },
+    "DePauw University": {
+        "accept": 67, "satMedian": 1195, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Greencastle, IN",
+        "vibe": "Greek life-heavy with strong communications and music programs",
+    },
+    "Wabash College": {
+        "accept": 69, "satMedian": 1165, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Crawfordsville, IN",
+        "vibe": "All-male liberal arts with intense brotherhood and strong traditions",
+    },
+    "College of Wooster": {
+        "accept": 57, "satMedian": 1195, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Wooster, OH",
+        "vibe": "Every senior writes a thesis; close-knit with strong independent study",
+    },
+    "Oberlin College": {
+        "accept": 33, "satMedian": 1385, "hiddenIvy": True, "stem": False,
+        "merit": "none", "location": "Oberlin, OH",
+        "vibe": "Progressive and artistic; famous conservatory and engaged campus politics",
+    },
+    "Ohio Wesleyan University": {
+        "accept": 83, "satMedian": 1150, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Delaware, OH",
+        "vibe": "Emphasis on global experience; internship-focused with civic engagement",
+    },
+    "Wittenberg University": {
+        "accept": 86, "satMedian": 1125, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Springfield, OH",
+        "vibe": "Lutheran-rooted campus; personal and strong in teacher education",
+    },
+    # ── NESCAC ───────────────────────────────────────────────────────────────
+    "Williams College": {
+        "accept": 9, "satMedian": 1510, "hiddenIvy": True, "stem": False,
+        "merit": "none", "location": "Williamstown, MA",
+        "vibe": "Consistently ranked #1 LAC; mountain campus with elite academics",
+    },
+    "Tufts University": {
+        "accept": 9, "satMedian": 1500, "hiddenIvy": True, "stem": True,
+        "merit": "none", "location": "Medford, MA",
+        "vibe": "Globally minded near Boston; research-intensive with elite academics",
+    },
+    "Amherst College": {
+        "accept": 9, "satMedian": 1515, "hiddenIvy": True, "stem": False,
+        "merit": "none", "location": "Amherst, MA",
+        "vibe": "Open curriculum, no required courses; fiercely intellectual with 5-College access",
+    },
+    "Connecticut College": {
+        "accept": 38, "satMedian": 1315, "hiddenIvy": False, "stem": False,
+        "merit": "none", "location": "New London, CT",
+        "vibe": "Student self-governance model; students run nearly everything on campus",
+    },
+    "Bates College": {
+        "accept": 13, "satMedian": 1430, "hiddenIvy": True, "stem": False,
+        "merit": "none", "location": "Lewiston, ME",
+        "vibe": "Politically engaged and outdoorsy; tight community in coastal Maine",
+    },
+    "Hamilton College": {
+        "accept": 14, "satMedian": 1440, "hiddenIvy": True, "stem": False,
+        "merit": "none", "location": "Clinton, NY",
+        "vibe": "Writing-intensive; every major leads to a thesis on a beautiful rural campus",
+    },
+    "Bowdoin College": {
+        "accept": 9, "satMedian": 1495, "hiddenIvy": True, "stem": False,
+        "merit": "none", "location": "Brunswick, ME",
+        "vibe": "Outdoorsy and intellectual in coastal Maine; sustainability and community",
+    },
+    "Middlebury College": {
+        "accept": 13, "satMedian": 1445, "hiddenIvy": True, "stem": False,
+        "merit": "none", "location": "Middlebury, VT",
+        "vibe": "Environmental passion meets rigorous academics in a beautiful Vermont setting",
+    },
+    "Colby College": {
+        "accept": 11, "satMedian": 1435, "hiddenIvy": True, "stem": False,
+        "merit": "none", "location": "Waterville, ME",
+        "vibe": "Liberal arts in the Maine wilderness; entrepreneurial with a tight community",
+    },
+    "Trinity College": {
+        "accept": 34, "satMedian": 1310, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "Hartford, CT",
+        "vibe": "Classic New England campus with strong city partnerships and Greek life",
+    },
+    "Wesleyan University": {
+        "accept": 17, "satMedian": 1455, "hiddenIvy": True, "stem": False,
+        "merit": "none", "location": "Middletown, CT",
+        "vibe": "Quirky and politically active; film and social sciences define the culture",
+    },
+    # ── NEWMAC ───────────────────────────────────────────────────────────────
+    "MIT": {
+        "accept": 4, "satMedian": 1565, "hiddenIvy": False, "stem": True,
+        "merit": "none", "moonshot": True, "location": "Cambridge, MA",
+        "vibe": "The world's most famous STEM institution; unmatched resources and intensity",
+    },
+    "U.S. Coast Guard Academy": {
+        "accept": 14, "satMedian": 1265, "hiddenIvy": False, "stem": True,
+        "merit": "none", "location": "New London, CT",
+        "vibe": "Military service academy; full scholarship, intense discipline, meaningful mission",
+    },
+    "Worcester Polytechnic Institute": {
+        "accept": 58, "satMedian": 1370, "hiddenIvy": False, "stem": True,
+        "merit": "high", "location": "Worcester, MA",
+        "vibe": "Project-based learning at a tech school with strong industry connections",
+    },
+    "Babson College": {
+        "accept": 24, "satMedian": 1330, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "Wellesley, MA",
+        "vibe": "#1 entrepreneurship school; every freshman runs a real business for credit",
+    },
+    "Wheaton College (MA)": {
+        "accept": 71, "satMedian": 1200, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Norton, MA",
+        "vibe": "Small and personal campus reinventing itself with a bold connected curriculum",
+    },
+    "Springfield College": {
+        "accept": 77, "satMedian": 1095, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Springfield, MA",
+        "vibe": "Birthplace of basketball; health sciences and PT define the campus culture",
+    },
+    "Clark University": {
+        "accept": 52, "satMedian": 1225, "hiddenIvy": False, "stem": True,
+        "merit": "high", "location": "Worcester, MA",
+        "vibe": "Free fifth year for any grad program; research-first culture in an urban campus",
+    },
+    # ── NWC ──────────────────────────────────────────────────────────────────
+    "Whitworth University": {
+        "accept": 89, "satMedian": 1175, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Spokane, WA",
+        "vibe": "Christian liberal arts in the Pacific Northwest with strong education programs",
+    },
+    "University of Puget Sound": {
+        "accept": 87, "satMedian": 1200, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Tacoma, WA",
+        "vibe": "NW outdoor culture meets classic liberal arts; tight-knit campus",
+    },
+    "Linfield University": {
+        "accept": 88, "satMedian": 1120, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "McMinnville, OR",
+        "vibe": "Small Oregon liberal arts in wine country; personal and community-focused",
+    },
+    "Whitman College": {
+        "accept": 46, "satMedian": 1295, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "Walla Walla, WA",
+        "vibe": "Quirky Pacific NW intellectual gem with outdoor access and high grad school rates",
+    },
+    "Pacific Lutheran University": {
+        "accept": 87, "satMedian": 1125, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Tacoma, WA",
+        "vibe": "Lutheran values in the Pacific Northwest; strong music and education programs",
+    },
+    "Lewis & Clark College": {
+        "accept": 65, "satMedian": 1275, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "Portland, OR",
+        "vibe": "Hippie-intellectual Portland culture; environmental law and social justice focus",
+    },
+    "Willamette University": {
+        "accept": 81, "satMedian": 1190, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Salem, OR",
+        "vibe": "NW LAC with strong law school connections and active civic engagement",
+    },
+    "George Fox University": {
+        "accept": 93, "satMedian": 1090, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Newberg, OR",
+        "vibe": "Christian university with strong community, athletics, and business programs",
+    },
+    # ── SCIAC ────────────────────────────────────────────────────────────────
+    "Pomona-Pitzer": {
+        "accept": 7, "satMedian": 1510, "hiddenIvy": True, "stem": True,
+        "merit": "none", "location": "Claremont, CA",
+        "vibe": "Elite SoCal LAC in the Claremont Consortium; 5 colleges sharing resources",
+    },
+    "Claremont-Mudd-Scripps": {
+        "accept": 9, "satMedian": 1490, "hiddenIvy": True, "stem": True,
+        "merit": "none", "location": "Claremont, CA",
+        "vibe": "Harvey Mudd's STEM intensity meets Scripps' creative and humanistic edge",
+    },
+    "Chapman University": {
+        "accept": 52, "satMedian": 1230, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Orange, CA",
+        "vibe": "Film school prestige meets SoCal sunshine; entrepreneurial and media-forward",
+    },
+    "Caltech": {
+        "accept": 3, "satMedian": 1560, "hiddenIvy": False, "stem": True,
+        "merit": "none", "moonshot": True, "location": "Pasadena, CA",
+        "vibe": "Hardest STEM school to enter in America; Nobel laureates teach undergrads",
+    },
+    "Whittier College": {
+        "accept": 73, "satMedian": 1100, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Whittier, CA",
+        "vibe": "Liberal arts with strong Latino heritage and close community feel in SoCal",
+    },
+    "Cal Lutheran University": {
+        "accept": 61, "satMedian": 1125, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Thousand Oaks, CA",
+        "vibe": "Lutheran roots in Ventura County; strong business and communications programs",
+    },
+    "Occidental College": {
+        "accept": 37, "satMedian": 1295, "hiddenIvy": False, "stem": False,
+        "merit": "none", "location": "Los Angeles, CA",
+        "vibe": "Progressive urban LAC in Eagle Rock; politics and international relations culture",
+    },
+    "University of Redlands": {
+        "accept": 67, "satMedian": 1140, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Redlands, CA",
+        "vibe": "Inland Empire LAC; strong music, environmental studies, and pre-law culture",
+    },
+    "University of La Verne": {
+        "accept": 65, "satMedian": 1080, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "La Verne, CA",
+        "vibe": "Close-knit SoCal campus with strong business and criminal justice programs",
+    },
+    # ── UAA ──────────────────────────────────────────────────────────────────
+    # Names are abbreviated in the workbook — kept as-is (not truncation, just short forms)
+    "Emory": {
+        "accept": 12, "satMedian": 1470, "hiddenIvy": False, "stem": False,
+        "merit": "none", "location": "Atlanta, GA",
+        "vibe": "Research powerhouse in Atlanta; dominant pre-med culture and strong social scene",
+    },
+    "NYU": {
+        "accept": 12, "satMedian": 1460, "hiddenIvy": False, "stem": False,
+        "merit": "none", "location": "New York, NY",
+        "vibe": "Urban campus without borders; Greenwich Village is your quad in the heart of NYC",
+    },
+    "Chicago": {
+        "accept": 6, "satMedian": 1530, "hiddenIvy": False, "stem": False,
+        "merit": "none", "location": "Chicago, IL",
+        "vibe": "Intellectual intensity above all else; famous for taking ideas more seriously than sleep",
+    },
+    "Washington (Mo)": {
+        "accept": 14, "satMedian": 1500, "hiddenIvy": False, "stem": True,
+        "merit": "none", "location": "St. Louis, MO",
+        "vibe": "Research powerhouse in the Midwest; strong pre-med, engineering, and business",
+    },
+    "Carnegie Mellon": {
+        "accept": 11, "satMedian": 1535, "hiddenIvy": False, "stem": True,
+        "merit": "none", "location": "Pittsburgh, PA",
+        "vibe": "Top CS and engineering with a rigorous, career-driven campus culture",
+    },
+    "Case Western": {
+        "accept": 30, "satMedian": 1455, "hiddenIvy": False, "stem": True,
+        "merit": "high", "location": "Cleveland, OH",
+        "vibe": "STEM-focused research university; pre-med and engineering define campus life",
+    },
+    "Rochester": {
+        "accept": 29, "satMedian": 1440, "hiddenIvy": False, "stem": True,
+        "merit": "high", "location": "Rochester, NY",
+        "vibe": "Research-intensive with strong engineering, optics, and pre-med programs",
+    },
+    "Brandeis": {
+        "accept": 37, "satMedian": 1420, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "Waltham, MA",
+        "vibe": "Social justice mission and research strength near Boston with a unique founding story",
+    },
+    # ── MIAC ─────────────────────────────────────────────────────────────────
+    "Gustavus Adolphus College": {
+        "accept": 72, "satMedian": 1195, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Saint Peter, MN",
+        "vibe": "Lutheran liberal arts with Swedish heritage and strong athletics in Minnesota",
+    },
+    "Carleton College": {
+        "accept": 18, "satMedian": 1495, "hiddenIvy": False, "stem": False,
+        "merit": "none", "location": "Northfield, MN",
+        "vibe": "One of the Midwest's best LACs; intellectual culture with top grad school placement",
+    },
+    "Saint John's University": {
+        "accept": 75, "satMedian": 1145, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Collegeville, MN",
+        "vibe": "Coordinate college with Saint Benedict; Benedictine tradition and strong community",
+    },
+    "Macalester College": {
+        "accept": 28, "satMedian": 1430, "hiddenIvy": False, "stem": False,
+        "merit": "none", "location": "Saint Paul, MN",
+        "vibe": "Globally focused and politically active urban LAC with high international enrollment",
+    },
+    "Saint Olaf College": {
+        "accept": 48, "satMedian": 1270, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Northfield, MN",
+        "vibe": "Norwegian Lutheran roots; world-famous music programs and close Minnesota community",
+    },
+    "Hamline University": {
+        "accept": 82, "satMedian": 1130, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Saint Paul, MN",
+        "vibe": "Urban liberal arts with social justice focus; personal and accessible in Twin Cities",
+    },
+}
+
+# ---------------------------------------------------------------------------
+# Data loading from Excel
+# ---------------------------------------------------------------------------
 EXCEL_PATH = os.path.join(os.path.dirname(__file__), 'data', 'lane4_swim_model.xlsx')
 
-BENCHMARKS = {}   # key: "Conference|Event" -> {first, eighth, sixteenth, sec_per_place}
-TEAMS = {}        # key: "Conference|Team"  -> {psf, tier, finish, men_points}
-CONFERENCES = {}  # key: conference name   -> sorted list of team name strings
+BENCHMARKS = {}    # "Conference|Event" -> {first, eighth, sixteenth, sec_per_place}
+TEAMS = {}         # "Conference|School" -> {conference, school, psf, tier, finish, normalized}
+TEAMS_LIST = []    # ordered list of all team dicts
+CONFERENCES = {}   # conference name -> sorted list of canonical school names
+NORMALIZATION_LOG = []  # records every name that was normalized
 
 def load_data():
     wb = openpyxl.load_workbook(EXCEL_PATH, data_only=True)
 
-    # --- Sheet1: BENCHMARKS ---
+    # ── Sheet1: BENCHMARKS ──────────────────────────────────────────────────
     ws = wb['Sheet1']
-    headers = [ws.cell(1, c).value for c in range(1, ws.max_column + 1)]
-    col = {h: i + 1 for i, h in enumerate(headers) if h}
+    h1 = [ws.cell(1, c).value for c in range(1, ws.max_column + 1)]
+    col1 = {v: i + 1 for i, v in enumerate(h1) if v}
 
     for r in range(2, ws.max_row + 1):
-        conf  = ws.cell(r, col['Conference']).value
-        event = ws.cell(r, col['Event']).value
+        conf  = ws.cell(r, col1['Conference']).value
+        event = ws.cell(r, col1['Event']).value
         if not conf or not event:
             continue
-        key = f"{conf}|{event}"
-        BENCHMARKS[key] = {
-            'first':         _float(ws.cell(r, col['1st_sec']).value),
-            'eighth':        _float(ws.cell(r, col['8th_sec']).value),
-            'sixteenth':     _float(ws.cell(r, col['16th_sec']).value),
-            'sec_per_place': _float(ws.cell(r, col['Sec_per_place']).value),
+        BENCHMARKS[f"{conf}|{event}"] = {
+            'first':         _float(ws.cell(r, col1['1st_sec']).value),
+            'eighth':        _float(ws.cell(r, col1['8th_sec']).value),
+            'sixteenth':     _float(ws.cell(r, col1['16th_sec']).value),
+            'sec_per_place': _float(ws.cell(r, col1['Sec_per_place']).value),
         }
 
-    # --- Team_Tiers: TEAMS ---
+    # ── Team_Tiers: TEAMS ────────────────────────────────────────────────────
     ws2 = wb['Team_Tiers']
     h2 = [ws2.cell(1, c).value for c in range(1, ws2.max_column + 1)]
     col2 = {}
-    for i, h in enumerate(h2):
-        if h and h not in col2:   # first occurrence wins — sheet has duplicate headers
-            col2[h] = i + 1
+    for i, v in enumerate(h2):
+        if v and v not in col2:   # first-occurrence wins — sheet has duplicate headers at col 14
+            col2[v] = i + 1
 
     for r in range(2, ws2.max_row + 1):
         conf   = ws2.cell(r, col2['Conference']).value
-        team   = ws2.cell(r, col2['Team']).value
+        raw    = ws2.cell(r, col2['Team']).value
         psf    = ws2.cell(r, col2['PSF']).value
         tier   = ws2.cell(r, col2['Tier']).value
         finish = ws2.cell(r, col2['Finish']).value
         pts    = ws2.cell(r, col2['MenPoints']).value
-        if not conf or not team:
+        if not conf or not raw:
             continue
-        key = f"{conf}|{team}"
-        TEAMS[key] = {
-            'psf':        _float(psf) if psf is not None else 1.0,
-            'tier':       tier or '',
-            'finish':     finish,
-            'men_points': _float(pts),
+
+        # Apply name normalization
+        normalized = False
+        canonical = raw
+        if raw in TEAM_NAME_MAP:
+            canonical, reason = TEAM_NAME_MAP[raw]
+            normalized = True
+            NORMALIZATION_LOG.append({
+                'raw': raw, 'canonical': canonical,
+                'reason': reason, 'conference': conf, 'finish': finish,
+            })
+
+        team_rec = {
+            'conference':  conf,
+            'school':      canonical,
+            'raw_name':    raw,
+            'psf':         _float(psf) if psf is not None else 1.0,
+            'tier':        tier or '',
+            'finish':      finish,
+            'men_points':  _float(pts),
+            'normalized':  normalized,
         }
+        key = f"{conf}|{canonical}"
+        TEAMS[key] = team_rec
+        TEAMS_LIST.append(team_rec)
+
         if conf not in CONFERENCES:
             CONFERENCES[conf] = []
-        if team not in CONFERENCES[conf]:
-            CONFERENCES[conf].append(team)
+        if canonical not in CONFERENCES[conf]:
+            CONFERENCES[conf].append(canonical)
 
     # Sort teams within each conference by finish position
     for conf in CONFERENCES:
         CONFERENCES[conf].sort(
-            key=lambda t: TEAMS.get(f"{conf}|{t}", {}).get('finish') or 99
+            key=lambda s: TEAMS.get(f"{conf}|{s}", {}).get('finish') or 99
         )
 
 def _float(v):
@@ -82,7 +549,7 @@ def _float(v):
 load_data()
 
 # ---------------------------------------------------------------------------
-# Scoring engine (authoritative: Swimmer_Calcs formulas from workbook)
+# Scoring engine — all formulas from Swimmer_Calcs (workbook authoritative)
 # ---------------------------------------------------------------------------
 
 ALL_EVENTS = [
@@ -96,7 +563,7 @@ ALL_EVENTS = [
 ]
 
 def parse_time(s):
-    """Convert time string 'M:SS.ss' or 'SS.ss' to decimal seconds. Returns None if invalid."""
+    """'M:SS.ss' or 'SS.ss' → decimal seconds. Returns None if invalid."""
     if s is None:
         return None
     s = str(s).strip()
@@ -112,11 +579,11 @@ def parse_time(s):
 
 def estimate_place(sec, b):
     """
-    3-zone linear interpolation — matches Swimmer_Calcs formula exactly:
+    3-zone linear interpolation — workbook formula (Swimmer_Calcs):
       IF(C<=D, 1,
         IF(C<=E, 1+(C-D)/(E-D)*7,
-          IF(C<=F, 8+(C-E)/(F-E)*8,
-                   16+(C-F)/G)))
+          IF(C<=F, 8+(C-E)/(F-E)*8, 16+(C-F)/G)))
+    Cap at 1.0 when swimmer beats the champion.
     """
     first     = b['first']
     eighth    = b['eighth']
@@ -124,22 +591,22 @@ def estimate_place(sec, b):
     spp       = b['sec_per_place'] or 1.0
 
     if sec <= first:
-        return 1.0                                                      # faster than champion — cap at 1
+        return 1.0
     elif sec <= eighth:
-        denom = (eighth - first) if eighth != first else 1.0
-        return 1.0 + (sec - first) / denom * 7                         # zone 1-8
+        denom = (eighth - first) or 1.0
+        return 1.0 + (sec - first) / denom * 7
     elif sec <= sixteenth:
-        denom = (sixteenth - eighth) if sixteenth != eighth else 1.0
-        return 8.0 + (sec - eighth) / denom * 8                        # zone 8-16
+        denom = (sixteenth - eighth) or 1.0
+        return 8.0 + (sec - eighth) / denom * 8
     else:
-        return 16.0 + (sec - sixteenth) / spp                          # beyond 16th
+        return 16.0 + (sec - sixteenth) / spp
 
 def exp_points(place):
-    """MAX(0, MIN(20, 21 - place)) — from Swimmer_Calcs."""
+    """MAX(0, MIN(20, 21-place)) — workbook formula."""
     return max(0.0, min(20.0, 21.0 - place))
 
 def confidence_weight(place):
-    """Confidence multiplier from Swimmer_Calcs bubble-weighting."""
+    """Bubble confidence weighting — from Swimmer_Calcs."""
     if place <= 12:
         return 1.0
     elif place <= 14:
@@ -150,6 +617,7 @@ def confidence_weight(place):
         return 0.0
 
 def place_label(place):
+    """Display label for estimated place — per LOGIC_RULES.md thresholds."""
     if place <= 1.5:  return '🥇 Winner'
     if place <= 3.5:  return '🏅 Podium'
     if place <= 8.5:  return 'A Final'
@@ -158,6 +626,7 @@ def place_label(place):
     return 'Out of range'
 
 def tier_label(pts):
+    """Swim tier from adjPts — workbook formula thresholds."""
     if pts < 1:   return 'Moonshot'
     if pts < 4:   return 'Reach'
     if pts < 10:  return 'Recruitable'
@@ -166,80 +635,197 @@ def tier_label(pts):
     if pts < 50:  return 'Conference Star'
     return 'High-Point Contender'
 
-def score_swimmer(times_input, conference, team):
+def admission_chance(school, sat, gpa, swim_tier, psf):
     """
-    Run full scoring pipeline for one swimmer at one school.
-
-    times_input: dict {event_name: time_string}
-    conference:  string
-    team:        string (must match Team_Tiers exactly)
-
-    Returns structured result dict.
+    admissionChance() — deterministic, per LOGIC_RULES.md section 8.
+    Returns dict: {label, color, total, acadScore, swimScore}
     """
-    team_key = f"{conference}|{team}"
+    meta = SCHOOL_META.get(school)
+
+    if not meta:
+        return {'label': 'Unknown', 'color': '#94A3B8', 'total': None,
+                'acadScore': None, 'swimScore': None}
+
+    if meta.get('moonshot'):
+        return {'label': 'Moonshot — Apply for Fun', 'color': '#6B7280',
+                'total': None, 'acadScore': None, 'swimScore': None}
+
+    sat_median = meta.get('satMedian', 1200)
+    accept     = meta.get('accept', 50)
+
+    # Academic score — Step 1: SAT differential
+    sat_diff = sat - sat_median
+    if sat_diff >= 80:   acad = 4
+    elif sat_diff >= 30: acad = 3
+    elif sat_diff >= -30: acad = 2
+    elif sat_diff >= -80: acad = 1
+    else:                 acad = 0
+
+    # Step 2: GPA bonus
+    if gpa >= 3.9:
+        acad += 1
+
+    # Step 3: Acceptance rate bonus
+    if accept > 60:
+        acad += 1
+
+    # Swim score — inverse to program prestige
+    if psf <= 0.78:   swim = 1
+    elif psf <= 0.85: swim = 2
+    elif psf <= 1.00: swim = 3
+    else:             swim = 4
+
+    # Swim tier bonus
+    if swim_tier in ('High-Point Contender', 'Conference Star'):
+        swim += 2
+    elif swim_tier in ('Likely Commit', 'Priority Recruit'):
+        swim += 1
+
+    total = acad + swim
+
+    if total >= 9:   label, color = 'Virtual Lock',         '#059669'
+    elif total >= 8: label, color = 'Very Strong Chance',   '#10B981'
+    elif total >= 7: label, color = 'Strong Chance',        '#34D399'
+    elif total >= 6: label, color = 'Realistic Shot',       '#2563EB'
+    elif total >= 5: label, color = 'Possible',             '#3B82F6'
+    elif total >= 4: label, color = 'Reach with Support',   '#F59E0B'
+    elif total >= 3: label, color = 'Major Reach',          '#EF4444'
+    else:            label, color = 'Extreme Reach',        '#DC2626'
+
+    return {'label': label, 'color': color, 'total': total,
+            'acadScore': acad, 'swimScore': swim}
+
+def score_all_schools(times, sat, gpa):
+    """
+    Score swimmer against all 76 programs. Returns ranked list sorted by adjPts desc.
+    Schools with rawPts == 0 are excluded (no scorable events in that conference).
+    """
+    results = []
+
+    for team in TEAMS_LIST:
+        conf   = team['conference']
+        school = team['school']
+        psf    = team['psf']
+
+        event_scores = []
+        for event, time_str in times.items():
+            sec = parse_time(time_str)
+            if sec is None:
+                continue
+
+            bench = BENCHMARKS.get(f"{conf}|{event}")
+            if bench is None:
+                continue  # event not benchmarked in this conference
+
+            place = estimate_place(sec, bench)
+            ep    = exp_points(place)
+            cw    = confidence_weight(place)
+            ap    = ep * cw
+
+            event_scores.append({
+                'event':      event,
+                'sec':        round(sec, 3),
+                'place':      round(place, 2),
+                'placeLabel': place_label(place),
+                'expPoints':  round(ep, 2),
+                'confidence': cw,
+                'adjPoints':  round(ap, 2),
+            })
+
+        # Sort by adjPoints descending; top-3 contribute to score
+        event_scores.sort(key=lambda e: e['adjPoints'], reverse=True)
+        top3     = event_scores[:3]
+        raw_pts  = round(sum(e['adjPoints'] for e in top3), 2)
+
+        if raw_pts == 0:
+            continue   # no scorable events at this conference — exclude entirely
+
+        adj_pts  = round(raw_pts * psf, 2)
+        adj_tier = tier_label(adj_pts)
+        adm      = admission_chance(school, sat, gpa, adj_tier, psf)
+        meta     = SCHOOL_META.get(school, {})
+
+        results.append({
+            'school':      school,
+            'conference':  conf,
+            'finish':      team['finish'],
+            'tier':        team['tier'],
+            'psf':         psf,
+            'rawPts':      raw_pts,
+            'adjPts':      adj_pts,
+            'adjTier':     adj_tier,
+            'top3':        top3,
+            'allEvents':   event_scores,
+            'admission':   adm,
+            'hiddenIvy':   meta.get('hiddenIvy', False),
+            'stem':        meta.get('stem', False),
+            'merit':       meta.get('merit', ''),
+            'accept':      meta.get('accept'),
+            'satMedian':   meta.get('satMedian'),
+            'location':    meta.get('location', ''),
+            'vibe':        meta.get('vibe', ''),
+            'hasMeta':     bool(meta),
+            'normalized':  team['normalized'],
+            'rawName':     team['raw_name'],
+        })
+
+    results.sort(key=lambda r: r['adjPts'], reverse=True)
+    return results
+
+def score_one_school(times, conference, team):
+    """Score a single school — for the manual calculator panel."""
+    team_key  = f"{conference}|{team}"
     team_data = TEAMS.get(team_key)
-    psf = team_data['psf'] if team_data else 1.0
+    psf       = team_data['psf'] if team_data else 1.0
 
     event_results = []
-
-    for event, time_str in times_input.items():
+    for event, time_str in times.items():
         sec = parse_time(time_str)
         if sec is None:
             continue
 
-        bench_key = f"{conference}|{event}"
-        bench = BENCHMARKS.get(bench_key)
+        bench = BENCHMARKS.get(f"{conference}|{event}")
         if bench is None:
-            # Event not benchmarked in this conference — skip
             event_results.append({
-                'event':      event,
-                'time':       time_str,
-                'sec':        sec,
-                'place':      None,
-                'place_label': None,
-                'exp_points': None,
-                'confidence': None,
-                'adj_points': None,
-                'benchmarked': False,
+                'event': event, 'time': time_str,
+                'sec': sec, 'benchmarked': False,
             })
             continue
 
         place = estimate_place(sec, bench)
         ep    = exp_points(place)
-        conf  = confidence_weight(place)
-        ap    = ep * conf
+        cw    = confidence_weight(place)
+        ap    = ep * cw
 
         event_results.append({
-            'event':       event,
-            'time':        time_str,
+            'event':       event, 'time': time_str,
             'sec':         round(sec, 3),
             'place':       round(place, 2),
-            'place_label': place_label(place),
-            'exp_points':  round(ep, 2),
-            'confidence':  conf,
-            'adj_points':  round(ap, 2),
+            'placeLabel':  place_label(place),
+            'expPoints':   round(ep, 2),
+            'confidence':  cw,
+            'adjPoints':   round(ap, 2),
             'benchmarked': True,
         })
 
-    # Sort scored events by adj_points descending
-    scored = [e for e in event_results if e['benchmarked'] and e['adj_points'] is not None]
-    unscored = [e for e in event_results if not e['benchmarked']]
-    scored.sort(key=lambda e: e['adj_points'], reverse=True)
+    scored   = [e for e in event_results if e.get('benchmarked')]
+    unscored = [e for e in event_results if not e.get('benchmarked')]
+    scored.sort(key=lambda e: e['adjPoints'], reverse=True)
 
-    top3 = scored[:3]
-    raw_pts = sum(e['adj_points'] for e in top3)
-    adj_pts = raw_pts * psf
+    top3     = scored[:3]
+    raw_pts  = round(sum(e['adjPoints'] for e in top3), 2)
+    adj_pts  = round(raw_pts * psf, 2)
+    adj_tier = tier_label(adj_pts)
+    adm      = admission_chance(team, JAMES['sat'], JAMES['gpa'], adj_tier, psf)
 
     return {
-        'conference': conference,
-        'team':       team,
-        'psf':        psf,
+        'conference': conference, 'team': team, 'psf': psf,
         'tier':       team_data['tier'] if team_data else '',
         'events':     scored + unscored,
         'top3':       [e['event'] for e in top3],
-        'raw_pts':    round(raw_pts, 2),
-        'adj_pts':    round(adj_pts, 2),
-        'swim_tier':  tier_label(adj_pts),
+        'rawPts':     raw_pts, 'adjPts': adj_pts, 'swimTier': adj_tier,
+        'admission':  adm,
+        'normalized': team_data.get('normalized', False) if team_data else False,
     }
 
 # ---------------------------------------------------------------------------
@@ -252,20 +838,28 @@ def index():
 
 @app.route('/api/meta', methods=['GET'])
 def meta():
-    """Return all conferences and their teams for the UI dropdowns."""
     return jsonify({
-        'conferences': sorted(CONFERENCES.keys()),
-        'teams':       CONFERENCES,
-        'events':      ALL_EVENTS,
+        'conferences':       sorted(CONFERENCES.keys()),
+        'teams':             CONFERENCES,
+        'events':            ALL_EVENTS,
+        'normalizationLog':  NORMALIZATION_LOG,
+    })
+
+@app.route('/api/score-all', methods=['GET'])
+def score_all():
+    """Score James against all 76 programs. No request body needed."""
+    results = score_all_schools(JAMES['times'], JAMES['sat'], JAMES['gpa'])
+    return jsonify({
+        'profile': {k: v for k, v in JAMES.items() if k != 'vibe'},
+        'totalSchools': len(TEAMS_LIST),
+        'scoredSchools': len(results),
+        'results': results,
     })
 
 @app.route('/api/score', methods=['POST'])
 def score():
-    """Score a swimmer's times at a specific school/conference."""
-    data = request.json
-    if not data:
-        return jsonify({'error': 'No data provided'}), 400
-
+    """Score arbitrary times at a specific school — for the manual calculator."""
+    data       = request.json or {}
     conference = data.get('conference', '').strip()
     team       = data.get('team', '').strip()
     times      = data.get('times', {})
@@ -274,15 +868,20 @@ def score():
         return jsonify({'error': 'Conference is required'}), 400
     if not team:
         return jsonify({'error': 'Team is required'}), 400
-    if not times or not any(v and str(v).strip() for v in times.values()):
+    if not any(v and str(v).strip() for v in times.values()):
         return jsonify({'error': 'At least one event time is required'}), 400
 
-    result = score_swimmer(times, conference, team)
-    return jsonify(result)
+    return jsonify(score_one_school(times, conference, team))
 
 @app.route('/api/health', methods=['GET'])
 def health():
-    return jsonify({'status': 'ok', 'benchmarks': len(BENCHMARKS), 'teams': len(TEAMS)})
+    return jsonify({
+        'status':        'ok',
+        'benchmarks':    len(BENCHMARKS),
+        'teams':         len(TEAMS_LIST),
+        'schoolMeta':    len(SCHOOL_META),
+        'normalized':    len(NORMALIZATION_LOG),
+    })
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

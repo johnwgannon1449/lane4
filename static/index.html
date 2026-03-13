@@ -3,485 +3,699 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Lane4 — Swim Scoring Engine</title>
+  <title>Lane4 — Scoring Engine</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,600;0,700;0,800;1,300;1,600&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700;800&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
-      --blue:       #2563EB;
-      --blue-light: #EFF6FF;
-      --blue-mid:   #BFDBFE;
-      --navy:       #0F172A;
-      --slate:      #475569;
-      --muted:      #64748B;
-      --border:     #E2E8F0;
-      --bg:         #F8FAFC;
-      --white:      #ffffff;
-      --green:      #059669;
-      --green-bg:   #ECFDF5;
-      --green-bd:   #A7F3D0;
-      --amber:      #D97706;
-      --amber-bg:   #FFFBEB;
-      --red:        #EF4444;
+      --blue:   #2563EB; --blue-l: #EFF6FF; --blue-m: #BFDBFE;
+      --navy:   #0F172A; --slate:  #475569; --muted:  #64748B;
+      --border: #E2E8F0; --bg:     #F8FAFC; --white:  #ffffff;
+      --green:  #059669; --green-l:#ECFDF5;
+      --amber:  #D97706; --amber-l:#FFFBEB;
+      --red:    #EF4444; --red-l:  #FEF2F2;
+      --mono:   'JetBrains Mono', monospace;
     }
-
-    body {
-      font-family: 'Figtree', sans-serif;
-      background: var(--bg);
-      color: var(--navy);
-      min-height: 100vh;
-    }
+    body { font-family: 'Figtree', sans-serif; background: var(--bg); color: var(--navy); font-size: 14px; }
 
     /* NAV */
     nav {
-      position: sticky; top: 0; z-index: 10;
-      background: var(--white);
-      border-bottom: 1px solid var(--border);
-      padding: 0 1.5rem;
-      height: 52px;
-      display: flex; align-items: center; gap: 10px;
-    }
-    .nav-logo {
+      position: sticky; top: 0; z-index: 20;
+      background: var(--white); border-bottom: 1px solid var(--border);
+      padding: 0 1.25rem; height: 48px;
       display: flex; align-items: center; gap: 8px;
     }
-    .nav-logo svg { flex-shrink: 0; }
-    .nav-wordmark {
-      font-family: 'Fraunces', serif;
-      font-weight: 800; font-size: 1rem;
-      color: var(--navy); letter-spacing: -0.02em;
-    }
-    .nav-sub {
-      font-family: 'Figtree', sans-serif;
-      font-size: 0.78rem; color: var(--muted);
-    }
+    .logo { font-family: 'Fraunces', serif; font-weight: 800; font-size: 1rem; color: var(--navy); }
+    .logo-dot { color: var(--blue); }
+    .nav-sub { font-size: 0.75rem; color: var(--muted); }
 
     /* LAYOUT */
-    .container {
-      max-width: 720px;
-      margin: 0 auto;
-      padding: 2rem 1.5rem 4rem;
+    .wrap { max-width: 1200px; margin: 0 auto; padding: 1.5rem 1.25rem 4rem; }
+
+    /* SECTION HEADERS */
+    .section-hd {
+      font-family: 'Fraunces', serif; font-weight: 700; font-size: 1.05rem;
+      color: var(--navy); margin-bottom: 0.6rem;
+      display: flex; align-items: center; gap: 0.5rem;
     }
+    .section-sub { font-size: 0.75rem; color: var(--muted); font-weight: 400; font-family: 'Figtree', sans-serif; }
 
     /* CARDS */
     .card {
-      background: var(--white);
-      border: 1.5px solid var(--border);
-      border-radius: 14px;
-      padding: 1.25rem 1.4rem;
-      margin-bottom: 1.25rem;
+      background: var(--white); border: 1.5px solid var(--border);
+      border-radius: 12px; padding: 1rem 1.1rem; margin-bottom: 1.1rem;
     }
-    .card-label {
-      font-family: 'Figtree', sans-serif;
-      font-size: 0.68rem; font-weight: 700;
-      color: var(--muted); text-transform: uppercase;
-      letter-spacing: 0.08em;
-      margin-bottom: 1rem;
+    .card-lbl {
+      font-size: 0.65rem; font-weight: 700; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.75rem;
     }
 
-    /* SELECTORS */
-    .selector-row {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;
+    /* PROFILE STRIP */
+    .profile-strip {
+      display: flex; flex-wrap: wrap; gap: 1rem; align-items: center;
     }
-    .field { display: flex; flex-direction: column; gap: 5px; }
-    .field label {
-      font-size: 0.78rem; font-weight: 600; color: var(--slate);
+    .pstat { display: flex; flex-direction: column; gap: 2px; }
+    .pstat-val { font-family: 'Fraunces', serif; font-weight: 700; font-size: 1.1rem; color: var(--blue); }
+    .pstat-lbl { font-size: 0.65rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+    .pdivider { width: 1px; height: 32px; background: var(--border); }
+    .times-grid { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+    .tpill {
+      font-family: var(--mono); font-size: 0.75rem; font-weight: 500;
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: 6px; padding: 3px 8px; color: var(--slate);
     }
-    select, input[type="text"] {
-      padding: 9px 12px;
-      border: 1.5px solid var(--border);
-      border-radius: 8px;
-      font-family: 'Figtree', sans-serif;
-      font-size: 0.88rem;
-      color: var(--navy);
-      background: var(--white);
-      transition: border-color 0.15s, box-shadow 0.15s;
+    .tpill strong { color: var(--navy); }
+
+    /* NORMALIZATION ALERT */
+    .norm-alert {
+      background: #FFFBEB; border: 1px solid #FCD34D; border-radius: 10px;
+      padding: 0.75rem 1rem; margin-bottom: 1rem; font-size: 0.8rem;
     }
-    select:focus, input[type="text"]:focus {
-      outline: none;
-      border-color: var(--blue);
-      box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+    .norm-alert-hd { font-weight: 700; color: var(--amber); margin-bottom: 0.4rem; }
+    .norm-list { display: flex; flex-direction: column; gap: 3px; }
+    .norm-row { display: flex; gap: 0.5rem; align-items: baseline; color: var(--slate); }
+    .norm-raw { font-family: var(--mono); color: var(--red); font-size: 0.72rem; }
+    .norm-arrow { color: var(--muted); }
+    .norm-can { font-family: var(--mono); color: var(--green); font-size: 0.72rem; }
+    .norm-reason { color: var(--muted); font-size: 0.68rem; }
+
+    /* CONTROLS */
+    .controls { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; flex-wrap: wrap; }
+    .filter-input {
+      padding: 7px 10px; border: 1.5px solid var(--border); border-radius: 7px;
+      font-family: 'Figtree', sans-serif; font-size: 0.82rem;
+      color: var(--navy); background: var(--white); flex: 1; min-width: 180px; max-width: 260px;
+    }
+    .filter-input:focus { outline: none; border-color: var(--blue); }
+    .toggle-btn {
+      padding: 6px 12px; border: 1.5px solid var(--border); border-radius: 7px;
+      font-size: 0.78rem; font-weight: 600; cursor: pointer; background: var(--white);
+      color: var(--slate); transition: all 0.15s;
+    }
+    .toggle-btn.active { background: var(--blue); border-color: var(--blue); color: var(--white); }
+    .count-badge {
+      font-size: 0.72rem; color: var(--muted); padding-left: 0.25rem;
     }
 
-    /* EVENTS GRID */
-    .events-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 0.65rem;
+    /* RANKED TABLE */
+    .tbl-wrap { overflow-x: auto; }
+    table.rtbl { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
+    table.rtbl thead th {
+      position: sticky; top: 47px; background: var(--white);
+      font-size: 0.62rem; font-weight: 700; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 0.06em;
+      padding: 0 0.5rem 0.5rem; text-align: right;
+      border-bottom: 1.5px solid var(--border);
+      white-space: nowrap; cursor: pointer; user-select: none;
     }
-    .event-field { display: flex; flex-direction: column; gap: 4px; }
-    .event-field label {
-      font-size: 0.72rem; font-weight: 600; color: var(--slate);
-    }
-    .event-field input {
-      font-family: 'Fraunces', serif;
-      font-weight: 600; font-size: 0.9rem;
-    }
-    .event-field input::placeholder {
-      font-family: 'Figtree', sans-serif;
-      font-weight: 400; font-size: 0.8rem; color: #CBD5E1;
-    }
-
-    /* BUTTON */
-    .btn-calculate {
-      width: 100%; padding: 13px;
-      background: var(--blue);
-      color: var(--white);
-      border: none; border-radius: 10px;
-      font-family: 'Fraunces', serif;
-      font-weight: 700; font-size: 1rem;
-      cursor: pointer;
-      transition: opacity 0.15s, transform 0.1s;
-      letter-spacing: -0.01em;
-    }
-    .btn-calculate:hover:not(:disabled) { opacity: 0.9; transform: translateY(-1px); }
-    .btn-calculate:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-
-    /* RESULTS */
-    #results { display: none; }
-
-    .result-header {
-      display: flex; justify-content: space-between; align-items: flex-start;
-      margin-bottom: 1rem;
-    }
-    .result-school {
-      font-family: 'Fraunces', serif;
-      font-weight: 700; font-size: 1.2rem;
-      color: var(--navy);
-    }
-    .result-conf {
-      font-size: 0.75rem; color: var(--muted); margin-top: 2px;
-    }
-    .swim-tier-badge {
-      font-family: 'Fraunces', serif;
-      font-weight: 700; font-size: 0.82rem;
-      padding: 4px 12px;
-      border-radius: 20px;
-      background: var(--blue-light);
-      color: var(--blue);
+    table.rtbl thead th:first-child { text-align: left; }
+    table.rtbl thead th:hover { color: var(--blue); }
+    table.rtbl thead th.sort-asc::after  { content: ' ↑'; color: var(--blue); }
+    table.rtbl thead th.sort-desc::after { content: ' ↓'; color: var(--blue); }
+    table.rtbl tbody tr { border-bottom: 1px solid var(--bg); transition: background 0.1s; }
+    table.rtbl tbody tr:hover { background: #F8FAFC; }
+    table.rtbl td {
+      padding: 0.45rem 0.5rem; text-align: right; color: var(--slate);
       white-space: nowrap;
     }
+    table.rtbl td:first-child { text-align: left; }
+    .rank-num { color: var(--muted); font-size: 0.7rem; width: 28px; }
+    .school-name { color: var(--navy); font-weight: 600; }
+    .norm-flag {
+      display: inline-block; font-size: 0.6rem; vertical-align: middle;
+      background: var(--amber-l); color: var(--amber); border: 1px solid #FCD34D;
+      border-radius: 4px; padding: 0 4px; margin-left: 4px; line-height: 1.4;
+    }
+    .ivy-badge {
+      display: inline-block; font-size: 0.58rem; background: #EDE9FE; color: #7C3AED;
+      border-radius: 4px; padding: 0 4px; margin-left: 3px; vertical-align: middle;
+    }
+    .stem-badge {
+      display: inline-block; font-size: 0.58rem; background: var(--blue-l); color: var(--blue);
+      border-radius: 4px; padding: 0 4px; margin-left: 3px; vertical-align: middle;
+    }
+    .adj-pts { font-family: 'Fraunces', serif; font-weight: 700; color: var(--blue); }
+    .raw-pts { font-family: var(--mono); font-size: 0.72rem; color: var(--slate); }
+    .psf-val  { font-family: var(--mono); font-size: 0.72rem; }
+    .event-col { font-size: 0.7rem; color: var(--slate); }
+    code { font-family: var(--mono); font-size: 0.72rem; }
 
-    /* SCORE SUMMARY */
-    .score-summary {
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 1rem;
-      margin-bottom: 1rem;
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 0.5rem;
-      text-align: center;
-    }
-    .score-tile { padding: 0.5rem; }
-    .score-value {
-      font-family: 'Fraunces', serif;
-      font-weight: 800; font-size: 1.6rem;
-      color: var(--blue);
-      line-height: 1;
-    }
-    .score-label {
-      font-size: 0.65rem; font-weight: 700;
-      color: var(--muted); text-transform: uppercase;
-      letter-spacing: 0.06em; margin-top: 4px;
-    }
-    .score-divider {
-      width: 1px; background: var(--border);
-      align-self: stretch; margin: 8px 0;
+    /* TIER BADGES */
+    .tier-badge {
+      display: inline-block; font-size: 0.62rem; font-weight: 700;
+      padding: 2px 7px; border-radius: 5px; white-space: nowrap;
     }
 
-    /* EVENT TABLE */
-    .event-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.82rem;
-    }
-    .event-table th {
-      font-size: 0.65rem; font-weight: 700;
-      color: var(--muted); text-transform: uppercase;
-      letter-spacing: 0.06em;
-      padding: 0 0.5rem 0.6rem;
-      text-align: right;
-      border-bottom: 1px solid var(--border);
-    }
-    .event-table th:first-child { text-align: left; }
-    .event-table td {
-      padding: 0.55rem 0.5rem;
-      text-align: right;
-      border-bottom: 1px solid var(--bg);
-      color: var(--slate);
-    }
-    .event-table td:first-child { text-align: left; color: var(--navy); font-weight: 500; }
-    .event-table tr.top3-row td { background: #F0FDF4; }
-    .event-table tr.top3-row td:first-child { color: var(--green); font-weight: 700; }
-    .event-table tr.unscored td { color: #CBD5E1; }
-
-    .place-badge {
-      display: inline-block;
-      font-size: 0.68rem; font-weight: 700;
-      padding: 1px 7px; border-radius: 5px;
-      background: var(--blue-light); color: var(--blue);
-    }
-    .place-badge.winner   { background: #FEF3C7; color: #92400E; }
-    .place-badge.podium   { background: #FEF9C3; color: #854D0E; }
-    .place-badge.afinal   { background: var(--blue-light); color: var(--blue); }
-    .place-badge.bfinal   { background: #F1F5F9; color: var(--slate); }
-    .place-badge.bubble   { background: #FFF7ED; color: var(--amber); }
-    .place-badge.oor      { background: #FEF2F2; color: var(--red); }
-
-    .top3-label {
-      font-size: 0.65rem; font-weight: 700;
-      color: var(--green); text-transform: uppercase;
-      letter-spacing: 0.05em;
+    /* ADMISSION BADGE */
+    .adm-badge {
+      display: inline-block; font-size: 0.62rem; font-weight: 700;
+      padding: 2px 7px; border-radius: 5px; white-space: nowrap;
+      color: var(--white);
     }
 
-    /* ERROR */
-    .error-msg {
-      background: #FEF2F2; color: var(--red);
-      padding: 12px 16px; border-radius: 8px;
-      font-size: 0.88rem; border-left: 3px solid var(--red);
-      margin-top: 1rem;
-    }
+    /* EXPANDABLE ROW */
+    .expand-btn { cursor: pointer; color: var(--blue); font-size: 0.7rem; user-select: none; }
+    .detail-row td { background: #F8FAFC; padding: 0.5rem 0.75rem; }
+    .detail-tbl { width: 100%; border-collapse: collapse; font-size: 0.72rem; }
+    .detail-tbl td { padding: 3px 6px; color: var(--slate); text-align: right; border-bottom: 1px solid var(--border); }
+    .detail-tbl td:first-child { text-align: left; color: var(--navy); }
+    .detail-tbl tr.top3-row td { background: var(--green-l); }
+    .detail-tbl tr.top3-row td:first-child { color: var(--green); font-weight: 600; }
 
-    /* LOADING */
-    .spinner {
-      width: 20px; height: 20px;
-      border: 2.5px solid var(--border);
-      border-top-color: var(--blue);
-      border-radius: 50%;
-      animation: spin 0.7s linear infinite;
-      display: inline-block; vertical-align: middle;
-      margin-right: 8px;
+    /* PLACE LABEL COLORS */
+    .pl-winner { background: #FEF3C7; color: #92400E; }
+    .pl-podium  { background: #FEF9C3; color: #854D0E; }
+    .pl-afinal  { background: var(--blue-l); color: var(--blue); }
+    .pl-bfinal  { background: #F1F5F9; color: var(--slate); }
+    .pl-bubble  { background: var(--amber-l); color: var(--amber); }
+    .pl-oor     { background: var(--red-l); color: var(--red); }
+
+    /* CALC SECTION */
+    .calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .field { display: flex; flex-direction: column; gap: 4px; }
+    .field label { font-size: 0.75rem; font-weight: 600; color: var(--slate); }
+    select, input[type="text"] {
+      padding: 8px 10px; border: 1.5px solid var(--border); border-radius: 7px;
+      font-family: 'Figtree', sans-serif; font-size: 0.85rem; color: var(--navy); background: var(--white);
     }
+    select:focus, input[type="text"]:focus { outline: none; border-color: var(--blue); }
+    .events-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.55rem; margin-top: 0.75rem; }
+    .ef label { font-size: 0.7rem; font-weight: 600; color: var(--slate); display: block; margin-bottom: 3px; }
+    .ef input { font-family: var(--mono); font-weight: 500; }
+    .ef input::placeholder { font-family: 'Figtree'; font-weight: 400; color: #CBD5E1; font-size: 0.78rem; }
+    .btn-calc {
+      width: 100%; padding: 11px; margin-top: 1rem;
+      background: var(--blue); color: var(--white);
+      border: none; border-radius: 9px; font-family: 'Fraunces', serif; font-weight: 700; font-size: 0.95rem;
+      cursor: pointer; transition: opacity 0.15s;
+    }
+    .btn-calc:hover:not(:disabled) { opacity: 0.88; }
+    .btn-calc:disabled { opacity: 0.45; cursor: not-allowed; }
+
+    .calc-result { margin-top: 1rem; }
+    .cr-summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; margin-bottom: 0.75rem; }
+    .cr-tile { text-align: center; padding: 0.5rem; background: var(--bg); border-radius: 8px; border: 1px solid var(--border); }
+    .cr-val { font-family: 'Fraunces', serif; font-weight: 800; font-size: 1.4rem; color: var(--blue); }
+    .cr-lbl { font-size: 0.62rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin-top: 2px; }
+
+    .spinner { width: 16px; height: 16px; border: 2px solid var(--border); border-top-color: var(--blue); border-radius: 50%; animation: spin 0.7s linear infinite; display: inline-block; vertical-align: middle; margin-right: 6px; }
     @keyframes spin { to { transform: rotate(360deg); } }
+    .err { background: var(--red-l); color: var(--red); padding: 10px 14px; border-radius: 8px; font-size: 0.82rem; margin-top: 0.75rem; border-left: 3px solid var(--red); }
 
-    @media (max-width: 560px) {
-      .events-grid { grid-template-columns: repeat(2, 1fr); }
-      .selector-row { grid-template-columns: 1fr; }
-      .score-summary { grid-template-columns: 1fr; }
+    @media (max-width: 640px) {
+      .events-grid { grid-template-columns: repeat(2,1fr); }
+      .calc-grid { grid-template-columns: 1fr; }
+      .cr-summary { grid-template-columns: repeat(2,1fr); }
     }
   </style>
 </head>
 <body>
-
 <nav>
-  <div class="nav-logo">
-    <!-- Lane4 logo: blue rectangle with 3 white bars -->
-    <svg width="22" height="18" viewBox="0 0 22 18" fill="none">
-      <rect width="22" height="18" rx="3" fill="#2563EB"/>
-      <rect x="3" y="4" width="16" height="2" rx="1" fill="white"/>
-      <rect x="3" y="8" width="16" height="2" rx="1" fill="white"/>
-      <rect x="3" y="12" width="16" height="2" rx="1" fill="white"/>
-    </svg>
-    <span class="nav-wordmark">Lane4</span>
-    <span class="nav-sub">· Swim Analysis Engine</span>
-  </div>
+  <span class="logo">Lane<span class="logo-dot">4</span></span>
+  <span class="nav-sub">· Deterministic Scoring Engine</span>
 </nav>
 
-<div class="container">
+<div class="wrap">
 
-  <!-- SCHOOL SELECTOR -->
-  <div class="card">
-    <div class="card-label">Select a School</div>
-    <div class="selector-row">
-      <div class="field">
-        <label for="conf-select">Conference</label>
-        <select id="conf-select">
-          <option value="">Loading…</option>
-        </select>
-      </div>
-      <div class="field">
-        <label for="team-select">Program</label>
-        <select id="team-select" disabled>
-          <option value="">Select conference first</option>
-        </select>
-      </div>
-    </div>
-  </div>
-
-  <!-- EVENT TIMES -->
-  <div class="card">
-    <div class="card-label">Swimmer Event Times (SCY — leave blank to skip)</div>
-    <div class="events-grid" id="events-grid">
-      <!-- populated by JS -->
-    </div>
-  </div>
-
-  <!-- CALCULATE -->
-  <button class="btn-calculate" id="calc-btn" disabled>
-    Calculate Conference Fit →
-  </button>
-  <div id="error-msg" class="error-msg" style="display:none;"></div>
-
-  <!-- RESULTS -->
-  <div id="results">
-    <div class="card" style="margin-top:1.25rem;">
-
-      <div class="result-header">
-        <div>
-          <div class="result-school" id="r-school"></div>
-          <div class="result-conf" id="r-conf"></div>
-        </div>
-        <div class="swim-tier-badge" id="r-tier"></div>
-      </div>
-
-      <!-- score summary tiles -->
-      <div class="score-summary">
-        <div class="score-tile">
-          <div class="score-value" id="r-rawpts">—</div>
-          <div class="score-label">Top-3 Raw Pts</div>
-        </div>
-        <div class="score-tile">
-          <div class="score-value" id="r-psf" style="font-size:1.3rem;">—</div>
-          <div class="score-label">PSF</div>
-        </div>
-        <div class="score-tile">
-          <div class="score-value" id="r-adjpts" style="color:#059669;">—</div>
-          <div class="score-label">Adj Swim Score</div>
-        </div>
-      </div>
-
-      <!-- per-event table -->
-      <div class="card-label" style="margin-bottom:0.6rem;">Event Breakdown</div>
-      <table class="event-table">
-        <thead>
-          <tr>
-            <th>Event</th>
-            <th>Time</th>
-            <th>Est. Place</th>
-            <th>Outcome</th>
-            <th>Pts</th>
-            <th>Conf</th>
-            <th>Adj Pts</th>
-          </tr>
-        </thead>
-        <tbody id="event-tbody"></tbody>
-      </table>
-
-      <div style="margin-top:0.75rem; font-size:0.72rem; color:var(--muted); line-height:1.6;">
-        <strong>Adj Pts</strong> = MAX(0, MIN(20, 21−place)) × confidence weight (1.0 / 0.85 / 0.65 based on proximity to bubble) · Top-3 summed, then × PSF.
+  <!-- ── JAMES PROFILE ──────────────────────────────────────────────────── -->
+  <div class="card" id="profile-card" style="display:none;">
+    <div class="card-lbl">James — Hardcoded Swimmer Profile</div>
+    <div class="profile-strip">
+      <div class="pstat"><div class="pstat-val" id="p-gpa">—</div><div class="pstat-lbl">GPA</div></div>
+      <div class="pdivider"></div>
+      <div class="pstat"><div class="pstat-val" id="p-sat">—</div><div class="pstat-lbl">SAT</div></div>
+      <div class="pdivider"></div>
+      <div class="pstat"><div class="pstat-val" id="p-sat-proj">—</div><div class="pstat-lbl">Projected SAT</div></div>
+      <div class="pdivider"></div>
+      <div class="pstat"><div class="pstat-val" id="p-math">—</div><div class="pstat-lbl">Math SAT</div></div>
+      <div class="pdivider"></div>
+      <div class="pstat" style="flex:1;">
+        <div class="pstat-lbl" style="margin-bottom:4px;">Event Times (SCY)</div>
+        <div class="times-grid" id="p-times"></div>
       </div>
     </div>
   </div>
 
-</div><!-- end container -->
+  <!-- ── NORMALIZATION ALERT ────────────────────────────────────────────── -->
+  <div class="norm-alert" id="norm-alert" style="display:none;">
+    <div class="norm-alert-hd">⚠ 10 team names normalized from raw workbook values</div>
+    <div class="norm-list" id="norm-list"></div>
+  </div>
+
+  <!-- ── RANKED RESULTS ─────────────────────────────────────────────────── -->
+  <div class="section-hd" id="results-hd" style="display:none;">
+    James vs All D3 Programs
+    <span class="section-sub" id="results-sub"></span>
+  </div>
+
+  <div id="results-loading" style="color:var(--muted);padding:2rem 0;display:none;text-align:center;">
+    <span class="spinner"></span> Scoring James against all 76 programs…
+  </div>
+
+  <!-- Filter / toggle controls -->
+  <div class="controls" id="result-controls" style="display:none;">
+    <input type="text" class="filter-input" id="filter-input" placeholder="Filter by school or conference…" />
+    <button class="toggle-btn active" id="tog-all"    onclick="setFilter('all')">All</button>
+    <button class="toggle-btn"        id="tog-ivy"    onclick="setFilter('ivy')">Hidden Ivy</button>
+    <button class="toggle-btn"        id="tog-stem"   onclick="setFilter('stem')">STEM</button>
+    <button class="toggle-btn"        id="tog-merit"  onclick="setFilter('merit')">High Merit</button>
+    <button class="toggle-btn"        id="tog-norm"   onclick="setFilter('norm')">Normalized ⚠</button>
+    <span class="count-badge" id="count-badge"></span>
+  </div>
+
+  <div class="tbl-wrap" id="results-table-wrap" style="display:none;">
+    <table class="rtbl" id="rtbl">
+      <thead>
+        <tr>
+          <th data-col="rank"       class="sort-asc">#</th>
+          <th data-col="school"     style="text-align:left;">School</th>
+          <th data-col="conference">Conf</th>
+          <th data-col="finish">Fin</th>
+          <th data-col="top1Event"  style="text-align:left;">Top Event</th>
+          <th data-col="top1Place">Place</th>
+          <th data-col="top1Adj">Adj Pts</th>
+          <th data-col="top2Event"  style="text-align:left;">2nd Event</th>
+          <th data-col="top2Place">Place</th>
+          <th data-col="top2Adj">Adj Pts</th>
+          <th data-col="rawPts">Raw Pts</th>
+          <th data-col="psf">PSF</th>
+          <th data-col="adjPts">Adj Score</th>
+          <th data-col="adjTier">Swim Tier</th>
+          <th data-col="acadScore">Acad</th>
+          <th data-col="swimScore">Swim Boost</th>
+          <th data-col="admTotal">Adm Total</th>
+          <th data-col="admission">Admission</th>
+          <th data-col="accept">Accept%</th>
+          <th data-col="satMedian">SAT Med</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="rtbl-body"></tbody>
+    </table>
+  </div>
+
+  <!-- ── MANUAL CALCULATOR ─────────────────────────────────────────────── -->
+  <div style="margin-top:2rem;">
+    <div class="section-hd">Manual Calculator
+      <span class="section-sub">— Enter any times to score at any school</span>
+    </div>
+    <div class="card">
+      <div class="card-lbl">School</div>
+      <div class="calc-grid">
+        <div class="field">
+          <label>Conference</label>
+          <select id="c-conf"><option value="">Loading…</option></select>
+        </div>
+        <div class="field">
+          <label>Program</label>
+          <select id="c-team" disabled><option value="">Select conference first</option></select>
+        </div>
+      </div>
+      <div class="card-lbl" style="margin-top:1rem;">Event Times (SCY — leave blank to skip)</div>
+      <div class="events-grid" id="c-events"></div>
+      <button class="btn-calc" id="c-btn" disabled>Calculate →</button>
+      <div id="c-error" class="err" style="display:none;"></div>
+      <div id="c-result" class="calc-result" style="display:none;"></div>
+    </div>
+  </div>
+
+</div><!-- end wrap -->
 
 <script>
+// ── State ──────────────────────────────────────────────────────────────────
 let META = null;
+let ALL_RESULTS = [];    // full ranked list from /api/score-all
+let FILTER_MODE = 'all';
+let SORT_COL = 'rank';
+let SORT_DIR = 'asc';
 
-async function loadMeta() {
-  const res = await fetch('/api/meta');
-  META = await res.json();
+// ── Boot ──────────────────────────────────────────────────────────────────
+async function boot() {
+  // Load meta (conferences/teams/events + normalization log)
+  const mres = await fetch('/api/meta');
+  META = await mres.json();
 
-  const confSel = document.getElementById('conf-select');
+  // Render normalization alert
+  if (META.normalizationLog && META.normalizationLog.length) {
+    const el = document.getElementById('norm-alert');
+    const list = document.getElementById('norm-list');
+    META.normalizationLog.forEach(n => {
+      const row = document.createElement('div');
+      row.className = 'norm-row';
+      row.innerHTML = `
+        <span class="norm-raw">${esc(n.raw)}</span>
+        <span class="norm-arrow">→</span>
+        <span class="norm-can">${esc(n.canonical)}</span>
+        <span class="norm-reason">(${esc(n.reason)}, ${esc(n.conference)} #${n.finish})</span>`;
+      list.appendChild(row);
+    });
+    el.style.display = 'block';
+  }
+
+  // Populate manual calc dropdowns
+  buildCalcUI();
+
+  // Auto-score James
+  await loadJamesScores();
+}
+
+// ── James scoring ─────────────────────────────────────────────────────────
+async function loadJamesScores() {
+  document.getElementById('results-loading').style.display = 'block';
+  document.getElementById('results-hd').style.display = 'flex';
+
+  const res  = await fetch('/api/score-all');
+  const data = await res.json();
+
+  // Profile strip
+  const prof = data.profile;
+  document.getElementById('p-gpa').textContent   = prof.gpa;
+  document.getElementById('p-sat').textContent   = prof.sat;
+  document.getElementById('p-sat-proj').textContent = prof.satProjected;
+  document.getElementById('p-math').textContent  = prof.mathSat;
+  const tg = document.getElementById('p-times');
+  Object.entries(prof.times).forEach(([ev, t]) => {
+    if (!t) return;
+    const pill = document.createElement('span');
+    pill.className = 'tpill';
+    pill.innerHTML = `<strong>${esc(ev)}:</strong> ${esc(t)}`;
+    tg.appendChild(pill);
+  });
+  document.getElementById('profile-card').style.display = 'block';
+
+  document.getElementById('results-loading').style.display = 'none';
+
+  ALL_RESULTS = data.results;
+  document.getElementById('results-sub').textContent =
+    `${data.scoredSchools} of ${data.totalSchools} programs scored`;
+  document.getElementById('results-hd').style.display = 'flex';
+  document.getElementById('result-controls').style.display = 'flex';
+  document.getElementById('results-table-wrap').style.display = 'block';
+
+  renderTable();
+  wireSort();
+  document.getElementById('filter-input').addEventListener('input', renderTable);
+}
+
+// ── Table rendering ───────────────────────────────────────────────────────
+function renderTable() {
+  const query = document.getElementById('filter-input').value.toLowerCase();
+  let rows = ALL_RESULTS.filter(r => {
+    if (query && !r.school.toLowerCase().includes(query) && !r.conference.toLowerCase().includes(query))
+      return false;
+    if (FILTER_MODE === 'ivy')   return r.hiddenIvy;
+    if (FILTER_MODE === 'stem')  return r.stem;
+    if (FILTER_MODE === 'merit') return r.merit === 'high';
+    if (FILTER_MODE === 'norm')  return r.normalized;
+    return true;
+  });
+
+  // Apply sort
+  rows = sortRows(rows, SORT_COL, SORT_DIR);
+
+  document.getElementById('count-badge').textContent = `${rows.length} schools`;
+  const tbody = document.getElementById('rtbl-body');
+  tbody.innerHTML = '';
+
+  rows.forEach((r, i) => {
+    const origRank = ALL_RESULTS.indexOf(r) + 1;
+    const top1 = r.top3[0] || null;
+    const top2 = r.top3[1] || null;
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td class="rank-num">${origRank}</td>
+      <td class="school-name">
+        ${esc(r.school)}
+        ${r.normalized ? `<span class="norm-flag" title="Name normalized from: ${esc(r.rawName)}">⚠</span>` : ''}
+        ${r.hiddenIvy  ? `<span class="ivy-badge">Hidden Ivy</span>` : ''}
+        ${r.stem       ? `<span class="stem-badge">STEM</span>` : ''}
+      </td>
+      <td style="text-align:left;color:var(--muted);">${esc(r.conference)}</td>
+      <td>${r.finish}</td>
+      <td class="event-col" style="text-align:left;">${top1 ? esc(top1.event) : '—'}</td>
+      <td>${top1 ? placeCell(top1.place, top1.placeLabel) : '—'}</td>
+      <td><code>${top1 ? top1.adjPoints.toFixed(2) : '—'}</code></td>
+      <td class="event-col" style="text-align:left;">${top2 ? esc(top2.event) : '—'}</td>
+      <td>${top2 ? placeCell(top2.place, top2.placeLabel) : '—'}</td>
+      <td><code>${top2 ? top2.adjPoints.toFixed(2) : '—'}</code></td>
+      <td class="raw-pts">${r.rawPts.toFixed(2)}</td>
+      <td class="psf-val" style="color:${psfColor(r.psf)};">${r.psf.toFixed(2)}</td>
+      <td class="adj-pts">${r.adjPts.toFixed(1)}</td>
+      <td>${tierBadge(r.adjTier)}</td>
+      <td>${r.admission.acadScore ?? '—'}</td>
+      <td>${r.admission.swimScore ?? '—'}</td>
+      <td>${r.admission.total ?? '—'}</td>
+      <td>${admBadge(r.admission)}</td>
+      <td>${r.accept != null ? r.accept + '%' : '—'}</td>
+      <td>${r.satMedian ?? '—'}</td>
+      <td><span class="expand-btn" onclick="toggleDetail(this, ${origRank - 1})">▸</span></td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+function toggleDetail(btn, idx) {
+  const r = ALL_RESULTS[idx];
+  const existingDetail = btn.closest('tr').nextElementSibling;
+  if (existingDetail && existingDetail.classList.contains('detail-row')) {
+    existingDetail.remove();
+    btn.textContent = '▸';
+    return;
+  }
+  btn.textContent = '▾';
+  const detailTr = document.createElement('tr');
+  detailTr.className = 'detail-row';
+  const top3Events = new Set(r.top3.map(e => e.event));
+  const rows = r.allEvents.map(e => {
+    const isTop3 = top3Events.has(e.event);
+    return `<tr class="${isTop3 ? 'top3-row' : ''}">
+      <td>${isTop3 ? '▲ ' : ''}${esc(e.event)}</td>
+      <td><code>${secStr(e.sec)}</code></td>
+      <td>${e.place.toFixed(2)}</td>
+      <td>${placeCell(e.place, e.placeLabel)}</td>
+      <td>${e.expPoints.toFixed(2)}</td>
+      <td>${(e.confidence * 100).toFixed(0)}%</td>
+      <td>${isTop3 ? `<strong>${e.adjPoints.toFixed(2)}</strong>` : e.adjPoints.toFixed(2)}</td>
+    </tr>`;
+  }).join('');
+  detailTr.innerHTML = `<td colspan="21">
+    <table class="detail-tbl">
+      <thead><tr>
+        <th style="text-align:left;">Event</th><th>Time (sec)</th>
+        <th>Est Place</th><th>Outcome</th>
+        <th>Exp Pts</th><th>Conf</th><th>Adj Pts</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+    <div style="margin-top:6px;font-size:0.7rem;color:var(--muted);">
+      rawPts = ${r.rawPts.toFixed(2)} (top-3 sum) &nbsp;×&nbsp; PSF ${r.psf.toFixed(2)} = adjPts ${r.adjPts.toFixed(2)}
+      &nbsp;|&nbsp; acadScore ${r.admission.acadScore ?? '?'} + swimScore ${r.admission.swimScore ?? '?'} = ${r.admission.total ?? '?'} → ${r.admission.label}
+      ${r.normalized ? `&nbsp;|&nbsp; <span style="color:var(--amber);">⚠ Name normalized from: "${esc(r.rawName)}"</span>` : ''}
+    </div>
+  </td>`;
+  btn.closest('tr').after(detailTr);
+}
+
+// ── Filter toggles ────────────────────────────────────────────────────────
+function setFilter(mode) {
+  FILTER_MODE = mode;
+  ['all','ivy','stem','merit','norm'].forEach(m => {
+    document.getElementById(`tog-${m}`).classList.toggle('active', m === mode);
+  });
+  renderTable();
+}
+
+// ── Sort ─────────────────────────────────────────────────────────────────
+function wireSort() {
+  document.querySelectorAll('.rtbl thead th[data-col]').forEach(th => {
+    th.addEventListener('click', () => {
+      const col = th.dataset.col;
+      if (SORT_COL === col) {
+        SORT_DIR = SORT_DIR === 'asc' ? 'desc' : 'asc';
+      } else {
+        SORT_COL = col; SORT_DIR = 'desc';
+      }
+      document.querySelectorAll('.rtbl thead th').forEach(h => {
+        h.classList.remove('sort-asc','sort-desc');
+      });
+      th.classList.add(SORT_DIR === 'asc' ? 'sort-asc' : 'sort-desc');
+      renderTable();
+    });
+  });
+}
+
+function sortRows(rows, col, dir) {
+  const mult = dir === 'asc' ? 1 : -1;
+  return [...rows].sort((a, b) => {
+    let av, bv;
+    if (col === 'rank')      { av = ALL_RESULTS.indexOf(a); bv = ALL_RESULTS.indexOf(b); }
+    else if (col === 'school')      { av = a.school; bv = b.school; return mult * av.localeCompare(bv); }
+    else if (col === 'conference')  { av = a.conference; bv = b.conference; return mult * av.localeCompare(bv); }
+    else if (col === 'finish')      { av = a.finish; bv = b.finish; }
+    else if (col === 'adjPts')      { av = a.adjPts; bv = b.adjPts; }
+    else if (col === 'rawPts')      { av = a.rawPts; bv = b.rawPts; }
+    else if (col === 'psf')         { av = a.psf; bv = b.psf; }
+    else if (col === 'accept')      { av = a.accept ?? 999; bv = b.accept ?? 999; }
+    else if (col === 'satMedian')   { av = a.satMedian ?? 0; bv = b.satMedian ?? 0; }
+    else if (col === 'admTotal')    { av = a.admission.total ?? 0; bv = b.admission.total ?? 0; }
+    else if (col === 'acadScore')   { av = a.admission.acadScore ?? 0; bv = b.admission.acadScore ?? 0; }
+    else if (col === 'swimScore')   { av = a.admission.swimScore ?? 0; bv = b.admission.swimScore ?? 0; }
+    else if (col === 'top1Adj')     { av = a.top3[0]?.adjPoints ?? 0; bv = b.top3[0]?.adjPoints ?? 0; }
+    else if (col === 'top2Adj')     { av = a.top3[1]?.adjPoints ?? 0; bv = b.top3[1]?.adjPoints ?? 0; }
+    else if (col === 'top1Place')   { av = a.top3[0]?.place ?? 99; bv = b.top3[0]?.place ?? 99; }
+    else { return 0; }
+    return mult * (av - bv);
+  });
+}
+
+// ── Manual Calculator ──────────────────────────────────────────────────────
+function buildCalcUI() {
+  // Conference dropdown
+  const confSel = document.getElementById('c-conf');
   confSel.innerHTML = '<option value="">Select conference…</option>';
   META.conferences.forEach(c => {
-    const opt = document.createElement('option');
-    opt.value = c; opt.textContent = c;
-    confSel.appendChild(opt);
+    const o = document.createElement('option');
+    o.value = c; o.textContent = c;
+    confSel.appendChild(o);
   });
 
-  // Build event inputs
-  const grid = document.getElementById('events-grid');
+  confSel.addEventListener('change', () => {
+    const conf = confSel.value;
+    const teamSel = document.getElementById('c-team');
+    teamSel.innerHTML = '<option value="">Select program…</option>';
+    teamSel.disabled = !conf;
+    if (conf && META.teams[conf]) {
+      META.teams[conf].forEach(t => {
+        const o = document.createElement('option');
+        o.value = t; o.textContent = t;
+        teamSel.appendChild(o);
+      });
+      teamSel.disabled = false;
+    }
+    calcReady();
+  });
+
+  document.getElementById('c-team').addEventListener('change', calcReady);
+
+  // Event inputs
+  const grid = document.getElementById('c-events');
   META.events.forEach(ev => {
-    const div = document.createElement('div');
-    div.className = 'event-field';
-    div.innerHTML = `
-      <label>${ev}</label>
-      <input type="text" data-event="${ev}" placeholder="e.g. 4:37.00" autocomplete="off" />
-    `;
-    grid.appendChild(div);
+    const d = document.createElement('div');
+    d.className = 'ef';
+    d.innerHTML = `<label>${esc(ev)}</label><input type="text" data-event="${esc(ev)}" placeholder="e.g. 4:37.00" />`;
+    grid.appendChild(d);
   });
-
-  // Wire event inputs to enable/disable calc button
-  grid.querySelectorAll('input').forEach(inp => {
-    inp.addEventListener('input', checkCalcReady);
-  });
-
-  document.getElementById('calc-btn').disabled = false;
+  grid.querySelectorAll('input').forEach(i => i.addEventListener('input', calcReady));
 }
 
-document.getElementById('conf-select').addEventListener('change', function() {
-  const conf = this.value;
-  const teamSel = document.getElementById('team-select');
-  teamSel.innerHTML = '<option value="">Select program…</option>';
-  teamSel.disabled = !conf;
+function calcReady() {
+  const conf = document.getElementById('c-conf').value;
+  const team = document.getElementById('c-team').value;
+  const hasTimes = [...document.querySelectorAll('#c-events input')].some(i => i.value.trim());
+  document.getElementById('c-btn').disabled = !(conf && team && hasTimes);
+}
 
-  if (conf && META && META.teams[conf]) {
-    META.teams[conf].forEach(t => {
-      const opt = document.createElement('option');
-      opt.value = t; opt.textContent = t;
-      teamSel.appendChild(opt);
-    });
-    teamSel.disabled = false;
-  }
-  checkCalcReady();
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('c-btn').addEventListener('click', runCalc);
 });
 
-document.getElementById('team-select').addEventListener('change', checkCalcReady);
-
-function checkCalcReady() {
-  const conf = document.getElementById('conf-select').value;
-  const team = document.getElementById('team-select').value;
-  const hasTimes = [...document.querySelectorAll('#events-grid input')]
-    .some(i => i.value.trim());
-  document.getElementById('calc-btn').disabled = !(conf && team && hasTimes);
-}
-
-document.getElementById('calc-btn').addEventListener('click', async () => {
-  const conf = document.getElementById('conf-select').value;
-  const team = document.getElementById('team-select').value;
+async function runCalc() {
+  const conf  = document.getElementById('c-conf').value;
+  const team  = document.getElementById('c-team').value;
   const times = {};
-  document.querySelectorAll('#events-grid input').forEach(inp => {
-    const v = inp.value.trim();
-    if (v) times[inp.dataset.event] = v;
+  document.querySelectorAll('#c-events input').forEach(i => {
+    if (i.value.trim()) times[i.dataset.event] = i.value.trim();
   });
-
-  const btn = document.getElementById('calc-btn');
-  const errDiv = document.getElementById('error-msg');
-  errDiv.style.display = 'none';
-  btn.innerHTML = '<span class="spinner"></span> Calculating…';
+  const btn = document.getElementById('c-btn');
+  const errEl = document.getElementById('c-error');
+  const resEl = document.getElementById('c-result');
+  errEl.style.display = 'none';
+  resEl.style.display = 'none';
+  btn.innerHTML = '<span class="spinner"></span>Calculating…';
   btn.disabled = true;
 
   try {
     const res = await fetch('/api/score', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ conference: conf, team, times })
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({conference: conf, team, times}),
     });
-    const data = await res.json();
-
-    if (data.error) {
-      errDiv.textContent = data.error;
-      errDiv.style.display = 'block';
-    } else {
-      renderResults(data);
-    }
-  } catch (e) {
-    errDiv.textContent = 'Request failed. Is the server running?';
-    errDiv.style.display = 'block';
+    const d = await res.json();
+    if (d.error) { errEl.textContent = d.error; errEl.style.display = 'block'; }
+    else renderCalcResult(d, resEl);
+  } catch(e) {
+    errEl.textContent = 'Request failed.'; errEl.style.display = 'block';
   } finally {
-    btn.innerHTML = 'Calculate Conference Fit →';
-    btn.disabled = false;
-    checkCalcReady();
+    btn.innerHTML = 'Calculate →'; calcReady();
   }
-});
+}
 
-function renderResults(d) {
-  document.getElementById('results').style.display = 'block';
-  document.getElementById('r-school').textContent = d.team;
-  document.getElementById('r-conf').textContent = d.conference + (d.tier ? ' · ' + d.tier : '');
-  document.getElementById('r-tier').textContent = d.swim_tier;
-  document.getElementById('r-rawpts').textContent = d.raw_pts.toFixed(1);
-  document.getElementById('r-psf').textContent = '×' + d.psf.toFixed(2);
-  document.getElementById('r-adjpts').textContent = d.adj_pts.toFixed(1);
+function renderCalcResult(d, el) {
+  const scored   = d.events.filter(e => e.benchmarked);
+  const unscored = d.events.filter(e => !e.benchmarked);
+  const top3Set  = new Set(d.top3);
 
-  // Color the tier badge
-  const tierBadge = document.getElementById('r-tier');
-  const tierColors = {
+  el.innerHTML = `
+    <div class="card-lbl">${esc(d.team)} · ${esc(d.conference)} · ${esc(d.tier)}</div>
+    <div class="cr-summary">
+      <div class="cr-tile"><div class="cr-val">${d.rawPts.toFixed(1)}</div><div class="cr-lbl">Raw Pts (top-3)</div></div>
+      <div class="cr-tile"><div class="cr-val">×${d.psf.toFixed(2)}</div><div class="cr-lbl">PSF</div></div>
+      <div class="cr-tile"><div class="cr-val" style="color:var(--green);">${d.adjPts.toFixed(1)}</div><div class="cr-lbl">Adj Score</div></div>
+      <div class="cr-tile"><div class="cr-val" style="font-size:0.9rem;">${tierBadge(d.swimTier)}</div><div class="cr-lbl">Swim Tier</div></div>
+    </div>
+    <div style="font-size:0.72rem;color:var(--muted);margin-bottom:0.75rem;">
+      Admission (James): acadScore=${d.admission.acadScore ?? '?'} + swimScore=${d.admission.swimScore ?? '?'} = ${d.admission.total ?? '?'}
+      → <span style="color:${d.admission.color};font-weight:700;">${esc(d.admission.label)}</span>
+      ${d.normalized ? `&nbsp;<span style="color:var(--amber);">⚠ Name normalized</span>` : ''}
+    </div>
+    <table class="detail-tbl" style="width:100%;">
+      <thead><tr><th style="text-align:left;">Event</th><th>Time</th><th>Place</th><th>Outcome</th><th>Exp Pts</th><th>Conf</th><th>Adj Pts</th></tr></thead>
+      <tbody>
+        ${scored.map(e => `<tr class="${top3Set.has(e.event) ? 'top3-row' : ''}">
+          <td>${top3Set.has(e.event) ? '▲ ' : ''}${esc(e.event)}</td>
+          <td><code>${esc(e.time)}</code></td>
+          <td>${e.place.toFixed(2)}</td>
+          <td>${placeCell(e.place, e.placeLabel)}</td>
+          <td>${e.expPoints.toFixed(2)}</td>
+          <td>${(e.confidence*100).toFixed(0)}%</td>
+          <td>${top3Set.has(e.event) ? `<strong>${e.adjPoints.toFixed(2)}</strong>` : e.adjPoints.toFixed(2)}</td>
+        </tr>`).join('')}
+        ${unscored.map(e => `<tr style="opacity:0.4;">
+          <td>${esc(e.event)}</td><td><code>${esc(e.time)}</code></td>
+          <td colspan="5" style="text-align:left;font-size:0.68rem;color:var(--muted);">Not benchmarked in ${esc(d.conference)}</td>
+        </tr>`).join('')}
+      </tbody>
+    </table>`;
+  el.style.display = 'block';
+}
+
+// ── Helpers ───────────────────────────────────────────────────────────────
+function esc(s) {
+  if (s == null) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function secStr(sec) {
+  if (sec < 60) return sec.toFixed(2) + 's';
+  const m = Math.floor(sec/60);
+  const s = (sec - m*60).toFixed(2).padStart(5,'0');
+  return `${m}:${s}`;
+}
+
+function placeCell(place, label) {
+  const cls = label.includes('Winner') ? 'pl-winner' :
+              label.includes('Podium')  ? 'pl-podium'  :
+              label === 'A Final'       ? 'pl-afinal'  :
+              label === 'B Final'       ? 'pl-bfinal'  :
+              label === 'Bubble'        ? 'pl-bubble'  : 'pl-oor';
+  return `<span class="tier-badge ${cls}">${esc(label)}</span>`;
+}
+
+function tierBadge(t) {
+  const map = {
     'High-Point Contender': ['#059669','#ECFDF5'],
     'Conference Star':      ['#2563EB','#EFF6FF'],
     'Likely Commit':        ['#2563EB','#EFF6FF'],
@@ -490,55 +704,22 @@ function renderResults(d) {
     'Reach':                ['#EF4444','#FEF2F2'],
     'Moonshot':             ['#94A3B8','#F8FAFC'],
   };
-  const [tc, tbg] = tierColors[d.swim_tier] || ['#64748B','#F1F5F9'];
-  tierBadge.style.color = tc;
-  tierBadge.style.background = tbg;
-
-  const tbody = document.getElementById('event-tbody');
-  tbody.innerHTML = '';
-
-  d.events.forEach(ev => {
-    const isTop3 = d.top3.includes(ev.event);
-    const tr = document.createElement('tr');
-    if (!ev.benchmarked) {
-      tr.className = 'unscored';
-      tr.innerHTML = `
-        <td>${ev.event}</td>
-        <td>${ev.time}</td>
-        <td colspan="5" style="text-align:left;font-size:0.72rem;color:#CBD5E1;">Not benchmarked in ${d.conference}</td>
-      `;
-    } else {
-      if (isTop3) tr.className = 'top3-row';
-      const plBadge = placeBadgeClass(ev.place_label);
-      tr.innerHTML = `
-        <td>
-          ${isTop3 ? `<div class="top3-label">▲ Top 3</div>` : ''}
-          ${ev.event}
-        </td>
-        <td style="font-family:'Fraunces',serif;font-weight:600;">${ev.time}</td>
-        <td>${ev.place.toFixed(1)}</td>
-        <td><span class="place-badge ${plBadge}">${ev.place_label}</span></td>
-        <td>${ev.exp_points.toFixed(1)}</td>
-        <td>${(ev.confidence * 100).toFixed(0)}%</td>
-        <td style="font-weight:700;color:${isTop3 ? '#059669' : 'inherit'};">${ev.adj_points.toFixed(2)}</td>
-      `;
-    }
-    tbody.appendChild(tr);
-  });
-
-  document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  const [c, bg] = map[t] || ['#64748B','#F1F5F9'];
+  return `<span class="tier-badge" style="color:${c};background:${bg};">${esc(t)}</span>`;
 }
 
-function placeBadgeClass(label) {
-  if (label.includes('Winner')) return 'winner';
-  if (label.includes('Podium')) return 'podium';
-  if (label === 'A Final') return 'afinal';
-  if (label === 'B Final') return 'bfinal';
-  if (label === 'Bubble') return 'bubble';
-  return 'oor';
+function admBadge(adm) {
+  if (!adm || !adm.label) return '—';
+  return `<span class="adm-badge" style="background:${adm.color};">${esc(adm.label)}</span>`;
 }
 
-loadMeta();
+function psfColor(psf) {
+  if (psf <= 0.78) return '#EF4444';
+  if (psf <= 1.00) return '#64748B';
+  return '#059669';
+}
+
+boot();
 </script>
 </body>
 </html>
