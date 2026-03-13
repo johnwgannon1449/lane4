@@ -405,9 +405,9 @@ function renderTable() {
   let rows = ALL_RESULTS.filter(r => {
     if (query && !r.school.toLowerCase().includes(query) && !r.conference.toLowerCase().includes(query))
       return false;
-    if (FILTER_MODE === 'ivy')   return r.hiddenIvy;
-    if (FILTER_MODE === 'stem')  return r.stem;
-    if (FILTER_MODE === 'merit') return r.merit === 'high';
+    if (FILTER_MODE === 'ivy')   return r.meta.hiddenIvy;
+    if (FILTER_MODE === 'stem')  return r.meta.stem;
+    if (FILTER_MODE === 'merit') return r.meta.merit === 'high';
     if (FILTER_MODE === 'norm')  return r.normalized;
     return true;
   });
@@ -430,17 +430,17 @@ function renderTable() {
       <td class="school-name">
         ${esc(r.school)}
         ${r.normalized ? `<span class="norm-flag" title="Name normalized from: ${esc(r.rawName)}">⚠</span>` : ''}
-        ${r.hiddenIvy  ? `<span class="ivy-badge">Hidden Ivy</span>` : ''}
-        ${r.stem       ? `<span class="stem-badge">STEM</span>` : ''}
+        ${r.meta.hiddenIvy ? `<span class="ivy-badge">Hidden Ivy</span>` : ''}
+        ${r.meta.stem      ? `<span class="stem-badge">STEM</span>` : ''}
       </td>
       <td style="text-align:left;color:var(--muted);">${esc(r.conference)}</td>
       <td>${r.finish}</td>
       <td class="event-col" style="text-align:left;">${top1 ? esc(top1.event) : '—'}</td>
       <td>${top1 ? placeCell(top1.place, top1.placeLabel) : '—'}</td>
-      <td><code>${top1 ? top1.adjPoints.toFixed(2) : '—'}</code></td>
+      <td><code>${top1 ? top1.pts.toFixed(2) : '—'}</code></td>
       <td class="event-col" style="text-align:left;">${top2 ? esc(top2.event) : '—'}</td>
       <td>${top2 ? placeCell(top2.place, top2.placeLabel) : '—'}</td>
-      <td><code>${top2 ? top2.adjPoints.toFixed(2) : '—'}</code></td>
+      <td><code>${top2 ? top2.pts.toFixed(2) : '—'}</code></td>
       <td class="raw-pts">${r.rawPts.toFixed(2)}</td>
       <td class="psf-val" style="color:${psfColor(r.psf)};">${r.psf.toFixed(2)}</td>
       <td class="adj-pts">${r.adjPts.toFixed(1)}</td>
@@ -449,8 +449,8 @@ function renderTable() {
       <td>${r.admission.swimScore ?? '—'}</td>
       <td>${r.admission.total ?? '—'}</td>
       <td>${admBadge(r.admission)}</td>
-      <td>${r.accept != null ? r.accept + '%' : '—'}</td>
-      <td>${r.satMedian ?? '—'}</td>
+      <td>${r.meta.accept != null ? r.meta.accept + '%' : '—'}</td>
+      <td>${r.meta.satMedian ?? '—'}</td>
       <td><span class="expand-btn" onclick="toggleDetail(this, ${origRank - 1})">▸</span></td>
     `;
     tbody.appendChild(tr);
@@ -476,9 +476,9 @@ function toggleDetail(btn, idx) {
       <td><code>${secStr(e.sec)}</code></td>
       <td>${e.place.toFixed(2)}</td>
       <td>${placeCell(e.place, e.placeLabel)}</td>
-      <td>${e.expPoints.toFixed(2)}</td>
+      <td>${e.expPts.toFixed(2)}</td>
       <td>${(e.confidence * 100).toFixed(0)}%</td>
-      <td>${isTop3 ? `<strong>${e.adjPoints.toFixed(2)}</strong>` : e.adjPoints.toFixed(2)}</td>
+      <td>${isTop3 ? `<strong>${e.pts.toFixed(2)}</strong>` : e.pts.toFixed(2)}</td>
     </tr>`;
   }).join('');
   detailTr.innerHTML = `<td colspan="21">
@@ -538,13 +538,13 @@ function sortRows(rows, col, dir) {
     else if (col === 'adjPts')      { av = a.adjPts; bv = b.adjPts; }
     else if (col === 'rawPts')      { av = a.rawPts; bv = b.rawPts; }
     else if (col === 'psf')         { av = a.psf; bv = b.psf; }
-    else if (col === 'accept')      { av = a.accept ?? 999; bv = b.accept ?? 999; }
-    else if (col === 'satMedian')   { av = a.satMedian ?? 0; bv = b.satMedian ?? 0; }
+    else if (col === 'accept')      { av = a.meta.accept ?? 999; bv = b.meta.accept ?? 999; }
+    else if (col === 'satMedian')   { av = a.meta.satMedian ?? 0; bv = b.meta.satMedian ?? 0; }
     else if (col === 'admTotal')    { av = a.admission.total ?? 0; bv = b.admission.total ?? 0; }
     else if (col === 'acadScore')   { av = a.admission.acadScore ?? 0; bv = b.admission.acadScore ?? 0; }
     else if (col === 'swimScore')   { av = a.admission.swimScore ?? 0; bv = b.admission.swimScore ?? 0; }
-    else if (col === 'top1Adj')     { av = a.top3[0]?.adjPoints ?? 0; bv = b.top3[0]?.adjPoints ?? 0; }
-    else if (col === 'top2Adj')     { av = a.top3[1]?.adjPoints ?? 0; bv = b.top3[1]?.adjPoints ?? 0; }
+    else if (col === 'top1Adj')     { av = a.top3[0]?.pts ?? 0; bv = b.top3[0]?.pts ?? 0; }
+    else if (col === 'top2Adj')     { av = a.top3[1]?.pts ?? 0; bv = b.top3[1]?.pts ?? 0; }
     else if (col === 'top1Place')   { av = a.top3[0]?.place ?? 99; bv = b.top3[0]?.place ?? 99; }
     else { return 0; }
     return mult * (av - bv);
@@ -659,9 +659,9 @@ function renderCalcResult(d, el) {
           <td><code>${esc(e.time)}</code></td>
           <td>${e.place.toFixed(2)}</td>
           <td>${placeCell(e.place, e.placeLabel)}</td>
-          <td>${e.expPoints.toFixed(2)}</td>
+          <td>${e.expPts.toFixed(2)}</td>
           <td>${(e.confidence*100).toFixed(0)}%</td>
-          <td>${top3Set.has(e.event) ? `<strong>${e.adjPoints.toFixed(2)}</strong>` : e.adjPoints.toFixed(2)}</td>
+          <td>${top3Set.has(e.event) ? `<strong>${e.pts.toFixed(2)}</strong>` : e.pts.toFixed(2)}</td>
         </tr>`).join('')}
         ${unscored.map(e => `<tr style="opacity:0.4;">
           <td>${esc(e.event)}</td><td><code>${esc(e.time)}</code></td>

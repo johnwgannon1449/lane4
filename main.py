@@ -550,6 +550,22 @@ load_data()
 
 # ---------------------------------------------------------------------------
 # Scoring engine — all formulas from Swimmer_Calcs (workbook authoritative)
+#
+# Layer architecture (clean separation for later admissions layer):
+#
+#   SWIM LAYER  ──  _score_event()  →  EventScore
+#                   _score_school_swim()  →  SwimResult
+#
+#   ADMISSION LAYER  ──  admission_chance(school, sat, gpa, adj_tier, psf)  →  AdmissionResult
+#                        (takes SwimResult outputs + academic inputs; returns {label, color, …})
+#
+#   FULL PIPELINE  ──  score_all_schools(times, sat, gpa)  →  [SchoolResult …]
+#                      (SwimResult + SCHOOL_META nested as `meta` + AdmissionResult)
+#
+# Output field names follow OUTPUT_SCHEMA.md exactly:
+#   EventScore:  { event, sec, place, pts }   (+ expPts, confidence, placeLabel for tracing)
+#   SchoolResult: { school, conference, tier, psf, rawPts, adjPts, adjTier,
+#                   top3, allEvents, admission, meta, normalized, rawName }
 # ---------------------------------------------------------------------------
 
 ALL_EVENTS = [
@@ -562,8 +578,10 @@ ALL_EVENTS = [
     '50 Breast (Relay Split)',
 ]
 
+# ── Primitives ─────────────────────────────────────────────────────────────
+
 def parse_time(s):
-    """'M:SS.ss' or 'SS.ss' → decimal seconds. Returns None if invalid."""
+    """'M:SS.ss' or 'SS.ss' → decimal seconds. Returns None if invalid/missing."""
     if s is None:
         return None
     s = str(s).strip()
@@ -571,8 +589,8 @@ def parse_time(s):
         return None
     try:
         if ':' in s:
-            parts = s.split(':', 1)
-            return float(parts[0]) * 60 + float(parts[1])
+            m, sec = s.split(':', 1)
+            return float(m) * 60 + float(sec)
         return float(s)
     except ValueError:
         return None
@@ -580,10 +598,13 @@ def parse_time(s):
 def estimate_place(sec, b):
     """
     3-zone linear interpolation — workbook formula (Swimmer_Calcs):
-      IF(C<=D, 1,
-        IF(C<=E, 1+(C-D)/(E-D)*7,
-          IF(C<=F, 8+(C-E)/(F-E)*8, 16+(C-F)/G)))
-    Cap at 1.0 when swimmer beats the champion.
+
+      Zone 1  sec <= first      → 1.0          (capped; workbook IF behaviour)
+      Zone 2  sec <= eighth     → 1 + (sec-1st)/(8th-1st) * 7
+      Zone 3  sec <= sixteenth  → 8 + (sec-8th)/(16th-8th) * 8
+      Zone 4  sec > sixteenth   → 16 + (sec-16th) / secPerPlace
+
+    Returns a continuous float. No upper ceiling.
     """
     first     = b['first']
     eighth    = b['eighth']
@@ -592,32 +613,28 @@ def estimate_place(sec, b):
 
     if sec <= first:
         return 1.0
-    elif sec <= eighth:
-        denom = (eighth - first) or 1.0
-        return 1.0 + (sec - first) / denom * 7
-    elif sec <= sixteenth:
-        denom = (sixteenth - eighth) or 1.0
-        return 8.0 + (sec - eighth) / denom * 8
-    else:
-        return 16.0 + (sec - sixteenth) / spp
+    if sec <= eighth:
+        return 1.0 + (sec - first)  / ((eighth    - first)    or 1.0) * 7
+    if sec <= sixteenth:
+        return 8.0 + (sec - eighth) / ((sixteenth  - eighth)   or 1.0) * 8
+    return 16.0 + (sec - sixteenth) / spp
 
 def exp_points(place):
-    """MAX(0, MIN(20, 21-place)) — workbook formula."""
+    """MAX(0, MIN(20, 21−place)) — workbook formula. Continuous float."""
     return max(0.0, min(20.0, 21.0 - place))
 
 def confidence_weight(place):
-    """Bubble confidence weighting — from Swimmer_Calcs."""
-    if place <= 12:
-        return 1.0
-    elif place <= 14:
-        return 0.85
-    elif place <= 16:
-        return 0.65
-    else:
-        return 0.0
+    """
+    Bubble-zone confidence discount — from Swimmer_Calcs.
+    Full weight for A/B finalists; discounted for bubble; zero below 16th.
+    """
+    if place <= 12: return 1.0
+    if place <= 14: return 0.85
+    if place <= 16: return 0.65
+    return 0.0
 
 def place_label(place):
-    """Display label for estimated place — per LOGIC_RULES.md thresholds."""
+    """Human-readable place outcome — OUTPUT_SCHEMA thresholds."""
     if place <= 1.5:  return '🥇 Winner'
     if place <= 3.5:  return '🏅 Podium'
     if place <= 8.5:  return 'A Final'
@@ -626,7 +643,10 @@ def place_label(place):
     return 'Out of range'
 
 def tier_label(pts):
-    """Swim tier from adjPts — workbook formula thresholds."""
+    """
+    Swim tier from adjPts — workbook thresholds (authoritative over spec).
+    Called with rawPts for display and adjPts for the canonical tier.
+    """
     if pts < 1:   return 'Moonshot'
     if pts < 4:   return 'Reach'
     if pts < 10:  return 'Recruitable'
@@ -635,197 +655,270 @@ def tier_label(pts):
     if pts < 50:  return 'Conference Star'
     return 'High-Point Contender'
 
-def admission_chance(school, sat, gpa, swim_tier, psf):
+# ── Swim layer ──────────────────────────────────────────────────────────────
+
+def _score_event(event, time_str, conf):
     """
-    admissionChance() — deterministic, per LOGIC_RULES.md section 8.
-    Returns dict: {label, color, total, acadScore, swimScore}
+    Score one event for one conference.
+    Returns an EventScore dict or None if no benchmark / no valid time.
+
+    EventScore (OUTPUT_SCHEMA):
+      event      — event name
+      sec        — time in decimal seconds
+      place      — estimated decimal finish place
+      pts        — confidence-weighted points (workbook: expPts × confidence)
+                   NOTE: spec defines pts as integer from placeToPoints() lookup;
+                   workbook uses continuous formula — workbook is authoritative.
+      expPts     — points before confidence discount (for tracing)
+      confidence — confidence multiplier applied (for tracing)
+      placeLabel — human-readable outcome
+    """
+    sec = parse_time(time_str)
+    if sec is None:
+        return None
+
+    bench = BENCHMARKS.get(f"{conf}|{event}")
+    if bench is None:
+        return None   # event not benchmarked in this conference
+
+    place  = estimate_place(sec, bench)
+    exp_pt = exp_points(place)
+    cw     = confidence_weight(place)
+    pts    = exp_pt * cw               # workbook weighted value → spec's `pts` field
+
+    return {
+        'event':      event,
+        'sec':        round(sec, 3),
+        'place':      round(place, 2),
+        'pts':        round(pts, 2),   # OUTPUT_SCHEMA field name
+        'expPts':     round(exp_pt, 2),
+        'confidence': cw,
+        'placeLabel': place_label(place),
+    }
+
+def _score_school_swim(team_rec, times):
+    """
+    Pure swim-value layer for one school.
+
+    Input:  team_rec (from TEAMS_LIST), times dict from swimmer profile
+    Output: SwimResult dict, or None if the swimmer has no scorable events here.
+
+    SwimResult fields (OUTPUT_SCHEMA — swim-layer subset):
+      school, conference, finish, tier, psf
+      rawPts   — sum of top-3 pts values
+      adjPts   — rawPts × psf
+      adjTier  — tier label from adjPts
+      top3     — up to 3 highest-scoring EventScore objects
+      allEvents — all scored EventScore objects, sorted pts desc
+      normalized, rawName — provenance flags
+    """
+    conf   = team_rec['conference']
+    school = team_rec['school']
+    psf    = team_rec['psf']
+
+    all_events = []
+    for event, time_str in times.items():
+        es = _score_event(event, time_str, conf)
+        if es is not None:
+            all_events.append(es)
+
+    # Sort by pts descending; top-3 drive rawPts
+    all_events.sort(key=lambda e: e['pts'], reverse=True)
+    top3    = all_events[:3]
+    raw_pts = round(sum(e['pts'] for e in top3), 2)
+
+    if raw_pts == 0:
+        return None   # zero-score guardrail — school excluded from results
+
+    adj_pts  = round(raw_pts * psf, 2)
+    adj_tier = tier_label(adj_pts)
+
+    return {
+        'school':     school,
+        'conference': conf,
+        'finish':     team_rec['finish'],
+        'tier':       team_rec['tier'],
+        'psf':        psf,
+        'rawPts':     raw_pts,
+        'adjPts':     adj_pts,
+        'adjTier':    adj_tier,
+        'top3':       top3,
+        'allEvents':  all_events,
+        'normalized': team_rec['normalized'],
+        'rawName':    team_rec['raw_name'],
+    }
+
+# ── Admission layer ─────────────────────────────────────────────────────────
+
+def admission_chance(school, sat, gpa, adj_tier, psf):
+    """
+    Deterministic admission scoring — per LOGIC_RULES.md section 8.
+    Consumes swim-layer outputs (adj_tier, psf) + academic profile (sat, gpa).
+
+    Returns AdmissionResult:
+      label      — one of 9 admission labels  (OUTPUT_SCHEMA)
+      color      — hex color for UI
+      total      — raw numeric score (debug)
+      acadScore  — academic sub-score (debug)
+      swimScore  — swim sub-score (debug)
     """
     meta = SCHOOL_META.get(school)
 
-    if not meta:
-        return {'label': 'Unknown', 'color': '#94A3B8', 'total': None,
-                'acadScore': None, 'swimScore': None}
+    if meta is None:
+        return {'label': 'Unknown', 'color': '#94A3B8',
+                'total': None, 'acadScore': None, 'swimScore': None}
 
     if meta.get('moonshot'):
         return {'label': 'Moonshot — Apply for Fun', 'color': '#6B7280',
                 'total': None, 'acadScore': None, 'swimScore': None}
 
-    sat_median = meta.get('satMedian', 1200)
-    accept     = meta.get('accept', 50)
+    sat_median = meta['satMedian']
+    accept     = meta['accept']
 
-    # Academic score — Step 1: SAT differential
+    # Academic score
     sat_diff = sat - sat_median
-    if sat_diff >= 80:   acad = 4
-    elif sat_diff >= 30: acad = 3
+    if sat_diff >= 80:    acad = 4
+    elif sat_diff >= 30:  acad = 3
     elif sat_diff >= -30: acad = 2
     elif sat_diff >= -80: acad = 1
     else:                 acad = 0
 
-    # Step 2: GPA bonus
-    if gpa >= 3.9:
-        acad += 1
+    if gpa >= 3.9:     acad += 1   # GPA bonus
+    if accept > 60:    acad += 1   # accessibility bonus
 
-    # Step 3: Acceptance rate bonus
-    if accept > 60:
-        acad += 1
+    # Swim score (inverse to program prestige — workbook PSF values: 0.70, 0.78, 1.00, 1.10, 1.20)
+    if psf <= 0.78:   swim = 1    # elite — coach has least admissions leverage
+    elif psf <= 0.85: swim = 2    # (placeholder; no school currently has psf=0.85)
+    elif psf <= 1.00: swim = 3    # mid-tier
+    else:             swim = 4    # weaker program — maximum coach leverage
 
-    # Swim score — inverse to program prestige
-    if psf <= 0.78:   swim = 1
-    elif psf <= 0.85: swim = 2
-    elif psf <= 1.00: swim = 3
-    else:             swim = 4
-
-    # Swim tier bonus
-    if swim_tier in ('High-Point Contender', 'Conference Star'):
-        swim += 2
-    elif swim_tier in ('Likely Commit', 'Priority Recruit'):
-        swim += 1
+    if adj_tier in ('High-Point Contender', 'Conference Star'):  swim += 2
+    elif adj_tier in ('Likely Commit', 'Priority Recruit'):      swim += 1
 
     total = acad + swim
 
-    if total >= 9:   label, color = 'Virtual Lock',         '#059669'
-    elif total >= 8: label, color = 'Very Strong Chance',   '#10B981'
-    elif total >= 7: label, color = 'Strong Chance',        '#34D399'
-    elif total >= 6: label, color = 'Realistic Shot',       '#2563EB'
-    elif total >= 5: label, color = 'Possible',             '#3B82F6'
-    elif total >= 4: label, color = 'Reach with Support',   '#F59E0B'
-    elif total >= 3: label, color = 'Major Reach',          '#EF4444'
-    else:            label, color = 'Extreme Reach',        '#DC2626'
+    if total >= 9:   label, color = 'Virtual Lock',        '#059669'
+    elif total >= 8: label, color = 'Very Strong Chance',  '#10B981'
+    elif total >= 7: label, color = 'Strong Chance',       '#34D399'
+    elif total >= 6: label, color = 'Realistic Shot',      '#2563EB'
+    elif total >= 5: label, color = 'Possible',            '#3B82F6'
+    elif total >= 4: label, color = 'Reach with Support',  '#F59E0B'
+    elif total >= 3: label, color = 'Major Reach',         '#EF4444'
+    else:            label, color = 'Extreme Reach',       '#DC2626'
 
-    return {'label': label, 'color': color, 'total': total,
-            'acadScore': acad, 'swimScore': swim}
+    return {'label': label, 'color': color,
+            'total': total, 'acadScore': acad, 'swimScore': swim}
+
+# ── Full pipeline ───────────────────────────────────────────────────────────
 
 def score_all_schools(times, sat, gpa):
     """
-    Score swimmer against all 76 programs. Returns ranked list sorted by adjPts desc.
-    Schools with rawPts == 0 are excluded (no scorable events in that conference).
+    Score swimmer against all 76 programs.
+    Returns list of SchoolResult dicts sorted by adjPts descending.
+
+    Pipeline: swim layer → meta lookup → admission layer.
+    Schools with rawPts == 0 (zero scorable events) are excluded entirely.
+
+    SchoolResult (OUTPUT_SCHEMA):
+      school, conference, tier, psf
+      rawPts, adjPts, adjTier
+      top3, allEvents
+      admission  — AdmissionResult { label, color, total*, acadScore*, swimScore* }
+      meta       — SchoolMeta nested object { accept, satMedian, hiddenIvy, stem,
+                   merit, location, vibe, moonshot? }
+      normalized, rawName  — provenance
     """
     results = []
 
-    for team in TEAMS_LIST:
-        conf   = team['conference']
-        school = team['school']
-        psf    = team['psf']
+    for team_rec in TEAMS_LIST:
+        # ── Swim layer
+        swim = _score_school_swim(team_rec, times)
+        if swim is None:
+            continue
 
-        event_scores = []
-        for event, time_str in times.items():
-            sec = parse_time(time_str)
-            if sec is None:
-                continue
+        # ── Meta lookup (feeds admission layer and UI display)
+        meta_raw = SCHOOL_META.get(swim['school'], {})
+        meta = {
+            'accept':    meta_raw.get('accept'),
+            'satMedian': meta_raw.get('satMedian'),
+            'hiddenIvy': meta_raw.get('hiddenIvy', False),
+            'stem':      meta_raw.get('stem', False),
+            'merit':     meta_raw.get('merit', ''),
+            'location':  meta_raw.get('location', ''),
+            'vibe':      meta_raw.get('vibe', ''),
+        }
+        if meta_raw.get('moonshot'):
+            meta['moonshot'] = True
 
-            bench = BENCHMARKS.get(f"{conf}|{event}")
-            if bench is None:
-                continue  # event not benchmarked in this conference
+        # ── Admission layer (consumes swim outputs + academic profile)
+        adm = admission_chance(swim['school'], sat, gpa, swim['adjTier'], swim['psf'])
 
-            place = estimate_place(sec, bench)
-            ep    = exp_points(place)
-            cw    = confidence_weight(place)
-            ap    = ep * cw
-
-            event_scores.append({
-                'event':      event,
-                'sec':        round(sec, 3),
-                'place':      round(place, 2),
-                'placeLabel': place_label(place),
-                'expPoints':  round(ep, 2),
-                'confidence': cw,
-                'adjPoints':  round(ap, 2),
-            })
-
-        # Sort by adjPoints descending; top-3 contribute to score
-        event_scores.sort(key=lambda e: e['adjPoints'], reverse=True)
-        top3     = event_scores[:3]
-        raw_pts  = round(sum(e['adjPoints'] for e in top3), 2)
-
-        if raw_pts == 0:
-            continue   # no scorable events at this conference — exclude entirely
-
-        adj_pts  = round(raw_pts * psf, 2)
-        adj_tier = tier_label(adj_pts)
-        adm      = admission_chance(school, sat, gpa, adj_tier, psf)
-        meta     = SCHOOL_META.get(school, {})
-
+        # ── Assemble SchoolResult (OUTPUT_SCHEMA shape)
         results.append({
-            'school':      school,
-            'conference':  conf,
-            'finish':      team['finish'],
-            'tier':        team['tier'],
-            'psf':         psf,
-            'rawPts':      raw_pts,
-            'adjPts':      adj_pts,
-            'adjTier':     adj_tier,
-            'top3':        top3,
-            'allEvents':   event_scores,
-            'admission':   adm,
-            'hiddenIvy':   meta.get('hiddenIvy', False),
-            'stem':        meta.get('stem', False),
-            'merit':       meta.get('merit', ''),
-            'accept':      meta.get('accept'),
-            'satMedian':   meta.get('satMedian'),
-            'location':    meta.get('location', ''),
-            'vibe':        meta.get('vibe', ''),
-            'hasMeta':     bool(meta),
-            'normalized':  team['normalized'],
-            'rawName':     team['raw_name'],
+            **swim,              # school, conference, finish, tier, psf,
+                                 # rawPts, adjPts, adjTier, top3, allEvents,
+                                 # normalized, rawName
+            'admission': adm,    # { label, color, total, acadScore, swimScore }
+            'meta':      meta,   # nested SchoolMeta object
         })
 
     results.sort(key=lambda r: r['adjPts'], reverse=True)
     return results
 
-def score_one_school(times, conference, team):
-    """Score a single school — for the manual calculator panel."""
-    team_key  = f"{conference}|{team}"
-    team_data = TEAMS.get(team_key)
-    psf       = team_data['psf'] if team_data else 1.0
+def score_one_school(times, conference, school):
+    """
+    Score arbitrary times at one specific school — for the manual calculator.
+    Runs the same swim + admission pipeline as score_all_schools() for one school.
+    """
+    team_key  = f"{conference}|{school}"
+    team_rec  = TEAMS.get(team_key)
+    if team_rec is None:
+        return {'error': f'School "{school}" not found in {conference}'}
 
-    event_results = []
+    # Swim layer — also collect unscored events for display
+    scored, unscored = [], []
     for event, time_str in times.items():
         sec = parse_time(time_str)
         if sec is None:
             continue
+        es = _score_event(event, time_str, conference)
+        if es is not None:
+            scored.append({**es, 'time': time_str, 'benchmarked': True})
+        else:
+            unscored.append({'event': event, 'time': time_str,
+                             'sec': sec, 'benchmarked': False})
 
-        bench = BENCHMARKS.get(f"{conference}|{event}")
-        if bench is None:
-            event_results.append({
-                'event': event, 'time': time_str,
-                'sec': sec, 'benchmarked': False,
-            })
-            continue
-
-        place = estimate_place(sec, bench)
-        ep    = exp_points(place)
-        cw    = confidence_weight(place)
-        ap    = ep * cw
-
-        event_results.append({
-            'event':       event, 'time': time_str,
-            'sec':         round(sec, 3),
-            'place':       round(place, 2),
-            'placeLabel':  place_label(place),
-            'expPoints':   round(ep, 2),
-            'confidence':  cw,
-            'adjPoints':   round(ap, 2),
-            'benchmarked': True,
-        })
-
-    scored   = [e for e in event_results if e.get('benchmarked')]
-    unscored = [e for e in event_results if not e.get('benchmarked')]
-    scored.sort(key=lambda e: e['adjPoints'], reverse=True)
-
-    top3     = scored[:3]
-    raw_pts  = round(sum(e['adjPoints'] for e in top3), 2)
-    adj_pts  = round(raw_pts * psf, 2)
+    scored.sort(key=lambda e: e['pts'], reverse=True)
+    top3    = scored[:3]
+    raw_pts = round(sum(e['pts'] for e in top3), 2)
+    psf     = team_rec['psf']
+    adj_pts = round(raw_pts * psf, 2)
     adj_tier = tier_label(adj_pts)
-    adm      = admission_chance(team, JAMES['sat'], JAMES['gpa'], adj_tier, psf)
+    adm     = admission_chance(school, JAMES['sat'], JAMES['gpa'], adj_tier, psf)
+    meta_raw = SCHOOL_META.get(school, {})
 
     return {
-        'conference': conference, 'team': team, 'psf': psf,
-        'tier':       team_data['tier'] if team_data else '',
-        'events':     scored + unscored,
+        'school':     school,
+        'conference': conference,
+        'tier':       team_rec['tier'],
+        'psf':        psf,
+        'rawPts':     raw_pts,
+        'adjPts':     adj_pts,
+        'adjTier':    adj_tier,
         'top3':       [e['event'] for e in top3],
-        'rawPts':     raw_pts, 'adjPts': adj_pts, 'swimTier': adj_tier,
+        'events':     scored + unscored,
         'admission':  adm,
-        'normalized': team_data.get('normalized', False) if team_data else False,
+        'meta': {
+            'accept':    meta_raw.get('accept'),
+            'satMedian': meta_raw.get('satMedian'),
+            'hiddenIvy': meta_raw.get('hiddenIvy', False),
+            'stem':      meta_raw.get('stem', False),
+            'merit':     meta_raw.get('merit', ''),
+            'location':  meta_raw.get('location', ''),
+            'vibe':      meta_raw.get('vibe', ''),
+        },
+        'normalized': team_rec['normalized'],
+        'rawName':    team_rec['raw_name'],
     }
 
 # ---------------------------------------------------------------------------
