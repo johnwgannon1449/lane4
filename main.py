@@ -1215,10 +1215,10 @@ def search():
     if not query:
         return jsonify({'error': 'Query is required'}), 400
 
-    times = prof_ovr.get('times', JAMES['times'])
-    sat   = int(prof_ovr.get('sat',  JAMES['sat']))
-    gpa   = float(prof_ovr.get('gpa', JAMES['gpa']))
-    swimmer_name = prof_ovr.get('name', JAMES['name'])
+    times = prof_ovr.get('times') or JAMES['times']
+    sat   = int(prof_ovr.get('sat')  or JAMES['sat'])
+    gpa   = float(prof_ovr.get('gpa') or JAMES['gpa'])
+    swimmer_name = prof_ovr.get('name') or JAMES['name']
     all_results = score_all_schools(times, sat, gpa)
 
     # ── Direct school-name match ──────────────────────────────────────────
@@ -1343,10 +1343,10 @@ def deep_dive():
     if not school:
         return jsonify({'error': 'school is required'}), 400
 
-    times = prof_ovr.get('times', JAMES['times'])
-    sat   = int(prof_ovr.get('sat',  JAMES['sat']))
-    gpa   = float(prof_ovr.get('gpa', JAMES['gpa']))
-    swimmer_name     = prof_ovr.get('name',             JAMES['name'])
+    times = prof_ovr.get('times') or JAMES['times']
+    sat   = int(prof_ovr.get('sat')  or JAMES['sat'])
+    gpa   = float(prof_ovr.get('gpa') or JAMES['gpa'])
+    swimmer_name = prof_ovr.get('name') or JAMES['name']
     math_sat         = prof_ovr.get('mathSat',          JAMES.get('mathSat', ''))
     sat_projected    = prof_ovr.get('satProjected',     JAMES.get('satProjected', ''))
     math_sat_proj    = prof_ovr.get('mathSatProjected', JAMES.get('mathSatProjected', ''))
@@ -1487,10 +1487,10 @@ def coach_email():
     if not school:
         return jsonify({'error': 'school is required'}), 400
 
-    times         = prof_ovr.get('times', JAMES['times'])
-    sat           = int(prof_ovr.get('sat',      JAMES['sat']))
-    gpa           = float(prof_ovr.get('gpa',    JAMES['gpa']))
-    swimmer_name  = prof_ovr.get('name',         JAMES['name'])
+    times         = prof_ovr.get('times') or JAMES['times']
+    sat           = int(prof_ovr.get('sat')  or JAMES['sat'])
+    gpa           = float(prof_ovr.get('gpa') or JAMES['gpa'])
+    swimmer_name  = prof_ovr.get('name') or JAMES['name']
     grad_year     = prof_ovr.get('gradYear',     '2026')
 
     all_results = score_all_schools(times, sat, gpa)
