@@ -1,10 +1,131 @@
 import os, json, re, time
-from flask import Flask, request, jsonify, send_from_directory
+from flask import Flask, request, jsonify, send_from_directory, session
 from dotenv import load_dotenv
+from functools import wraps
 import openpyxl
+import psycopg2
+import psycopg2.extras
+from werkzeug.security import generate_password_hash, check_password_hash
 
 load_dotenv()
 app = Flask(__name__, static_folder='static', static_url_path='')
+app.secret_key = os.environ.get('SESSION_SECRET', 'dev-secret-change-me')
+
+# ---------------------------------------------------------------------------
+# DATABASE
+# ---------------------------------------------------------------------------
+def get_db():
+    return psycopg2.connect(os.environ['DATABASE_URL'])
+
+def login_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        if 'user_id' not in session:
+            return jsonify({'error': 'Not authenticated'}), 401
+        return f(*args, **kwargs)
+    return decorated
+
+# ---------------------------------------------------------------------------
+# AUTH ENDPOINTS
+# ---------------------------------------------------------------------------
+@app.route('/api/auth/register', methods=['POST'])
+def auth_register():
+    body = request.get_json(silent=True) or {}
+    email    = (body.get('email') or '').strip().lower()
+    password = (body.get('password') or '').strip()
+    if not email or '@' not in email:
+        return jsonify({'error': 'A valid email is required.'}), 400
+    if len(password) < 8:
+        return jsonify({'error': 'Password must be at least 8 characters.'}), 400
+    pw_hash = generate_password_hash(password)
+    try:
+        with get_db() as conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    'INSERT INTO users (email, password_hash) VALUES (%s, %s) RETURNING id',
+                    (email, pw_hash)
+                )
+                user_id = cur.fetchone()[0]
+        session['user_id'] = user_id
+        session['email']   = email
+        return jsonify({'ok': True, 'email': email})
+    except psycopg2.errors.UniqueViolation:
+        return jsonify({'error': 'An account with that email already exists.'}), 409
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/auth/login', methods=['POST'])
+def auth_login():
+    body = request.get_json(silent=True) or {}
+    email    = (body.get('email') or '').strip().lower()
+    password = (body.get('password') or '').strip()
+    try:
+        with get_db() as conn:
+            with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+                cur.execute('SELECT id, password_hash FROM users WHERE email = %s', (email,))
+                row = cur.fetchone()
+        if not row or not check_password_hash(row['password_hash'], password):
+            return jsonify({'error': 'Incorrect email or password.'}), 401
+        session['user_id'] = row['id']
+        session['email']   = email
+        return jsonify({'ok': True, 'email': email})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/auth/logout', methods=['POST'])
+def auth_logout():
+    session.clear()
+    return jsonify({'ok': True})
+
+@app.route('/api/auth/me', methods=['GET'])
+def auth_me():
+    if 'user_id' not in session:
+        return jsonify({'authenticated': False}), 401
+    return jsonify({'authenticated': True, 'email': session.get('email'), 'user_id': session['user_id']})
+
+# ---------------------------------------------------------------------------
+# DATA SYNC ENDPOINTS
+# ---------------------------------------------------------------------------
+_ALLOWED_KEYS = {'swimmer', 'my_list', 'crm_data'}
+
+@app.route('/api/data/load', methods=['GET'])
+@login_required
+def data_load():
+    user_id = session['user_id']
+    try:
+        with get_db() as conn:
+            with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+                cur.execute(
+                    'SELECT data_key, data_value FROM sync_data WHERE user_id = %s',
+                    (user_id,)
+                )
+                rows = cur.fetchall()
+        result = {r['data_key']: r['data_value'] for r in rows}
+        return jsonify({'ok': True, 'data': result})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/data/save', methods=['POST'])
+@login_required
+def data_save():
+    user_id = session['user_id']
+    body    = request.get_json(silent=True) or {}
+    try:
+        with get_db() as conn:
+            with conn.cursor() as cur:
+                for key, value in body.items():
+                    if key not in _ALLOWED_KEYS:
+                        continue
+                    cur.execute(
+                        '''INSERT INTO sync_data (user_id, data_key, data_value, updated_at)
+                           VALUES (%s, %s, %s::jsonb, NOW())
+                           ON CONFLICT (user_id, data_key)
+                           DO UPDATE SET data_value = EXCLUDED.data_value, updated_at = NOW()''',
+                        (user_id, key, json.dumps(value))
+                    )
+        return jsonify({'ok': True})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 # ---------------------------------------------------------------------------
 # TEAM NAME NORMALIZATIONS

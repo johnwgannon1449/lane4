@@ -342,7 +342,7 @@
     }
 
     /* ── ONBOARDING OVERLAY ──────────────────────────────────── */
-    #onboarding-overlay {
+    #onboarding-overlay, #auth-overlay {
       position: fixed; inset: 0; z-index: 1000;
       background: linear-gradient(135deg, #EFF6FF 0%, #F8FAFC 60%, #EDE9FE 100%);
       display: flex; align-items: flex-start; justify-content: center;
@@ -399,6 +399,40 @@
   </style>
 </head>
 <body>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     AUTH OVERLAY — login / register, shown before everything else
+════════════════════════════════════════════════════════════════ -->
+<div id="auth-overlay" style="display:none;">
+  <div class="ob-card">
+    <div class="ob-logo">Lane<span>4</span></div>
+    <div class="ob-headline" id="auth-headline">Welcome back.</div>
+    <div class="ob-sub" id="auth-sub">Sign in to access your swimmer profile and school list.</div>
+
+    <div class="ob-section">
+      <div class="ob-field">
+        <label>Email address</label>
+        <input class="ob-input" id="auth-email" type="email" placeholder="family@example.com" autocomplete="email"
+          onkeydown="if(event.key==='Enter')document.getElementById('auth-password').focus()" />
+      </div>
+      <div class="ob-field">
+        <label>Password</label>
+        <input class="ob-input" id="auth-password" type="password" placeholder="••••••••" autocomplete="current-password"
+          onkeydown="if(event.key==='Enter')authSubmit()" />
+      </div>
+      <div id="auth-err" class="ob-err" style="margin-top:0.3rem;"></div>
+    </div>
+
+    <button class="ob-submit" id="auth-submit-btn" onclick="authSubmit()">Sign In →</button>
+    <div style="text-align:center;margin-top:0.9rem;">
+      <span id="auth-toggle-text" style="font-size:0.82rem;color:var(--muted);">No account yet?</span>
+      <button id="auth-toggle-btn" onclick="authToggleMode()" style="background:none;border:none;color:var(--blue);font-size:0.82rem;font-weight:600;cursor:pointer;padding:0 0 0 5px;text-decoration:underline;">Create one</button>
+    </div>
+    <div style="text-align:center;margin-top:0.6rem;font-size:0.73rem;color:var(--muted);">
+      🔒 One account per family. Your data is stored securely and tied to your login.
+    </div>
+  </div>
+</div>
 
 <!-- ═══════════════════════════════════════════════════════════════
      ONBOARDING OVERLAY — shown on first load if no swimmer in localStorage
@@ -565,8 +599,15 @@
     </div>
 
     <div class="danger-zone">
+      <div id="profile-account-row" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;padding-bottom:0.9rem;border-bottom:1px solid var(--border);">
+        <div>
+          <div style="font-size:0.75rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:0.15rem;">Signed in as</div>
+          <div id="profile-email" style="font-size:0.88rem;color:var(--text);font-weight:500;">—</div>
+        </div>
+        <button class="btn btn-sm" onclick="authLogout()" style="font-size:0.78rem;padding:6px 13px;background:none;border:1.5px solid var(--border);color:var(--muted);">Sign out</button>
+      </div>
       <div class="section-label" style="margin-bottom:0.5rem;">Switch swimmer</div>
-      <p style="font-size:0.83rem;color:var(--muted);margin-bottom:0.85rem;line-height:1.5;">Start fresh with a new swimmer profile. Your current list, reminders, and notes will be cleared from this browser.</p>
+      <p style="font-size:0.83rem;color:var(--muted);margin-bottom:0.85rem;line-height:1.5;">Start fresh with a new swimmer profile. Your current list, reminders, and notes will be replaced on this account.</p>
       <button class="btn btn-danger" onclick="confirmStartNewSwimmer()">Start New Swimmer</button>
     </div>
   </div>
@@ -667,6 +708,7 @@ function saveToStorage() {
     localStorage.setItem(LS_VIBE,       JSON.stringify(VIBE_STATE));
     localStorage.setItem(LS_OTHERPREFS, OTHER_PREFS);
   } catch(e) { console.warn('Storage save failed', e); }
+  schedulePush();
 }
 
 function loadFromStorage() {
@@ -886,21 +928,163 @@ function startNewSwimmer() {
   renderMyList();
   renderReminders();
   updateBadges();
+  // Immediately push cleared state to server so the account is reset
+  pushToServer();
   showOnboarding();
   showTab('explore');
+}
+
+// ════════════════════════════════════════════════════════════════
+// AUTH
+// ════════════════════════════════════════════════════════════════
+let AUTH_MODE     = 'login'; // 'login' | 'register'
+let CURRENT_USER  = null;    // { email, user_id } when logged in
+
+function showAuth() {
+  document.getElementById('auth-overlay').style.display = 'flex';
+}
+function hideAuth() {
+  document.getElementById('auth-overlay').style.display = 'none';
+}
+
+function authToggleMode() {
+  AUTH_MODE = AUTH_MODE === 'login' ? 'register' : 'login';
+  const isReg = AUTH_MODE === 'register';
+  document.getElementById('auth-headline').textContent  = isReg ? 'Create your account.' : 'Welcome back.';
+  document.getElementById('auth-sub').textContent       = isReg
+    ? 'One account per family. Your swimmer data will be saved and synced.'
+    : 'Sign in to access your swimmer profile and school list.';
+  document.getElementById('auth-submit-btn').textContent = isReg ? 'Create Account →' : 'Sign In →';
+  document.getElementById('auth-toggle-text').textContent = isReg ? 'Already have an account?' : 'No account yet?';
+  document.getElementById('auth-toggle-btn').textContent  = isReg ? 'Sign in' : 'Create one';
+  document.getElementById('auth-err').textContent = '';
+  document.getElementById('auth-password').autocomplete = isReg ? 'new-password' : 'current-password';
+}
+
+async function authSubmit() {
+  const email    = document.getElementById('auth-email').value.trim().toLowerCase();
+  const password = document.getElementById('auth-password').value;
+  const errEl    = document.getElementById('auth-err');
+  const btn      = document.getElementById('auth-submit-btn');
+  errEl.textContent = '';
+
+  const endpoint = AUTH_MODE === 'register' ? '/api/auth/register' : '/api/auth/login';
+  btn.disabled = true;
+  btn.textContent = AUTH_MODE === 'register' ? 'Creating…' : 'Signing in…';
+
+  try {
+    const res  = await fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    });
+    const data = await res.json();
+    if (!res.ok || !data.ok) {
+      errEl.textContent = data.error || 'Something went wrong. Please try again.';
+      btn.disabled = false;
+      btn.textContent = AUTH_MODE === 'register' ? 'Create Account →' : 'Sign In →';
+      return;
+    }
+    CURRENT_USER = { email: data.email };
+    hideAuth();
+    await afterAuthBoot();
+  } catch(e) {
+    errEl.textContent = 'Network error. Please check your connection.';
+    btn.disabled = false;
+    btn.textContent = AUTH_MODE === 'register' ? 'Create Account →' : 'Sign In →';
+  }
+}
+
+async function authLogout() {
+  if (!confirm('Sign out? Your data is saved and will be here when you return.')) return;
+  try { await fetch('/api/auth/logout', { method: 'POST' }); } catch(_) {}
+  CURRENT_USER = null;
+  // Clear in-memory state but keep localStorage so data reloads if they log back in
+  JAMES = {}; MY_LIST = []; CRM_DATA = {}; VIBE_STATE = {}; OTHER_PREFS = '';
+  ALL_RESULTS = []; ELIMINATED = []; LAST_RESULTS = null; LAST_QUERY = '';
+  clearStorage();
+  window.location.reload();
+}
+
+// ════════════════════════════════════════════════════════════════
+// SERVER SYNC  (debounced push to /api/data/save)
+// ════════════════════════════════════════════════════════════════
+let _syncTimer = null;
+
+function schedulePush() {
+  if (!CURRENT_USER) return;
+  clearTimeout(_syncTimer);
+  _syncTimer = setTimeout(pushToServer, 1500);
+}
+
+async function pushToServer() {
+  if (!CURRENT_USER) return;
+  try {
+    await fetch('/api/data/save', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        swimmer:  JAMES,
+        my_list:  MY_LIST,
+        crm_data: CRM_DATA,
+      }),
+    });
+  } catch(e) { console.warn('Server sync failed', e); }
+}
+
+async function loadFromServer() {
+  try {
+    const res  = await fetch('/api/data/load');
+    if (!res.ok) return false;
+    const body = await res.json();
+    const d    = body.data || {};
+    if (d.swimmer  && typeof d.swimmer  === 'object') JAMES    = d.swimmer;
+    if (d.my_list  && Array.isArray(d.my_list))       MY_LIST  = d.my_list;
+    if (d.crm_data && typeof d.crm_data === 'object') CRM_DATA = d.crm_data;
+    // Also pull vibe/other_prefs from localStorage as before (not yet DB-backed)
+    const vibe = localStorage.getItem('lane4_vibe');
+    if (vibe) VIBE_STATE = JSON.parse(vibe);
+    const op = localStorage.getItem('lane4_other_prefs');
+    if (op !== null) OTHER_PREFS = op;
+    return true;
+  } catch(e) { console.warn('Server load failed', e); return false; }
 }
 
 // ════════════════════════════════════════════════════════════════
 // BOOT
 // ════════════════════════════════════════════════════════════════
 async function boot() {
-  loadFromStorage();
+  // 1. Check if user is already logged in via session
+  try {
+    const res  = await fetch('/api/auth/me');
+    if (res.ok) {
+      const data = await res.json();
+      if (data.authenticated) {
+        CURRENT_USER = { email: data.email };
+      }
+    }
+  } catch(_) {}
 
+  if (!CURRENT_USER) {
+    showAuth();
+    return;
+  }
+
+  await afterAuthBoot();
+}
+
+async function afterAuthBoot() {
+  // 2. Load data from server (source of truth); fall back to localStorage
+  const serverOk = await loadFromServer();
+  if (!serverOk) loadFromStorage();
+
+  // 3. If no swimmer profile yet, show onboarding
   if (!JAMES.name) {
     showOnboarding();
     return;
   }
 
+  // 4. Score all schools with the swimmer's profile
   try {
     const res  = await fetch('/api/score-all', {
       method: 'POST',
@@ -909,9 +1093,7 @@ async function boot() {
     });
     const data = await res.json();
     ALL_RESULTS = data.results;
-  } catch(e) {
-    console.error('Boot score failed:', e);
-  }
+  } catch(e) { console.error('Boot score failed:', e); }
 
   const otherPrefsInput = document.getElementById('other-prefs-input');
   if (otherPrefsInput && OTHER_PREFS) otherPrefsInput.value = OTHER_PREFS;
@@ -921,6 +1103,7 @@ async function boot() {
   renderMyList();
   renderReminders();
   updateBadges();
+  renderLoggedInUser();
 }
 
 // ════════════════════════════════════════════════════════════════
@@ -1848,9 +2031,15 @@ async function doneEditTimes() {
 // ════════════════════════════════════════════════════════════════
 // PROFILE
 // ════════════════════════════════════════════════════════════════
+function renderLoggedInUser() {
+  const el = document.getElementById('profile-email');
+  if (el && CURRENT_USER) el.textContent = CURRENT_USER.email;
+}
+
 function renderProfile() {
   if (!JAMES.name) return;
   document.getElementById('prof-name').textContent = JAMES.name + "'s Profile";
+  renderLoggedInUser();
   const aboutLabel = document.getElementById('prof-about-label');
   if (aboutLabel) aboutLabel.textContent = 'About ' + JAMES.name;
   renderStats();
