@@ -1015,11 +1015,10 @@ def _build_top3_text(top3):
     """'1650 Free: 🥇 Winner; 500 Free: 🏅 Podium' style string."""
     return '; '.join(f"{e['event']}: {place_label(e['place'])}" for e in top3)
 
-def _build_vibe_lines(vibe):
+def _build_vibe_lines(vibe, other_prefs=''):
     """Format answered vibe questions for deep dive prompt."""
-    if not vibe:
-        return ''
     labels = {
+        'swimGoal': 'Swim environment goal',
         'campus':   'Ideal campus feel',
         'friday':   'Friday night preference',
         'academic': 'Academic priority',
@@ -1028,9 +1027,12 @@ def _build_vibe_lines(vibe):
         'career':   'Career interest',
     }
     lines = []
-    for k, v in vibe.items():
-        if v:
-            lines.append(f"  - {labels.get(k, k)}: {v}")
+    if vibe:
+        for k, v in vibe.items():
+            if v:
+                lines.append(f"  - {labels.get(k, k)}: {v}")
+    if other_prefs and other_prefs.strip():
+        lines.append(f"  - Additional preferences: {other_prefs.strip()}")
     return '\n'.join(lines)
 
 # ---------------------------------------------------------------------------
@@ -1050,10 +1052,17 @@ def meta():
         'normalizationLog':  NORMALIZATION_LOG,
     })
 
-@app.route('/api/score-all', methods=['GET'])
+@app.route('/api/score-all', methods=['GET', 'POST'])
 def score_all():
-    """Score James against all 76 programs. No request body needed."""
-    results = score_all_schools(JAMES['times'], JAMES['sat'], JAMES['gpa'])
+    """Score against all 76 programs. POST body may include profile overrides."""
+    if request.method == 'POST':
+        body = request.json or {}
+        times = body.get('times', JAMES['times'])
+        sat   = int(body.get('sat',  JAMES['sat']))
+        gpa   = float(body.get('gpa', JAMES['gpa']))
+    else:
+        times, sat, gpa = JAMES['times'], JAMES['sat'], JAMES['gpa']
+    results = score_all_schools(times, sat, gpa)
     return jsonify({
         'profile': JAMES,
         'totalSchools': len(TEAMS_LIST),
@@ -1078,11 +1087,15 @@ def search():
     query      = data.get('query', '').strip()
     eliminated = data.get('eliminated', [])
     my_list    = data.get('myList', [])
+    prof_ovr   = data.get('profile', {})
 
     if not query:
         return jsonify({'error': 'Query is required'}), 400
 
-    all_results = score_all_schools(JAMES['times'], JAMES['sat'], JAMES['gpa'])
+    times = prof_ovr.get('times', JAMES['times'])
+    sat   = int(prof_ovr.get('sat',  JAMES['sat']))
+    gpa   = float(prof_ovr.get('gpa', JAMES['gpa']))
+    all_results = score_all_schools(times, sat, gpa)
 
     # ── Direct school-name match ──────────────────────────────────────────
     q_lower      = query.lower()
@@ -1198,13 +1211,17 @@ def deep_dive():
     Body: { school }   (school must match a key in score_all results)
     Response: { sections: [{title, body}] } or { error }
     """
-    data    = request.json or {}
-    school  = data.get('school', '').strip()
+    data     = request.json or {}
+    school   = data.get('school', '').strip()
+    prof_ovr = data.get('profile', {})
 
     if not school:
         return jsonify({'error': 'school is required'}), 400
 
-    all_results = score_all_schools(JAMES['times'], JAMES['sat'], JAMES['gpa'])
+    times = prof_ovr.get('times', JAMES['times'])
+    sat   = int(prof_ovr.get('sat',  JAMES['sat']))
+    gpa   = float(prof_ovr.get('gpa', JAMES['gpa']))
+    all_results = score_all_schools(times, sat, gpa)
     result = next((r for r in all_results if r['school'] == school), None)
 
     if result is None:
@@ -1218,8 +1235,10 @@ def deep_dive():
         }), 503
 
     meta = result['meta']
-    top3_text = _build_top3_text(result['top3'])
-    vibe_lines = _build_vibe_lines(JAMES.get('vibe'))
+    top3_text  = _build_top3_text(result['top3'])
+    vibe_answers = data.get('vibeAnswers') or JAMES.get('vibe') or {}
+    other_prefs  = data.get('otherPrefs', '')
+    vibe_lines   = _build_vibe_lines(vibe_answers, other_prefs)
 
     merit_label = {
         'none':     'Need-based only',

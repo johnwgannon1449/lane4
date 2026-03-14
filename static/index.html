@@ -238,6 +238,38 @@
     }
     .vibe-opt:hover  { border-color: var(--blue); color: var(--blue); }
     .vibe-opt.picked { background: var(--blue); border-color: var(--blue); color: white; font-weight: 700; }
+    .other-prefs-ta {
+      width: 100%; box-sizing: border-box; padding: 0.7rem 0.85rem;
+      border: 1.5px solid var(--border); border-radius: 8px;
+      font-size: 0.9rem; font-family: inherit; color: var(--text);
+      background: var(--bg); resize: vertical; line-height: 1.55;
+      transition: border-color 0.15s;
+    }
+    .other-prefs-ta:focus { outline: none; border-color: var(--blue); box-shadow: 0 0 0 3px rgba(37,99,235,.09); }
+    .other-prefs-ta::placeholder { color: var(--muted); }
+
+    /* ── PROFILE EDITING ─────────────────────────────────────── */
+    .btn-edit-link { background: none; border: none; color: var(--blue); font-size: 0.8rem; font-weight: 600; cursor: pointer; padding: 3px 8px; border-radius: 6px; letter-spacing: normal; text-transform: none; }
+    .btn-edit-link:hover { background: var(--blue-l); }
+    .score-mode-toggle { display: inline-flex; background: var(--bg); border: 1.5px solid var(--border); border-radius: 8px; overflow: hidden; margin-bottom: 1rem; }
+    .score-mode-btn { border: none; background: none; padding: 6px 20px; font-size: 0.82rem; font-weight: 600; cursor: pointer; color: var(--muted); }
+    .score-mode-btn.active { background: var(--blue); color: white; }
+    .stat-edit-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 0.75rem; margin-bottom: 1rem; }
+    .stat-edit-field { display: flex; flex-direction: column; gap: 4px; }
+    .stat-edit-field label { font-size: 0.72rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
+    .stat-edit-field input { padding: 8px 10px; border: 1.5px solid var(--border); border-radius: 8px; font-size: 0.95rem; font-family: inherit; color: var(--text); background: var(--white); }
+    .stat-edit-field input:focus { outline: none; border-color: var(--blue); }
+    .act-note { font-size: 0.72rem; color: var(--muted); margin-top: 1px; }
+    .times-edit-wrap { padding: 0.85rem 1.1rem; border-top: 1.5px solid var(--border); }
+    .event-add-row { display: flex; gap: 0.5rem; align-items: flex-end; flex-wrap: wrap; }
+    .event-select-wrap { flex: 1; min-width: 140px; }
+    .event-select-wrap label, .time-input-wrap label { font-size: 0.72rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; display: block; margin-bottom: 4px; }
+    .event-select, .time-input { width: 100%; box-sizing: border-box; padding: 8px 10px; border: 1.5px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 0.9rem; color: var(--text); background: var(--white); }
+    .event-select:focus, .time-input:focus { outline: none; border-color: var(--blue); }
+    .time-input-wrap { flex: 0 0 120px; }
+    .time-pill-edit { display: inline-flex; align-items: center; gap: 5px; }
+    .time-pill-del { background: none; border: none; cursor: pointer; color: var(--muted); font-size: 0.8rem; padding: 0 1px; line-height: 1; }
+    .time-pill-del:hover { color: #EF4444; }
 
     /* ── MY LIST TAB ─────────────────────────────────────────── */
     .list-school-card { background: var(--white); border: 1.5px solid var(--border); border-radius: 12px; margin-bottom: 0.75rem; overflow: hidden; }
@@ -373,17 +405,37 @@
     <div class="page-title" id="prof-name">James's Profile</div>
     <div class="page-sub">Academic stats and swim times Lane4 uses to score every school.</div>
 
-    <div class="section-label">Academic Stats</div>
+    <div class="section-label" style="display:flex;align-items:center;justify-content:space-between;">
+      Academic Stats
+      <button class="btn-edit-link" id="stats-edit-btn" onclick="toggleEditStats()">✏ Edit</button>
+    </div>
     <div class="stat-grid" id="prof-stats"></div>
+    <div id="stats-edit-panel" style="display:none;"></div>
 
-    <div class="section-label" style="margin-top:0.5rem;">Current Best Times (SCY)</div>
+    <div class="section-label" style="margin-top:0.5rem;display:flex;align-items:center;justify-content:space-between;">
+      Current Best Times (SCY)
+      <button class="btn-edit-link" onclick="toggleEditTimes()">✏ Edit times</button>
+    </div>
     <div class="card" style="margin-bottom:1.5rem;">
       <div class="times-list" id="prof-times"></div>
+      <div id="times-edit-panel" style="display:none;"></div>
     </div>
 
     <div class="section-label">About James <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:0.78rem;color:var(--muted);">— helps Lane4 personalize your deep dives</span></div>
     <div class="card">
       <div id="vibe-questions"></div>
+    </div>
+
+    <div class="section-label" style="margin-top:1.5rem;">Anything else?
+      <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:0.78rem;color:var(--muted);">— optional, free-form</span>
+    </div>
+    <div class="card" style="margin-bottom:2rem;">
+      <div class="vibe-q">
+        <div class="vibe-q-label" style="margin-bottom:0.6rem;">Tell Lane4 anything else that matters — academics, team culture, geography, coaching style, family factors, anything</div>
+        <textarea id="other-prefs-input" class="other-prefs-ta"
+          placeholder="e.g. I want a school with a strong pre-med track near a city, and a team with a head coach who's invested in individual development…"
+          rows="4" oninput="OTHER_PREFS = this.value"></textarea>
+      </div>
     </div>
   </div>
 </div>
@@ -402,6 +454,7 @@ let LAST_QUERY    = '';
 let ACTIVE_TAB    = 'explore';
 let VIBE_STATE    = {};   // { campus, friday, academic, compete, location, career }
 let OPEN_CRM      = null; // currently expanded CRM card
+let OTHER_PREFS   = '';   // free-form additional preferences from Profile tab
 
 const STATUS_CONFIG = {
   researching: { label: 'Researching',       color: '#64748B' },
@@ -427,6 +480,12 @@ const VIBE_QUESTIONS = [
               'Pre-med / pre-law track',
               'Engineering or CS',
               'Business or entrepreneurship'] },
+  { id: 'swimGoal', question: 'What swim environment are you looking for?',
+    options: ['Swim as high as possible — I want to push my limits at the elite level',
+              'Somewhere I can podium and score big points for the team',
+              'Make finals and contribute to team scoring',
+              'Compete and stay competitive without elite-level pressure',
+              'Just want to keep swimming in college'] },
   { id: 'compete',  question: 'How do you feel about swim competition?',
     options: ['Love pushing myself inside a team environment',
               'Want to contribute but stay balanced',
@@ -588,7 +647,7 @@ async function runSearch() {
     const res = await fetch('/api/search', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ query: q, eliminated: ELIMINATED, myList: MY_LIST }),
+      body: JSON.stringify({ query: q, eliminated: ELIMINATED, myList: MY_LIST, vibeAnswers: VIBE_STATE, otherPrefs: OTHER_PREFS, profile: buildCurrentProfile() }),
     });
     const data = await res.json();
 
@@ -714,7 +773,7 @@ async function openDeepDive(school) {
     const res  = await fetch('/api/deep-dive', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ school }),
+      body: JSON.stringify({ school, vibeAnswers: VIBE_STATE, otherPrefs: OTHER_PREFS, profile: buildCurrentProfile() }),
     });
     const data = await res.json();
 
@@ -1039,31 +1098,257 @@ function goToSchool(school) {
 }
 
 // ════════════════════════════════════════════════════════════════
+// PROFILE — STATE & CONSTANTS
+// ════════════════════════════════════════════════════════════════
+let EDIT_STATS  = false;
+let EDIT_TIMES  = false;
+let SCORE_MODE  = 'SAT';   // 'SAT' | 'ACT'
+let ACT_SCORE   = null;
+let ACT_PROJ    = null;
+
+const D3_EVENTS = [
+  '50 Free','100 Free','200 Free','500 Free','1000 Free','1650 Free',
+  '100 Back','200 Back','100 Breast','200 Breast','100 Fly','200 Fly',
+  '200 IM','400 IM',
+];
+
+function actToSat(act) {
+  const t = {36:1600,35:1560,34:1520,33:1490,32:1450,31:1420,30:1390,
+             29:1350,28:1310,27:1260,26:1240,25:1210,24:1160,23:1130,
+             22:1100,21:1060,20:1020,19:980,18:940,17:900,16:860,15:820};
+  return t[act] || Math.round((act / 36) * 160) * 10;
+}
+
+function buildCurrentProfile() {
+  return { times: JAMES.times, sat: JAMES.sat, gpa: JAMES.gpa };
+}
+
+async function refreshScores() {
+  try {
+    const res  = await fetch('/api/score-all', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(buildCurrentProfile()),
+    });
+    const data = await res.json();
+    ALL_RESULTS = data.results;
+  } catch (e) { console.error('Rescore failed:', e); }
+}
+
+// ── Stats editing ─────────────────────────────────────────────
+function toggleEditStats() {
+  EDIT_STATS = !EDIT_STATS;
+  renderStats();
+  const btn = document.getElementById('stats-edit-btn');
+  if (btn) btn.textContent = EDIT_STATS ? '✕ Cancel' : '✏ Edit';
+}
+
+function renderStats() {
+  const el = document.getElementById('prof-stats');
+  const panel = document.getElementById('stats-edit-panel');
+  if (!el) return;
+
+  if (SCORE_MODE === 'ACT' && ACT_SCORE) {
+    const statTiles = [
+      { val: JAMES.gpa, lbl: 'GPA' },
+      { val: `${ACT_SCORE} ACT`, lbl: `≈ ${actToSat(ACT_SCORE)} SAT equiv` },
+      { val: ACT_PROJ ? `${ACT_PROJ} ACT` : '—', lbl: ACT_PROJ ? `≈ ${actToSat(ACT_PROJ)} SAT proj` : 'Projected ACT' },
+      { val: JAMES.mathSat, lbl: 'Math SAT' },
+    ];
+    el.innerHTML = statTiles.map(s =>
+      `<div class="stat-tile"><div class="stat-val">${esc(String(s.val))}</div><div class="stat-lbl">${esc(s.lbl)}</div></div>`
+    ).join('');
+  } else {
+    const statTiles = [
+      { val: JAMES.gpa,          lbl: 'GPA' },
+      { val: JAMES.sat,          lbl: 'SAT' },
+      { val: JAMES.satProjected, lbl: 'Projected SAT' },
+      { val: JAMES.mathSat,      lbl: 'Math SAT' },
+    ];
+    el.innerHTML = statTiles.map(s =>
+      `<div class="stat-tile"><div class="stat-val">${esc(String(s.val))}</div><div class="stat-lbl">${esc(s.lbl)}</div></div>`
+    ).join('');
+  }
+
+  if (!panel) return;
+  if (!EDIT_STATS) { panel.style.display = 'none'; return; }
+  panel.style.display = 'block';
+
+  const isSAT = SCORE_MODE === 'SAT';
+  const actEq = ACT_SCORE ? `≈ ${actToSat(ACT_SCORE)} SAT (used for scoring)` : 'enter score to see SAT equivalent';
+  const actPEq = ACT_PROJ  ? `≈ ${actToSat(ACT_PROJ)} SAT` : '';
+
+  panel.innerHTML = `
+  <div class="card" style="margin-top:0.6rem;margin-bottom:0.75rem;">
+    <div class="score-mode-toggle">
+      <button class="score-mode-btn ${isSAT ? 'active' : ''}" onclick="setScoreMode('SAT')">SAT</button>
+      <button class="score-mode-btn ${!isSAT ? 'active' : ''}" onclick="setScoreMode('ACT')">ACT</button>
+    </div>
+    <div class="stat-edit-grid">
+      <div class="stat-edit-field">
+        <label>GPA (unweighted)</label>
+        <input id="edit-gpa" type="number" step="0.01" min="0" max="4.0" value="${JAMES.gpa}" placeholder="3.85">
+      </div>
+      ${isSAT ? `
+      <div class="stat-edit-field">
+        <label>SAT composite</label>
+        <input id="edit-sat" type="number" step="10" min="400" max="1600" value="${JAMES.sat}" placeholder="1450">
+      </div>
+      <div class="stat-edit-field">
+        <label>Projected SAT</label>
+        <input id="edit-sat-proj" type="number" step="10" min="400" max="1600" value="${JAMES.satProjected}" placeholder="1500">
+      </div>
+      <div class="stat-edit-field">
+        <label>Math SAT</label>
+        <input id="edit-math-sat" type="number" step="10" min="200" max="800" value="${JAMES.mathSat}" placeholder="750">
+      </div>` : `
+      <div class="stat-edit-field">
+        <label>ACT composite</label>
+        <input id="edit-act" type="number" step="1" min="1" max="36" value="${ACT_SCORE || ''}" placeholder="33"
+          oninput="ACT_SCORE=parseInt(this.value)||null; document.getElementById('act-eq').textContent=ACT_SCORE?'≈ '+actToSat(ACT_SCORE)+' SAT (used for scoring)':''">
+        <span class="act-note" id="act-eq">${actEq}</span>
+      </div>
+      <div class="stat-edit-field">
+        <label>Projected ACT</label>
+        <input id="edit-act-proj" type="number" step="1" min="1" max="36" value="${ACT_PROJ || ''}" placeholder="35"
+          oninput="ACT_PROJ=parseInt(this.value)||null; document.getElementById('act-peq').textContent=ACT_PROJ?'≈ '+actToSat(ACT_PROJ)+' SAT':''">
+        <span class="act-note" id="act-peq">${actPEq}</span>
+      </div>`}
+    </div>
+    <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+      <button class="btn btn-primary" onclick="saveStats()">Save &amp; Rescore</button>
+      <button class="btn btn-secondary" onclick="toggleEditStats()">Cancel</button>
+    </div>
+  </div>`;
+}
+
+function setScoreMode(mode) {
+  SCORE_MODE = mode;
+  renderStats();
+}
+
+async function saveStats() {
+  const gpaVal = parseFloat(document.getElementById('edit-gpa')?.value);
+  if (!isNaN(gpaVal) && gpaVal > 0 && gpaVal <= 4.0) JAMES.gpa = gpaVal;
+
+  if (SCORE_MODE === 'SAT') {
+    const sat  = parseInt(document.getElementById('edit-sat')?.value);
+    const proj = parseInt(document.getElementById('edit-sat-proj')?.value);
+    const math = parseInt(document.getElementById('edit-math-sat')?.value);
+    if (sat  >= 400 && sat  <= 1600) JAMES.sat = sat;
+    if (proj >= 400 && proj <= 1600) JAMES.satProjected = proj;
+    if (math >= 200 && math <= 800)  JAMES.mathSat = math;
+  } else {
+    const act  = parseInt(document.getElementById('edit-act')?.value);
+    const actP = parseInt(document.getElementById('edit-act-proj')?.value);
+    if (act  >= 1 && act  <= 36) { ACT_SCORE = act;  JAMES.sat = actToSat(act); }
+    if (actP >= 1 && actP <= 36) { ACT_PROJ  = actP; JAMES.satProjected = actToSat(actP); }
+  }
+
+  EDIT_STATS = false;
+  const btn = document.getElementById('stats-edit-btn');
+  if (btn) btn.textContent = '✏ Edit';
+  renderStats();
+  await refreshScores();
+}
+
+// ── Times editing ──────────────────────────────────────────────
+function toggleEditTimes() {
+  EDIT_TIMES = !EDIT_TIMES;
+  renderTimes();
+}
+
+function renderTimes() {
+  const timesEl = document.getElementById('prof-times');
+  const panel   = document.getElementById('times-edit-panel');
+  if (!timesEl) return;
+
+  if (!EDIT_TIMES) {
+    timesEl.innerHTML = Object.entries(JAMES.times || {}).map(([ev, t]) =>
+      `<span class="time-pill"><strong>${esc(ev)}:</strong> ${esc(t)}</span>`
+    ).join('');
+    if (panel) panel.style.display = 'none';
+    return;
+  }
+
+  // Edit mode: pills with delete buttons
+  timesEl.innerHTML = Object.entries(JAMES.times || {}).map(([ev, t]) =>
+    `<span class="time-pill time-pill-edit">
+       <strong>${esc(ev)}:</strong> ${esc(t)}
+       <button class="time-pill-del" title="Remove" onclick='deleteTime(${JSON.stringify(ev)})'>✕</button>
+     </span>`
+  ).join('') || '<span style="color:var(--muted);font-size:0.85rem;">No times entered yet.</span>';
+
+  if (!panel) return;
+  panel.style.display = 'block';
+
+  const usedEvents = new Set(Object.keys(JAMES.times || {}));
+  panel.innerHTML = `
+  <div class="times-edit-wrap">
+    <div class="event-add-row">
+      <div class="event-select-wrap">
+        <label>Add event</label>
+        <select id="event-select" class="event-select">
+          <option value="">— select event —</option>
+          ${D3_EVENTS.map(e =>
+            `<option value="${esc(e)}">${esc(e)}${usedEvents.has(e) ? ' ✓' : ''}</option>`
+          ).join('')}
+        </select>
+      </div>
+      <div class="time-input-wrap">
+        <label>Best time (SCY)</label>
+        <input id="time-input" class="time-input" placeholder="1:41.53"
+          onkeydown="if(event.key==='Enter')addTime()">
+      </div>
+      <button class="btn btn-primary" style="align-self:flex-end;" onclick="addTime()">Add</button>
+    </div>
+    <div id="time-add-err" style="color:#EF4444;font-size:0.78rem;min-height:1.1rem;margin-top:4px;"></div>
+    <button class="btn btn-secondary" style="margin-top:0.6rem;" onclick="doneEditTimes()">Done</button>
+  </div>`;
+}
+
+async function deleteTime(ev) {
+  const t = { ...JAMES.times };
+  delete t[ev];
+  JAMES.times = t;
+  renderTimes();
+  await refreshScores();
+}
+
+async function addTime() {
+  const evEl  = document.getElementById('event-select');
+  const tEl   = document.getElementById('time-input');
+  const errEl = document.getElementById('time-add-err');
+  const ev    = evEl?.value;
+  const time  = tEl?.value.trim();
+
+  if (!ev)   { if (errEl) errEl.textContent = 'Please select an event.'; return; }
+  if (!time) { if (errEl) errEl.textContent = 'Please enter a time.'; return; }
+  if (!/^\d+(\:\d{2})?\.\d{1,2}$/.test(time)) {
+    if (errEl) errEl.textContent = 'Format: 1:41.53 or 22.15'; return;
+  }
+
+  JAMES.times = { ...JAMES.times, [ev]: time };
+  if (errEl) errEl.textContent = '';
+  if (tEl)   tEl.value = '';
+  if (evEl)  evEl.value = '';
+  renderTimes();
+  await refreshScores();
+}
+
+async function doneEditTimes() {
+  EDIT_TIMES = false;
+  renderTimes();
+}
+
+// ════════════════════════════════════════════════════════════════
 // PROFILE
 // ════════════════════════════════════════════════════════════════
 function renderProfile() {
   if (!JAMES.name) return;
-
   document.getElementById('prof-name').textContent = JAMES.name + "'s Profile";
-
-  // Stats
-  const stats = [
-    { val: JAMES.gpa,           lbl: 'GPA' },
-    { val: JAMES.sat,           lbl: 'SAT' },
-    { val: JAMES.satProjected,  lbl: 'Projected SAT' },
-    { val: JAMES.mathSat,       lbl: 'Math SAT' },
-  ];
-  document.getElementById('prof-stats').innerHTML = stats.map(s =>
-    `<div class="stat-tile"><div class="stat-val">${esc(String(s.val))}</div><div class="stat-lbl">${esc(s.lbl)}</div></div>`
-  ).join('');
-
-  // Times
-  const timesEl = document.getElementById('prof-times');
-  timesEl.innerHTML = Object.entries(JAMES.times || {}).map(([ev, t]) =>
-    `<span class="time-pill"><strong>${esc(ev)}:</strong> ${esc(t)}</span>`
-  ).join('');
-
-  // Vibe questions
+  renderStats();
+  renderTimes();
   renderVibeQuestions();
 }
 
