@@ -340,9 +340,120 @@
       .stat-grid { grid-template-columns: repeat(2, 1fr); }
       .nav-tab { padding: 0 0.65rem; font-size: 0.78rem; }
     }
+
+    /* ── ONBOARDING OVERLAY ──────────────────────────────────── */
+    #onboarding-overlay {
+      position: fixed; inset: 0; z-index: 1000;
+      background: linear-gradient(135deg, #EFF6FF 0%, #F8FAFC 60%, #EDE9FE 100%);
+      display: flex; align-items: flex-start; justify-content: center;
+      padding: 2rem 1rem 4rem; overflow-y: auto;
+    }
+    .ob-card {
+      background: var(--white); border: 1.5px solid var(--border);
+      border-radius: 20px; padding: 2.25rem 2rem;
+      width: 100%; max-width: 520px;
+      box-shadow: 0 8px 40px rgba(37,99,235,.10);
+    }
+    .ob-logo { font-family: 'Fraunces', serif; font-weight: 800; font-size: 1.4rem; color: var(--navy); margin-bottom: 0.25rem; }
+    .ob-logo span { color: var(--blue); }
+    .ob-headline { font-family: 'Fraunces', serif; font-weight: 700; font-size: 1.6rem; color: var(--navy); margin: 1rem 0 0.4rem; line-height: 1.25; }
+    .ob-sub { font-size: 0.9rem; color: var(--muted); margin-bottom: 2rem; line-height: 1.55; }
+    .ob-section { margin-bottom: 1.75rem; }
+    .ob-section-label {
+      font-size: 0.68rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.09em; color: var(--muted); margin-bottom: 0.75rem;
+    }
+    .ob-field { display: flex; flex-direction: column; gap: 5px; margin-bottom: 0.75rem; }
+    .ob-field label { font-size: 0.78rem; font-weight: 600; color: var(--slate); }
+    .ob-input {
+      padding: 10px 13px; border: 1.5px solid var(--border); border-radius: 9px;
+      font-family: 'Figtree', sans-serif; font-size: 0.95rem; color: var(--navy);
+      background: var(--white); transition: border-color 0.15s;
+    }
+    .ob-input:focus { outline: none; border-color: var(--blue); box-shadow: 0 0 0 3px rgba(37,99,235,.08); }
+    .ob-input::placeholder { color: #CBD5E1; }
+    .ob-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; }
+    @media (max-width: 480px) { .ob-row { grid-template-columns: 1fr; } }
+    .ob-time-row { display: flex; gap: 0.5rem; align-items: flex-end; margin-bottom: 0.5rem; }
+    .ob-time-row .ob-input { flex: 1; }
+    .ob-time-row .ob-input.time-val { max-width: 110px; flex: none; }
+    .ob-time-del { background: none; border: none; cursor: pointer; color: var(--muted); font-size: 1rem; padding: 0 4px; line-height: 1; align-self: center; margin-bottom: 2px; }
+    .ob-time-del:hover { color: var(--red); }
+    .ob-add-btn { background: none; border: 1.5px dashed var(--border); color: var(--blue); font-size: 0.82rem; font-weight: 600; cursor: pointer; padding: 7px 14px; border-radius: 8px; width: 100%; margin-top: 0.25rem; }
+    .ob-add-btn:hover { border-color: var(--blue); background: var(--blue-l); }
+    .ob-optional { font-size: 0.72rem; color: var(--muted); font-weight: 400; margin-left: 4px; }
+    .ob-err { color: var(--red); font-size: 0.78rem; min-height: 1rem; margin-top: 2px; }
+    .ob-submit {
+      width: 100%; padding: 13px; font-size: 1rem; font-weight: 700;
+      background: var(--blue); color: white; border: none; border-radius: 10px;
+      cursor: pointer; font-family: 'Figtree', sans-serif;
+      transition: background 0.15s; margin-top: 0.5rem;
+    }
+    .ob-submit:hover { background: var(--blue-d); }
+    .ob-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* ── START NEW SWIMMER ───────────────────────────────────── */
+    .danger-zone { border-top: 1.5px solid var(--border); padding-top: 1.25rem; margin-top: 1rem; }
+    .btn-danger { background: var(--red-l); color: var(--red); border: 1.5px solid #FECACA; }
+    .btn-danger:hover { background: #FEE2E2; }
   </style>
 </head>
 <body>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     ONBOARDING OVERLAY — shown on first load if no swimmer in localStorage
+════════════════════════════════════════════════════════════════ -->
+<div id="onboarding-overlay" style="display:none;">
+  <div class="ob-card">
+    <div class="ob-logo">Lane<span>4</span></div>
+    <div class="ob-headline">Let's set up your swimmer profile.</div>
+    <div class="ob-sub">Lane4 uses your times, academics, and preferences to score all 76 D3 programs and personalize every insight. Takes about 2 minutes.</div>
+
+    <div class="ob-section">
+      <div class="ob-section-label">About the swimmer</div>
+      <div class="ob-field">
+        <label>First name</label>
+        <input class="ob-input" id="ob-name" type="text" placeholder="e.g. Alex" autocomplete="off" />
+      </div>
+      <div class="ob-row">
+        <div class="ob-field">
+          <label>Graduation year</label>
+          <select class="ob-input" id="ob-gradyear">
+            <option value="2025">2025</option>
+            <option value="2026" selected>2026</option>
+            <option value="2027">2027</option>
+            <option value="2028">2028</option>
+            <option value="2029">2029</option>
+          </select>
+        </div>
+      </div>
+      <div id="ob-name-err" class="ob-err"></div>
+    </div>
+
+    <div class="ob-section">
+      <div class="ob-section-label">Best times <span class="ob-optional">(SCY — add at least one)</span></div>
+      <div id="ob-times-list"></div>
+      <button class="ob-add-btn" onclick="obAddTimeRow()">+ Add another event</button>
+      <div id="ob-times-err" class="ob-err"></div>
+    </div>
+
+    <div class="ob-section">
+      <div class="ob-section-label">Academic profile <span class="ob-optional">(optional)</span></div>
+      <div class="ob-row">
+        <div class="ob-field">
+          <label>GPA (unweighted)</label>
+          <input class="ob-input" id="ob-gpa" type="number" step="0.01" min="0" max="4.0" placeholder="3.85" />
+        </div>
+        <div class="ob-field">
+          <label>SAT score</label>
+          <input class="ob-input" id="ob-sat" type="number" step="10" min="400" max="1600" placeholder="1350" />
+        </div>
+      </div>
+    </div>
+
+    <button class="ob-submit" id="ob-submit-btn" onclick="submitOnboarding()">Enter Lane4 →</button>
+  </div>
+</div>
 
 <nav>
   <span class="logo">Lane<span class="logo-dot">4</span></span>
@@ -432,7 +543,7 @@
       <div id="times-edit-panel" style="display:none;"></div>
     </div>
 
-    <div class="section-label">About James <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:0.78rem;color:var(--muted);">— helps Lane4 personalize your deep dives</span></div>
+    <div class="section-label"><span id="prof-about-label">About the swimmer</span> <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:0.78rem;color:var(--muted);">— helps Lane4 personalize your deep dives</span></div>
     <div class="card">
       <div id="vibe-questions"></div>
     </div>
@@ -445,8 +556,14 @@
         <div class="vibe-q-label" style="margin-bottom:0.6rem;">Tell Lane4 anything else that matters — academics, team culture, geography, coaching style, family factors, anything</div>
         <textarea id="other-prefs-input" class="other-prefs-ta"
           placeholder="e.g. I want a school with a strong pre-med track near a city, and a team with a head coach who's invested in individual development…"
-          rows="4" oninput="OTHER_PREFS = this.value"></textarea>
+          rows="4" oninput="OTHER_PREFS = this.value; saveToStorage()"></textarea>
       </div>
+    </div>
+
+    <div class="danger-zone">
+      <div class="section-label" style="margin-bottom:0.5rem;">Switch swimmer</div>
+      <p style="font-size:0.83rem;color:var(--muted);margin-bottom:0.85rem;line-height:1.5;">Start fresh with a new swimmer profile. Your current list, reminders, and notes will be cleared from this browser.</p>
+      <button class="btn btn-danger" onclick="confirmStartNewSwimmer()">Start New Swimmer</button>
     </div>
   </div>
 </div>
@@ -517,24 +634,247 @@ const VIBE_QUESTIONS = [
               'Not sure yet'] },
 ];
 
-const SUGGESTED_QUERIES = [
-  'Where would James score points and have a real shot at getting in?',
-  'Best STEM schools where swim matters',
-  'Hidden Ivy schools that could recruit James',
-  'Schools where James could win or podium',
-  'Affordable options with strong merit aid',
-  'What are the most realistic schools for James right now?',
+function getSuggestedQueries() {
+  const name = JAMES.name || 'this swimmer';
+  return [
+    `Where would ${name} score points and have a real shot at getting in?`,
+    'Best STEM schools where swim matters',
+    `Hidden Ivy schools that could recruit ${name}`,
+    `Schools where ${name} could win or podium`,
+    'Affordable options with strong merit aid',
+    `What are the most realistic schools for ${name} right now?`,
+  ];
+}
+
+// ════════════════════════════════════════════════════════════════
+// LOCAL STORAGE
+// ════════════════════════════════════════════════════════════════
+const LS_SWIMMER    = 'lane4_swimmer';
+const LS_MYLIST     = 'lane4_mylist';
+const LS_CRM        = 'lane4_crm';
+const LS_VIBE       = 'lane4_vibe';
+const LS_OTHERPREFS = 'lane4_other_prefs';
+
+function saveToStorage() {
+  try {
+    localStorage.setItem(LS_SWIMMER,    JSON.stringify(JAMES));
+    localStorage.setItem(LS_MYLIST,     JSON.stringify(MY_LIST));
+    localStorage.setItem(LS_CRM,        JSON.stringify(CRM_DATA));
+    localStorage.setItem(LS_VIBE,       JSON.stringify(VIBE_STATE));
+    localStorage.setItem(LS_OTHERPREFS, OTHER_PREFS);
+  } catch(e) { console.warn('Storage save failed', e); }
+}
+
+function loadFromStorage() {
+  try {
+    const swimmer = localStorage.getItem(LS_SWIMMER);
+    if (swimmer) JAMES = JSON.parse(swimmer);
+    const ml = localStorage.getItem(LS_MYLIST);
+    if (ml) MY_LIST = JSON.parse(ml);
+    const crm = localStorage.getItem(LS_CRM);
+    if (crm) CRM_DATA = JSON.parse(crm);
+    const vibe = localStorage.getItem(LS_VIBE);
+    if (vibe) VIBE_STATE = JSON.parse(vibe);
+    const op = localStorage.getItem(LS_OTHERPREFS);
+    if (op !== null) OTHER_PREFS = op;
+  } catch(e) { console.warn('Storage load failed', e); }
+}
+
+function clearStorage() {
+  [LS_SWIMMER, LS_MYLIST, LS_CRM, LS_VIBE, LS_OTHERPREFS].forEach(k => localStorage.removeItem(k));
+}
+
+// ════════════════════════════════════════════════════════════════
+// ONBOARDING
+// ════════════════════════════════════════════════════════════════
+const D3_EVENTS_ONBOARD = [
+  '50 Free','100 Free','200 Free','500 Free','1000 Free','1650 Free',
+  '100 Back','200 Back','100 Breast','200 Breast','100 Fly','200 Fly',
+  '200 IM','400 IM',
 ];
+
+let OB_ROWS = 0;
+
+function obAddTimeRow() {
+  const container = document.getElementById('ob-times-list');
+  const idx = OB_ROWS++;
+  const optionsHtml = D3_EVENTS_ONBOARD.map(e =>
+    `<option value="${esc(e)}">${esc(e)}</option>`
+  ).join('');
+  const row = document.createElement('div');
+  row.className = 'ob-time-row';
+  row.id = 'ob-row-' + idx;
+  row.innerHTML = `
+    <select class="ob-input" id="ob-event-${idx}">
+      <option value="">— event —</option>
+      ${optionsHtml}
+    </select>
+    <input class="ob-input time-val" id="ob-time-${idx}" type="text" placeholder="1:41.50" />
+    <button class="ob-time-del" title="Remove" onclick="obRemoveRow(${idx})">✕</button>`;
+  container.appendChild(row);
+}
+
+function obRemoveRow(idx) {
+  const row = document.getElementById('ob-row-' + idx);
+  if (row) row.remove();
+}
+
+function showOnboarding() {
+  document.getElementById('onboarding-overlay').style.display = 'flex';
+  obAddTimeRow();
+}
+
+function hideOnboarding() {
+  document.getElementById('onboarding-overlay').style.display = 'none';
+}
+
+async function submitOnboarding() {
+  const nameEl    = document.getElementById('ob-name');
+  const gradEl    = document.getElementById('ob-gradyear');
+  const gpaEl     = document.getElementById('ob-gpa');
+  const satEl     = document.getElementById('ob-sat');
+  const nameErr   = document.getElementById('ob-name-err');
+  const timesErr  = document.getElementById('ob-times-err');
+  const submitBtn = document.getElementById('ob-submit-btn');
+
+  nameErr.textContent  = '';
+  timesErr.textContent = '';
+
+  const name     = nameEl.value.trim();
+  const gradYear = gradEl.value;
+  const gpa      = parseFloat(gpaEl.value) || 0;
+  const sat      = parseInt(satEl.value)   || 0;
+
+  if (!name) {
+    nameErr.textContent = 'Please enter a first name.';
+    nameEl.focus();
+    return;
+  }
+
+  // Collect times
+  const times = {};
+  let timesErrMsg = '';
+  const rows = document.querySelectorAll('[id^="ob-row-"]');
+  rows.forEach(row => {
+    const idx = row.id.replace('ob-row-', '');
+    const ev  = document.getElementById('ob-event-' + idx)?.value;
+    const t   = document.getElementById('ob-time-'  + idx)?.value.trim();
+    if (ev && t) {
+      if (!/^\d+(\:\d{2})?\.\d{1,2}$/.test(t) && !/^\d+:\d{2}:\d{2}$/.test(t)) {
+        timesErrMsg = `"${t}" doesn't look right. Try formats like 4:37.00 or 59.50`;
+      } else {
+        times[ev] = t;
+      }
+    }
+  });
+
+  if (Object.keys(times).length === 0) {
+    timesErr.textContent = timesErrMsg || 'Please add at least one event and time.';
+    return;
+  }
+  if (timesErrMsg) {
+    timesErr.textContent = timesErrMsg;
+    return;
+  }
+
+  submitBtn.disabled   = true;
+  submitBtn.textContent = 'Setting up…';
+
+  JAMES = {
+    name,
+    gradYear,
+    gpa:  gpa  || 0,
+    sat:  sat  || 0,
+    satProjected: 0,
+    mathSat: 0,
+    mathSatProjected: 0,
+    times,
+    vibe: {},
+  };
+  VIBE_STATE = {};
+  MY_LIST    = [];
+  CRM_DATA   = {};
+  OTHER_PREFS = '';
+
+  saveToStorage();
+
+  try {
+    const res  = await fetch('/api/score-all', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ times: JAMES.times, sat: JAMES.sat, gpa: JAMES.gpa }),
+    });
+    const data = await res.json();
+    ALL_RESULTS = data.results;
+  } catch(e) {
+    console.error('Score failed:', e);
+  }
+
+  hideOnboarding();
+  renderProfile();
+  renderElimBar();
+  renderMyList();
+  renderReminders();
+  updateBadges();
+
+  submitBtn.disabled    = false;
+  submitBtn.textContent = 'Enter Lane4 →';
+}
+
+function confirmStartNewSwimmer() {
+  if (confirm(`Start over with a new swimmer profile?\n\nThis will clear ${JAMES.name ? JAMES.name + "'s" : 'the current'} list, reminders, and notes from this browser.`)) {
+    startNewSwimmer();
+  }
+}
+
+function startNewSwimmer() {
+  clearStorage();
+  JAMES      = {};
+  MY_LIST    = [];
+  CRM_DATA   = {};
+  VIBE_STATE = {};
+  OTHER_PREFS = '';
+  ALL_RESULTS = [];
+  OB_ROWS    = 0;
+  document.getElementById('ob-times-list').innerHTML = '';
+  document.getElementById('ob-name').value = '';
+  document.getElementById('ob-gpa').value  = '';
+  document.getElementById('ob-sat').value  = '';
+  document.getElementById('ob-name-err').textContent  = '';
+  document.getElementById('ob-times-err').textContent = '';
+  showOnboarding();
+  showTab('explore');
+  renderProfile();
+  renderMyList();
+  renderReminders();
+  updateBadges();
+}
 
 // ════════════════════════════════════════════════════════════════
 // BOOT
 // ════════════════════════════════════════════════════════════════
 async function boot() {
-  const res  = await fetch('/api/score-all');
-  const data = await res.json();
-  ALL_RESULTS = data.results;
-  JAMES       = data.profile;
-  VIBE_STATE  = { ...(JAMES.vibe || {}) };
+  loadFromStorage();
+
+  if (!JAMES.name) {
+    showOnboarding();
+    return;
+  }
+
+  try {
+    const res  = await fetch('/api/score-all', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ times: JAMES.times, sat: JAMES.sat, gpa: JAMES.gpa }),
+    });
+    const data = await res.json();
+    ALL_RESULTS = data.results;
+  } catch(e) {
+    console.error('Boot score failed:', e);
+  }
+
+  const otherPrefsInput = document.getElementById('other-prefs-input');
+  if (otherPrefsInput && OTHER_PREFS) otherPrefsInput.value = OTHER_PREFS;
 
   renderProfile();
   renderElimBar();
@@ -574,7 +914,7 @@ let _dropdownVisible = false;
 
 function buildDropdownItems(filter) {
   const f = (filter || '').toLowerCase();
-  return SUGGESTED_QUERIES.filter(q => !f || q.toLowerCase().includes(f));
+  return getSuggestedQueries().filter(q => !f || q.toLowerCase().includes(f));
 }
 
 function renderDropdown(items) {
@@ -768,6 +1108,7 @@ function addToList(school, idx) {
     if (btn) { btn.className = 'btn btn-added'; btn.disabled = true; btn.textContent = '✓ On My List'; }
   }
   updateBadges();
+  saveToStorage();
 }
 
 // ════════════════════════════════════════════════════════════════
@@ -869,7 +1210,7 @@ async function showCoachEmail(school) {
   const res  = await fetch('/api/coach-email', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ school }),
+    body: JSON.stringify({ school, profile: buildCurrentProfile() }),
   });
   const data = await res.json();
 
@@ -900,6 +1241,7 @@ function addToListDirect(school) {
     CRM_DATA[school] = CRM_DATA[school] || { status: 'researching', notes: [], reminders: [] };
   }
   updateBadges();
+  saveToStorage();
 }
 
 function renderMyList() {
@@ -1011,6 +1353,7 @@ function setCrmStatus(school, status) {
   if (!CRM_DATA[school]) CRM_DATA[school] = { status: 'researching', notes: [], reminders: [] };
   CRM_DATA[school].status = status;
   renderMyList();
+  saveToStorage();
 }
 
 function addNote(school, si) {
@@ -1021,11 +1364,13 @@ function addNote(school, si) {
   const note = { id: Date.now(), cat, text, date: fmtDate(new Date()) };
   CRM_DATA[school].notes = [note, ...CRM_DATA[school].notes];
   renderMyList();
+  saveToStorage();
 }
 
 function deleteNote(school, idx) {
   if (CRM_DATA[school]) CRM_DATA[school].notes.splice(idx, 1);
   renderMyList();
+  saveToStorage();
 }
 
 function addReminder(school, si) {
@@ -1039,6 +1384,7 @@ function addReminder(school, si) {
   renderMyList();
   renderReminders();
   updateBadges();
+  saveToStorage();
 }
 
 function deleteReminder(school, id) {
@@ -1047,6 +1393,7 @@ function deleteReminder(school, id) {
   renderMyList();
   renderReminders();
   updateBadges();
+  saveToStorage();
 }
 
 function completeReminder(school, id) {
@@ -1056,6 +1403,7 @@ function completeReminder(school, id) {
   renderMyList();
   renderReminders();
   updateBadges();
+  saveToStorage();
 }
 
 function uncompleteReminder(school, id) {
@@ -1065,6 +1413,7 @@ function uncompleteReminder(school, id) {
   renderMyList();
   renderReminders();
   updateBadges();
+  saveToStorage();
 }
 
 function removeFromList(school) {
@@ -1073,6 +1422,7 @@ function removeFromList(school) {
   updateBadges();
   renderMyList();
   renderReminders();
+  saveToStorage();
 }
 
 // ════════════════════════════════════════════════════════════════
@@ -1221,7 +1571,17 @@ function actToSat(act) {
 }
 
 function buildCurrentProfile() {
-  return { times: JAMES.times, sat: JAMES.sat, gpa: JAMES.gpa };
+  return {
+    name:             JAMES.name,
+    gradYear:         JAMES.gradYear,
+    gpa:              JAMES.gpa,
+    sat:              JAMES.sat,
+    satProjected:     JAMES.satProjected,
+    mathSat:          JAMES.mathSat,
+    mathSatProjected: JAMES.mathSatProjected,
+    times:            JAMES.times,
+    vibe:             JAMES.vibe,
+  };
 }
 
 async function refreshScores() {
@@ -1351,6 +1711,7 @@ async function saveStats() {
   if (btn) btn.textContent = '✏ Edit';
   renderStats();
   await refreshScores();
+  saveToStorage();
 }
 
 // ── Times editing ──────────────────────────────────────────────
@@ -1414,6 +1775,7 @@ async function deleteTime(ev) {
   JAMES.times = t;
   renderTimes();
   await refreshScores();
+  saveToStorage();
 }
 
 async function addTime() {
@@ -1435,6 +1797,7 @@ async function addTime() {
   if (evEl)  evEl.value = '';
   renderTimes();
   await refreshScores();
+  saveToStorage();
 }
 
 async function doneEditTimes() {
@@ -1448,6 +1811,8 @@ async function doneEditTimes() {
 function renderProfile() {
   if (!JAMES.name) return;
   document.getElementById('prof-name').textContent = JAMES.name + "'s Profile";
+  const aboutLabel = document.getElementById('prof-about-label');
+  if (aboutLabel) aboutLabel.textContent = 'About ' + JAMES.name;
   renderStats();
   renderTimes();
   renderVibeQuestions();
@@ -1472,6 +1837,7 @@ function renderVibeQuestions() {
 function setVibe(id, value) {
   VIBE_STATE[id] = VIBE_STATE[id] === value ? null : value;
   renderVibeQuestions();
+  saveToStorage();
 }
 
 // ════════════════════════════════════════════════════════════════
