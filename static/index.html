@@ -324,6 +324,17 @@
     }
     .rem-school-link { font-size: 0.78rem; color: var(--blue); font-weight: 600; cursor: pointer; text-decoration: underline; text-underline-offset: 2px; }
     .rem-text { font-size: 0.88rem; color: var(--navy); flex: 1; }
+    .rem-filter-row { display: flex; gap: 0; background: var(--bg); border: 1.5px solid var(--border); border-radius: 8px; overflow: hidden; margin-bottom: 1.25rem; width: fit-content; }
+    .rem-filter-btn { border: none; background: none; padding: 7px 20px; font-size: 0.82rem; font-weight: 600; cursor: pointer; color: var(--muted); }
+    .rem-filter-btn.active { background: var(--blue); color: white; }
+    .rem-overdue  { background: #FEE2E2 !important; color: #DC2626 !important; }
+    .rem-today    { background: #FEF3C7 !important; color: #D97706 !important; }
+    .rem-upcoming { background: #DBEAFE !important; color: #1D4ED8 !important; }
+    .rem-done     { background: #D1FAE5 !important; color: #059669 !important; }
+    .rem-action-btn { border: none; border-radius: 6px; padding: 5px 9px; font-size: 0.82rem; cursor: pointer; background: var(--bg); transition: background 0.12s; }
+    .rem-complete-btn { color: #059669; } .rem-complete-btn:hover { background: #D1FAE5; }
+    .rem-undo-btn     { color: var(--blue); } .rem-undo-btn:hover { background: var(--blue-l); }
+    .rem-delete-btn   { color: var(--muted); } .rem-delete-btn:hover { background: #FEE2E2; color: #DC2626; }
 
     @media (max-width: 600px) {
       .stat-grid { grid-template-columns: repeat(2, 1fr); }
@@ -926,13 +937,14 @@ function renderMyList() {
         <button class="btn btn-ghost" style="padding:2px 6px;" onclick='deleteNote(${JSON.stringify(school)}, ${ni})'>✕</button>
       </div>`).join('');
 
-    const remItems = (crm.reminders || []).map((r, ri) => {
+    const remItems = (crm.reminders || []).filter(r => !r.completed).map(r => {
       const cls = remClass(r.date);
-      const lbl = remLabel(r.date);
+      const lbl = r.date < todayISO() ? 'Overdue' : r.date === todayISO() ? 'Due Today' : remLabel(r.date);
       return `<div class="reminder-item">
         <span class="reminder-label ${cls}">${lbl}</span>
         <span style="flex:1;">${esc(r.text)}</span>
-        <button class="btn btn-ghost" style="padding:2px 6px;" onclick='deleteReminder(${JSON.stringify(school)}, ${ri})'>✕</button>
+        <button class="btn btn-ghost" style="padding:2px 6px;color:#059669;" title="Mark complete" onclick='completeReminder(${JSON.stringify(school)}, ${r.id})'>✓</button>
+        <button class="btn btn-ghost" style="padding:2px 6px;" onclick='deleteReminder(${JSON.stringify(school)}, ${r.id})'>✕</button>
       </div>`;
     }).join('');
 
@@ -1021,7 +1033,7 @@ function addReminder(school, si) {
   const date = document.getElementById('rem-date-' + si)?.value;
   if (!text || !date) return;
   if (!CRM_DATA[school]) CRM_DATA[school] = { status: 'researching', notes: [], reminders: [] };
-  const rem = { id: Date.now(), text, date };
+  const rem = { id: Date.now(), text, date, completed: false, completedAt: null };
   CRM_DATA[school].reminders = [...CRM_DATA[school].reminders, rem]
     .sort((a, b) => a.date.localeCompare(b.date));
   renderMyList();
@@ -1029,8 +1041,27 @@ function addReminder(school, si) {
   updateBadges();
 }
 
-function deleteReminder(school, idx) {
-  if (CRM_DATA[school]) CRM_DATA[school].reminders.splice(idx, 1);
+function deleteReminder(school, id) {
+  if (CRM_DATA[school])
+    CRM_DATA[school].reminders = CRM_DATA[school].reminders.filter(r => r.id !== id);
+  renderMyList();
+  renderReminders();
+  updateBadges();
+}
+
+function completeReminder(school, id) {
+  if (!CRM_DATA[school]) return;
+  const r = CRM_DATA[school].reminders.find(r => r.id === id);
+  if (r) { r.completed = true; r.completedAt = todayISO(); }
+  renderMyList();
+  renderReminders();
+  updateBadges();
+}
+
+function uncompleteReminder(school, id) {
+  if (!CRM_DATA[school]) return;
+  const r = CRM_DATA[school].reminders.find(r => r.id === id);
+  if (r) { r.completed = false; r.completedAt = null; }
   renderMyList();
   renderReminders();
   updateBadges();
@@ -1047,49 +1078,119 @@ function removeFromList(school) {
 // ════════════════════════════════════════════════════════════════
 // REMINDERS
 // ════════════════════════════════════════════════════════════════
+let REM_FILTER = 'incomplete'; // 'incomplete' | 'completed'
+
+function setRemFilter(f) {
+  REM_FILTER = f;
+  renderReminders();
+}
+
 function renderReminders() {
   const el = document.getElementById('reminders-body');
   const today = todayISO();
 
   const all = MY_LIST.flatMap(school =>
     (CRM_DATA[school]?.reminders || []).map(r => ({ ...r, school }))
-  ).sort((a, b) => a.date.localeCompare(b.date));
+  );
 
-  if (!all.length) {
-    el.innerHTML = `<div class="empty-state">
-      <div class="empty-state-icon">📅</div>
-      <div class="empty-state-title">No reminders yet</div>
-      <div class="empty-state-text">Set reminders on schools in My List to track important dates and follow-ups.</div>
+  const incomplete = all.filter(r => !r.completed).sort((a, b) => a.date.localeCompare(b.date));
+  const completed  = all.filter(r =>  r.completed).sort((a, b) => (b.completedAt||'').localeCompare(a.completedAt||''));
+
+  const filterHtml = `
+    <div class="rem-filter-row">
+      <button class="rem-filter-btn ${REM_FILTER === 'incomplete' ? 'active' : ''}" onclick="setRemFilter('incomplete')">
+        Incomplete${incomplete.length ? ` (${incomplete.length})` : ''}
+      </button>
+      <button class="rem-filter-btn ${REM_FILTER === 'completed' ? 'active' : ''}" onclick="setRemFilter('completed')">
+        Completed${completed.length ? ` (${completed.length})` : ''}
+      </button>
+    </div>`;
+
+  // ── Incomplete view ────────────────────────────────────────────
+  if (REM_FILTER === 'incomplete') {
+    if (!incomplete.length) {
+      el.innerHTML = (all.length ? filterHtml : '') + `<div class="empty-state">
+        <div class="empty-state-icon">${completed.length ? '✅' : '📅'}</div>
+        <div class="empty-state-title">${completed.length ? 'All caught up!' : 'No reminders yet'}</div>
+        <div class="empty-state-text">${completed.length
+          ? 'No incomplete reminders. Switch to Completed to see your history.'
+          : 'Set reminders on schools in My List to track important dates and follow-ups.'
+        }</div></div>`;
+      return;
+    }
+
+    const overdue  = incomplete.filter(r => r.date < today);
+    const todayRem = incomplete.filter(r => r.date === today);
+    const upcoming = incomplete.filter(r => r.date > today);
+
+    function incompleteCard(r) {
+      const isOverdue = r.date < today;
+      const isToday   = r.date === today;
+      const cls = isOverdue ? 'rem-overdue' : isToday ? 'rem-today' : 'rem-upcoming';
+      const lbl = isOverdue ? 'Overdue' : isToday ? 'Due Today' : remLabel(r.date);
+      return `
+        <div class="global-reminder-item">
+          <span class="reminder-label ${cls}">${lbl}</span>
+          <div style="flex:1;min-width:0;">
+            <div class="rem-text">${esc(r.text)}</div>
+            <div style="font-size:0.75rem;color:var(--muted);">
+              <span class="rem-school-link" onclick='goToSchool(${JSON.stringify(r.school)})'>${esc(r.school)}</span>
+            </div>
+          </div>
+          <div style="display:flex;gap:4px;flex-shrink:0;">
+            <button class="rem-action-btn rem-complete-btn" title="Mark complete" onclick='completeReminder(${JSON.stringify(r.school)}, ${r.id})'>✓</button>
+            <button class="rem-action-btn rem-delete-btn"   title="Delete"        onclick='deleteReminder(${JSON.stringify(r.school)}, ${r.id})'>✕</button>
+          </div>
+        </div>`;
+    }
+
+    function groupHtml(title, items) {
+      if (!items.length) return '';
+      return `<div class="reminder-group">
+        <div class="reminder-group-title">${title}</div>
+        ${items.map(incompleteCard).join('')}
+      </div>`;
+    }
+
+    el.innerHTML = filterHtml +
+      groupHtml('⚠ Overdue',   overdue)  +
+      groupHtml('⚡ Due Today', todayRem) +
+      groupHtml('📅 Upcoming',  upcoming);
+    return;
+  }
+
+  // ── Completed view ─────────────────────────────────────────────
+  if (!completed.length) {
+    el.innerHTML = filterHtml + `<div class="empty-state">
+      <div class="empty-state-icon">📋</div>
+      <div class="empty-state-title">No completed reminders yet</div>
+      <div class="empty-state-text">Mark reminders as done and they'll appear here.</div>
     </div>`;
     return;
   }
 
-  const overdue  = all.filter(r => r.date < today);
-  const todayRem = all.filter(r => r.date === today);
-  const upcoming = all.filter(r => r.date > today);
-
-  function groupHtml(title, items, cls) {
-    if (!items.length) return '';
+  const completedCards = completed.map(r => {
+    const completedOn = r.completedAt
+      ? new Date(r.completedAt + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+      : '';
     return `
-      <div class="reminder-group">
-        <div class="reminder-group-title">${title}</div>
-        ${items.map(r => `
-          <div class="global-reminder-item">
-            <span class="reminder-label ${cls}">${remLabel(r.date)}</span>
-            <div style="flex:1;">
-              <div class="rem-text">${esc(r.text)}</div>
-              <div style="font-size:0.75rem;color:var(--muted);">
-                <span class="rem-school-link" onclick='goToSchool(${JSON.stringify(r.school)})'>${esc(r.school)}</span>
-              </div>
-            </div>
-          </div>`).join('')}
+      <div class="global-reminder-item" style="opacity:0.85;">
+        <span class="reminder-label rem-done">Done</span>
+        <div style="flex:1;min-width:0;">
+          <div class="rem-text" style="text-decoration:line-through;color:var(--muted);">${esc(r.text)}</div>
+          <div style="font-size:0.75rem;color:var(--muted);">
+            <span class="rem-school-link" onclick='goToSchool(${JSON.stringify(r.school)})'>${esc(r.school)}</span>
+            ${completedOn ? ` · completed ${completedOn}` : ''}
+          </div>
+        </div>
+        <div style="display:flex;gap:4px;flex-shrink:0;">
+          <button class="rem-action-btn rem-undo-btn"   title="Mark incomplete" onclick='uncompleteReminder(${JSON.stringify(r.school)}, ${r.id})'>↩</button>
+          <button class="rem-action-btn rem-delete-btn" title="Delete"          onclick='deleteReminder(${JSON.stringify(r.school)}, ${r.id})'>✕</button>
+        </div>
       </div>`;
-  }
+  }).join('');
 
-  el.innerHTML =
-    groupHtml('⚠ Overdue', overdue, 'rem-overdue') +
-    groupHtml('⚡ Today',   todayRem, 'rem-today') +
-    groupHtml('📅 Upcoming', upcoming, 'rem-upcoming');
+  el.innerHTML = filterHtml + `<div class="reminder-group">${completedCards}</div>`;
 }
 
 function goToSchool(school) {
@@ -1387,7 +1488,7 @@ function updateBadges() {
 
   const today = todayISO();
   const urgent = MY_LIST.flatMap(s => (CRM_DATA[s]?.reminders || []))
-    .filter(r => r.date <= today).length;
+    .filter(r => !r.completed && r.date <= today).length;
   const remBadge = document.getElementById('rem-urgent-badge');
   if (urgent > 0) {
     remBadge.style.display = 'inline-flex';
