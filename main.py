@@ -1111,7 +1111,7 @@ def search():
 
     try:
         resp = client.messages.create(
-            model='claude-sonnet-4-5-20250929',
+            model='claude-sonnet-4-6',
             max_tokens=600,
             system=system_prompt,
             messages=[{'role': 'user', 'content': user_prompt}],
@@ -1233,7 +1233,7 @@ def deep_dive():
 
     try:
         resp = client.messages.create(
-            model='claude-sonnet-4-5-20250929',
+            model='claude-sonnet-4-6',
             max_tokens=1000,
             system=system_prompt,
             messages=[{'role': 'user', 'content': user_prompt}],
@@ -1250,7 +1250,7 @@ def deep_dive():
             lines = part.split('\n', 1)
             title = lines[0].strip()
             body  = lines[1].strip() if len(lines) > 1 else ''
-            if title:
+            if title and not title.startswith('#') and not title.startswith('---'):
                 sections.append({'title': title, 'body': body})
 
         if not sections:
