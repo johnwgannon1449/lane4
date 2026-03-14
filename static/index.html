@@ -103,7 +103,7 @@
 
     /* ── SEARCH BAR ──────────────────────────────────────────── */
     .search-wrap {
-      display: flex; gap: 0.6rem; margin-bottom: 1.25rem;
+      display: flex; gap: 0.6rem; margin-bottom: 0.75rem; position: relative;
     }
     .search-input {
       flex: 1; padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 9px;
@@ -112,6 +112,40 @@
     }
     .search-input:focus { outline: none; border-color: var(--blue); }
     .search-input::placeholder { color: #CBD5E1; }
+    .search-dropdown {
+      position: absolute; top: calc(100% + 4px); left: 0;
+      right: 72px; /* leave space for the button */
+      background: var(--white); border: 1.5px solid var(--border);
+      border-radius: 10px; box-shadow: 0 8px 24px rgba(0,0,0,0.10);
+      z-index: 200; overflow: hidden; display: none;
+    }
+    .search-dropdown.open { display: block; }
+    .drop-item {
+      padding: 10px 14px; font-size: 0.87rem; color: var(--slate);
+      cursor: pointer; border-bottom: 1px solid var(--border);
+      transition: background 0.1s;
+    }
+    .drop-item:last-child { border-bottom: none; }
+    .drop-item:hover { background: var(--blue-l); color: var(--blue); }
+    .drop-item-icon { margin-right: 6px; opacity: 0.5; font-size: 0.8rem; }
+    .elim-bar {
+      display: flex; align-items: center; gap: 0.6rem;
+      background: var(--amber-l); border: 1px solid var(--amber-m);
+      border-radius: 8px; padding: 7px 12px; margin-bottom: 0.9rem;
+      font-size: 0.82rem; color: var(--amber);
+    }
+    .elim-bar span { flex: 1; font-weight: 500; }
+    .direct-match-banner {
+      background: var(--blue); color: white; font-size: 0.68rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      padding: 3px 9px; border-radius: 4px; display: inline-block; margin-bottom: 0.5rem;
+    }
+    .related-divider {
+      font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.08em; color: var(--muted);
+      margin: 1.25rem 0 0.75rem; padding-bottom: 0.4rem;
+      border-bottom: 1px solid var(--border);
+    }
 
     /* ── RESULT CARDS ────────────────────────────────────────── */
     .result-card {
@@ -288,13 +322,16 @@
 
     <div class="search-wrap">
       <input class="search-input" id="q-input" type="text"
-        placeholder="What kind of school is James looking for?"
-        onkeydown="if(event.key==='Enter') runSearch()" />
-      <button class="btn btn-primary" onclick="runSearch()">Search</button>
+        placeholder="School name or ask anything…"
+        onfocus="showDropdown()"
+        oninput="filterDropdown()"
+        onkeydown="handleSearchKey(event)"
+        autocomplete="off" />
+      <button class="btn btn-primary" id="search-btn" onclick="hideDropdown();runSearch()">Search</button>
+      <div class="search-dropdown" id="search-dropdown"></div>
     </div>
 
-    <div class="pill-row" id="suggestion-pills"></div>
-
+    <div id="elim-bar"></div>
     <div id="search-state"></div>
     <div id="search-results"></div>
   </div>
@@ -430,7 +467,7 @@ async function boot() {
   VIBE_STATE  = { ...(JAMES.vibe || {}) };
 
   renderProfile();
-  renderSuggestions();
+  renderElimBar();
   renderMyList();
   renderReminders();
   updateBadges();
@@ -461,28 +498,90 @@ function safeAdmColor(adm) {
 }
 
 // ════════════════════════════════════════════════════════════════
-// EXPLORE — SEARCH
+// EXPLORE — DROPDOWN
 // ════════════════════════════════════════════════════════════════
-function renderSuggestions() {
-  const el = document.getElementById('suggestion-pills');
-  el.innerHTML = SUGGESTED_QUERIES.map(q =>
-    `<span class="pill" onclick='fillAndSearch(${JSON.stringify(q)})'>${q}</span>`
-  ).join('');
+let _dropdownVisible = false;
+
+function buildDropdownItems(filter) {
+  const f = (filter || '').toLowerCase();
+  return SUGGESTED_QUERIES.filter(q => !f || q.toLowerCase().includes(f));
 }
 
-function fillAndSearch(q) {
+function renderDropdown(items) {
+  const dd = document.getElementById('search-dropdown');
+  if (!items.length) { hideDropdown(); return; }
+  dd.innerHTML = items.map(q =>
+    `<div class="drop-item" onmousedown='pickSuggestion(${JSON.stringify(q)})'>
+       <span class="drop-item-icon">✦</span>${esc(q)}
+     </div>`
+  ).join('');
+  dd.classList.add('open');
+  _dropdownVisible = true;
+}
+
+function showDropdown() {
+  const val = document.getElementById('q-input').value.trim();
+  renderDropdown(buildDropdownItems(val));
+}
+
+function hideDropdown() {
+  document.getElementById('search-dropdown').classList.remove('open');
+  _dropdownVisible = false;
+}
+
+function filterDropdown() {
+  const val = document.getElementById('q-input').value.trim();
+  if (!val) { renderDropdown(buildDropdownItems('')); return; }
+  const items = buildDropdownItems(val);
+  if (items.length) renderDropdown(items);
+  else hideDropdown();
+}
+
+function handleSearchKey(e) {
+  if (e.key === 'Enter')  { hideDropdown(); runSearch(); }
+  if (e.key === 'Escape') { hideDropdown(); }
+}
+
+function pickSuggestion(q) {
   document.getElementById('q-input').value = q;
+  hideDropdown();
   runSearch();
 }
 
+// Close dropdown when clicking outside
+document.addEventListener('click', e => {
+  if (!e.target.closest('.search-wrap')) hideDropdown();
+});
+
+// ════════════════════════════════════════════════════════════════
+// EXPLORE — ELIMINATED BAR
+// ════════════════════════════════════════════════════════════════
+function renderElimBar() {
+  const el = document.getElementById('elim-bar');
+  if (!el) return;
+  if (!ELIMINATED.length) { el.innerHTML = ''; return; }
+  el.innerHTML = `<div class="elim-bar">
+    <span>↩ ${ELIMINATED.length} school${ELIMINATED.length > 1 ? 's' : ''} hidden from results</span>
+    <button class="btn btn-secondary" style="padding:5px 12px;font-size:0.78rem;" onclick="releaseEliminated()">Release all</button>
+  </div>`;
+}
+
+function releaseEliminated() {
+  ELIMINATED = [];
+  renderElimBar();
+}
+
+// ════════════════════════════════════════════════════════════════
+// EXPLORE — SEARCH
+// ════════════════════════════════════════════════════════════════
 async function runSearch() {
   const q = document.getElementById('q-input').value.trim();
   if (!q) return;
   LAST_QUERY = q;
 
-  const state = document.getElementById('search-state');
+  const state   = document.getElementById('search-state');
   const results = document.getElementById('search-results');
-  state.innerHTML = `<div class="loading-state"><span class="spinner"></span> Searching across 76 programs…</div>`;
+  state.innerHTML   = `<div class="loading-state"><span class="spinner"></span> Searching across 76 programs…</div>`;
   results.innerHTML = '';
 
   try {
@@ -500,25 +599,26 @@ async function runSearch() {
       return;
     }
 
-    const schools = data.schools || data.fallback || [];
-    const answer  = data.answer || '';
+    const schools     = data.schools || data.fallback || [];
+    const answer      = data.answer  || '';
+    const isDirect    = data.directMatch || (schools[0] && schools[0].directMatch);
 
     if (data.fallback && !data.schools) {
       state.innerHTML = `<div class="info-box">AI search unavailable — showing top results by swim score.</div>`;
-    } else if (answer) {
+    } else if (answer && !isDirect) {
       state.innerHTML = `<div class="info-box" style="background:var(--blue-l);border-left-color:var(--blue);">
         <strong>Lane4:</strong> ${esc(answer)}</div>`;
     }
 
     LAST_RESULTS = { answer, schools };
-    renderResultCards(schools, results);
+    renderResultCards(schools, results, isDirect, answer);
 
   } catch (e) {
     state.innerHTML = `<div class="err-box">Something went wrong. Please try again.</div>`;
   }
 }
 
-function renderResultCards(schools, container) {
+function renderResultCards(schools, container, isDirect, answer) {
   if (!schools.length) {
     container.innerHTML = `<div class="empty-state">
       <div class="empty-state-icon">🔍</div>
@@ -528,20 +628,22 @@ function renderResultCards(schools, container) {
     return;
   }
 
-  container.innerHTML = schools.map((r, i) => {
+  function cardHtml(r, i) {
     const inList = MY_LIST.includes(r.school);
     const top1   = r.top3[0];
     const top2   = r.top3[1];
+    const admColor = safeAdmColor(r.admission);
     return `
     <div class="result-card" id="rcard-${i}">
-      ${r.aiWhy ? `<div class="ai-why">✦ ${esc(r.aiWhy)}</div>` : ''}
+      ${r.directMatch ? '<div class="direct-match-banner">Exact Match</div>' : ''}
+      ${r.aiWhy && !r.directMatch ? `<div class="ai-why">✦ ${esc(r.aiWhy)}</div>` : ''}
       <div class="result-card-top">
         <div>
           <div class="result-school-name">${esc(r.school)}</div>
           <div class="result-conference">${esc(r.conference)} · ${esc(r.meta.location || '')}</div>
         </div>
         <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;">
-          <span class="badge badge-adm" style="background:${r.admission.color};">${esc(r.admission.label)}</span>
+          <span class="badge badge-adm" style="background:${admColor};">${esc(r.admission.label)}</span>
           <span class="badge badge-tier">${esc(r.adjTier)}</span>
         </div>
       </div>
@@ -563,13 +665,25 @@ function renderResultCards(schools, container) {
         <button class="btn btn-ghost" onclick='eliminate(${JSON.stringify(r.school)}, ${i})'>✕</button>
       </div>
     </div>`;
-  }).join('');
+  }
+
+  if (isDirect && schools.length > 1) {
+    const relatedAnswer = answer ? `<div class="info-box" style="background:var(--blue-l);border-left-color:var(--blue);margin-bottom:0.75rem;"><strong>Lane4:</strong> ${esc(answer)}</div>` : '';
+    container.innerHTML =
+      cardHtml(schools[0], 0) +
+      `<div class="related-divider">You might also like…</div>` +
+      relatedAnswer +
+      schools.slice(1).map((r, i) => cardHtml(r, i + 1)).join('');
+  } else {
+    container.innerHTML = schools.map((r, i) => cardHtml(r, i)).join('');
+  }
 }
 
 function eliminate(school, idx) {
   if (!ELIMINATED.includes(school)) ELIMINATED.push(school);
   const card = document.getElementById('rcard-' + idx);
   if (card) card.style.display = 'none';
+  renderElimBar();
 }
 
 function addToList(school, idx) {

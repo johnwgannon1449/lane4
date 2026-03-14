@@ -1065,10 +1065,14 @@ def score_all():
 def search():
     """
     Natural-language search: re-sort top-35 by query intent, call Claude,
-    return 3 annotated SchoolResult objects.
+    return 6 annotated SchoolResult objects.
+
+    If the query exactly (or partially) matches a school name, that school is
+    returned first as a directMatch, and Claude picks 5 related schools.
+    Otherwise Claude picks 6 schools from the pre-sorted pool.
 
     Body: { query, eliminated?, myList? }
-    Response: { answer, schools } or { error, fallback? }
+    Response: { answer, schools, directMatch? } or { error, fallback? }
     """
     data       = request.json or {}
     query      = data.get('query', '').strip()
@@ -1078,19 +1082,35 @@ def search():
     if not query:
         return jsonify({'error': 'Query is required'}), 400
 
-    # Always compute fresh so filtering/sorting is accurate
     all_results = score_all_schools(JAMES['times'], JAMES['sat'], JAMES['gpa'])
-    sorted_35   = _pre_sort(all_results, query, eliminated, my_list)
 
-    if not sorted_35:
-        return jsonify({'error': 'No schools available to search after filters'}), 400
+    # ── Direct school-name match ──────────────────────────────────────────
+    q_lower      = query.lower()
+    direct_match = None
+    for r in all_results:
+        if r['school'].lower() == q_lower:
+            direct_match = r
+            break
+    if not direct_match:
+        for r in all_results:
+            if q_lower in r['school'].lower():
+                direct_match = r
+                break
+
+    excl_names = set(eliminated) | set(my_list)
+    if direct_match:
+        excl_names.add(direct_match['school'])
+
+    pool = [r for r in all_results if r['school'] not in excl_names][:35]
 
     client = _get_anthropic()
     if not client:
+        fallback = ([{**direct_match, 'directMatch': True}] if direct_match else []) + pool[:6 if not direct_match else 5]
         return jsonify({
             'error': 'AI search is not configured',
             'detail': 'ANTHROPIC_API_KEY is missing or invalid',
-            'fallback': sorted_35[:3],  # return top 3 deterministically
+            'fallback': fallback[:6],
+            'directMatch': bool(direct_match),
         }), 503
 
     system_prompt = (
@@ -1099,45 +1119,74 @@ def search():
         "Keep 'why' fields under 15 words each. Keep 'answer' under 30 words."
     )
 
-    school_lines = '\n'.join(_build_school_line(i, r) for i, r in enumerate(sorted_35))
-    user_prompt  = (
-        f'Mom\'s question: "{query}"\n\n'
-        f"James: GPA {JAMES['gpa']}, SAT {JAMES['sat']}, STEM-focused, "
-        f"Conference Star swimmer (1650/500 Free, 50 Breast split).\n\n"
-        "Pick 3 schools from this numbered list that best answer the question. Return ONLY JSON.\n\n"
-        f"{school_lines}\n\n"
-        'JSON format:\n{"answer":"1-2 sentences max","schools":[{"number":1,"why":"under 15 words"}]}'
-    )
+    school_lines = '\n'.join(_build_school_line(i, r) for i, r in enumerate(pool))
+
+    if direct_match:
+        user_prompt = (
+            f'The user searched by school name for "{direct_match["school"]}" '
+            f'({direct_match["conference"]}, swim tier: {direct_match["adjTier"]}).\n\n'
+            f"James: GPA {JAMES['gpa']}, SAT {JAMES['sat']}, STEM-focused.\n\n"
+            "Pick 5 schools from this numbered list that are most similar to "
+            f"{direct_match['school']} in swim tier, academic selectivity, and overall vibe. "
+            "Return ONLY JSON.\n\n"
+            f"{school_lines}\n\n"
+            'JSON format:\n{"answer":"1-2 sentences why these are similar","schools":[{"number":1,"why":"under 15 words"}]}'
+        )
+    else:
+        sorted_35 = _pre_sort(all_results, query, eliminated, my_list)
+        school_lines = '\n'.join(_build_school_line(i, r) for i, r in enumerate(sorted_35))
+        pool = sorted_35  # reassign so _parse_search_response uses the right order
+        user_prompt = (
+            f'Mom\'s question: "{query}"\n\n'
+            f"James: GPA {JAMES['gpa']}, SAT {JAMES['sat']}, STEM-focused, "
+            f"Conference Star swimmer (1650/500 Free, 50 Breast split).\n\n"
+            "Pick 6 schools from this numbered list that best answer the question. Return ONLY JSON.\n\n"
+            f"{school_lines}\n\n"
+            'JSON format:\n{"answer":"1-2 sentences max","schools":[{"number":1,"why":"under 15 words"}]}'
+        )
 
     try:
         resp = client.messages.create(
             model='claude-sonnet-4-6',
-            max_tokens=600,
+            max_tokens=800,
             system=system_prompt,
             messages=[{'role': 'user', 'content': user_prompt}],
         )
         raw_text = resp.content[0].text
-        answer, schools = _parse_search_response(raw_text, sorted_35)
-        return jsonify({'answer': answer, 'schools': schools})
+        answer, ai_schools = _parse_search_response(raw_text, pool)
+
+        if direct_match:
+            dm = {**direct_match, 'directMatch': True, 'aiWhy': 'You searched for this school directly.'}
+            schools = [dm] + ai_schools
+        else:
+            schools = ai_schools
+
+        return jsonify({'answer': answer, 'schools': schools, 'directMatch': bool(direct_match)})
 
     except json.JSONDecodeError as e:
+        fallback = ([{**direct_match, 'directMatch': True}] if direct_match else []) + pool[:5 if direct_match else 6]
         return jsonify({
             'error': 'AI returned malformed JSON',
             'detail': str(e),
-            'fallback': sorted_35[:3],
+            'fallback': fallback[:6],
+            'directMatch': bool(direct_match),
         }), 200
 
     except ValueError as e:
+        fallback = ([{**direct_match, 'directMatch': True}] if direct_match else []) + pool[:5 if direct_match else 6]
         return jsonify({
             'error': str(e),
-            'fallback': sorted_35[:3],
+            'fallback': fallback[:6],
+            'directMatch': bool(direct_match),
         }), 200
 
     except Exception as e:
+        fallback = ([{**direct_match, 'directMatch': True}] if direct_match else []) + pool[:5 if direct_match else 6]
         return jsonify({
             'error': 'Search failed',
             'detail': str(e),
-            'fallback': sorted_35[:3],
+            'fallback': fallback[:6],
+            'directMatch': bool(direct_match),
         }), 200
 
 
