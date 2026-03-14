@@ -3,168 +3,142 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Lane4 — Scoring Engine</title>
+  <title>Lane4 — D3 Swim Recruiting Advisor</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700;800&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,600;0,700;0,800;1,600&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --blue:   #2563EB; --blue-l: #EFF6FF; --blue-m: #BFDBFE;
+      --blue:   #2563EB; --blue-l: #EFF6FF; --blue-m: #BFDBFE; --blue-d: #1D4ED8;
       --navy:   #0F172A; --slate:  #475569; --muted:  #64748B;
       --border: #E2E8F0; --bg:     #F8FAFC; --white:  #ffffff;
-      --green:  #059669; --green-l:#ECFDF5;
-      --amber:  #D97706; --amber-l:#FFFBEB;
+      --green:  #059669; --green-l:#ECFDF5; --green-m:#D1FAE5;
+      --amber:  #D97706; --amber-l:#FFFBEB; --amber-m:#FEF3C7;
       --red:    #EF4444; --red-l:  #FEF2F2;
+      --violet: #7C3AED; --violet-l:#EDE9FE;
       --mono:   'JetBrains Mono', monospace;
     }
-    body { font-family: 'Figtree', sans-serif; background: var(--bg); color: var(--navy); font-size: 14px; }
+    body { font-family: 'Figtree', sans-serif; background: var(--bg); color: var(--navy); font-size: 15px; min-height: 100vh; }
 
-    /* NAV */
+    /* ── NAV ─────────────────────────────────────────────────── */
     nav {
-      position: sticky; top: 0; z-index: 20;
+      position: sticky; top: 0; z-index: 50;
       background: var(--white); border-bottom: 1px solid var(--border);
-      padding: 0 1.25rem; height: 48px;
-      display: flex; align-items: center; gap: 8px;
+      height: 52px; display: flex; align-items: center; justify-content: space-between;
+      padding: 0 1.25rem;
     }
-    .logo { font-family: 'Fraunces', serif; font-weight: 800; font-size: 1rem; color: var(--navy); }
+    .logo { font-family: 'Fraunces', serif; font-weight: 800; font-size: 1.1rem; color: var(--navy); text-decoration: none; }
     .logo-dot { color: var(--blue); }
-    .nav-sub { font-size: 0.75rem; color: var(--muted); }
-
-    /* LAYOUT */
-    .wrap { max-width: 1200px; margin: 0 auto; padding: 1.5rem 1.25rem 4rem; }
-
-    /* SECTION HEADERS */
-    .section-hd {
-      font-family: 'Fraunces', serif; font-weight: 700; font-size: 1.05rem;
-      color: var(--navy); margin-bottom: 0.6rem;
-      display: flex; align-items: center; gap: 0.5rem;
+    .nav-tabs { display: flex; gap: 0; }
+    .nav-tab {
+      padding: 0 1rem; height: 52px; display: flex; align-items: center;
+      font-size: 0.85rem; font-weight: 600; color: var(--muted); cursor: pointer;
+      border-bottom: 2px solid transparent; transition: color 0.15s, border-color 0.15s;
+      user-select: none; white-space: nowrap;
     }
-    .section-sub { font-size: 0.75rem; color: var(--muted); font-weight: 400; font-family: 'Figtree', sans-serif; }
+    .nav-tab:hover { color: var(--navy); }
+    .nav-tab.active { color: var(--blue); border-bottom-color: var(--blue); }
+    .nav-tab .badge {
+      display: inline-flex; align-items: center; justify-content: center;
+      background: var(--red); color: white; font-size: 0.55rem;
+      width: 14px; height: 14px; border-radius: 50%; margin-left: 4px; font-weight: 700;
+    }
 
-    /* CARDS */
+    /* ── LAYOUT ──────────────────────────────────────────────── */
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+    .wrap { max-width: 720px; margin: 0 auto; padding: 1.75rem 1.25rem 5rem; }
+    .wrap-wide { max-width: 900px; margin: 0 auto; padding: 1.75rem 1.25rem 5rem; }
+
+    /* ── TYPOGRAPHY ──────────────────────────────────────────── */
+    .page-title { font-family: 'Fraunces', serif; font-weight: 700; font-size: 1.35rem; color: var(--navy); margin-bottom: 0.25rem; }
+    .page-sub { font-size: 0.85rem; color: var(--muted); margin-bottom: 1.5rem; }
+    .section-label {
+      font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;
+      color: var(--muted); margin-bottom: 0.6rem;
+    }
+
+    /* ── CARDS ───────────────────────────────────────────────── */
     .card {
       background: var(--white); border: 1.5px solid var(--border);
-      border-radius: 12px; padding: 1rem 1.1rem; margin-bottom: 1.1rem;
+      border-radius: 14px; padding: 1.1rem 1.2rem; margin-bottom: 1rem;
     }
-    .card-lbl {
-      font-size: 0.65rem; font-weight: 700; color: var(--muted);
-      text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.75rem;
-    }
+    .card-sm { padding: 0.8rem 1rem; border-radius: 10px; }
 
-    /* PROFILE STRIP */
-    .profile-strip {
-      display: flex; flex-wrap: wrap; gap: 1rem; align-items: center;
-    }
-    .pstat { display: flex; flex-direction: column; gap: 2px; }
-    .pstat-val { font-family: 'Fraunces', serif; font-weight: 700; font-size: 1.1rem; color: var(--blue); }
-    .pstat-lbl { font-size: 0.65rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
-    .pdivider { width: 1px; height: 32px; background: var(--border); }
-    .times-grid { display: flex; flex-wrap: wrap; gap: 0.4rem; }
-    .tpill {
-      font-family: var(--mono); font-size: 0.75rem; font-weight: 500;
-      background: var(--bg); border: 1px solid var(--border);
-      border-radius: 6px; padding: 3px 8px; color: var(--slate);
-    }
-    .tpill strong { color: var(--navy); }
-
-    /* NORMALIZATION ALERT */
-    .norm-alert {
-      background: #FFFBEB; border: 1px solid #FCD34D; border-radius: 10px;
-      padding: 0.75rem 1rem; margin-bottom: 1rem; font-size: 0.8rem;
-    }
-    .norm-alert-hd { font-weight: 700; color: var(--amber); margin-bottom: 0.4rem; }
-    .norm-list { display: flex; flex-direction: column; gap: 3px; }
-    .norm-row { display: flex; gap: 0.5rem; align-items: baseline; color: var(--slate); }
-    .norm-raw { font-family: var(--mono); color: var(--red); font-size: 0.72rem; }
-    .norm-arrow { color: var(--muted); }
-    .norm-can { font-family: var(--mono); color: var(--green); font-size: 0.72rem; }
-    .norm-reason { color: var(--muted); font-size: 0.68rem; }
-
-    /* CONTROLS */
-    .controls { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; flex-wrap: wrap; }
-    .filter-input {
-      padding: 7px 10px; border: 1.5px solid var(--border); border-radius: 7px;
-      font-family: 'Figtree', sans-serif; font-size: 0.82rem;
-      color: var(--navy); background: var(--white); flex: 1; min-width: 180px; max-width: 260px;
-    }
-    .filter-input:focus { outline: none; border-color: var(--blue); }
-    .toggle-btn {
-      padding: 6px 12px; border: 1.5px solid var(--border); border-radius: 7px;
-      font-size: 0.78rem; font-weight: 600; cursor: pointer; background: var(--white);
-      color: var(--slate); transition: all 0.15s;
-    }
-    .toggle-btn.active { background: var(--blue); border-color: var(--blue); color: var(--white); }
-    .count-badge {
-      font-size: 0.72rem; color: var(--muted); padding-left: 0.25rem;
-    }
-
-    /* RANKED TABLE */
-    .tbl-wrap { overflow-x: auto; }
-    table.rtbl { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
-    table.rtbl thead th {
-      position: sticky; top: 47px; background: var(--white);
-      font-size: 0.62rem; font-weight: 700; color: var(--muted);
-      text-transform: uppercase; letter-spacing: 0.06em;
-      padding: 0 0.5rem 0.5rem; text-align: right;
-      border-bottom: 1.5px solid var(--border);
-      white-space: nowrap; cursor: pointer; user-select: none;
-    }
-    table.rtbl thead th:first-child { text-align: left; }
-    table.rtbl thead th:hover { color: var(--blue); }
-    table.rtbl thead th.sort-asc::after  { content: ' ↑'; color: var(--blue); }
-    table.rtbl thead th.sort-desc::after { content: ' ↓'; color: var(--blue); }
-    table.rtbl tbody tr { border-bottom: 1px solid var(--bg); transition: background 0.1s; }
-    table.rtbl tbody tr:hover { background: #F8FAFC; }
-    table.rtbl td {
-      padding: 0.45rem 0.5rem; text-align: right; color: var(--slate);
-      white-space: nowrap;
-    }
-    table.rtbl td:first-child { text-align: left; }
-    .rank-num { color: var(--muted); font-size: 0.7rem; width: 28px; }
-    .school-name { color: var(--navy); font-weight: 600; }
-    .norm-flag {
-      display: inline-block; font-size: 0.6rem; vertical-align: middle;
-      background: var(--amber-l); color: var(--amber); border: 1px solid #FCD34D;
-      border-radius: 4px; padding: 0 4px; margin-left: 4px; line-height: 1.4;
-    }
-    .ivy-badge {
-      display: inline-block; font-size: 0.58rem; background: #EDE9FE; color: #7C3AED;
-      border-radius: 4px; padding: 0 4px; margin-left: 3px; vertical-align: middle;
-    }
-    .stem-badge {
-      display: inline-block; font-size: 0.58rem; background: var(--blue-l); color: var(--blue);
-      border-radius: 4px; padding: 0 4px; margin-left: 3px; vertical-align: middle;
-    }
-    .adj-pts { font-family: 'Fraunces', serif; font-weight: 700; color: var(--blue); }
-    .raw-pts { font-family: var(--mono); font-size: 0.72rem; color: var(--slate); }
-    .psf-val  { font-family: var(--mono); font-size: 0.72rem; }
-    .event-col { font-size: 0.7rem; color: var(--slate); }
-    code { font-family: var(--mono); font-size: 0.72rem; }
-
-    /* TIER BADGES */
-    .tier-badge {
+    /* ── BADGES ──────────────────────────────────────────────── */
+    .badge {
       display: inline-block; font-size: 0.62rem; font-weight: 700;
       padding: 2px 7px; border-radius: 5px; white-space: nowrap;
     }
+    .badge-ivy  { background: var(--violet-l); color: var(--violet); }
+    .badge-stem { background: var(--blue-l);   color: var(--blue); }
+    .badge-tier { background: var(--blue-l);   color: var(--blue); }
+    .badge-adm  { color: white; }
 
-    /* ADMISSION BADGE */
-    .adm-badge {
-      display: inline-block; font-size: 0.62rem; font-weight: 700;
-      padding: 2px 7px; border-radius: 5px; white-space: nowrap;
-      color: var(--white);
+    /* ── BUTTONS ─────────────────────────────────────────────── */
+    .btn {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 8px 14px; border-radius: 8px; font-family: 'Figtree', sans-serif;
+      font-size: 0.83rem; font-weight: 600; cursor: pointer; border: none;
+      transition: all 0.15s; text-decoration: none;
     }
+    .btn-primary   { background: var(--blue);  color: white; }
+    .btn-primary:hover  { background: var(--blue-d); }
+    .btn-secondary { background: var(--bg); color: var(--navy); border: 1.5px solid var(--border); }
+    .btn-secondary:hover { border-color: var(--blue); color: var(--blue); }
+    .btn-ghost { background: transparent; color: var(--muted); padding: 6px 10px; }
+    .btn-ghost:hover { color: var(--red); }
+    .btn-full { width: 100%; justify-content: center; padding: 11px; }
+    .btn:disabled { opacity: 0.45; cursor: not-allowed; }
 
-    /* EXPANDABLE ROW */
-    .expand-btn { cursor: pointer; color: var(--blue); font-size: 0.7rem; user-select: none; }
-    .detail-row td { background: #F8FAFC; padding: 0.5rem 0.75rem; }
-    .detail-tbl { width: 100%; border-collapse: collapse; font-size: 0.72rem; }
-    .detail-tbl td { padding: 3px 6px; color: var(--slate); text-align: right; border-bottom: 1px solid var(--border); }
-    .detail-tbl td:first-child { text-align: left; color: var(--navy); }
-    .detail-tbl tr.top3-row td { background: var(--green-l); }
-    .detail-tbl tr.top3-row td:first-child { color: var(--green); font-weight: 600; }
+    /* ── PILL SUGGESTIONS ────────────────────────────────────── */
+    .pill-row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.25rem; }
+    .pill {
+      padding: 6px 13px; border-radius: 20px; border: 1.5px solid var(--border);
+      font-size: 0.8rem; font-weight: 500; color: var(--slate); cursor: pointer;
+      background: var(--white); transition: all 0.15s;
+    }
+    .pill:hover { border-color: var(--blue); color: var(--blue); background: var(--blue-l); }
 
-    /* PLACE LABEL COLORS */
+    /* ── SEARCH BAR ──────────────────────────────────────────── */
+    .search-wrap {
+      display: flex; gap: 0.6rem; margin-bottom: 1.25rem;
+    }
+    .search-input {
+      flex: 1; padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 9px;
+      font-family: 'Figtree', sans-serif; font-size: 0.92rem; color: var(--navy);
+      background: var(--white); transition: border-color 0.15s;
+    }
+    .search-input:focus { outline: none; border-color: var(--blue); }
+    .search-input::placeholder { color: #CBD5E1; }
+
+    /* ── RESULT CARDS ────────────────────────────────────────── */
+    .result-card {
+      background: var(--white); border: 1.5px solid var(--border);
+      border-radius: 14px; padding: 1.1rem 1.2rem; margin-bottom: 0.85rem;
+      transition: border-color 0.15s;
+    }
+    .result-card:hover { border-color: var(--blue-m); }
+    .result-card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 0.75rem; margin-bottom: 0.6rem; }
+    .result-school-name { font-family: 'Fraunces', serif; font-weight: 700; font-size: 1.05rem; color: var(--navy); }
+    .result-conference { font-size: 0.78rem; color: var(--muted); margin-top: 1px; }
+    .result-badges { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 0.55rem; }
+    .result-vibe { font-size: 0.82rem; color: var(--slate); font-style: italic; margin-bottom: 0.7rem; line-height: 1.45; }
+    .ai-why {
+      font-size: 0.78rem; color: var(--blue); font-weight: 600;
+      margin-bottom: 0.6rem; display: flex; align-items: baseline; gap: 4px;
+    }
+    .result-events { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.8rem; }
+    .event-chip {
+      font-size: 0.75rem; background: var(--bg); border: 1px solid var(--border);
+      border-radius: 6px; padding: 3px 9px; color: var(--slate);
+    }
+    .event-chip strong { color: var(--navy); }
+    .result-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center; }
+    .btn-added { background: var(--green-m); color: var(--green); cursor: default; border: 1.5px solid var(--green-m); }
+
+    /* place label colors */
     .pl-winner { background: #FEF3C7; color: #92400E; }
     .pl-podium  { background: #FEF9C3; color: #854D0E; }
     .pl-afinal  { background: var(--blue-l); color: var(--blue); }
@@ -172,553 +146,886 @@
     .pl-bubble  { background: var(--amber-l); color: var(--amber); }
     .pl-oor     { background: var(--red-l); color: var(--red); }
 
-    /* CALC SECTION */
-    .calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-    .field { display: flex; flex-direction: column; gap: 4px; }
-    .field label { font-size: 0.75rem; font-weight: 600; color: var(--slate); }
-    select, input[type="text"] {
-      padding: 8px 10px; border: 1.5px solid var(--border); border-radius: 7px;
-      font-family: 'Figtree', sans-serif; font-size: 0.85rem; color: var(--navy); background: var(--white);
+    /* ── DEEP DIVE PANEL ─────────────────────────────────────── */
+    .deep-dive-back { display: flex; align-items: center; gap: 6px; color: var(--blue); font-size: 0.85rem; font-weight: 600; cursor: pointer; margin-bottom: 1.25rem; }
+    .deep-dive-back:hover { opacity: 0.75; }
+    .deep-dive-header { margin-bottom: 1.5rem; }
+    .deep-dive-school { font-family: 'Fraunces', serif; font-weight: 800; font-size: 1.6rem; color: var(--navy); margin-bottom: 0.35rem; }
+    .deep-dive-meta { font-size: 0.85rem; color: var(--muted); display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center; }
+    .deep-section { margin-bottom: 1.25rem; }
+    .deep-section-title { font-family: 'Fraunces', serif; font-weight: 700; font-size: 0.95rem; color: var(--navy); margin-bottom: 0.4rem; }
+    .deep-section-body { font-size: 0.9rem; line-height: 1.65; color: var(--slate); white-space: pre-wrap; }
+    .bottom-line {
+      background: var(--navy); border-radius: 12px; padding: 1.25rem 1.4rem; margin-top: 1.25rem;
     }
-    select:focus, input[type="text"]:focus { outline: none; border-color: var(--blue); }
-    .events-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.55rem; margin-top: 0.75rem; }
-    .ef label { font-size: 0.7rem; font-weight: 600; color: var(--slate); display: block; margin-bottom: 3px; }
-    .ef input { font-family: var(--mono); font-weight: 500; }
-    .ef input::placeholder { font-family: 'Figtree'; font-weight: 400; color: #CBD5E1; font-size: 0.78rem; }
-    .btn-calc {
-      width: 100%; padding: 11px; margin-top: 1rem;
-      background: var(--blue); color: var(--white);
-      border: none; border-radius: 9px; font-family: 'Fraunces', serif; font-weight: 700; font-size: 0.95rem;
-      cursor: pointer; transition: opacity 0.15s;
-    }
-    .btn-calc:hover:not(:disabled) { opacity: 0.88; }
-    .btn-calc:disabled { opacity: 0.45; cursor: not-allowed; }
+    .bottom-line-label { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #93C5FD; margin-bottom: 0.4rem; }
+    .bottom-line-text { font-family: 'Fraunces', serif; font-weight: 700; font-size: 1.1rem; color: var(--white); line-height: 1.4; }
+    .email-block { white-space: pre-wrap; font-family: var(--mono); font-size: 0.78rem; color: var(--slate); line-height: 1.6; background: var(--bg); border-radius: 8px; padding: 1rem; }
+    .deep-dive-actions { display: flex; gap: 0.6rem; flex-wrap: wrap; margin: 1.25rem 0; }
 
-    .calc-result { margin-top: 1rem; }
-    .cr-summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; margin-bottom: 0.75rem; }
-    .cr-tile { text-align: center; padding: 0.5rem; background: var(--bg); border-radius: 8px; border: 1px solid var(--border); }
-    .cr-val { font-family: 'Fraunces', serif; font-weight: 800; font-size: 1.4rem; color: var(--blue); }
-    .cr-lbl { font-size: 0.62rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin-top: 2px; }
-
-    .spinner { width: 16px; height: 16px; border: 2px solid var(--border); border-top-color: var(--blue); border-radius: 50%; animation: spin 0.7s linear infinite; display: inline-block; vertical-align: middle; margin-right: 6px; }
+    /* ── SPINNER / STATE ─────────────────────────────────────── */
+    .spinner { width: 18px; height: 18px; border: 2px solid var(--border); border-top-color: var(--blue); border-radius: 50%; animation: spin 0.7s linear infinite; display: inline-block; vertical-align: middle; }
     @keyframes spin { to { transform: rotate(360deg); } }
-    .err { background: var(--red-l); color: var(--red); padding: 10px 14px; border-radius: 8px; font-size: 0.82rem; margin-top: 0.75rem; border-left: 3px solid var(--red); }
+    .loading-state { text-align: center; padding: 2.5rem 0; color: var(--muted); font-size: 0.9rem; display: flex; align-items: center; justify-content: center; gap: 0.6rem; }
+    .err-box { background: var(--red-l); color: var(--red); padding: 0.9rem 1.1rem; border-radius: 9px; font-size: 0.85rem; border-left: 3px solid var(--red); margin-bottom: 1rem; }
+    .info-box { background: var(--blue-l); color: var(--blue); padding: 0.9rem 1.1rem; border-radius: 9px; font-size: 0.85rem; border-left: 3px solid var(--blue-m); margin-bottom: 1rem; }
+    .empty-state { text-align: center; padding: 3rem 1rem; color: var(--muted); }
+    .empty-state-icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
+    .empty-state-title { font-family: 'Fraunces', serif; font-weight: 700; font-size: 1.1rem; color: var(--navy); margin-bottom: 0.35rem; }
+    .empty-state-text { font-size: 0.85rem; line-height: 1.5; }
 
-    @media (max-width: 640px) {
-      .events-grid { grid-template-columns: repeat(2,1fr); }
-      .calc-grid { grid-template-columns: 1fr; }
-      .cr-summary { grid-template-columns: repeat(2,1fr); }
+    /* ── PROFILE TAB ─────────────────────────────────────────── */
+    .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.75rem; margin-bottom: 1.25rem; }
+    .stat-tile { background: var(--white); border: 1.5px solid var(--border); border-radius: 10px; padding: 0.75rem 1rem; text-align: center; }
+    .stat-val { font-family: 'Fraunces', serif; font-weight: 700; font-size: 1.35rem; color: var(--blue); }
+    .stat-lbl { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin-top: 2px; }
+    .times-list { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .time-pill {
+      font-family: var(--mono); font-size: 0.78rem; font-weight: 500;
+      background: var(--bg); border: 1.5px solid var(--border);
+      border-radius: 7px; padding: 5px 10px; color: var(--slate);
+    }
+    .time-pill strong { color: var(--navy); }
+    .vibe-q { margin-bottom: 1.1rem; }
+    .vibe-q-label { font-size: 0.85rem; font-weight: 600; color: var(--navy); margin-bottom: 0.5rem; }
+    .vibe-options { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+    .vibe-opt {
+      padding: 6px 13px; border-radius: 20px; border: 1.5px solid var(--border);
+      font-size: 0.82rem; font-weight: 500; color: var(--slate); cursor: pointer;
+      background: var(--white); transition: all 0.15s;
+    }
+    .vibe-opt:hover  { border-color: var(--blue); color: var(--blue); }
+    .vibe-opt.picked { background: var(--blue); border-color: var(--blue); color: white; font-weight: 700; }
+
+    /* ── MY LIST TAB ─────────────────────────────────────────── */
+    .list-school-card { background: var(--white); border: 1.5px solid var(--border); border-radius: 12px; margin-bottom: 0.75rem; overflow: hidden; }
+    .list-school-header { display: flex; justify-content: space-between; align-items: center; padding: 0.9rem 1.1rem; cursor: pointer; gap: 0.75rem; }
+    .list-school-header:hover { background: var(--bg); }
+    .list-school-name { font-family: 'Fraunces', serif; font-weight: 700; font-size: 1rem; color: var(--navy); }
+    .list-school-meta { font-size: 0.78rem; color: var(--muted); margin-top: 1px; }
+    .list-school-right { display: flex; align-items: center; gap: 0.6rem; flex-shrink: 0; }
+    .status-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+    .crm-body { border-top: 1px solid var(--border); padding: 1rem 1.1rem; }
+    .status-row { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1rem; }
+    .status-btn {
+      padding: 5px 12px; border-radius: 20px; border: 1.5px solid var(--border);
+      font-size: 0.78rem; font-weight: 600; cursor: pointer; background: var(--white);
+      color: var(--slate); transition: all 0.15s;
+    }
+    .status-btn.active { border-color: transparent; color: white; }
+    .crm-section { margin-bottom: 1rem; }
+    .crm-section-title { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); margin-bottom: 0.5rem; }
+    .note-item { background: var(--bg); border-radius: 8px; padding: 0.65rem 0.75rem; margin-bottom: 0.4rem; font-size: 0.83rem; color: var(--slate); display: flex; justify-content: space-between; align-items: flex-start; gap: 0.5rem; }
+    .note-item-body { flex: 1; white-space: pre-wrap; }
+    .note-meta { font-size: 0.7rem; color: var(--muted); margin-top: 2px; }
+    .reminder-item { display: flex; align-items: center; gap: 0.6rem; background: var(--bg); border-radius: 8px; padding: 0.55rem 0.75rem; margin-bottom: 0.4rem; font-size: 0.83rem; }
+    .reminder-label { font-size: 0.7rem; font-weight: 700; padding: 2px 7px; border-radius: 4px; white-space: nowrap; }
+    .rem-overdue { background: var(--red-l); color: var(--red); }
+    .rem-today   { background: var(--amber-l); color: var(--amber); }
+    .rem-upcoming { background: var(--green-l); color: var(--green); }
+    .crm-add-row { display: flex; gap: 0.5rem; margin-top: 0.5rem; flex-wrap: wrap; }
+    .crm-input {
+      flex: 1; min-width: 0; padding: 7px 10px; border: 1.5px solid var(--border); border-radius: 7px;
+      font-family: 'Figtree', sans-serif; font-size: 0.83rem; color: var(--navy); background: var(--white);
+    }
+    .crm-input:focus { outline: none; border-color: var(--blue); }
+    select.crm-input { cursor: pointer; }
+
+    /* ── REMINDERS TAB ───────────────────────────────────────── */
+    .reminder-group { margin-bottom: 1.5rem; }
+    .reminder-group-title { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 0.5rem; padding-bottom: 0.4rem; border-bottom: 1px solid var(--border); }
+    .global-reminder-item {
+      background: var(--white); border: 1.5px solid var(--border); border-radius: 10px;
+      padding: 0.75rem 1rem; margin-bottom: 0.5rem;
+      display: flex; align-items: center; gap: 0.75rem;
+    }
+    .rem-school-link { font-size: 0.78rem; color: var(--blue); font-weight: 600; cursor: pointer; text-decoration: underline; text-underline-offset: 2px; }
+    .rem-text { font-size: 0.88rem; color: var(--navy); flex: 1; }
+
+    @media (max-width: 600px) {
+      .stat-grid { grid-template-columns: repeat(2, 1fr); }
+      .nav-tab { padding: 0 0.65rem; font-size: 0.78rem; }
     }
   </style>
 </head>
 <body>
+
 <nav>
   <span class="logo">Lane<span class="logo-dot">4</span></span>
-  <span class="nav-sub">· Deterministic Scoring Engine</span>
+  <div class="nav-tabs">
+    <div class="nav-tab active" id="tab-explore"   onclick="showTab('explore')">Explore</div>
+    <div class="nav-tab"        id="tab-mylist"    onclick="showTab('mylist')">My List <span id="list-count-badge" style="display:none;" class="badge">0</span></div>
+    <div class="nav-tab"        id="tab-reminders" onclick="showTab('reminders')">Reminders <span id="rem-urgent-badge" style="display:none;" class="badge">!</span></div>
+    <div class="nav-tab"        id="tab-profile"   onclick="showTab('profile')">Profile</div>
+  </div>
 </nav>
 
-<div class="wrap">
+<!-- ═══════════════════════════════════════════════════════════════
+     EXPLORE TAB
+════════════════════════════════════════════════════════════════ -->
+<div class="tab-panel active" id="panel-explore">
+  <!-- Search view -->
+  <div id="explore-search" class="wrap">
+    <div class="page-title">Find your schools</div>
+    <div class="page-sub">Ask anything about fit, cost, academics, or swim — Lane4 knows all 76 programs.</div>
 
-  <!-- ── JAMES PROFILE ──────────────────────────────────────────────────── -->
-  <div class="card" id="profile-card" style="display:none;">
-    <div class="card-lbl">James — Hardcoded Swimmer Profile</div>
-    <div class="profile-strip">
-      <div class="pstat"><div class="pstat-val" id="p-gpa">—</div><div class="pstat-lbl">GPA</div></div>
-      <div class="pdivider"></div>
-      <div class="pstat"><div class="pstat-val" id="p-sat">—</div><div class="pstat-lbl">SAT</div></div>
-      <div class="pdivider"></div>
-      <div class="pstat"><div class="pstat-val" id="p-sat-proj">—</div><div class="pstat-lbl">Projected SAT</div></div>
-      <div class="pdivider"></div>
-      <div class="pstat"><div class="pstat-val" id="p-math">—</div><div class="pstat-lbl">Math SAT</div></div>
-      <div class="pdivider"></div>
-      <div class="pstat" style="flex:1;">
-        <div class="pstat-lbl" style="margin-bottom:4px;">Event Times (SCY)</div>
-        <div class="times-grid" id="p-times"></div>
-      </div>
+    <div class="search-wrap">
+      <input class="search-input" id="q-input" type="text"
+        placeholder="What kind of school is James looking for?"
+        onkeydown="if(event.key==='Enter') runSearch()" />
+      <button class="btn btn-primary" onclick="runSearch()">Search</button>
     </div>
+
+    <div class="pill-row" id="suggestion-pills"></div>
+
+    <div id="search-state"></div>
+    <div id="search-results"></div>
   </div>
 
-  <!-- ── NORMALIZATION ALERT ────────────────────────────────────────────── -->
-  <div class="norm-alert" id="norm-alert" style="display:none;">
-    <div class="norm-alert-hd">⚠ 10 team names normalized from raw workbook values</div>
-    <div class="norm-list" id="norm-list"></div>
+  <!-- Deep dive view (hidden until triggered) -->
+  <div id="explore-deepdive" class="wrap" style="display:none;">
+    <div class="deep-dive-back" onclick="closeDeepDive()">← Back to results</div>
+    <div id="dd-content"></div>
   </div>
+</div>
 
-  <!-- ── RANKED RESULTS ─────────────────────────────────────────────────── -->
-  <div class="section-hd" id="results-hd" style="display:none;">
-    James vs All D3 Programs
-    <span class="section-sub" id="results-sub"></span>
+<!-- ═══════════════════════════════════════════════════════════════
+     MY LIST TAB
+════════════════════════════════════════════════════════════════ -->
+<div class="tab-panel" id="panel-mylist">
+  <div class="wrap">
+    <div class="page-title">My List</div>
+    <div class="page-sub">Track schools you're serious about. Add notes, set reminders, update your status.</div>
+    <div id="mylist-body"></div>
   </div>
+</div>
 
-  <div id="results-loading" style="color:var(--muted);padding:2rem 0;display:none;text-align:center;">
-    <span class="spinner"></span> Scoring James against all 76 programs…
+<!-- ═══════════════════════════════════════════════════════════════
+     REMINDERS TAB
+════════════════════════════════════════════════════════════════ -->
+<div class="tab-panel" id="panel-reminders">
+  <div class="wrap">
+    <div class="page-title">Reminders</div>
+    <div class="page-sub">All upcoming tasks across every school, sorted by date.</div>
+    <div id="reminders-body"></div>
   </div>
+</div>
 
-  <!-- Filter / toggle controls -->
-  <div class="controls" id="result-controls" style="display:none;">
-    <input type="text" class="filter-input" id="filter-input" placeholder="Filter by school or conference…" />
-    <button class="toggle-btn active" id="tog-all"    onclick="setFilter('all')">All</button>
-    <button class="toggle-btn"        id="tog-ivy"    onclick="setFilter('ivy')">Hidden Ivy</button>
-    <button class="toggle-btn"        id="tog-stem"   onclick="setFilter('stem')">STEM</button>
-    <button class="toggle-btn"        id="tog-merit"  onclick="setFilter('merit')">High Merit</button>
-    <button class="toggle-btn"        id="tog-norm"   onclick="setFilter('norm')">Normalized ⚠</button>
-    <span class="count-badge" id="count-badge"></span>
-  </div>
+<!-- ═══════════════════════════════════════════════════════════════
+     PROFILE TAB
+════════════════════════════════════════════════════════════════ -->
+<div class="tab-panel" id="panel-profile">
+  <div class="wrap">
+    <div class="page-title" id="prof-name">James's Profile</div>
+    <div class="page-sub">Academic stats and swim times Lane4 uses to score every school.</div>
 
-  <div class="tbl-wrap" id="results-table-wrap" style="display:none;">
-    <table class="rtbl" id="rtbl">
-      <thead>
-        <tr>
-          <th data-col="rank"       class="sort-asc">#</th>
-          <th data-col="school"     style="text-align:left;">School</th>
-          <th data-col="conference">Conf</th>
-          <th data-col="finish">Fin</th>
-          <th data-col="top1Event"  style="text-align:left;">Top Event</th>
-          <th data-col="top1Place">Place</th>
-          <th data-col="top1Adj">Adj Pts</th>
-          <th data-col="top2Event"  style="text-align:left;">2nd Event</th>
-          <th data-col="top2Place">Place</th>
-          <th data-col="top2Adj">Adj Pts</th>
-          <th data-col="rawPts">Raw Pts</th>
-          <th data-col="psf">PSF</th>
-          <th data-col="adjPts">Adj Score</th>
-          <th data-col="adjTier">Swim Tier</th>
-          <th data-col="acadScore">Acad</th>
-          <th data-col="swimScore">Swim Boost</th>
-          <th data-col="admTotal">Adm Total</th>
-          <th data-col="admission">Admission</th>
-          <th data-col="accept">Accept%</th>
-          <th data-col="satMedian">SAT Med</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody id="rtbl-body"></tbody>
-    </table>
-  </div>
+    <div class="section-label">Academic Stats</div>
+    <div class="stat-grid" id="prof-stats"></div>
 
-  <!-- ── MANUAL CALCULATOR ─────────────────────────────────────────────── -->
-  <div style="margin-top:2rem;">
-    <div class="section-hd">Manual Calculator
-      <span class="section-sub">— Enter any times to score at any school</span>
+    <div class="section-label" style="margin-top:0.5rem;">Current Best Times (SCY)</div>
+    <div class="card" style="margin-bottom:1.5rem;">
+      <div class="times-list" id="prof-times"></div>
     </div>
+
+    <div class="section-label">About James <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:0.78rem;color:var(--muted);">— helps Lane4 personalize your deep dives</span></div>
     <div class="card">
-      <div class="card-lbl">School</div>
-      <div class="calc-grid">
-        <div class="field">
-          <label>Conference</label>
-          <select id="c-conf"><option value="">Loading…</option></select>
-        </div>
-        <div class="field">
-          <label>Program</label>
-          <select id="c-team" disabled><option value="">Select conference first</option></select>
-        </div>
-      </div>
-      <div class="card-lbl" style="margin-top:1rem;">Event Times (SCY — leave blank to skip)</div>
-      <div class="events-grid" id="c-events"></div>
-      <button class="btn-calc" id="c-btn" disabled>Calculate →</button>
-      <div id="c-error" class="err" style="display:none;"></div>
-      <div id="c-result" class="calc-result" style="display:none;"></div>
+      <div id="vibe-questions"></div>
     </div>
   </div>
-
-</div><!-- end wrap -->
+</div>
 
 <script>
-// ── State ──────────────────────────────────────────────────────────────────
-let META = null;
-let ALL_RESULTS = [];    // full ranked list from /api/score-all
-let FILTER_MODE = 'all';
-let SORT_COL = 'rank';
-let SORT_DIR = 'asc';
+// ════════════════════════════════════════════════════════════════
+// STATE
+// ════════════════════════════════════════════════════════════════
+let ALL_RESULTS   = [];   // full ranked list from /api/score-all
+let JAMES         = {};   // swimmer profile
+let CRM_DATA      = {};   // { schoolName: { status, notes, reminders } }
+let MY_LIST       = [];   // array of school name strings (ordered)
+let ELIMINATED    = [];   // eliminated in current session
+let LAST_RESULTS  = null; // last search result { answer, schools }
+let LAST_QUERY    = '';
+let ACTIVE_TAB    = 'explore';
+let VIBE_STATE    = {};   // { campus, friday, academic, compete, location, career }
+let OPEN_CRM      = null; // currently expanded CRM card
 
-// ── Boot ──────────────────────────────────────────────────────────────────
+const STATUS_CONFIG = {
+  researching: { label: 'Researching',       color: '#64748B' },
+  emailed:     { label: 'Emailed Coach',      color: '#2563EB' },
+  visit:       { label: 'Visit Scheduled',    color: '#7C3AED' },
+  applied:     { label: 'Applied',            color: '#D97706' },
+  committed:   { label: 'Committed 🎉',       color: '#059669' },
+  pass:        { label: 'Not the Right Fit',  color: '#94A3B8' },
+};
+
+const VIBE_QUESTIONS = [
+  { id: 'campus',   question: 'What kind of campus feel matters most?',
+    options: ['Small and tight-knit — everyone knows everyone',
+              'Medium size with room to explore',
+              'Big university energy'] },
+  { id: 'friday',   question: 'Friday night on campus looks like...',
+    options: ['Library with 2–3 close friends',
+              'Team dinner and a movie',
+              'A house party or campus event',
+              'Exploring the city'] },
+  { id: 'academic', question: 'What describes your academic goal?',
+    options: ['Genuinely want to be well-rounded',
+              'Pre-med / pre-law track',
+              'Engineering or CS',
+              'Business or entrepreneurship'] },
+  { id: 'compete',  question: 'How do you feel about swim competition?',
+    options: ['Love pushing myself inside a team environment',
+              'Want to contribute but stay balanced',
+              'Just want to keep swimming without the pressure'] },
+  { id: 'location', question: 'Where in the country are you open to?',
+    options: ['New England',
+              'Mid-Atlantic',
+              'Midwest',
+              'Pacific Northwest',
+              'Southern California',
+              'Open to anywhere'] },
+  { id: 'career',   question: 'Biggest career interest so far?',
+    options: ['Tech / software',
+              'Medicine / health',
+              'Law / policy',
+              'Business / finance',
+              'Environment / sustainability',
+              'Not sure yet'] },
+];
+
+const SUGGESTED_QUERIES = [
+  'Where would James score points and have a real shot at getting in?',
+  'Best STEM schools where swim matters',
+  'Hidden Ivy schools that could recruit James',
+  'Schools where James could win or podium',
+  'Affordable options with strong merit aid',
+  'What are the most realistic schools for James right now?',
+];
+
+// ════════════════════════════════════════════════════════════════
+// BOOT
+// ════════════════════════════════════════════════════════════════
 async function boot() {
-  // Load meta (conferences/teams/events + normalization log)
-  const mres = await fetch('/api/meta');
-  META = await mres.json();
-
-  // Render normalization alert
-  if (META.normalizationLog && META.normalizationLog.length) {
-    const el = document.getElementById('norm-alert');
-    const list = document.getElementById('norm-list');
-    META.normalizationLog.forEach(n => {
-      const row = document.createElement('div');
-      row.className = 'norm-row';
-      row.innerHTML = `
-        <span class="norm-raw">${esc(n.raw)}</span>
-        <span class="norm-arrow">→</span>
-        <span class="norm-can">${esc(n.canonical)}</span>
-        <span class="norm-reason">(${esc(n.reason)}, ${esc(n.conference)} #${n.finish})</span>`;
-      list.appendChild(row);
-    });
-    el.style.display = 'block';
-  }
-
-  // Populate manual calc dropdowns
-  buildCalcUI();
-
-  // Auto-score James
-  await loadJamesScores();
-}
-
-// ── James scoring ─────────────────────────────────────────────────────────
-async function loadJamesScores() {
-  document.getElementById('results-loading').style.display = 'block';
-  document.getElementById('results-hd').style.display = 'flex';
-
   const res  = await fetch('/api/score-all');
   const data = await res.json();
-
-  // Profile strip
-  const prof = data.profile;
-  document.getElementById('p-gpa').textContent   = prof.gpa;
-  document.getElementById('p-sat').textContent   = prof.sat;
-  document.getElementById('p-sat-proj').textContent = prof.satProjected;
-  document.getElementById('p-math').textContent  = prof.mathSat;
-  const tg = document.getElementById('p-times');
-  Object.entries(prof.times).forEach(([ev, t]) => {
-    if (!t) return;
-    const pill = document.createElement('span');
-    pill.className = 'tpill';
-    pill.innerHTML = `<strong>${esc(ev)}:</strong> ${esc(t)}`;
-    tg.appendChild(pill);
-  });
-  document.getElementById('profile-card').style.display = 'block';
-
-  document.getElementById('results-loading').style.display = 'none';
-
   ALL_RESULTS = data.results;
-  document.getElementById('results-sub').textContent =
-    `${data.scoredSchools} of ${data.totalSchools} programs scored`;
-  document.getElementById('results-hd').style.display = 'flex';
-  document.getElementById('result-controls').style.display = 'flex';
-  document.getElementById('results-table-wrap').style.display = 'block';
+  JAMES       = data.profile;
+  VIBE_STATE  = { ...(JAMES.vibe || {}) };
 
-  renderTable();
-  wireSort();
-  document.getElementById('filter-input').addEventListener('input', renderTable);
+  renderProfile();
+  renderSuggestions();
+  renderMyList();
+  renderReminders();
+  updateBadges();
 }
 
-// ── Table rendering ───────────────────────────────────────────────────────
-function renderTable() {
-  const query = document.getElementById('filter-input').value.toLowerCase();
-  let rows = ALL_RESULTS.filter(r => {
-    if (query && !r.school.toLowerCase().includes(query) && !r.conference.toLowerCase().includes(query))
-      return false;
-    if (FILTER_MODE === 'ivy')   return r.meta.hiddenIvy;
-    if (FILTER_MODE === 'stem')  return r.meta.stem;
-    if (FILTER_MODE === 'merit') return r.meta.merit === 'high';
-    if (FILTER_MODE === 'norm')  return r.normalized;
-    return true;
-  });
+// ════════════════════════════════════════════════════════════════
+// TAB ROUTING
+// ════════════════════════════════════════════════════════════════
+function showTab(name) {
+  ACTIVE_TAB = name;
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+  document.getElementById('tab-' + name).classList.add('active');
 
-  // Apply sort
-  rows = sortRows(rows, SORT_COL, SORT_DIR);
-
-  document.getElementById('count-badge').textContent = `${rows.length} schools`;
-  const tbody = document.getElementById('rtbl-body');
-  tbody.innerHTML = '';
-
-  rows.forEach((r, i) => {
-    const origRank = ALL_RESULTS.indexOf(r) + 1;
-    const top1 = r.top3[0] || null;
-    const top2 = r.top3[1] || null;
-
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td class="rank-num">${origRank}</td>
-      <td class="school-name">
-        ${esc(r.school)}
-        ${r.normalized ? `<span class="norm-flag" title="Name normalized from: ${esc(r.rawName)}">⚠</span>` : ''}
-        ${r.meta.hiddenIvy ? `<span class="ivy-badge">Hidden Ivy</span>` : ''}
-        ${r.meta.stem      ? `<span class="stem-badge">STEM</span>` : ''}
-      </td>
-      <td style="text-align:left;color:var(--muted);">${esc(r.conference)}</td>
-      <td>${r.finish}</td>
-      <td class="event-col" style="text-align:left;">${top1 ? esc(top1.event) : '—'}</td>
-      <td>${top1 ? placeCell(top1.place, top1.placeLabel) : '—'}</td>
-      <td><code>${top1 ? top1.pts.toFixed(2) : '—'}</code></td>
-      <td class="event-col" style="text-align:left;">${top2 ? esc(top2.event) : '—'}</td>
-      <td>${top2 ? placeCell(top2.place, top2.placeLabel) : '—'}</td>
-      <td><code>${top2 ? top2.pts.toFixed(2) : '—'}</code></td>
-      <td class="raw-pts">${r.rawPts.toFixed(2)}</td>
-      <td class="psf-val" style="color:${psfColor(r.psf)};">${r.psf.toFixed(2)}</td>
-      <td class="adj-pts">${r.adjPts.toFixed(1)}</td>
-      <td>${tierBadge(r.adjTier)}</td>
-      <td>${r.admission.acadScore ?? '—'}</td>
-      <td>${r.admission.swimScore ?? '—'}</td>
-      <td>${r.admission.total ?? '—'}</td>
-      <td>${admBadge(r.admission)}</td>
-      <td>${r.meta.accept != null ? r.meta.accept + '%' : '—'}</td>
-      <td>${r.meta.satMedian ?? '—'}</td>
-      <td><span class="expand-btn" onclick="toggleDetail(this, ${origRank - 1})">▸</span></td>
-    `;
-    tbody.appendChild(tr);
-  });
+  if (name === 'mylist')    renderMyList();
+  if (name === 'reminders') renderReminders();
 }
 
-function toggleDetail(btn, idx) {
-  const r = ALL_RESULTS[idx];
-  const existingDetail = btn.closest('tr').nextElementSibling;
-  if (existingDetail && existingDetail.classList.contains('detail-row')) {
-    existingDetail.remove();
-    btn.textContent = '▸';
-    return;
-  }
-  btn.textContent = '▾';
-  const detailTr = document.createElement('tr');
-  detailTr.className = 'detail-row';
-  const top3Events = new Set(r.top3.map(e => e.event));
-  const rows = r.allEvents.map(e => {
-    const isTop3 = top3Events.has(e.event);
-    return `<tr class="${isTop3 ? 'top3-row' : ''}">
-      <td>${isTop3 ? '▲ ' : ''}${esc(e.event)}</td>
-      <td><code>${secStr(e.sec)}</code></td>
-      <td>${e.place.toFixed(2)}</td>
-      <td>${placeCell(e.place, e.placeLabel)}</td>
-      <td>${e.expPts.toFixed(2)}</td>
-      <td>${(e.confidence * 100).toFixed(0)}%</td>
-      <td>${isTop3 ? `<strong>${e.pts.toFixed(2)}</strong>` : e.pts.toFixed(2)}</td>
-    </tr>`;
-  }).join('');
-  detailTr.innerHTML = `<td colspan="21">
-    <table class="detail-tbl">
-      <thead><tr>
-        <th style="text-align:left;">Event</th><th>Time (sec)</th>
-        <th>Est Place</th><th>Outcome</th>
-        <th>Exp Pts</th><th>Conf</th><th>Adj Pts</th>
-      </tr></thead>
-      <tbody>${rows}</tbody>
-    </table>
-    <div style="margin-top:6px;font-size:0.7rem;color:var(--muted);">
-      rawPts = ${r.rawPts.toFixed(2)} (top-3 sum) &nbsp;×&nbsp; PSF ${r.psf.toFixed(2)} = adjPts ${r.adjPts.toFixed(2)}
-      &nbsp;|&nbsp; acadScore ${r.admission.acadScore ?? '?'} + swimScore ${r.admission.swimScore ?? '?'} = ${r.admission.total ?? '?'} → ${r.admission.label}
-      ${r.normalized ? `&nbsp;|&nbsp; <span style="color:var(--amber);">⚠ Name normalized from: "${esc(r.rawName)}"</span>` : ''}
-    </div>
-  </td>`;
-  btn.closest('tr').after(detailTr);
+// ════════════════════════════════════════════════════════════════
+// EXPLORE — SEARCH
+// ════════════════════════════════════════════════════════════════
+function renderSuggestions() {
+  const el = document.getElementById('suggestion-pills');
+  el.innerHTML = SUGGESTED_QUERIES.map(q =>
+    `<span class="pill" onclick="fillAndSearch(${JSON.stringify(q)})">${q}</span>`
+  ).join('');
 }
 
-// ── Filter toggles ────────────────────────────────────────────────────────
-function setFilter(mode) {
-  FILTER_MODE = mode;
-  ['all','ivy','stem','merit','norm'].forEach(m => {
-    document.getElementById(`tog-${m}`).classList.toggle('active', m === mode);
-  });
-  renderTable();
+function fillAndSearch(q) {
+  document.getElementById('q-input').value = q;
+  runSearch();
 }
 
-// ── Sort ─────────────────────────────────────────────────────────────────
-function wireSort() {
-  document.querySelectorAll('.rtbl thead th[data-col]').forEach(th => {
-    th.addEventListener('click', () => {
-      const col = th.dataset.col;
-      if (SORT_COL === col) {
-        SORT_DIR = SORT_DIR === 'asc' ? 'desc' : 'asc';
-      } else {
-        SORT_COL = col; SORT_DIR = 'desc';
-      }
-      document.querySelectorAll('.rtbl thead th').forEach(h => {
-        h.classList.remove('sort-asc','sort-desc');
-      });
-      th.classList.add(SORT_DIR === 'asc' ? 'sort-asc' : 'sort-desc');
-      renderTable();
-    });
-  });
-}
+async function runSearch() {
+  const q = document.getElementById('q-input').value.trim();
+  if (!q) return;
+  LAST_QUERY = q;
 
-function sortRows(rows, col, dir) {
-  const mult = dir === 'asc' ? 1 : -1;
-  return [...rows].sort((a, b) => {
-    let av, bv;
-    if (col === 'rank')      { av = ALL_RESULTS.indexOf(a); bv = ALL_RESULTS.indexOf(b); }
-    else if (col === 'school')      { av = a.school; bv = b.school; return mult * av.localeCompare(bv); }
-    else if (col === 'conference')  { av = a.conference; bv = b.conference; return mult * av.localeCompare(bv); }
-    else if (col === 'finish')      { av = a.finish; bv = b.finish; }
-    else if (col === 'adjPts')      { av = a.adjPts; bv = b.adjPts; }
-    else if (col === 'rawPts')      { av = a.rawPts; bv = b.rawPts; }
-    else if (col === 'psf')         { av = a.psf; bv = b.psf; }
-    else if (col === 'accept')      { av = a.meta.accept ?? 999; bv = b.meta.accept ?? 999; }
-    else if (col === 'satMedian')   { av = a.meta.satMedian ?? 0; bv = b.meta.satMedian ?? 0; }
-    else if (col === 'admTotal')    { av = a.admission.total ?? 0; bv = b.admission.total ?? 0; }
-    else if (col === 'acadScore')   { av = a.admission.acadScore ?? 0; bv = b.admission.acadScore ?? 0; }
-    else if (col === 'swimScore')   { av = a.admission.swimScore ?? 0; bv = b.admission.swimScore ?? 0; }
-    else if (col === 'top1Adj')     { av = a.top3[0]?.pts ?? 0; bv = b.top3[0]?.pts ?? 0; }
-    else if (col === 'top2Adj')     { av = a.top3[1]?.pts ?? 0; bv = b.top3[1]?.pts ?? 0; }
-    else if (col === 'top1Place')   { av = a.top3[0]?.place ?? 99; bv = b.top3[0]?.place ?? 99; }
-    else { return 0; }
-    return mult * (av - bv);
-  });
-}
-
-// ── Manual Calculator ──────────────────────────────────────────────────────
-function buildCalcUI() {
-  // Conference dropdown
-  const confSel = document.getElementById('c-conf');
-  confSel.innerHTML = '<option value="">Select conference…</option>';
-  META.conferences.forEach(c => {
-    const o = document.createElement('option');
-    o.value = c; o.textContent = c;
-    confSel.appendChild(o);
-  });
-
-  confSel.addEventListener('change', () => {
-    const conf = confSel.value;
-    const teamSel = document.getElementById('c-team');
-    teamSel.innerHTML = '<option value="">Select program…</option>';
-    teamSel.disabled = !conf;
-    if (conf && META.teams[conf]) {
-      META.teams[conf].forEach(t => {
-        const o = document.createElement('option');
-        o.value = t; o.textContent = t;
-        teamSel.appendChild(o);
-      });
-      teamSel.disabled = false;
-    }
-    calcReady();
-  });
-
-  document.getElementById('c-team').addEventListener('change', calcReady);
-
-  // Event inputs
-  const grid = document.getElementById('c-events');
-  META.events.forEach(ev => {
-    const d = document.createElement('div');
-    d.className = 'ef';
-    d.innerHTML = `<label>${esc(ev)}</label><input type="text" data-event="${esc(ev)}" placeholder="e.g. 4:37.00" />`;
-    grid.appendChild(d);
-  });
-  grid.querySelectorAll('input').forEach(i => i.addEventListener('input', calcReady));
-}
-
-function calcReady() {
-  const conf = document.getElementById('c-conf').value;
-  const team = document.getElementById('c-team').value;
-  const hasTimes = [...document.querySelectorAll('#c-events input')].some(i => i.value.trim());
-  document.getElementById('c-btn').disabled = !(conf && team && hasTimes);
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('c-btn').addEventListener('click', runCalc);
-});
-
-async function runCalc() {
-  const conf  = document.getElementById('c-conf').value;
-  const team  = document.getElementById('c-team').value;
-  const times = {};
-  document.querySelectorAll('#c-events input').forEach(i => {
-    if (i.value.trim()) times[i.dataset.event] = i.value.trim();
-  });
-  const btn = document.getElementById('c-btn');
-  const errEl = document.getElementById('c-error');
-  const resEl = document.getElementById('c-result');
-  errEl.style.display = 'none';
-  resEl.style.display = 'none';
-  btn.innerHTML = '<span class="spinner"></span>Calculating…';
-  btn.disabled = true;
+  const state = document.getElementById('search-state');
+  const results = document.getElementById('search-results');
+  state.innerHTML = `<div class="loading-state"><span class="spinner"></span> Searching across 76 programs…</div>`;
+  results.innerHTML = '';
 
   try {
-    const res = await fetch('/api/score', {
+    const res = await fetch('/api/search', {
       method: 'POST',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({conference: conf, team, times}),
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query: q, eliminated: ELIMINATED, myList: MY_LIST }),
     });
-    const d = await res.json();
-    if (d.error) { errEl.textContent = d.error; errEl.style.display = 'block'; }
-    else renderCalcResult(d, resEl);
-  } catch(e) {
-    errEl.textContent = 'Request failed.'; errEl.style.display = 'block';
-  } finally {
-    btn.innerHTML = 'Calculate →'; calcReady();
+    const data = await res.json();
+
+    state.innerHTML = '';
+
+    if (data.error && !data.fallback) {
+      state.innerHTML = `<div class="err-box">⚠ ${esc(data.error)}</div>`;
+      return;
+    }
+
+    const schools = data.schools || data.fallback || [];
+    const answer  = data.answer || '';
+
+    if (data.fallback && !data.schools) {
+      state.innerHTML = `<div class="info-box">AI search unavailable — showing top results by swim score.</div>`;
+    } else if (answer) {
+      state.innerHTML = `<div class="info-box" style="background:var(--blue-l);border-left-color:var(--blue);">
+        <strong>Lane4:</strong> ${esc(answer)}</div>`;
+    }
+
+    LAST_RESULTS = { answer, schools };
+    renderResultCards(schools, results);
+
+  } catch (e) {
+    state.innerHTML = `<div class="err-box">Something went wrong. Please try again.</div>`;
   }
 }
 
-function renderCalcResult(d, el) {
-  const scored   = d.events.filter(e => e.benchmarked);
-  const unscored = d.events.filter(e => !e.benchmarked);
-  const top3Set  = new Set(d.top3);
+function renderResultCards(schools, container) {
+  if (!schools.length) {
+    container.innerHTML = `<div class="empty-state">
+      <div class="empty-state-icon">🔍</div>
+      <div class="empty-state-title">No results</div>
+      <div class="empty-state-text">Try a different question or remove some filters.</div>
+    </div>`;
+    return;
+  }
 
-  el.innerHTML = `
-    <div class="card-lbl">${esc(d.team)} · ${esc(d.conference)} · ${esc(d.tier)}</div>
-    <div class="cr-summary">
-      <div class="cr-tile"><div class="cr-val">${d.rawPts.toFixed(1)}</div><div class="cr-lbl">Raw Pts (top-3)</div></div>
-      <div class="cr-tile"><div class="cr-val">×${d.psf.toFixed(2)}</div><div class="cr-lbl">PSF</div></div>
-      <div class="cr-tile"><div class="cr-val" style="color:var(--green);">${d.adjPts.toFixed(1)}</div><div class="cr-lbl">Adj Score</div></div>
-      <div class="cr-tile"><div class="cr-val" style="font-size:0.9rem;">${tierBadge(d.swimTier)}</div><div class="cr-lbl">Swim Tier</div></div>
-    </div>
-    <div style="font-size:0.72rem;color:var(--muted);margin-bottom:0.75rem;">
-      Admission (James): acadScore=${d.admission.acadScore ?? '?'} + swimScore=${d.admission.swimScore ?? '?'} = ${d.admission.total ?? '?'}
-      → <span style="color:${d.admission.color};font-weight:700;">${esc(d.admission.label)}</span>
-      ${d.normalized ? `&nbsp;<span style="color:var(--amber);">⚠ Name normalized</span>` : ''}
-    </div>
-    <table class="detail-tbl" style="width:100%;">
-      <thead><tr><th style="text-align:left;">Event</th><th>Time</th><th>Place</th><th>Outcome</th><th>Exp Pts</th><th>Conf</th><th>Adj Pts</th></tr></thead>
-      <tbody>
-        ${scored.map(e => `<tr class="${top3Set.has(e.event) ? 'top3-row' : ''}">
-          <td>${top3Set.has(e.event) ? '▲ ' : ''}${esc(e.event)}</td>
-          <td><code>${esc(e.time)}</code></td>
-          <td>${e.place.toFixed(2)}</td>
-          <td>${placeCell(e.place, e.placeLabel)}</td>
-          <td>${e.expPts.toFixed(2)}</td>
-          <td>${(e.confidence*100).toFixed(0)}%</td>
-          <td>${top3Set.has(e.event) ? `<strong>${e.pts.toFixed(2)}</strong>` : e.pts.toFixed(2)}</td>
-        </tr>`).join('')}
-        ${unscored.map(e => `<tr style="opacity:0.4;">
-          <td>${esc(e.event)}</td><td><code>${esc(e.time)}</code></td>
-          <td colspan="5" style="text-align:left;font-size:0.68rem;color:var(--muted);">Not benchmarked in ${esc(d.conference)}</td>
-        </tr>`).join('')}
-      </tbody>
-    </table>`;
-  el.style.display = 'block';
+  container.innerHTML = schools.map((r, i) => {
+    const inList = MY_LIST.includes(r.school);
+    const top1   = r.top3[0];
+    const top2   = r.top3[1];
+    return `
+    <div class="result-card" id="rcard-${i}">
+      ${r.aiWhy ? `<div class="ai-why">✦ ${esc(r.aiWhy)}</div>` : ''}
+      <div class="result-card-top">
+        <div>
+          <div class="result-school-name">${esc(r.school)}</div>
+          <div class="result-conference">${esc(r.conference)} · ${esc(r.meta.location || '')}</div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;">
+          <span class="badge badge-adm" style="background:${r.admission.color};">${esc(r.admission.label)}</span>
+          <span class="badge badge-tier">${esc(r.adjTier)}</span>
+        </div>
+      </div>
+      <div class="result-badges">
+        ${r.meta.hiddenIvy ? '<span class="badge badge-ivy">Hidden Ivy</span>' : ''}
+        ${r.meta.stem      ? '<span class="badge badge-stem">STEM</span>' : ''}
+        ${r.meta.merit === 'high' ? '<span class="badge" style="background:#D1FAE5;color:#065F46;">High Merit Aid</span>' : ''}
+      </div>
+      ${r.meta.vibe ? `<div class="result-vibe">"${esc(r.meta.vibe)}"</div>` : ''}
+      <div class="result-events">
+        ${top1 ? `<span class="badge ${placeClass(top1.place)}">${esc(top1.event)}: ${esc(place_label(top1.place))}</span>` : ''}
+        ${top2 ? `<span class="badge ${placeClass(top2.place)}">${esc(top2.event)}: ${esc(place_label(top2.place))}</span>` : ''}
+      </div>
+      <div class="result-actions">
+        <button class="btn btn-primary" onclick="openDeepDive(${JSON.stringify(r.school)})">Deep Dive →</button>
+        ${inList
+          ? `<button class="btn btn-added" disabled>✓ On My List</button>`
+          : `<button class="btn btn-secondary" onclick="addToList(${JSON.stringify(r.school)}, ${i})">+ Add to List</button>`}
+        <button class="btn btn-ghost" onclick="eliminate(${JSON.stringify(r.school)}, ${i})">✕</button>
+      </div>
+    </div>`;
+  }).join('');
 }
 
-// ── Helpers ───────────────────────────────────────────────────────────────
+function eliminate(school, idx) {
+  if (!ELIMINATED.includes(school)) ELIMINATED.push(school);
+  const card = document.getElementById('rcard-' + idx);
+  if (card) card.style.display = 'none';
+}
+
+function addToList(school, idx) {
+  if (!MY_LIST.includes(school)) {
+    MY_LIST.push(school);
+    CRM_DATA[school] = CRM_DATA[school] || { status: 'researching', notes: [], reminders: [] };
+  }
+  // Update button in the card
+  const card = document.getElementById('rcard-' + idx);
+  if (card) {
+    const btn = card.querySelector('.btn-secondary');
+    if (btn) { btn.className = 'btn btn-added'; btn.disabled = true; btn.textContent = '✓ On My List'; }
+  }
+  updateBadges();
+}
+
+// ════════════════════════════════════════════════════════════════
+// DEEP DIVE
+// ════════════════════════════════════════════════════════════════
+async function openDeepDive(school) {
+  document.getElementById('explore-search').style.display    = 'none';
+  document.getElementById('explore-deepdive').style.display  = 'block';
+
+  const content = document.getElementById('dd-content');
+  content.innerHTML = `<div class="loading-state"><span class="spinner"></span> Writing deep dive for ${esc(school)}…</div>`;
+
+  try {
+    const res  = await fetch('/api/deep-dive', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ school }),
+    });
+    const data = await res.json();
+
+    if (data.error) {
+      content.innerHTML = `<div class="err-box">⚠ ${esc(data.error)}</div>`;
+      return;
+    }
+
+    const result   = ALL_RESULTS.find(r => r.school === school) || {};
+    const meta     = result.meta || data.meta || {};
+    const adm      = result.admission || data.admission || {};
+    const inList   = MY_LIST.includes(school);
+    const sections = data.sections || [];
+    const bottomLine = sections.find(s => s.title.toLowerCase().includes('bottom line'));
+    const mainSections = sections.filter(s => !s.title.toLowerCase().includes('bottom line'));
+
+    content.innerHTML = `
+      <div class="deep-dive-header">
+        <div class="deep-dive-school">${esc(school)}</div>
+        <div class="deep-dive-meta">
+          <span>${esc(result.conference || '')}</span>
+          ${meta.location ? `<span>· ${esc(meta.location)}</span>` : ''}
+          <span class="badge badge-adm" style="background:${adm.color || '#64748B'};">${esc(adm.label || '')}</span>
+          <span class="badge badge-tier">${esc(result.adjTier || '')}</span>
+          ${meta.hiddenIvy ? '<span class="badge badge-ivy">Hidden Ivy</span>' : ''}
+          ${meta.stem      ? '<span class="badge badge-stem">STEM</span>' : ''}
+        </div>
+      </div>
+
+      <div class="deep-dive-actions">
+        ${inList
+          ? `<button class="btn btn-added" disabled>✓ On My List</button>`
+          : `<button class="btn btn-secondary" id="dd-add-btn" onclick="ddAddToList(${JSON.stringify(school)})">+ Add to List</button>`}
+        <button class="btn btn-secondary" onclick="showCoachEmail(${JSON.stringify(school)})">Draft Coach Email →</button>
+      </div>
+
+      ${mainSections.map(s => `
+        <div class="deep-section">
+          <div class="deep-section-title">${esc(s.title)}</div>
+          <div class="deep-section-body">${esc(s.body)}</div>
+        </div>`).join('')}
+
+      ${bottomLine ? `
+        <div class="bottom-line">
+          <div class="bottom-line-label">The Bottom Line</div>
+          <div class="bottom-line-text">${esc(bottomLine.body)}</div>
+        </div>` : ''}
+
+      <div id="dd-email-section" style="display:none;margin-top:1.5rem;">
+        <div class="section-label">Coach Email Draft</div>
+        <div class="card">
+          <div id="dd-email-subject" style="font-size:0.82rem;color:var(--muted);margin-bottom:0.6rem;font-weight:600;"></div>
+          <div class="email-block" id="dd-email-body"></div>
+          <button class="btn btn-secondary" style="margin-top:0.75rem;" onclick="copyEmail()">Copy to clipboard</button>
+        </div>
+      </div>
+    `;
+
+  } catch (e) {
+    content.innerHTML = `<div class="err-box">Something went wrong loading the deep dive. Please try again.</div>`;
+  }
+}
+
+function closeDeepDive() {
+  document.getElementById('explore-search').style.display    = 'block';
+  document.getElementById('explore-deepdive').style.display  = 'none';
+}
+
+function ddAddToList(school) {
+  addToListDirect(school);
+  const btn = document.getElementById('dd-add-btn');
+  if (btn) { btn.className = 'btn btn-added'; btn.disabled = true; btn.textContent = '✓ On My List'; }
+}
+
+async function showCoachEmail(school) {
+  const section = document.getElementById('dd-email-section');
+  if (section.style.display !== 'none') { section.style.display = 'none'; return; }
+  section.style.display = 'block';
+  document.getElementById('dd-email-subject').textContent = 'Loading…';
+  document.getElementById('dd-email-body').textContent    = '';
+
+  const res  = await fetch('/api/coach-email', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ school }),
+  });
+  const data = await res.json();
+
+  if (data.error) {
+    section.innerHTML = `<div class="err-box">⚠ ${esc(data.error)}</div>`;
+    return;
+  }
+  document.getElementById('dd-email-subject').textContent = 'Subject: ' + data.subject;
+  document.getElementById('dd-email-body').textContent    = data.body;
+}
+
+function copyEmail() {
+  const sub  = document.getElementById('dd-email-subject').textContent;
+  const body = document.getElementById('dd-email-body').textContent;
+  navigator.clipboard.writeText(sub + '\n\n' + body).then(() => {
+    const btn = event.target;
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy to clipboard', 2000);
+  });
+}
+
+// ════════════════════════════════════════════════════════════════
+// MY LIST
+// ════════════════════════════════════════════════════════════════
+function addToListDirect(school) {
+  if (!MY_LIST.includes(school)) {
+    MY_LIST.push(school);
+    CRM_DATA[school] = CRM_DATA[school] || { status: 'researching', notes: [], reminders: [] };
+  }
+  updateBadges();
+}
+
+function renderMyList() {
+  const el = document.getElementById('mylist-body');
+
+  if (!MY_LIST.length) {
+    el.innerHTML = `<div class="empty-state">
+      <div class="empty-state-icon">📋</div>
+      <div class="empty-state-title">Your list is empty</div>
+      <div class="empty-state-text">Add schools from the Explore tab to start tracking your recruiting process.</div>
+    </div>`;
+    return;
+  }
+
+  el.innerHTML = MY_LIST.map((school, si) => {
+    const crm    = CRM_DATA[school] || { status: 'researching', notes: [], reminders: [] };
+    const cfg    = STATUS_CONFIG[crm.status] || STATUS_CONFIG.researching;
+    const result = ALL_RESULTS.find(r => r.school === school);
+    const meta   = result?.meta || {};
+    const adm    = result?.admission || {};
+    const isOpen = OPEN_CRM === school;
+
+    const statusBtns = Object.entries(STATUS_CONFIG).map(([k, v]) =>
+      `<button class="status-btn ${crm.status === k ? 'active' : ''}"
+        style="${crm.status === k ? 'background:' + v.color + ';' : ''}"
+        onclick="setCrmStatus(${JSON.stringify(school)}, '${k}')">${v.label}</button>`
+    ).join('');
+
+    const noteItems = (crm.notes || []).map((n, ni) => `
+      <div class="note-item">
+        <div class="note-item-body">
+          <div>${esc(n.text)}</div>
+          <div class="note-meta">${esc(n.cat)} · ${esc(n.date)}</div>
+        </div>
+        <button class="btn btn-ghost" style="padding:2px 6px;" onclick="deleteNote(${JSON.stringify(school)}, ${ni})">✕</button>
+      </div>`).join('');
+
+    const remItems = (crm.reminders || []).map((r, ri) => {
+      const cls = remClass(r.date);
+      const lbl = remLabel(r.date);
+      return `<div class="reminder-item">
+        <span class="reminder-label ${cls}">${lbl}</span>
+        <span style="flex:1;">${esc(r.text)}</span>
+        <button class="btn btn-ghost" style="padding:2px 6px;" onclick="deleteReminder(${JSON.stringify(school)}, ${ri})">✕</button>
+      </div>`;
+    }).join('');
+
+    return `
+    <div class="list-school-card">
+      <div class="list-school-header" onclick="toggleCRM(${JSON.stringify(school)})">
+        <div>
+          <div class="list-school-name">${esc(school)}</div>
+          <div class="list-school-meta">
+            ${result ? esc(result.conference) : ''}
+            ${adm.label ? ' · ' + adm.label : ''}
+          </div>
+        </div>
+        <div class="list-school-right">
+          <span style="font-size:0.78rem;font-weight:600;color:${cfg.color};">${cfg.label}</span>
+          <span style="font-size:0.8rem;color:var(--muted);">${isOpen ? '▴' : '▾'}</span>
+        </div>
+      </div>
+      ${isOpen ? `
+      <div class="crm-body">
+        <div class="crm-section">
+          <div class="crm-section-title">Status</div>
+          <div class="status-row">${statusBtns}</div>
+        </div>
+
+        <div class="crm-section">
+          <div class="crm-section-title">Notes</div>
+          ${noteItems || '<div style="font-size:0.82rem;color:var(--muted);">No notes yet.</div>'}
+          <div class="crm-add-row" id="note-row-${si}">
+            <select class="crm-input" style="flex:0 0 130px;" id="note-cat-${si}">
+              <option value="General">General</option>
+              <option value="Email">Email</option>
+              <option value="Coach Call">Coach Call</option>
+              <option value="Campus Visit">Campus Visit</option>
+            </select>
+            <input class="crm-input" type="text" id="note-text-${si}" placeholder="Add a note…" />
+            <button class="btn btn-secondary" onclick="addNote(${JSON.stringify(school)}, ${si})">Add</button>
+          </div>
+        </div>
+
+        <div class="crm-section">
+          <div class="crm-section-title">Reminders</div>
+          ${remItems || '<div style="font-size:0.82rem;color:var(--muted);">No reminders set.</div>'}
+          <div class="crm-add-row">
+            <input class="crm-input" type="text" id="rem-text-${si}" placeholder="Reminder text…" />
+            <input class="crm-input" type="date" id="rem-date-${si}" style="flex:0 0 140px;" />
+            <button class="btn btn-secondary" onclick="addReminder(${JSON.stringify(school)}, ${si})">Set</button>
+          </div>
+        </div>
+
+        <div style="display:flex;justify-content:space-between;margin-top:0.25rem;">
+          <button class="btn btn-secondary" onclick="showTab('explore');openDeepDive(${JSON.stringify(school)})">Deep Dive →</button>
+          <button class="btn btn-ghost" style="color:var(--red);" onclick="removeFromList(${JSON.stringify(school)})">Remove from list</button>
+        </div>
+      </div>` : ''}
+    </div>`;
+  }).join('');
+}
+
+function toggleCRM(school) {
+  OPEN_CRM = OPEN_CRM === school ? null : school;
+  renderMyList();
+}
+
+function setCrmStatus(school, status) {
+  if (!CRM_DATA[school]) CRM_DATA[school] = { status: 'researching', notes: [], reminders: [] };
+  CRM_DATA[school].status = status;
+  renderMyList();
+}
+
+function addNote(school, si) {
+  const cat  = document.getElementById('note-cat-' + si)?.value || 'General';
+  const text = document.getElementById('note-text-' + si)?.value?.trim();
+  if (!text) return;
+  if (!CRM_DATA[school]) CRM_DATA[school] = { status: 'researching', notes: [], reminders: [] };
+  const note = { id: Date.now(), cat, text, date: fmtDate(new Date()) };
+  CRM_DATA[school].notes = [note, ...CRM_DATA[school].notes];
+  renderMyList();
+}
+
+function deleteNote(school, idx) {
+  if (CRM_DATA[school]) CRM_DATA[school].notes.splice(idx, 1);
+  renderMyList();
+}
+
+function addReminder(school, si) {
+  const text = document.getElementById('rem-text-' + si)?.value?.trim();
+  const date = document.getElementById('rem-date-' + si)?.value;
+  if (!text || !date) return;
+  if (!CRM_DATA[school]) CRM_DATA[school] = { status: 'researching', notes: [], reminders: [] };
+  const rem = { id: Date.now(), text, date };
+  CRM_DATA[school].reminders = [...CRM_DATA[school].reminders, rem]
+    .sort((a, b) => a.date.localeCompare(b.date));
+  renderMyList();
+  renderReminders();
+  updateBadges();
+}
+
+function deleteReminder(school, idx) {
+  if (CRM_DATA[school]) CRM_DATA[school].reminders.splice(idx, 1);
+  renderMyList();
+  renderReminders();
+  updateBadges();
+}
+
+function removeFromList(school) {
+  MY_LIST = MY_LIST.filter(s => s !== school);
+  if (OPEN_CRM === school) OPEN_CRM = null;
+  updateBadges();
+  renderMyList();
+  renderReminders();
+}
+
+// ════════════════════════════════════════════════════════════════
+// REMINDERS
+// ════════════════════════════════════════════════════════════════
+function renderReminders() {
+  const el = document.getElementById('reminders-body');
+  const today = todayISO();
+
+  const all = MY_LIST.flatMap(school =>
+    (CRM_DATA[school]?.reminders || []).map(r => ({ ...r, school }))
+  ).sort((a, b) => a.date.localeCompare(b.date));
+
+  if (!all.length) {
+    el.innerHTML = `<div class="empty-state">
+      <div class="empty-state-icon">📅</div>
+      <div class="empty-state-title">No reminders yet</div>
+      <div class="empty-state-text">Set reminders on schools in My List to track important dates and follow-ups.</div>
+    </div>`;
+    return;
+  }
+
+  const overdue  = all.filter(r => r.date < today);
+  const todayRem = all.filter(r => r.date === today);
+  const upcoming = all.filter(r => r.date > today);
+
+  function groupHtml(title, items, cls) {
+    if (!items.length) return '';
+    return `
+      <div class="reminder-group">
+        <div class="reminder-group-title">${title}</div>
+        ${items.map(r => `
+          <div class="global-reminder-item">
+            <span class="reminder-label ${cls}">${remLabel(r.date)}</span>
+            <div style="flex:1;">
+              <div class="rem-text">${esc(r.text)}</div>
+              <div style="font-size:0.75rem;color:var(--muted);">
+                <span class="rem-school-link" onclick="goToSchool(${JSON.stringify(r.school)})">${esc(r.school)}</span>
+              </div>
+            </div>
+          </div>`).join('')}
+      </div>`;
+  }
+
+  el.innerHTML =
+    groupHtml('⚠ Overdue', overdue, 'rem-overdue') +
+    groupHtml('⚡ Today',   todayRem, 'rem-today') +
+    groupHtml('📅 Upcoming', upcoming, 'rem-upcoming');
+}
+
+function goToSchool(school) {
+  OPEN_CRM = school;
+  showTab('mylist');
+}
+
+// ════════════════════════════════════════════════════════════════
+// PROFILE
+// ════════════════════════════════════════════════════════════════
+function renderProfile() {
+  if (!JAMES.name) return;
+
+  document.getElementById('prof-name').textContent = JAMES.name + "'s Profile";
+
+  // Stats
+  const stats = [
+    { val: JAMES.gpa,           lbl: 'GPA' },
+    { val: JAMES.sat,           lbl: 'SAT' },
+    { val: JAMES.satProjected,  lbl: 'Projected SAT' },
+    { val: JAMES.mathSat,       lbl: 'Math SAT' },
+  ];
+  document.getElementById('prof-stats').innerHTML = stats.map(s =>
+    `<div class="stat-tile"><div class="stat-val">${esc(String(s.val))}</div><div class="stat-lbl">${esc(s.lbl)}</div></div>`
+  ).join('');
+
+  // Times
+  const timesEl = document.getElementById('prof-times');
+  timesEl.innerHTML = Object.entries(JAMES.times || {}).map(([ev, t]) =>
+    `<span class="time-pill"><strong>${esc(ev)}:</strong> ${esc(t)}</span>`
+  ).join('');
+
+  // Vibe questions
+  renderVibeQuestions();
+}
+
+function renderVibeQuestions() {
+  const el = document.getElementById('vibe-questions');
+  el.innerHTML = VIBE_QUESTIONS.map(q => {
+    const current = VIBE_STATE[q.id] || null;
+    const opts = q.options.map(o =>
+      `<span class="vibe-opt ${current === o ? 'picked' : ''}"
+        onclick="setVibe(${JSON.stringify(q.id)}, ${JSON.stringify(o)})">${esc(o)}</span>`
+    ).join('');
+    return `
+      <div class="vibe-q">
+        <div class="vibe-q-label">${esc(q.question)}</div>
+        <div class="vibe-options">${opts}</div>
+      </div>`;
+  }).join('');
+}
+
+function setVibe(id, value) {
+  VIBE_STATE[id] = VIBE_STATE[id] === value ? null : value;
+  renderVibeQuestions();
+}
+
+// ════════════════════════════════════════════════════════════════
+// BADGES
+// ════════════════════════════════════════════════════════════════
+function updateBadges() {
+  const listBadge = document.getElementById('list-count-badge');
+  if (MY_LIST.length > 0) {
+    listBadge.textContent = MY_LIST.length;
+    listBadge.style.display = 'inline-flex';
+  } else {
+    listBadge.style.display = 'none';
+  }
+
+  const today = todayISO();
+  const urgent = MY_LIST.flatMap(s => (CRM_DATA[s]?.reminders || []))
+    .filter(r => r.date <= today).length;
+  const remBadge = document.getElementById('rem-urgent-badge');
+  if (urgent > 0) {
+    remBadge.style.display = 'inline-flex';
+  } else {
+    remBadge.style.display = 'none';
+  }
+}
+
+// ════════════════════════════════════════════════════════════════
+// UTILS
+// ════════════════════════════════════════════════════════════════
 function esc(s) {
-  if (s == null) return '';
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  if (s === null || s === undefined) return '';
+  return String(s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
 
-function secStr(sec) {
-  if (sec < 60) return sec.toFixed(2) + 's';
-  const m = Math.floor(sec/60);
-  const s = (sec - m*60).toFixed(2).padStart(5,'0');
-  return `${m}:${s}`;
+function place_label(place) {
+  if (place <= 1.5)  return '🥇 Winner';
+  if (place <= 3.5)  return '🏅 Podium';
+  if (place <= 8.5)  return 'A Final';
+  if (place <= 16.5) return 'B Final';
+  if (place <= 20)   return 'Bubble';
+  return 'Out of range';
 }
 
-function placeCell(place, label) {
-  const cls = label.includes('Winner') ? 'pl-winner' :
-              label.includes('Podium')  ? 'pl-podium'  :
-              label === 'A Final'       ? 'pl-afinal'  :
-              label === 'B Final'       ? 'pl-bfinal'  :
-              label === 'Bubble'        ? 'pl-bubble'  : 'pl-oor';
-  return `<span class="tier-badge ${cls}">${esc(label)}</span>`;
+function placeClass(place) {
+  if (place <= 1.5)  return 'pl-winner';
+  if (place <= 3.5)  return 'pl-podium';
+  if (place <= 8.5)  return 'pl-afinal';
+  if (place <= 16.5) return 'pl-bfinal';
+  if (place <= 20)   return 'pl-bubble';
+  return 'pl-oor';
 }
 
-function tierBadge(t) {
-  const map = {
-    'High-Point Contender': ['#059669','#ECFDF5'],
-    'Conference Star':      ['#2563EB','#EFF6FF'],
-    'Likely Commit':        ['#2563EB','#EFF6FF'],
-    'Priority Recruit':     ['#D97706','#FFFBEB'],
-    'Recruitable':          ['#64748B','#F1F5F9'],
-    'Reach':                ['#EF4444','#FEF2F2'],
-    'Moonshot':             ['#94A3B8','#F8FAFC'],
-  };
-  const [c, bg] = map[t] || ['#64748B','#F1F5F9'];
-  return `<span class="tier-badge" style="color:${c};background:${bg};">${esc(t)}</span>`;
+function todayISO() {
+  return new Date().toISOString().split('T')[0];
 }
 
-function admBadge(adm) {
-  if (!adm || !adm.label) return '—';
-  return `<span class="adm-badge" style="background:${adm.color};">${esc(adm.label)}</span>`;
+function fmtDate(d) {
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
-function psfColor(psf) {
-  if (psf <= 0.78) return '#EF4444';
-  if (psf <= 1.00) return '#64748B';
-  return '#059669';
+function remClass(date) {
+  const t = todayISO();
+  if (date < t)  return 'rem-overdue';
+  if (date === t) return 'rem-today';
+  return 'rem-upcoming';
 }
 
+function remLabel(date) {
+  const t = todayISO();
+  if (date < t)  return '⚠ Overdue';
+  if (date === t) return '⚡ Today';
+  const d = new Date(date + 'T00:00:00');
+  return '📅 ' + d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+
+// ════════════════════════════════════════════════════════════════
+// BOOT
+// ════════════════════════════════════════════════════════════════
 boot();
 </script>
 </body>

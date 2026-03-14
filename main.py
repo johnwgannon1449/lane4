@@ -1,4 +1,4 @@
-import os
+import os, json, re, time
 from flask import Flask, request, jsonify, send_from_directory
 from dotenv import load_dotenv
 import openpyxl
@@ -922,6 +922,118 @@ def score_one_school(times, conference, school):
     }
 
 # ---------------------------------------------------------------------------
+# Claude helpers
+# ---------------------------------------------------------------------------
+
+def _get_anthropic():
+    """Return an Anthropic client, or None if no key is configured."""
+    key = os.environ.get('ANTHROPIC_API_KEY', '').strip()
+    if not key:
+        return None
+    try:
+        import anthropic
+        return anthropic.Anthropic(api_key=key)
+    except Exception:
+        return None
+
+def _pre_sort(results, query, eliminated, my_list):
+    """
+    Re-sort top-35 slice based on query intent — per LOGIC_RULES.md section 10.
+    Excludes eliminated schools and my-list schools before sorting.
+    Returns top 35 from the resulting list.
+    """
+    excl = set(eliminated) | set(my_list)
+    pool = [r for r in results if r['school'] not in excl]
+
+    q = query.lower()
+    if any(k in q for k in ('prestig', 'best school', 'academic')):
+        pool.sort(key=lambda r: (r['meta'].get('accept') or 999))
+    elif any(k in q for k in ('stem', 'engineer', 'tech', 'med', 'science')):
+        pool.sort(key=lambda r: (0 if r['meta'].get('stem') else 1))
+    elif any(k in q for k in ('money', 'cost', 'afford', 'save')):
+        rank = {'high': 0, 'moderate': 1, 'none': 2, '': 3}
+        pool.sort(key=lambda r: rank.get(r['meta'].get('merit', ''), 3))
+    elif any(k in q for k in ('star', 'podium', 'win', 'lead')):
+        pool.sort(key=lambda r: -r['adjPts'])
+    elif any(k in q for k in ('fun', 'social', 'happy', 'vibe')):
+        pool.sort(key=lambda r: -(r['meta'].get('accept') or 0))
+    elif 'hidden ivy' in q or 'ivy' in q:
+        pool.sort(key=lambda r: (0 if r['meta'].get('hiddenIvy') else 1))
+    # default: already sorted by adjPts desc from score_all_schools
+
+    return pool[:35]
+
+def _build_school_line(i, r):
+    """Format one numbered line for the Claude search prompt."""
+    vibe = (r['meta'].get('vibe') or '')[:60]
+    return (
+        f"{i+1}. {r['school']} ({r['conference']}): "
+        f"swimTier={r['adjTier']}, admission={r['admission']['label']}, "
+        f"hiddenIvy={str(r['meta'].get('hiddenIvy', False)).lower()}, "
+        f"stem={str(r['meta'].get('stem', False)).lower()}, "
+        f"merit={r['meta'].get('merit', '')}, "
+        f"accept={r['meta'].get('accept', '?')}%, "
+        f"vibe=\"{vibe}\""
+    )
+
+def _parse_search_response(text, sorted_35):
+    """
+    Parse Claude's JSON search response.
+    Returns list of enriched SchoolResult dicts (with aiWhy), or raises ValueError.
+    """
+    # Strip markdown fences
+    text = re.sub(r'```json\s*', '', text)
+    text = re.sub(r'```\s*', '', text)
+    text = text.strip()
+
+    match = re.search(r'\{[\s\S]*\}', text)
+    if not match:
+        raise ValueError('No JSON object found in response')
+
+    parsed = json.loads(match.group())
+    answer  = parsed.get('answer', '')
+    picks   = parsed.get('schools', [])
+
+    schools = []
+    for pick in picks:
+        idx = pick.get('number')
+        if idx is None:
+            continue
+        idx = int(idx) - 1
+        if idx < 0 or idx >= len(sorted_35):
+            continue
+        r = dict(sorted_35[idx])
+        r['aiWhy'] = pick.get('why', '')
+        schools.append(r)
+
+    if not schools:
+        raise ValueError('No valid school picks in response')
+
+    return answer, schools
+
+def _build_top3_text(top3):
+    """'1650 Free: 🥇 Winner; 500 Free: 🏅 Podium' style string."""
+    return '; '.join(f"{e['event']}: {place_label(e['place'])}" for e in top3)
+
+def _build_vibe_lines(vibe):
+    """Format answered vibe questions for deep dive prompt."""
+    if not vibe:
+        return ''
+    labels = {
+        'campus':   'Ideal campus feel',
+        'friday':   'Friday night preference',
+        'academic': 'Academic priority',
+        'compete':  'Competition mindset',
+        'location': 'Location preference',
+        'career':   'Career interest',
+    }
+    lines = []
+    for k, v in vibe.items():
+        if v:
+            lines.append(f"  - {labels.get(k, k)}: {v}")
+    return '\n'.join(lines)
+
+# ---------------------------------------------------------------------------
 # Routes
 # ---------------------------------------------------------------------------
 
@@ -943,37 +1055,285 @@ def score_all():
     """Score James against all 76 programs. No request body needed."""
     results = score_all_schools(JAMES['times'], JAMES['sat'], JAMES['gpa'])
     return jsonify({
-        'profile': {k: v for k, v in JAMES.items() if k != 'vibe'},
+        'profile': JAMES,
         'totalSchools': len(TEAMS_LIST),
         'scoredSchools': len(results),
         'results': results,
     })
 
-@app.route('/api/score', methods=['POST'])
-def score():
-    """Score arbitrary times at a specific school — for the manual calculator."""
+@app.route('/api/search', methods=['POST'])
+def search():
+    """
+    Natural-language search: re-sort top-35 by query intent, call Claude,
+    return 3 annotated SchoolResult objects.
+
+    Body: { query, eliminated?, myList? }
+    Response: { answer, schools } or { error, fallback? }
+    """
     data       = request.json or {}
-    conference = data.get('conference', '').strip()
-    team       = data.get('team', '').strip()
-    times      = data.get('times', {})
+    query      = data.get('query', '').strip()
+    eliminated = data.get('eliminated', [])
+    my_list    = data.get('myList', [])
 
-    if not conference:
-        return jsonify({'error': 'Conference is required'}), 400
-    if not team:
-        return jsonify({'error': 'Team is required'}), 400
-    if not any(v and str(v).strip() for v in times.values()):
-        return jsonify({'error': 'At least one event time is required'}), 400
+    if not query:
+        return jsonify({'error': 'Query is required'}), 400
 
-    return jsonify(score_one_school(times, conference, team))
+    # Always compute fresh so filtering/sorting is accurate
+    all_results = score_all_schools(JAMES['times'], JAMES['sat'], JAMES['gpa'])
+    sorted_35   = _pre_sort(all_results, query, eliminated, my_list)
+
+    if not sorted_35:
+        return jsonify({'error': 'No schools available to search after filters'}), 400
+
+    client = _get_anthropic()
+    if not client:
+        return jsonify({
+            'error': 'AI search is not configured',
+            'detail': 'ANTHROPIC_API_KEY is missing or invalid',
+            'fallback': sorted_35[:3],  # return top 3 deterministically
+        }), 503
+
+    system_prompt = (
+        "You are Lane4. Respond ONLY with a valid JSON object. "
+        "No markdown. No explanation. Start with { end with }. "
+        "Keep 'why' fields under 15 words each. Keep 'answer' under 30 words."
+    )
+
+    school_lines = '\n'.join(_build_school_line(i, r) for i, r in enumerate(sorted_35))
+    user_prompt  = (
+        f'Mom\'s question: "{query}"\n\n'
+        f"James: GPA {JAMES['gpa']}, SAT {JAMES['sat']}, STEM-focused, "
+        f"Conference Star swimmer (1650/500 Free, 50 Breast split).\n\n"
+        "Pick 3 schools from this numbered list that best answer the question. Return ONLY JSON.\n\n"
+        f"{school_lines}\n\n"
+        'JSON format:\n{"answer":"1-2 sentences max","schools":[{"number":1,"why":"under 15 words"}]}'
+    )
+
+    try:
+        resp = client.messages.create(
+            model='claude-sonnet-4-20250514',
+            max_tokens=600,
+            system=system_prompt,
+            messages=[{'role': 'user', 'content': user_prompt}],
+        )
+        raw_text = resp.content[0].text
+        answer, schools = _parse_search_response(raw_text, sorted_35)
+        return jsonify({'answer': answer, 'schools': schools})
+
+    except json.JSONDecodeError as e:
+        return jsonify({
+            'error': 'AI returned malformed JSON',
+            'detail': str(e),
+            'fallback': sorted_35[:3],
+        }), 200
+
+    except ValueError as e:
+        return jsonify({
+            'error': str(e),
+            'fallback': sorted_35[:3],
+        }), 200
+
+    except Exception as e:
+        return jsonify({
+            'error': 'Search failed',
+            'detail': str(e),
+            'fallback': sorted_35[:3],
+        }), 200
+
+
+@app.route('/api/deep-dive', methods=['POST'])
+def deep_dive():
+    """
+    Generate the 8-section deep dive narrative for one school.
+
+    Body: { school }   (school must match a key in score_all results)
+    Response: { sections: [{title, body}] } or { error }
+    """
+    data    = request.json or {}
+    school  = data.get('school', '').strip()
+
+    if not school:
+        return jsonify({'error': 'school is required'}), 400
+
+    all_results = score_all_schools(JAMES['times'], JAMES['sat'], JAMES['gpa'])
+    result = next((r for r in all_results if r['school'] == school), None)
+
+    if result is None:
+        return jsonify({'error': f'School "{school}" not found in scored results'}), 404
+
+    client = _get_anthropic()
+    if not client:
+        return jsonify({
+            'error': 'AI deep dive is not configured',
+            'detail': 'ANTHROPIC_API_KEY is missing or invalid',
+        }), 503
+
+    meta = result['meta']
+    top3_text = _build_top3_text(result['top3'])
+    vibe_lines = _build_vibe_lines(JAMES.get('vibe'))
+
+    merit_label = {
+        'none':     'Need-based only',
+        'high':     'Strong merit aid available',
+        'moderate': 'Moderate merit aid',
+    }.get(meta.get('merit', ''), 'Moderate merit aid')
+
+    vibe_block = ''
+    if vibe_lines:
+        vibe_block = (
+            f"\n{JAMES['name']}'S PERSONALITY & PREFERENCES "
+            f"(use these to personalize every section):\n{vibe_lines}\n"
+        )
+
+    hidden_ivy_note = '\nThis is a Hidden Ivy — academically elite, employer-respected, without the brand tax.' if meta.get('hiddenIvy') else ''
+    stem_note       = '\nStrong STEM programs.' if meta.get('stem') else ''
+
+    system_prompt = (
+        "You are Lane4, a college swim recruiting advisor. "
+        "Warm, honest, direct. Talk to a 17-year-old and his mom. "
+        "Never use jargon. 'Hidden Ivy' means academically elite and employer-respected "
+        "without the Stanford rejection rate. The comp anchor — comparing to a dream school "
+        "— is powerful when honest."
+    )
+
+    user_prompt = (
+        f"Write a deep dive for {JAMES['name']} considering {result['school']}.\n\n"
+        f"SWIMMER: {JAMES['name']}, Class of 2026, GPA {JAMES['gpa']} unweighted, "
+        f"SAT {JAMES['sat']} (math {JAMES['mathSat']}), "
+        f"projected retake {JAMES['satProjected']} (math {JAMES['mathSatProjected']}). "
+        f"STEM-focused. Heavy AP load including Calc BC."
+        f"{vibe_block}\n"
+        f"SWIM RESULTS AT {result['school'].upper()} ({result['conference']}):\n"
+        f"Top events: {top3_text}\n"
+        f"Conference tier (raw): {tier_label(result['rawPts'])}\n"
+        f"Program adjusted tier (PSF {result['psf']}): {result['adjTier']}\n"
+        f"Admission outlook: {result['admission']['label']}"
+        f"{hidden_ivy_note}{stem_note}\n"
+        f"School vibe: {meta.get('vibe', '')}\n"
+        f"Location: {meta.get('location', '')}\n"
+        f"Acceptance rate: ~{meta.get('accept', '?')}%\n"
+        f"SAT median: ~{meta.get('satMedian', '?')}\n"
+        f"Merit aid: {merit_label}\n\n"
+        "Write exactly these sections. Warm, direct, honest. Talk to a 17-year-old and his mom. "
+        "Never clinical. Weave in what you know about his personality — don't just list his "
+        "preferences, speak to them naturally. Use 'Hidden Ivy' naturally if applicable. "
+        "Max 2-3 sentences per section.\n\n"
+        "## Your Honest Shot\n"
+        "## What This School Is Actually Like\n"
+        f"## How {JAMES['name']} Fits on the Swim Team\n"
+        "## Why a Coach Would Want to Call\n"
+        "## Getting In — The Real Picture\n"
+        "## The Money Conversation\n"
+        "Include: Estimated COA, Estimated Merit Aid for this profile, Estimated Net Cost\n"
+        "## Your Next Three Moves\n"
+        "Three specific actions this week.\n"
+        "## The Bottom Line\n"
+        "One sentence. Make it land."
+    )
+
+    try:
+        resp = client.messages.create(
+            model='claude-sonnet-4-20250514',
+            max_tokens=1000,
+            system=system_prompt,
+            messages=[{'role': 'user', 'content': user_prompt}],
+        )
+        raw = resp.content[0].text
+
+        # Split on section headers — per OUTPUT_SCHEMA response parsing spec
+        parts  = re.split(r'^## ', raw, flags=re.MULTILINE)
+        sections = []
+        for part in parts:
+            part = part.strip()
+            if not part:
+                continue
+            lines = part.split('\n', 1)
+            title = lines[0].strip()
+            body  = lines[1].strip() if len(lines) > 1 else ''
+            if title:
+                sections.append({'title': title, 'body': body})
+
+        if not sections:
+            return jsonify({'error': 'AI returned empty deep dive', 'raw': raw}), 200
+
+        return jsonify({
+            'school':    result['school'],
+            'sections':  sections,
+            'admission': result['admission'],
+            'adjTier':   result['adjTier'],
+            'meta':      meta,
+        })
+
+    except Exception as e:
+        return jsonify({'error': 'Deep dive failed', 'detail': str(e)}), 200
+
+
+@app.route('/api/coach-email', methods=['POST'])
+def coach_email():
+    """
+    Generate deterministic coach email for one school. No AI call.
+
+    Body: { school }
+    Response: { subject, body }
+    """
+    data   = request.json or {}
+    school = data.get('school', '').strip()
+
+    if not school:
+        return jsonify({'error': 'school is required'}), 400
+
+    all_results = score_all_schools(JAMES['times'], JAMES['sat'], JAMES['gpa'])
+    result = next((r for r in all_results if r['school'] == school), None)
+
+    if result is None:
+        return jsonify({'error': f'School "{school}" not found in scored results'}), 404
+
+    meta  = result['meta']
+    top3  = result['top3']
+    best  = top3[0] if top3 else None
+
+    if best is None:
+        return jsonify({'error': 'No scored events found for this school'}), 400
+
+    # Performance descriptor
+    if best['place'] <= 1.5:
+        perf = f"projected to win the {best['event']}"
+    elif best['place'] <= 3.5:
+        perf = f"projected to podium in the {best['event']}"
+    else:
+        perf = f"projected as a conference A finalist in the {best['event']}"
+
+    second   = f" I also project to score in the {top3[1]['event']}." if len(top3) > 1 else ''
+    stem_note  = ' Your programs in engineering and CS align directly with my academic direction.' if meta.get('stem') else ''
+    merit_note = " I've also been looking closely at your merit scholarship opportunities." if meta.get('merit') == 'high' else ''
+
+    subject = f"Prospective Student-Athlete Inquiry — Class of 2026 | Distance Freestyle"
+    body = (
+        f"Dear Coach,\n\n"
+        f"My name is {JAMES['name']} and I'm a junior in the Class of 2026 with strong interest "
+        f"in {result['school']}'s swim program.\n\n"
+        f"At the {result['conference']} conference level, I'm {perf}.{second} "
+        f"My current bests include a 16:06 in the 1650 free, 4:37 in the 500, "
+        f"and a 25.68 relay split in the 50 breast.\n\n"
+        f"Academically I carry a {JAMES['gpa']} GPA with a heavy AP load including Calc BC "
+        f"and scored a {JAMES['sat']} SAT with a retake planned.{stem_note}{merit_note}\n\n"
+        f"I'd love to connect about your program. Would you have time for a brief call or campus visit?\n\n"
+        f"Thank you,\n{JAMES['name']}"
+    )
+
+    return jsonify({'subject': subject, 'body': body})
+
 
 @app.route('/api/health', methods=['GET'])
 def health():
+    key_ok = bool(os.environ.get('ANTHROPIC_API_KEY', '').strip())
     return jsonify({
         'status':        'ok',
         'benchmarks':    len(BENCHMARKS),
         'teams':         len(TEAMS_LIST),
         'schoolMeta':    len(SCHOOL_META),
         'normalized':    len(NORMALIZATION_LOG),
+        'anthropicKey':  key_ok,
     })
 
 if __name__ == '__main__':
