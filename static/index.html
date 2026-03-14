@@ -376,7 +376,7 @@
     @media (max-width: 480px) { .ob-row { grid-template-columns: 1fr; } }
     .ob-time-row { display: flex; gap: 0.5rem; align-items: flex-end; margin-bottom: 0.5rem; }
     .ob-time-row .ob-input { flex: 1; }
-    .ob-time-row .ob-input.time-val { max-width: 110px; flex: none; }
+    .ob-time-row .ob-input.time-val { max-width: 140px; flex: none; }
     .ob-time-del { background: none; border: none; cursor: pointer; color: var(--muted); font-size: 1rem; padding: 0 4px; line-height: 1; align-self: center; margin-bottom: 2px; }
     .ob-time-del:hover { color: var(--red); }
     .ob-add-btn { background: none; border: 1.5px dashed var(--border); color: var(--blue); font-size: 0.82rem; font-weight: 600; cursor: pointer; padding: 7px 14px; border-radius: 8px; width: 100%; margin-top: 0.25rem; }
@@ -411,11 +411,11 @@
 
     <div class="ob-section">
       <div class="ob-section-label">About the swimmer</div>
-      <div class="ob-field">
-        <label>First name</label>
-        <input class="ob-input" id="ob-name" type="text" placeholder="e.g. Alex" autocomplete="off" />
-      </div>
       <div class="ob-row">
+        <div class="ob-field">
+          <label>First name</label>
+          <input class="ob-input" id="ob-name" type="text" placeholder="e.g. Alex" autocomplete="off" />
+        </div>
         <div class="ob-field">
           <label>Graduation year</label>
           <select class="ob-input" id="ob-gradyear">
@@ -431,27 +431,31 @@
     </div>
 
     <div class="ob-section">
-      <div class="ob-section-label">Best times <span class="ob-optional">(SCY — add at least one)</span></div>
+      <div class="ob-section-label">Best times <span class="ob-optional">(short-course yards — add at least one)</span></div>
+      <div style="font-size:0.75rem;color:var(--muted);margin-bottom:0.6rem;">Enter times as <strong>4:37.00</strong> or <strong>4:37</strong> for minutes:seconds, or <strong>59.50</strong> or <strong>59</strong> for seconds only.</div>
       <div id="ob-times-list"></div>
       <button class="ob-add-btn" onclick="obAddTimeRow()">+ Add another event</button>
       <div id="ob-times-err" class="ob-err"></div>
     </div>
 
     <div class="ob-section">
-      <div class="ob-section-label">Academic profile <span class="ob-optional">(optional)</span></div>
+      <div class="ob-section-label">Academic profile <span class="ob-optional">(optional — improves school matching)</span></div>
       <div class="ob-row">
         <div class="ob-field">
-          <label>GPA (unweighted)</label>
+          <label>GPA (unweighted, 0–4.0)</label>
           <input class="ob-input" id="ob-gpa" type="number" step="0.01" min="0" max="4.0" placeholder="3.85" />
         </div>
         <div class="ob-field">
-          <label>SAT score</label>
+          <label>SAT score (400–1600)</label>
           <input class="ob-input" id="ob-sat" type="number" step="10" min="400" max="1600" placeholder="1350" />
         </div>
       </div>
     </div>
 
-    <button class="ob-submit" id="ob-submit-btn" onclick="submitOnboarding()">Enter Lane4 →</button>
+    <button class="ob-submit" id="ob-submit-btn" onclick="submitOnboarding()">Save Profile &amp; Start →</button>
+    <div style="text-align:center;margin-top:0.75rem;font-size:0.73rem;color:var(--muted);">
+      🔒 Your profile is saved only in this browser. Nothing is sent to a server or stored in an account.
+    </div>
   </div>
 </div>
 
@@ -524,8 +528,8 @@
 ════════════════════════════════════════════════════════════════ -->
 <div class="tab-panel" id="panel-profile">
   <div class="wrap">
-    <div class="page-title" id="prof-name">James's Profile</div>
-    <div class="page-sub">Academic stats and swim times Lane4 uses to score every school.</div>
+    <div class="page-title" id="prof-name">Your Profile</div>
+    <div class="page-sub">Academic stats and swim times Lane4 uses to score every school. Saved locally in this browser only.</div>
 
     <div class="section-label" style="display:flex;align-items:center;justify-content:space-between;">
       Academic Stats
@@ -760,8 +764,8 @@ async function submitOnboarding() {
     const ev  = document.getElementById('ob-event-' + idx)?.value;
     const t   = document.getElementById('ob-time-'  + idx)?.value.trim();
     if (ev && t) {
-      if (!/^\d+(\:\d{2})?\.\d{1,2}$/.test(t) && !/^\d+:\d{2}:\d{2}$/.test(t)) {
-        timesErrMsg = `"${t}" doesn't look right. Try formats like 4:37.00 or 59.50`;
+      if (!/^\d+(?::\d{2})?(?:\.\d{1,2})?$/.test(t) || t === '0') {
+        timesErrMsg = `"${t}" doesn't look right. Use 4:37 or 4:37.00 for min:sec, or 59 or 59.50 for seconds.`;
       } else {
         times[ev] = t;
       }
@@ -817,8 +821,19 @@ async function submitOnboarding() {
   renderReminders();
   updateBadges();
 
+  // Show a welcome nudge and focus the search bar
+  const searchState = document.getElementById('search-state');
+  if (searchState) {
+    searchState.innerHTML = `<div class="info-box" style="background:var(--green-l);border-left-color:var(--green);">
+      <strong>You're all set, ${esc(JAMES.name)}!</strong> Your profile is saved in this browser. Try a search to see your best-fit schools.
+    </div>`;
+    setTimeout(() => { if (searchState.querySelector('.info-box')) searchState.innerHTML = ''; }, 6000);
+  }
+  const qInput = document.getElementById('q-input');
+  if (qInput) { qInput.focus(); showDropdown(); }
+
   submitBtn.disabled    = false;
-  submitBtn.textContent = 'Enter Lane4 →';
+  submitBtn.textContent = 'Save Profile & Start →';
 }
 
 function confirmStartNewSwimmer() {
@@ -829,25 +844,50 @@ function confirmStartNewSwimmer() {
 
 function startNewSwimmer() {
   clearStorage();
-  JAMES      = {};
-  MY_LIST    = [];
-  CRM_DATA   = {};
-  VIBE_STATE = {};
-  OTHER_PREFS = '';
-  ALL_RESULTS = [];
-  OB_ROWS    = 0;
+
+  // Reset all app state
+  JAMES        = {};
+  MY_LIST      = [];
+  CRM_DATA     = {};
+  VIBE_STATE   = {};
+  OTHER_PREFS  = '';
+  ALL_RESULTS  = [];
+  ELIMINATED   = [];
+  LAST_RESULTS = null;
+  LAST_QUERY   = '';
+  OPEN_CRM     = null;
+  ACT_SCORE    = null;
+  ACT_PROJ     = null;
+  EDIT_STATS   = false;
+  EDIT_TIMES   = false;
+
+  // Reset onboarding form
+  OB_ROWS = 0;
   document.getElementById('ob-times-list').innerHTML = '';
-  document.getElementById('ob-name').value = '';
-  document.getElementById('ob-gpa').value  = '';
-  document.getElementById('ob-sat').value  = '';
+  document.getElementById('ob-name').value           = '';
+  document.getElementById('ob-gradyear').value       = '2026';
+  document.getElementById('ob-gpa').value            = '';
+  document.getElementById('ob-sat').value            = '';
   document.getElementById('ob-name-err').textContent  = '';
   document.getElementById('ob-times-err').textContent = '';
-  showOnboarding();
-  showTab('explore');
-  renderProfile();
+
+  // Reset explore tab search state
+  const searchState   = document.getElementById('search-state');
+  const searchResults = document.getElementById('search-results');
+  if (searchState)   searchState.innerHTML   = '';
+  if (searchResults) searchResults.innerHTML = '';
+  const qInput = document.getElementById('q-input');
+  if (qInput) qInput.value = '';
+
+  // Reset other-prefs textarea
+  const otherPrefsInput = document.getElementById('other-prefs-input');
+  if (otherPrefsInput) otherPrefsInput.value = '';
+
   renderMyList();
   renderReminders();
   updateBadges();
+  showOnboarding();
+  showTab('explore');
 }
 
 // ════════════════════════════════════════════════════════════════
@@ -1787,8 +1827,8 @@ async function addTime() {
 
   if (!ev)   { if (errEl) errEl.textContent = 'Please select an event.'; return; }
   if (!time) { if (errEl) errEl.textContent = 'Please enter a time.'; return; }
-  if (!/^\d+(\:\d{2})?\.\d{1,2}$/.test(time)) {
-    if (errEl) errEl.textContent = 'Format: 1:41.53 or 22.15'; return;
+  if (!/^\d+(?::\d{2})?(?:\.\d{1,2})?$/.test(time) || time === '0') {
+    if (errEl) errEl.textContent = 'Use 4:37 or 4:37.00 for min:sec, or 59 or 59.50 for seconds.'; return;
   }
 
   JAMES.times = { ...JAMES.times, [ev]: time };
