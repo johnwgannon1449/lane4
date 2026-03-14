@@ -147,12 +147,20 @@
     .pl-oor     { background: var(--red-l); color: var(--red); }
 
     /* ── DEEP DIVE PANEL ─────────────────────────────────────── */
-    .deep-dive-back { display: flex; align-items: center; gap: 6px; color: var(--blue); font-size: 0.85rem; font-weight: 600; cursor: pointer; margin-bottom: 1.25rem; }
+    #explore-deepdive { background: #EBF4FF; min-height: 100vh; }
+    #explore-deepdive .wrap { padding-top: 1.75rem; }
+    .deep-dive-back { display: flex; align-items: center; gap: 6px; color: var(--blue-d); font-size: 0.85rem; font-weight: 600; cursor: pointer; margin-bottom: 1.25rem; }
     .deep-dive-back:hover { opacity: 0.75; }
-    .deep-dive-header { margin-bottom: 1.5rem; }
-    .deep-dive-school { font-family: 'Fraunces', serif; font-weight: 800; font-size: 1.6rem; color: var(--navy); margin-bottom: 0.35rem; }
-    .deep-dive-meta { font-size: 0.85rem; color: var(--muted); display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center; }
-    .deep-section { margin-bottom: 1.25rem; }
+    .deep-dive-header {
+      background: var(--white); border-radius: 14px; padding: 1.25rem 1.4rem;
+      margin-bottom: 1.25rem; border: 1.5px solid #BFDBFE;
+    }
+    .deep-dive-school { font-family: 'Fraunces', serif; font-weight: 800; font-size: 1.5rem; color: var(--navy); margin-bottom: 0.45rem; }
+    .deep-dive-meta { font-size: 0.85rem; color: var(--muted); display: flex; gap: 0.6rem; flex-wrap: wrap; align-items: center; }
+    .deep-section {
+      background: var(--white); border-radius: 12px; padding: 1rem 1.2rem;
+      margin-bottom: 0.75rem; border: 1.5px solid #DBEAFE;
+    }
     .deep-section-title { font-family: 'Fraunces', serif; font-weight: 700; font-size: 0.95rem; color: var(--navy); margin-bottom: 0.4rem; }
     .deep-section-body { font-size: 0.9rem; line-height: 1.65; color: var(--slate); white-space: pre-wrap; }
     .bottom-line {
@@ -203,8 +211,17 @@
     .list-school-header:hover { background: var(--bg); }
     .list-school-name { font-family: 'Fraunces', serif; font-weight: 700; font-size: 1rem; color: var(--navy); }
     .list-school-meta { font-size: 0.78rem; color: var(--muted); margin-top: 1px; }
-    .list-school-right { display: flex; align-items: center; gap: 0.6rem; flex-shrink: 0; }
+    .list-school-right { display: flex; align-items: center; gap: 0.5rem; flex-shrink: 0; flex-wrap: nowrap; }
     .status-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+    .status-oval {
+      display: inline-block; padding: 3px 11px; border-radius: 50px;
+      font-size: 0.68rem; font-weight: 700; color: white; white-space: nowrap;
+    }
+    .adm-oval {
+      display: inline-block; padding: 3px 11px; border-radius: 50px;
+      font-size: 0.68rem; font-weight: 700; color: white; white-space: nowrap;
+    }
+    .toggle-arrow { font-size: 0.75rem; color: var(--muted); flex-shrink: 0; }
     .crm-body { border-top: 1px solid var(--border); padding: 1rem 1.1rem; }
     .status-row { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1rem; }
     .status-btn {
@@ -423,6 +440,7 @@ async function boot() {
 // TAB ROUTING
 // ════════════════════════════════════════════════════════════════
 function showTab(name) {
+  if (name !== 'mylist') OPEN_CRM = null;
   ACTIVE_TAB = name;
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
@@ -431,6 +449,15 @@ function showTab(name) {
 
   if (name === 'mylist')    renderMyList();
   if (name === 'reminders') renderReminders();
+}
+
+function safeAdmColor(adm) {
+  const overrides = {
+    'Major Reach':  '#EA580C',
+    'Extreme Reach': '#78716C',
+    'Moonshot — Apply for Fun': '#94A3B8',
+  };
+  return overrides[adm.label] || adm.color || '#64748B';
 }
 
 // ════════════════════════════════════════════════════════════════
@@ -739,16 +766,14 @@ function renderMyList() {
     return `
     <div class="list-school-card">
       <div class="list-school-header" onclick='toggleCRM(${JSON.stringify(school)})'>
-        <div>
+        <div style="flex:1;min-width:0;">
           <div class="list-school-name">${esc(school)}</div>
-          <div class="list-school-meta">
-            ${result ? esc(result.conference) : ''}
-            ${adm.label ? ' · ' + adm.label : ''}
-          </div>
+          <div class="list-school-meta">${result ? esc(result.conference) : ''}</div>
         </div>
         <div class="list-school-right">
-          <span style="font-size:0.78rem;font-weight:600;color:${cfg.color};">${cfg.label}</span>
-          <span style="font-size:0.8rem;color:var(--muted);">${isOpen ? '▴' : '▾'}</span>
+          ${adm.label ? `<span class="adm-oval" style="background:${safeAdmColor(adm)};">${esc(adm.label)}</span>` : ''}
+          <span class="status-oval" style="background:${cfg.color};">${cfg.label}</span>
+          <span class="toggle-arrow">${isOpen ? '▴' : '▾'}</span>
         </div>
       </div>
       ${isOpen ? `
