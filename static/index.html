@@ -439,7 +439,7 @@ function showTab(name) {
 function renderSuggestions() {
   const el = document.getElementById('suggestion-pills');
   el.innerHTML = SUGGESTED_QUERIES.map(q =>
-    `<span class="pill" onclick="fillAndSearch(${JSON.stringify(q)})">${q}</span>`
+    `<span class="pill" onclick='fillAndSearch(${JSON.stringify(q)})'>${q}</span>`
   ).join('');
 }
 
@@ -529,11 +529,11 @@ function renderResultCards(schools, container) {
         ${top2 ? `<span class="badge ${placeClass(top2.place)}">${esc(top2.event)}: ${esc(place_label(top2.place))}</span>` : ''}
       </div>
       <div class="result-actions">
-        <button class="btn btn-primary" onclick="openDeepDive(${JSON.stringify(r.school)})">Deep Dive →</button>
+        <button class="btn btn-primary" onclick='openDeepDive(${JSON.stringify(r.school)})'>Deep Dive →</button>
         ${inList
           ? `<button class="btn btn-added" disabled>✓ On My List</button>`
-          : `<button class="btn btn-secondary" onclick="addToList(${JSON.stringify(r.school)}, ${i})">+ Add to List</button>`}
-        <button class="btn btn-ghost" onclick="eliminate(${JSON.stringify(r.school)}, ${i})">✕</button>
+          : `<button class="btn btn-secondary" onclick='addToList(${JSON.stringify(r.school)}, ${i})'>+ Add to List</button>`}
+        <button class="btn btn-ghost" onclick='eliminate(${JSON.stringify(r.school)}, ${i})'>✕</button>
       </div>
     </div>`;
   }).join('');
@@ -606,8 +606,8 @@ async function openDeepDive(school) {
       <div class="deep-dive-actions">
         ${inList
           ? `<button class="btn btn-added" disabled>✓ On My List</button>`
-          : `<button class="btn btn-secondary" id="dd-add-btn" onclick="ddAddToList(${JSON.stringify(school)})">+ Add to List</button>`}
-        <button class="btn btn-secondary" onclick="showCoachEmail(${JSON.stringify(school)})">Draft Coach Email →</button>
+          : `<button class="btn btn-secondary" id="dd-add-btn" onclick='ddAddToList(${JSON.stringify(school)})'>+ Add to List</button>`}
+        <button class="btn btn-secondary" onclick='showCoachEmail(${JSON.stringify(school)})'>Draft Coach Email →</button>
       </div>
 
       ${mainSections.map(s => `
@@ -714,7 +714,7 @@ function renderMyList() {
     const statusBtns = Object.entries(STATUS_CONFIG).map(([k, v]) =>
       `<button class="status-btn ${crm.status === k ? 'active' : ''}"
         style="${crm.status === k ? 'background:' + v.color + ';' : ''}"
-        onclick="setCrmStatus(${JSON.stringify(school)}, '${k}')">${v.label}</button>`
+        onclick='setCrmStatus(${JSON.stringify(school)}, "${k}")'>${v.label}</button>`
     ).join('');
 
     const noteItems = (crm.notes || []).map((n, ni) => `
@@ -723,7 +723,7 @@ function renderMyList() {
           <div>${esc(n.text)}</div>
           <div class="note-meta">${esc(n.cat)} · ${esc(n.date)}</div>
         </div>
-        <button class="btn btn-ghost" style="padding:2px 6px;" onclick="deleteNote(${JSON.stringify(school)}, ${ni})">✕</button>
+        <button class="btn btn-ghost" style="padding:2px 6px;" onclick='deleteNote(${JSON.stringify(school)}, ${ni})'>✕</button>
       </div>`).join('');
 
     const remItems = (crm.reminders || []).map((r, ri) => {
@@ -732,13 +732,13 @@ function renderMyList() {
       return `<div class="reminder-item">
         <span class="reminder-label ${cls}">${lbl}</span>
         <span style="flex:1;">${esc(r.text)}</span>
-        <button class="btn btn-ghost" style="padding:2px 6px;" onclick="deleteReminder(${JSON.stringify(school)}, ${ri})">✕</button>
+        <button class="btn btn-ghost" style="padding:2px 6px;" onclick='deleteReminder(${JSON.stringify(school)}, ${ri})'>✕</button>
       </div>`;
     }).join('');
 
     return `
     <div class="list-school-card">
-      <div class="list-school-header" onclick="toggleCRM(${JSON.stringify(school)})">
+      <div class="list-school-header" onclick='toggleCRM(${JSON.stringify(school)})'>
         <div>
           <div class="list-school-name">${esc(school)}</div>
           <div class="list-school-meta">
@@ -769,7 +769,7 @@ function renderMyList() {
               <option value="Campus Visit">Campus Visit</option>
             </select>
             <input class="crm-input" type="text" id="note-text-${si}" placeholder="Add a note…" />
-            <button class="btn btn-secondary" onclick="addNote(${JSON.stringify(school)}, ${si})">Add</button>
+            <button class="btn btn-secondary" onclick='addNote(${JSON.stringify(school)}, ${si})'>Add</button>
           </div>
         </div>
 
@@ -779,13 +779,13 @@ function renderMyList() {
           <div class="crm-add-row">
             <input class="crm-input" type="text" id="rem-text-${si}" placeholder="Reminder text…" />
             <input class="crm-input" type="date" id="rem-date-${si}" style="flex:0 0 140px;" />
-            <button class="btn btn-secondary" onclick="addReminder(${JSON.stringify(school)}, ${si})">Set</button>
+            <button class="btn btn-secondary" onclick='addReminder(${JSON.stringify(school)}, ${si})'>Set</button>
           </div>
         </div>
 
         <div style="display:flex;justify-content:space-between;margin-top:0.25rem;">
-          <button class="btn btn-secondary" onclick="showTab('explore');openDeepDive(${JSON.stringify(school)})">Deep Dive →</button>
-          <button class="btn btn-ghost" style="color:var(--red);" onclick="removeFromList(${JSON.stringify(school)})">Remove from list</button>
+          <button class="btn btn-secondary" onclick='showTab("explore");openDeepDive(${JSON.stringify(school)})'>Deep Dive →</button>
+          <button class="btn btn-ghost" style="color:var(--red);" onclick='removeFromList(${JSON.stringify(school)})'>Remove from list</button>
         </div>
       </div>` : ''}
     </div>`;
@@ -881,7 +881,7 @@ function renderReminders() {
             <div style="flex:1;">
               <div class="rem-text">${esc(r.text)}</div>
               <div style="font-size:0.75rem;color:var(--muted);">
-                <span class="rem-school-link" onclick="goToSchool(${JSON.stringify(r.school)})">${esc(r.school)}</span>
+                <span class="rem-school-link" onclick='goToSchool(${JSON.stringify(r.school)})'>${esc(r.school)}</span>
               </div>
             </div>
           </div>`).join('')}
@@ -934,7 +934,7 @@ function renderVibeQuestions() {
     const current = VIBE_STATE[q.id] || null;
     const opts = q.options.map(o =>
       `<span class="vibe-opt ${current === o ? 'picked' : ''}"
-        onclick="setVibe(${JSON.stringify(q.id)}, ${JSON.stringify(o)})">${esc(o)}</span>`
+        onclick='setVibe(${JSON.stringify(q.id)}, ${JSON.stringify(o)})'>${esc(o)}</span>`
     ).join('');
     return `
       <div class="vibe-q">
