@@ -417,8 +417,15 @@
       </div>
       <div class="ob-field">
         <label>Password</label>
-        <input class="ob-input" id="auth-password" type="password" placeholder="••••••••" autocomplete="current-password"
-          onkeydown="if(event.key==='Enter')authSubmit()" />
+        <div style="position:relative;">
+          <input class="ob-input" id="auth-password" type="password" placeholder="••••••••" autocomplete="current-password"
+            style="padding-right:2.5rem;"
+            onkeydown="if(event.key==='Enter')authSubmit()" />
+          <button type="button" onclick="toggleAuthPasswordVisibility()"
+            id="auth-pw-eye"
+            style="position:absolute;right:0.65rem;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;padding:0;color:var(--muted);line-height:1;font-size:1.1rem;"
+            title="Show/hide password">👁</button>
+        </div>
       </div>
       <div id="auth-err" class="ob-err" style="margin-top:0.3rem;"></div>
     </div>
@@ -939,6 +946,18 @@ function startNewSwimmer() {
 // ════════════════════════════════════════════════════════════════
 let AUTH_MODE     = 'login'; // 'login' | 'register'
 let CURRENT_USER  = null;    // { email, user_id } when logged in
+
+function toggleAuthPasswordVisibility() {
+  const input = document.getElementById('auth-password');
+  const btn   = document.getElementById('auth-pw-eye');
+  if (input.type === 'password') {
+    input.type  = 'text';
+    btn.textContent = '🙈';
+  } else {
+    input.type  = 'password';
+    btn.textContent = '👁';
+  }
+}
 
 function showAuth() {
   document.getElementById('auth-overlay').style.display = 'flex';
