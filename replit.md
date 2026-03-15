@@ -75,22 +75,28 @@ adjPts  = rawPts × PSF   (PSF from Team_Tiers lookup)
 | < 50 | Conference Star |
 | ≥ 50 | High-Point Contender |
 
-### Admission Scoring (admissionChance — per LOGIC_RULES.md)
+### Admission Scoring v2 — Matrix Model
 ```
-satDiff = swimmer.sat - school.satMedian
-acadScore = 0..4 based on satDiff, +1 if gpa >= 3.9, +1 if accept > 60%
+# 1. School selectivity tier (from accept% + satMedian)
+#    ultra_selective | highly_selective | selective | broader_admit
 
-swimBoost  = 1 if psf <= 0.78
-             2 if psf <= 0.85
-             3 if psf <= 1.00
-             4 if psf > 1.00
-swimBoost += 2 if tier in [High-Point Contender, Conference Star]
-swimBoost += 1 if tier in [Top Recruit, Priority Recruit]
+# 2. SAT ranges estimated: sat25 = satMedian-60, sat75 = satMedian+60
+#    sat_floor = sat25 - (60|80|100|120 by tier)
 
-total = acadScore + swimBoost
+# 3. Academic band (0-4) from SAT subscore (-2 to +2) + GPA subscore (0 — no percentile data)
+#    SAT > sat75 → +2 | sat25-sat75 → +1 | floor-sat25 → 0 | below floor → -2
+#    raw → band: 4→4, 2-3→3, 0-1→2, -1to-2→1, ≤-3→0
+#    Hard stop: GPA < 2.0 → band 0
+
+# 4. Swim support band (0-4)
+#    High-Point Contender / Conference Star → 4
+#    Priority Recruit / Top Recruit → 3
+#    Recruitable → 2 | Reach → 1 | Moonshot → 0
+#    PSF modifier: >1.00 → +1, ≤0.78 → -1, else 0 (clamped 0-4)
+
+# 5. Base label from 5×5 matrix, then guardrails (gpa/sat floors, selectivity caps)
 ```
-Labels: Virtual Lock (≥9), Very Strong Chance (≥8), Strong Chance (≥7), Realistic Shot (≥6),
-        Possible (≥5), Reach with Support (≥4), Major Reach (≥3), Extreme Reach (<3)
+Labels (6): Very Strong Chance, Strong Chance, Realistic Shot, Possible, Major Reach, Moonshot
 Moonshot override: MIT and Caltech return "Moonshot — Apply for Fun" unconditionally.
 
 ## Name Normalization (10 known workbook truncations — explicit, flagged)

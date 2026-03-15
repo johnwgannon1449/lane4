@@ -1,0 +1,625 @@
+We need to replace the current admissions-likelihood scoring with a matrix-based model that is more conservative, more school-relative, and less additive.
+
+Goal:
+Estimate the COMBINED likelihood that a swimmer gets into a school given:
+1) his academic profile
+2) his swimming value to that program
+3) the degree to which coach support can actually help at that school
+
+Important label changes:
+- Remove "Virtual Lock"
+- Remove "Extreme Reach"
+- Rename "Extreme Reach" to "Moonshot"
+- Do NOT use "Safety", "Safety School", or "Safety School+"
+- Final labels should be exactly:
+
+["Very Strong Chance", "Strong Chance", "Realistic Shot", "Possible", "Major Reach", "Moonshot"]
+
+Also remove any stale reference to "Likely Commit" and replace with the current swim tier names.
+
+==================================================
+PART 1 — NEW MODEL OVERVIEW
+==================================================
+
+We are moving from a simple additive total to this structure:
+
+A) Compute a school-relative academic band: 0 to 4
+B) Compute a swim support band: 0 to 4
+C) Use an academic-band x swim-support matrix to assign a base label
+D) Apply guardrails/caps based on academic floor and school selectivity
+
+Key philosophy:
+- Swimming should HELP an admissible or borderline-admissible applicant
+- Swimming should not fully rescue a clearly non-admissible academic profile
+- Academic Band 1 should still be meaningfully admissible if swim support is strong
+- Academic Band 0 is where we treat the student as near-non-admissible or not realistically admissible without extraordinary circumstances
+
+==================================================
+PART 2 — DATA EXPECTATIONS
+==================================================
+
+For each school, use these if available:
+- sat_25
+- sat_50
+- sat_75
+- gpa_25
+- gpa_50 (optional)
+- gpa_75
+- acceptance_rate
+- psf (program strength factor)
+
+If some percentiles are missing, fall back gracefully:
+- If sat_25/sat_75 missing but sat_50 exists, estimate a temporary range:
+  sat_25 = sat_50 - 60
+  sat_75 = sat_50 + 60
+- If gpa_25/gpa_75 missing but only average GPA exists, estimate:
+  gpa_25 = avg_gpa - 0.15
+  gpa_75 = avg_gpa + 0.15
+- Clamp GPA estimates to [0.0, 4.0]
+
+If percentiles are missing and cannot be estimated reliably, fall back to a conservative older method, but prefer the new model whenever possible.
+
+==================================================
+PART 3 — SCHOOL SELECTIVITY TIER
+==================================================
+
+We need a simple school selectivity tier because academic floors should be tighter at more selective schools.
+
+Create a function classify_selectivity_tier(school):
+
+Tier rules:
+- "ultra_selective" if acceptance_rate <= 0.15 OR sat_50 >= 1500
+- "highly_selective" if acceptance_rate <= 0.30 OR sat_50 >= 1400
+- "selective" if acceptance_rate <= 0.50 OR sat_50 >= 1300
+- else "broader_admit"
+
+This tier is NOT a final output label. It is used only for academic floors and guardrails.
+
+==================================================
+PART 4 — SCHOOL-RELATIVE ACADEMIC FLOORS
+==================================================
+
+We need a true "floor" below which the student is treated as near-non-admissible.
+
+Add a function get_academic_floors(school):
+
+GPA floor offsets by selectivity tier:
+- ultra_selective: gpa_floor = gpa_25 - 0.20
+- highly_selective: gpa_floor = gpa_25 - 0.25
+- selective: gpa_floor = gpa_25 - 0.30
+- broader_admit: gpa_floor = gpa_25 - 0.35
+
+SAT floor offsets by selectivity tier:
+- ultra_selective: sat_floor = sat_25 - 60
+- highly_selective: sat_floor = sat_25 - 80
+- selective: sat_floor = sat_25 - 100
+- broader_admit: sat_floor = sat_25 - 120
+
+Clamp:
+- gpa_floor cannot go below 2.0
+- sat_floor cannot go below 800
+
+Global hard-stop sanity rule:
+- if GPA < 2.0, student is automatically Academic Band 0
+- if SAT exists and SAT < 800, treat as Academic Band 0
+
+Important:
+Being below the 25th percentile does NOT automatically mean Band 0.
+Being below the school-relative floor is what matters.
+
+==================================================
+PART 5 — ACADEMIC RAW SCORE
+==================================================
+
+Add a function compute_academic_band(swimmer, school):
+
+Inputs:
+- swimmer.gpa
+- swimmer.sat
+- school sat/gpa percentiles
+- school academic floors
+- school selectivity tier
+
+Step A: SAT subscore
+Use:
+- +2 if swimmer.sat > sat_75
+- +1 if sat_25 <= swimmer.sat <= sat_75
+-  0 if sat_floor <= swimmer.sat < sat_25
+- -2 if swimmer.sat < sat_floor
+
+If SAT is missing, SAT subscore = 0 (neutral, not punitive)
+
+Step B: GPA subscore
+Use:
+- +2 if swimmer.gpa > gpa_75
+- +1 if gpa_25 <= swimmer.gpa <= gpa_75
+-  0 if gpa_floor <= swimmer.gpa < gpa_25
+- -2 if swimmer.gpa < gpa_floor
+
+Step C: Academic raw score
+academic_raw = sat_subscore + gpa_subscore
+
+Map academic_raw to band:
+- 4 if academic_raw == 4
+- 3 if academic_raw in [2, 3]
+- 2 if academic_raw in [0, 1]
+- 1 if academic_raw in [-1, -2]
+- 0 if academic_raw in [-3, -4]
+
+Also add useful booleans:
+- sat_below_floor
+- gpa_below_floor
+- both_below_floor
+- sat_below_25th
+- gpa_below_25th
+
+Interpretation:
+- Academic Band 4 = excellent academic fit
+- Academic Band 3 = solid academic fit
+- Academic Band 2 = viable / borderline-in-range
+- Academic Band 1 = below normal profile but plausibly admissible with real support
+- Academic Band 0 = near-non-admissible / support may not realistically clear admissions
+
+==================================================
+PART 6 — SWIM SUPPORT BAND
+==================================================
+
+We want swim support to be based primarily on swim tier, with PSF as a small modifier only.
+
+Add a function compute_swim_support_band(swim_tier, psf):
+
+Base band from swim tier:
+- "Conference Star" => 4
+- "High-Point Contender" => 4
+- "Priority Recruit" => 3
+- "Top Recruit" => 3
+- "Strong Roster Fit" => 2
+- "Roster Fit" => 2
+- "Depth Piece" => 1
+- anything weaker / unknown => 0
+
+PSF modifier:
+- if psf > 1.00, modifier = +1   # weaker team / more likely coach leverage
+- elif psf <= 0.78, modifier = -1  # elite/powerhouse / less coach pull
+- else modifier = 0
+
+swim_support_band = clamp(base_band + modifier, 0, 4)
+
+Important:
+PSF should only adjust by 1 band max. It should never be the foundation of the swim score.
+
+==================================================
+PART 7 — BASE MATRIX
+==================================================
+
+Add a function get_base_admission_label(academic_band, swim_support_band):
+
+Use this matrix exactly:
+
+Academic Band 4:
+- Swim 4 => "Very Strong Chance"
+- Swim 3 => "Strong Chance"
+- Swim 2 => "Strong Chance"
+- Swim 1 => "Realistic Shot"
+- Swim 0 => "Possible"
+
+Academic Band 3:
+- Swim 4 => "Strong Chance"
+- Swim 3 => "Strong Chance"
+- Swim 2 => "Realistic Shot"
+- Swim 1 => "Possible"
+- Swim 0 => "Possible"
+
+Academic Band 2:
+- Swim 4 => "Strong Chance"
+- Swim 3 => "Realistic Shot"
+- Swim 2 => "Possible"
+- Swim 1 => "Possible"
+- Swim 0 => "Major Reach"
+
+Academic Band 1:
+- Swim 4 => "Realistic Shot"
+- Swim 3 => "Possible"
+- Swim 2 => "Possible"
+- Swim 1 => "Major Reach"
+- Swim 0 => "Moonshot"
+
+Academic Band 0:
+- Swim 4 => "Major Reach"
+- Swim 3 => "Major Reach"
+- Swim 2 => "Moonshot"
+- Swim 1 => "Moonshot"
+- Swim 0 => "Moonshot"
+
+==================================================
+PART 8 — GUARDRAILS / CAPS
+==================================================
+
+After assigning the base label, apply these caps in order.
+
+Create helper label order:
+Moonshot < Major Reach < Possible < Realistic Shot < Strong Chance < Very Strong Chance
+
+Add a helper function cap_label(current_label, max_label)
+
+Guardrail 1:
+If both GPA and SAT are below floor:
+- final label = "Moonshot"
+
+Guardrail 2:
+If GPA is below floor:
+- if swim_support_band == 4: cap at "Major Reach"
+- else: final label = "Moonshot"
+
+Reason:
+GPA below the school-relative floor is the strongest sign the student may not be realistically admissible.
+
+Guardrail 3:
+If SAT is below floor AND academic_band == 0:
+- cap at "Major Reach"
+
+Guardrail 4:
+If swim_support_band == 0:
+- cap at "Possible"
+
+Reason:
+If the coach has little to no meaningful reason to push, swimming should not produce an optimistic combined label.
+
+Guardrail 5:
+At ultra_selective schools:
+- if academic_band == 1 and swim_support_band == 4: cap at "Possible"
+- if academic_band == 0: final label = "Moonshot"
+
+Guardrail 6:
+At highly_selective schools:
+- if academic_band == 0 and swim_support_band >= 3: cap at "Major Reach"
+- if academic_band == 0 and swim_support_band <= 2: final label = "Moonshot"
+
+Do NOT add any "Safety" style override.
+Do NOT add any "lock" style override.
+
+==================================================
+PART 9 — FINAL FUNCTION
+==================================================
+
+Create a single function like:
+
+def compute_admission_outlook(swimmer, school, swim_tier, psf):
+    # returns:
+    # {
+    #   "label": final_label,
+    #   "academic_band": academic_band,
+    #   "swim_support_band": swim_support_band,
+    #   "academic_raw": academic_raw,
+    #   "selectivity_tier": selectivity_tier,
+    #   "gpa_floor": gpa_floor,
+    #   "sat_floor": sat_floor,
+    #   "flags": {
+    #       "gpa_below_floor": ...,
+    #       "sat_below_floor": ...,
+    #       "both_below_floor": ...,
+    #       "gpa_below_25th": ...,
+    #       "sat_below_25th": ...
+    #   }
+    # }
+
+Implementation flow:
+1) estimate/fetch school academic ranges
+2) classify selectivity tier
+3) compute floors
+4) compute academic band
+5) compute swim support band
+6) assign base matrix label
+7) apply guardrails
+8) return final result object
+
+==================================================
+PART 10 — UI / DISPLAY NOTES
+==================================================
+
+Wherever the old combined label is shown:
+- replace with the new final label
+- optionally expose academic_band and swim_support_band for debugging only, not necessarily in the main UI
+
+If explanatory text exists, use wording like:
+"This estimate blends academic fit, swim recruiting value, and how much coach support is likely to matter at this school."
+
+If we currently show internal point totals from the old system, remove them or hide them.
+
+==================================================
+PART 11 — IMPORTANT PHILOSOPHY / EXPECTED BEHAVIOR
+==================================================
+
+This model should behave as follows:
+
+- A student slightly below SAT range but within GPA range can still do well if swim support is strong
+- Academic Band 1 is still admissible with real support
+- Academic Band 0 is reserved for true floor issues / near-non-admissible cases
+- Swimming helps most when the student is already in range or near range
+- Elite/powerhouse programs should not hand out huge admissions boosts
+- Broader-admit / weaker programs can be more helpful, but only modestly via the PSF modifier
+
+==================================================
+PART 12 — CLEAN PYTHON SKELETON
+==================================================
+
+Please implement something structurally like this:
+
+LABEL_ORDER = {
+    "Moonshot": 0,
+    "Major Reach": 1,
+    "Possible": 2,
+    "Realistic Shot": 3,
+    "Strong Chance": 4,
+    "Very Strong Chance": 5,
+}
+
+def clamp(x, lo, hi):
+    return max(lo, min(hi, x))
+
+def cap_label(current_label, max_label):
+    return current_label if LABEL_ORDER[current_label] <= LABEL_ORDER[max_label] else max_label
+
+def classify_selectivity_tier(school):
+    acc = school.get("acceptance_rate")
+    sat50 = school.get("sat_50")
+    if (acc is not None and acc <= 0.15) or (sat50 is not None and sat50 >= 1500):
+        return "ultra_selective"
+    if (acc is not None and acc <= 0.30) or (sat50 is not None and sat50 >= 1400):
+        return "highly_selective"
+    if (acc is not None and acc <= 0.50) or (sat50 is not None and sat50 >= 1300):
+        return "selective"
+    return "broader_admit"
+
+def get_estimated_school_ranges(school):
+    sat25 = school.get("sat_25")
+    sat50 = school.get("sat_50")
+    sat75 = school.get("sat_75")
+    gpa25 = school.get("gpa_25")
+    gpa75 = school.get("gpa_75")
+    avg_gpa = school.get("avg_gpa")
+
+    if sat25 is None or sat75 is None:
+        if sat50 is not None:
+            sat25 = sat25 if sat25 is not None else sat50 - 60
+            sat75 = sat75 if sat75 is not None else sat50 + 60
+
+    if gpa25 is None or gpa75 is None:
+        if avg_gpa is not None:
+            gpa25 = gpa25 if gpa25 is not None else max(0.0, avg_gpa - 0.15)
+            gpa75 = gpa75 if gpa75 is not None else min(4.0, avg_gpa + 0.15)
+
+    return {
+        "sat_25": sat25,
+        "sat_75": sat75,
+        "gpa_25": gpa25,
+        "gpa_75": gpa75,
+    }
+
+def get_academic_floors(school, selectivity_tier, ranges):
+    gpa25 = ranges.get("gpa_25")
+    sat25 = ranges.get("sat_25")
+
+    gpa_offsets = {
+        "ultra_selective": 0.20,
+        "highly_selective": 0.25,
+        "selective": 0.30,
+        "broader_admit": 0.35,
+    }
+    sat_offsets = {
+        "ultra_selective": 60,
+        "highly_selective": 80,
+        "selective": 100,
+        "broader_admit": 120,
+    }
+
+    gpa_floor = max(2.0, gpa25 - gpa_offsets[selectivity_tier]) if gpa25 is not None else 2.0
+    sat_floor = max(800, sat25 - sat_offsets[selectivity_tier]) if sat25 is not None else 800
+
+    return {"gpa_floor": gpa_floor, "sat_floor": sat_floor}
+
+def compute_academic_band(swimmer, school):
+    ranges = get_estimated_school_ranges(school)
+    tier = classify_selectivity_tier(school)
+    floors = get_academic_floors(school, tier, ranges)
+
+    sat = swimmer.get("sat")
+    gpa = swimmer.get("gpa")
+
+    sat25, sat75 = ranges.get("sat_25"), ranges.get("sat_75")
+    gpa25, gpa75 = ranges.get("gpa_25"), ranges.get("gpa_75")
+    sat_floor, gpa_floor = floors["sat_floor"], floors["gpa_floor"]
+
+    if gpa is not None and gpa < 2.0:
+        return {
+            "academic_band": 0,
+            "academic_raw": -4,
+            "selectivity_tier": tier,
+            "gpa_floor": gpa_floor,
+            "sat_floor": sat_floor,
+            "flags": {
+                "gpa_below_floor": True,
+                "sat_below_floor": sat is not None and sat < sat_floor,
+                "both_below_floor": sat is not None and sat < sat_floor,
+                "gpa_below_25th": gpa25 is not None and gpa < gpa25,
+                "sat_below_25th": sat25 is not None and sat is not None and sat < sat25,
+            }
+        }
+
+    # SAT subscore
+    if sat is None or sat25 is None or sat75 is None:
+        sat_sub = 0
+        sat_below_floor = False
+        sat_below_25th = False
+    else:
+        sat_below_floor = sat < sat_floor
+        sat_below_25th = sat < sat25
+        if sat > sat75:
+            sat_sub = 2
+        elif sat25 <= sat <= sat75:
+            sat_sub = 1
+        elif sat_floor <= sat < sat25:
+            sat_sub = 0
+        else:
+            sat_sub = -2
+
+    # GPA subscore
+    if gpa is None or gpa25 is None or gpa75 is None:
+        gpa_sub = 0
+        gpa_below_floor = False
+        gpa_below_25th = False
+    else:
+        gpa_below_floor = gpa < gpa_floor
+        gpa_below_25th = gpa < gpa25
+        if gpa > gpa75:
+            gpa_sub = 2
+        elif gpa25 <= gpa <= gpa75:
+            gpa_sub = 1
+        elif gpa_floor <= gpa < gpa25:
+            gpa_sub = 0
+        else:
+            gpa_sub = -2
+
+    academic_raw = sat_sub + gpa_sub
+
+    if academic_raw == 4:
+        band = 4
+    elif academic_raw in (2, 3):
+        band = 3
+    elif academic_raw in (0, 1):
+        band = 2
+    elif academic_raw in (-1, -2):
+        band = 1
+    else:
+        band = 0
+
+    both_below_floor = sat_below_floor and gpa_below_floor
+
+    return {
+        "academic_band": band,
+        "academic_raw": academic_raw,
+        "selectivity_tier": tier,
+        "gpa_floor": gpa_floor,
+        "sat_floor": sat_floor,
+        "flags": {
+            "gpa_below_floor": gpa_below_floor,
+            "sat_below_floor": sat_below_floor,
+            "both_below_floor": both_below_floor,
+            "gpa_below_25th": gpa_below_25th,
+            "sat_below_25th": sat_below_25th,
+        }
+    }
+
+def compute_swim_support_band(swim_tier, psf):
+    base_map = {
+        "Conference Star": 4,
+        "High-Point Contender": 4,
+        "Priority Recruit": 3,
+        "Top Recruit": 3,
+        "Strong Roster Fit": 2,
+        "Roster Fit": 2,
+        "Depth Piece": 1,
+    }
+    base = base_map.get(swim_tier, 0)
+
+    modifier = 0
+    if psf is not None:
+        if psf > 1.00:
+            modifier = 1
+        elif psf <= 0.78:
+            modifier = -1
+
+    return clamp(base + modifier, 0, 4)
+
+def get_base_admission_label(academic_band, swim_support_band):
+    matrix = {
+        4: {4: "Very Strong Chance", 3: "Strong Chance", 2: "Strong Chance", 1: "Realistic Shot", 0: "Possible"},
+        3: {4: "Strong Chance", 3: "Strong Chance", 2: "Realistic Shot", 1: "Possible", 0: "Possible"},
+        2: {4: "Strong Chance", 3: "Realistic Shot", 2: "Possible", 1: "Possible", 0: "Major Reach"},
+        1: {4: "Realistic Shot", 3: "Possible", 2: "Possible", 1: "Major Reach", 0: "Moonshot"},
+        0: {4: "Major Reach", 3: "Major Reach", 2: "Moonshot", 1: "Moonshot", 0: "Moonshot"},
+    }
+    return matrix[academic_band][swim_support_band]
+
+def compute_admission_outlook(swimmer, school, swim_tier, psf):
+    acad = compute_academic_band(swimmer, school)
+    academic_band = acad["academic_band"]
+    swim_support_band = compute_swim_support_band(swim_tier, psf)
+    label = get_base_admission_label(academic_band, swim_support_band)
+
+    flags = acad["flags"]
+    tier = acad["selectivity_tier"]
+
+    # Guardrails
+    if flags["both_below_floor"]:
+        label = "Moonshot"
+    elif flags["gpa_below_floor"]:
+        if swim_support_band == 4:
+            label = cap_label(label, "Major Reach")
+        else:
+            label = "Moonshot"
+    elif flags["sat_below_floor"] and academic_band == 0:
+        label = cap_label(label, "Major Reach")
+
+    if swim_support_band == 0:
+        label = cap_label(label, "Possible")
+
+    if tier == "ultra_selective":
+        if academic_band == 1 and swim_support_band == 4:
+            label = cap_label(label, "Possible")
+        if academic_band == 0:
+            label = "Moonshot"
+
+    if tier == "highly_selective":
+        if academic_band == 0 and swim_support_band >= 3:
+            label = cap_label(label, "Major Reach")
+        elif academic_band == 0 and swim_support_band <= 2:
+            label = "Moonshot"
+
+    return {
+        "label": label,
+        "academic_band": academic_band,
+        "swim_support_band": swim_support_band,
+        "academic_raw": acad["academic_raw"],
+        "selectivity_tier": tier,
+        "gpa_floor": acad["gpa_floor"],
+        "sat_floor": acad["sat_floor"],
+        "flags": flags,
+    }
+
+==================================================
+PART 13 — REPLACE OLD LOGIC
+==================================================
+
+Please remove or stop using the old admissions scoring logic that:
+- adds academic points 0–6
+- adds swim points 1–6
+- maps totals to old labels like "Virtual Lock"
+
+Replace all production usage with compute_admission_outlook(...).
+
+==================================================
+PART 14 — TEST CASES TO VERIFY
+==================================================
+
+After implementation, test these sanity cases:
+
+1) Strong academics + strong swim at a selective but not ultra-selective school
+Expected: Strong Chance or Very Strong Chance
+
+2) Slightly below SAT range, GPA in range, strong swim support
+Expected: Possible or Realistic Shot, not Moonshot
+
+3) GPA below school floor, even with good swim support
+Expected: Moonshot or Major Reach only
+
+4) Both GPA and SAT below floor
+Expected: Moonshot
+
+5) Excellent academics but no real swim support
+Expected: Possible, not Strong Chance
+
+6) Ultra-selective school, Band 1 academics, elite swim support
+Expected: capped at Possible
+
+Make sure the outputs feel conservative, believable, and school-relative.

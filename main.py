@@ -871,66 +871,203 @@ def _score_school_swim(team_rec, times):
         'rawName':    team_rec['raw_name'],
     }
 
-# ── Admission layer ─────────────────────────────────────────────────────────
+# ── Admission layer v2 — matrix model ───────────────────────────────────────
+#
+# Labels (6): Very Strong Chance > Strong Chance > Realistic Shot >
+#             Possible > Major Reach > Moonshot
+# Academic band (0-4) × Swim support band (0-4) → base label → guardrails.
+# ---------------------------------------------------------------------------
+
+_LABEL_ORDER = {
+    'Moonshot': 0, 'Major Reach': 1, 'Possible': 2,
+    'Realistic Shot': 3, 'Strong Chance': 4, 'Very Strong Chance': 5,
+}
+
+_LABEL_COLORS = {
+    'Very Strong Chance':       '#059669',
+    'Strong Chance':            '#10B981',
+    'Realistic Shot':           '#2563EB',
+    'Possible':                 '#3B82F6',
+    'Major Reach':              '#F59E0B',
+    'Moonshot':                 '#6B7280',
+    'Moonshot — Apply for Fun': '#6B7280',
+    'Unknown':                  '#94A3B8',
+}
+
+# Academic band × Swim support band → base admission label
+_ADMIT_MATRIX = {
+    4: {4: 'Very Strong Chance', 3: 'Strong Chance',  2: 'Strong Chance',  1: 'Realistic Shot', 0: 'Possible'},
+    3: {4: 'Strong Chance',      3: 'Strong Chance',  2: 'Realistic Shot', 1: 'Possible',       0: 'Possible'},
+    2: {4: 'Strong Chance',      3: 'Realistic Shot', 2: 'Possible',       1: 'Possible',       0: 'Major Reach'},
+    1: {4: 'Realistic Shot',     3: 'Possible',       2: 'Possible',       1: 'Major Reach',    0: 'Moonshot'},
+    0: {4: 'Major Reach',        3: 'Major Reach',    2: 'Moonshot',       1: 'Moonshot',       0: 'Moonshot'},
+}
+
+# Swim tier → base swim support band (PSF adjusts by ±1 max)
+_SWIM_BASE_BAND = {
+    'High-Point Contender': 4,
+    'Conference Star':      4,
+    'Priority Recruit':     3,
+    'Top Recruit':          3,
+    'Recruitable':          2,
+    'Reach':                1,
+    'Moonshot':             0,
+}
+
+
+def _adm_clamp(x, lo, hi):
+    return max(lo, min(hi, x))
+
+
+def _cap_label(current, max_label):
+    """Return current label, or max_label if current is better than max_label."""
+    return current if _LABEL_ORDER[current] <= _LABEL_ORDER[max_label] else max_label
+
+
+def _selectivity_tier(accept_pct, sat_median):
+    """
+    Classify school selectivity from accept % (integer) and SAT median (integer).
+    Returns: 'ultra_selective' | 'highly_selective' | 'selective' | 'broader_admit'
+    """
+    acc = (accept_pct / 100.0) if accept_pct is not None else None
+    sat = sat_median
+    if (acc is not None and acc <= 0.15) or (sat is not None and sat >= 1500):
+        return 'ultra_selective'
+    if (acc is not None and acc <= 0.30) or (sat is not None and sat >= 1400):
+        return 'highly_selective'
+    if (acc is not None and acc <= 0.50) or (sat is not None and sat >= 1300):
+        return 'selective'
+    return 'broader_admit'
+
 
 def admission_chance(school, sat, gpa, adj_tier, psf):
     """
-    Deterministic admission scoring — per LOGIC_RULES.md section 8.
-    Consumes swim-layer outputs (adj_tier, psf) + academic profile (sat, gpa).
+    Matrix-based admission model.  Same call signature as the old function.
+
+    Inputs
+      school   — canonical school name
+      sat      — swimmer SAT composite (0 or None = not entered)
+      gpa      — swimmer GPA (0 or None = not entered)
+      adj_tier — swim tier string from tier_label(adjPts)
+      psf      — program strength factor from TEAMS_LIST
 
     Returns AdmissionResult:
-      label      — one of 9 admission labels  (OUTPUT_SCHEMA)
-      color      — hex color for UI
-      total      — raw numeric score (debug)
-      acadScore  — academic sub-score (debug)
-      swimScore  — swim sub-score (debug)
+      label     — one of 6 labels (or 'Moonshot — Apply for Fun' / 'Unknown')
+      color     — hex color for UI
+      total     — None (old field kept for compatibility)
+      acadScore — academic band 0-4 (debug)
+      swimScore — swim support band 0-4 (debug)
     """
     meta = SCHOOL_META.get(school)
-
     if meta is None:
-        return {'label': 'Unknown', 'color': '#94A3B8',
+        return {'label': 'Unknown', 'color': _LABEL_COLORS['Unknown'],
                 'total': None, 'acadScore': None, 'swimScore': None}
 
     if meta.get('moonshot'):
-        return {'label': 'Moonshot — Apply for Fun', 'color': '#6B7280',
+        return {'label': 'Moonshot — Apply for Fun',
+                'color': _LABEL_COLORS['Moonshot — Apply for Fun'],
                 'total': None, 'acadScore': None, 'swimScore': None}
 
-    sat_median = meta['satMedian']
-    accept     = meta['accept']
+    # Normalise inputs — treat 0 as "not entered"
+    s = sat if sat and sat >= 400 else None
+    g = gpa if gpa and gpa > 0  else None
 
-    # Academic score
-    sat_diff = sat - sat_median
-    if sat_diff >= 80:    acad = 4
-    elif sat_diff >= 30:  acad = 3
-    elif sat_diff >= -30: acad = 2
-    elif sat_diff >= -80: acad = 1
-    else:                 acad = 0
+    accept_pct = meta.get('accept')      # integer percent, e.g. 7 for 7%
+    sat_median = meta.get('satMedian')   # integer, e.g. 1510
 
-    if gpa >= 3.9:     acad += 1   # GPA bonus
-    if accept > 60:    acad += 1   # accessibility bonus
+    # ── School academic ranges (estimated from satMedian ±60 per spec fallback) ──
+    sat25 = (sat_median - 60) if sat_median else None
+    sat75 = (sat_median + 60) if sat_median else None
+    # No GPA percentile data in SCHOOL_META — gpa sub-score will be 0 (neutral)
+    gpa25, gpa75 = None, None
 
-    # Swim score (inverse to program prestige — workbook PSF values: 0.70, 0.78, 1.00, 1.10, 1.20)
-    if psf <= 0.78:   swim = 1    # elite — coach has least admissions leverage
-    elif psf <= 0.85: swim = 2    # (placeholder; no school currently has psf=0.85)
-    elif psf <= 1.00: swim = 3    # mid-tier
-    else:             swim = 4    # weaker program — maximum coach leverage
+    # ── Selectivity tier & floors ────────────────────────────────────────────
+    sel_tier = _selectivity_tier(accept_pct, sat_median)
+    gpa_off  = {'ultra_selective': 0.20, 'highly_selective': 0.25,
+                'selective': 0.30,       'broader_admit':    0.35}
+    sat_off  = {'ultra_selective': 60,   'highly_selective': 80,
+                'selective': 100,        'broader_admit':    120}
+    sat_floor = max(800, sat25 - sat_off[sel_tier]) if sat25 is not None else None
+    gpa_floor = None   # no gpa25 available — gpa floor only applies via hard-stop
 
-    if adj_tier in ('High-Point Contender', 'Conference Star'):  swim += 2
-    elif adj_tier in ('Top Recruit', 'Priority Recruit'):        swim += 1
+    # ── Academic band ────────────────────────────────────────────────────────
+    gpa_below_floor = False
+    sat_below_floor = False
 
-    total = acad + swim
+    # Hard stop: GPA < 2.0 → band 0 regardless of SAT
+    if g is not None and g < 2.0:
+        acad_band = 0
+        gpa_below_floor = True
+        # Still check SAT floor so both_below_floor can trigger G1
+        if s is not None and sat_floor is not None and s < sat_floor:
+            sat_below_floor = True
+    else:
+        # SAT sub-score
+        if s is None or sat25 is None or sat75 is None:
+            sat_sub = 0
+        else:
+            sat_below_floor = sat_floor is not None and s < sat_floor
+            if   s > sat75:            sat_sub =  2
+            elif s >= sat25:           sat_sub =  1
+            elif not sat_below_floor:  sat_sub =  0
+            else:                      sat_sub = -2
 
-    if total >= 9:   label, color = 'Virtual Lock',        '#059669'
-    elif total >= 8: label, color = 'Very Strong Chance',  '#10B981'
-    elif total >= 7: label, color = 'Strong Chance',       '#34D399'
-    elif total >= 6: label, color = 'Realistic Shot',      '#2563EB'
-    elif total >= 5: label, color = 'Possible',            '#3B82F6'
-    elif total >= 4: label, color = 'Reach with Support',  '#F59E0B'
-    elif total >= 3: label, color = 'Major Reach',         '#EF4444'
-    else:            label, color = 'Extreme Reach',       '#DC2626'
+        # GPA sub-score — neutral (0) since no percentile data
+        gpa_sub = 0
 
-    return {'label': label, 'color': color,
-            'total': total, 'acadScore': acad, 'swimScore': swim}
+        raw = sat_sub + gpa_sub
+        if   raw == 4:         acad_band = 4
+        elif raw in (2, 3):    acad_band = 3
+        elif raw in (0, 1):    acad_band = 2
+        elif raw in (-1, -2):  acad_band = 1
+        else:                  acad_band = 0
+
+    both_below_floor = sat_below_floor and gpa_below_floor
+
+    # ── Swim support band ────────────────────────────────────────────────────
+    swim_base = _SWIM_BASE_BAND.get(adj_tier, 0)
+    psf_mod   = 1 if psf > 1.00 else (-1 if psf <= 0.78 else 0)
+    swim_band = _adm_clamp(swim_base + psf_mod, 0, 4)
+
+    # ── Base label from matrix ────────────────────────────────────────────────
+    label = _ADMIT_MATRIX[acad_band][swim_band]
+
+    # ── Guardrails (applied in order) ────────────────────────────────────────
+    # G1: Both below floor → Moonshot
+    if both_below_floor:
+        label = 'Moonshot'
+    # G2: GPA below floor (hard-stop triggered or explicit floor breach)
+    elif gpa_below_floor:
+        label = 'Major Reach' if swim_band == 4 else 'Moonshot'
+    # G3: SAT below floor AND band 0 → cap at Major Reach
+    elif sat_below_floor and acad_band == 0:
+        label = _cap_label(label, 'Major Reach')
+
+    # G4: No swim support → cap at Possible
+    if swim_band == 0:
+        label = _cap_label(label, 'Possible')
+
+    # G5: Ultra-selective school extra caps
+    if sel_tier == 'ultra_selective':
+        if acad_band == 1 and swim_band == 4:
+            label = _cap_label(label, 'Possible')
+        if acad_band == 0:
+            label = 'Moonshot'
+    # G6: Highly-selective school caps for band 0
+    elif sel_tier == 'highly_selective':
+        if acad_band == 0:
+            if swim_band >= 3:
+                label = _cap_label(label, 'Major Reach')  # no better than Major Reach
+            else:
+                label = 'Moonshot'
+
+    return {
+        'label':     label,
+        'color':     _LABEL_COLORS.get(label, '#94A3B8'),
+        'total':     None,
+        'acadScore': acad_band,
+        'swimScore': swim_band,
+    }
 
 # ── Full pipeline ───────────────────────────────────────────────────────────
 

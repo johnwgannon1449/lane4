@@ -1169,12 +1169,16 @@ function showTab(name) {
 }
 
 function safeAdmColor(adm) {
-  const overrides = {
-    'Major Reach':  '#EA580C',
-    'Extreme Reach': '#78716C',
-    'Moonshot — Apply for Fun': '#94A3B8',
+  const colors = {
+    'Very Strong Chance':       '#059669',
+    'Strong Chance':            '#10B981',
+    'Realistic Shot':           '#2563EB',
+    'Possible':                 '#3B82F6',
+    'Major Reach':              '#F59E0B',
+    'Moonshot':                 '#6B7280',
+    'Moonshot — Apply for Fun': '#6B7280',
   };
-  return overrides[adm.label] || adm.color || '#64748B';
+  return colors[adm.label] || adm.color || '#64748B';
 }
 
 // ════════════════════════════════════════════════════════════════
