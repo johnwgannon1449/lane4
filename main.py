@@ -774,7 +774,7 @@ def tier_label(pts):
     if pts < 4:   return 'Reach'
     if pts < 10:  return 'Recruitable'
     if pts < 18:  return 'Priority Recruit'
-    if pts < 35:  return 'Likely Commit'
+    if pts < 35:  return 'Top Recruit'
     if pts < 50:  return 'Conference Star'
     return 'High-Point Contender'
 
