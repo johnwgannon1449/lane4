@@ -154,6 +154,8 @@ JAMES = {
     "gpa":              4.0,
     "sat":              1460,
     "satProjected":     1500,
+    "actScore":         0,
+    "apCount":          0,
     "mathSat":          720,
     "mathSatProjected": 760,
     "times": {
@@ -1215,11 +1217,13 @@ def search():
     if not query:
         return jsonify({'error': 'Query is required'}), 400
 
-    times = prof_ovr.get('times') or JAMES['times']
-    sat   = int(prof_ovr.get('sat')  or JAMES['sat'])
-    gpa   = float(prof_ovr.get('gpa') or JAMES['gpa'])
-    swimmer_name = prof_ovr.get('name') or JAMES['name']
-    all_results = score_all_schools(times, sat, gpa)
+    times         = prof_ovr.get('times') or JAMES['times']
+    sat           = int(prof_ovr.get('sat')  or JAMES['sat'])
+    gpa           = float(prof_ovr.get('gpa') or JAMES['gpa'])
+    act_score     = prof_ovr.get('actScore', JAMES.get('actScore', 0)) or 0
+    ap_count      = prof_ovr.get('apCount',  JAMES.get('apCount',  0)) or 0
+    swimmer_name  = prof_ovr.get('name') or JAMES['name']
+    all_results   = score_all_schools(times, sat, gpa)
 
     # ── Direct school-name match ──────────────────────────────────────────
     q_lower      = query.lower()
@@ -1262,7 +1266,7 @@ def search():
         user_prompt = (
             f'The user searched by school name for "{direct_match["school"]}" '
             f'({direct_match["conference"]}, swim tier: {direct_match["adjTier"]}).\n\n'
-            f"{swimmer_name}: GPA {gpa}, SAT {sat}.\n\n"
+            f"{swimmer_name}: GPA {gpa}, SAT {sat}" + (f", ACT {act_score}" if act_score else "") + ".\n\n"
             "Pick 5 schools from this numbered list that are most similar to "
             f"{direct_match['school']} in swim tier, academic selectivity, and overall vibe. "
             "Return ONLY JSON.\n\n"
@@ -1276,8 +1280,7 @@ def search():
         top_events = ', '.join(list(times.keys())[:3]) if times else 'multiple events'
         user_prompt = (
             f'Question: "{query}"\n\n'
-            f"{swimmer_name}: GPA {gpa}, SAT {sat}, "
-            f"events: {top_events}.\n\n"
+            f"{swimmer_name}: GPA {gpa}, SAT {sat}" + (f", ACT {act_score}" if act_score else "") + f", events: {top_events}.\n\n"
             "Pick 6 schools from this numbered list that best answer the question. Return ONLY JSON.\n\n"
             f"{school_lines}\n\n"
             'JSON format:\n{"answer":"1-2 sentences max","schools":[{"number":1,"why":"under 15 words"}]}'
@@ -1350,6 +1353,8 @@ def deep_dive():
     math_sat         = prof_ovr.get('mathSat',          JAMES.get('mathSat', ''))
     sat_projected    = prof_ovr.get('satProjected',     JAMES.get('satProjected', ''))
     math_sat_proj    = prof_ovr.get('mathSatProjected', JAMES.get('mathSatProjected', ''))
+    act_score        = prof_ovr.get('actScore',         JAMES.get('actScore', 0)) or 0
+    ap_count         = prof_ovr.get('apCount',          JAMES.get('apCount',  0)) or 0
     grad_year        = prof_ovr.get('gradYear',         '2026')
     all_results = score_all_schools(times, sat, gpa)
     result = next((r for r in all_results if r['school'] == school), None)
@@ -1386,13 +1391,12 @@ def deep_dive():
     hidden_ivy_note = '\nThis is a Hidden Ivy — academically elite, employer-respected, without the brand tax.' if meta.get('hiddenIvy') else ''
     stem_note       = '\nStrong STEM programs.' if meta.get('stem') else ''
 
-    sat_detail = f"SAT {sat}"
-    if math_sat:
+    sat_detail = f"SAT {sat}" if sat else ""
+    if sat and math_sat:
         sat_detail += f" (math {math_sat})"
-    if sat_projected:
-        sat_detail += f", projected retake {sat_projected}"
-        if math_sat_proj:
-            sat_detail += f" (math {math_sat_proj})"
+    if act_score:
+        sat_detail += (", " if sat_detail else "") + f"ACT {act_score}"
+    ap_detail = f", {ap_count} projected APs" if ap_count else ""
 
     system_prompt = (
         "You are Lane4, a college swim recruiting advisor. "
@@ -1405,7 +1409,7 @@ def deep_dive():
     user_prompt = (
         f"Write a deep dive for {swimmer_name} considering {result['school']}.\n\n"
         f"SWIMMER: {swimmer_name}, Class of {grad_year}, GPA {gpa} unweighted, "
-        f"{sat_detail}."
+        f"{sat_detail}{ap_detail}."
         f"{vibe_block}\n"
         f"SWIM RESULTS AT {result['school'].upper()} ({result['conference']}):\n"
         f"Top events: {top3_text}\n"
@@ -1490,6 +1494,8 @@ def coach_email():
     times         = prof_ovr.get('times') or JAMES['times']
     sat           = int(prof_ovr.get('sat')  or JAMES['sat'])
     gpa           = float(prof_ovr.get('gpa') or JAMES['gpa'])
+    act_score     = prof_ovr.get('actScore', JAMES.get('actScore', 0)) or 0
+    ap_count      = prof_ovr.get('apCount',  JAMES.get('apCount',  0)) or 0
     swimmer_name  = prof_ovr.get('name') or JAMES['name']
     grad_year     = prof_ovr.get('gradYear',     '2026')
 
@@ -1535,8 +1541,11 @@ def coach_email():
         f"in {result['school']}'s swim program.\n\n"
         f"At the {result['conference']} conference level, I'm {perf}.{second} "
         f"My current bests include {times_text}.\n\n"
-        f"Academically I carry a {gpa} GPA "
-        f"and scored a {sat} SAT.{stem_note}{merit_note}\n\n"
+        f"Academically I carry a {gpa} GPA"
+        + (f", {sat} SAT" if sat else "")
+        + (f" / {act_score} ACT" if act_score else "")
+        + (f", with {ap_count} APs projected" if ap_count else "")
+        + f".{stem_note}{merit_note}\n\n"
         f"I'd love to connect about your program. Would you have time for a brief call or campus visit?\n\n"
         f"Thank you,\n{swimmer_name}"
     )

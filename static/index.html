@@ -231,6 +231,8 @@
     .vibe-q { margin-bottom: 1.1rem; }
     .vibe-q-label { font-size: 0.85rem; font-weight: 600; color: var(--navy); margin-bottom: 0.5rem; }
     .vibe-options { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+    .vibe-select { width: 100%; padding: 9px 12px; border: 1.5px solid var(--border); border-radius: 9px; font-size: 0.88rem; font-family: inherit; color: var(--text); background: var(--white); cursor: pointer; box-sizing: border-box; }
+    .vibe-select:focus { outline: none; border-color: var(--blue); }
     .vibe-opt {
       padding: 6px 13px; border-radius: 20px; border: 1.5px solid var(--border);
       font-size: 0.82rem; font-weight: 500; color: var(--slate); cursor: pointer;
@@ -257,8 +259,9 @@
     .stat-edit-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 0.75rem; margin-bottom: 1rem; }
     .stat-edit-field { display: flex; flex-direction: column; gap: 4px; }
     .stat-edit-field label { font-size: 0.72rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
-    .stat-edit-field input { padding: 8px 10px; border: 1.5px solid var(--border); border-radius: 8px; font-size: 0.95rem; font-family: inherit; color: var(--text); background: var(--white); }
-    .stat-edit-field input:focus { outline: none; border-color: var(--blue); }
+    .stat-edit-field input, .stat-edit-field select { width: 100%; box-sizing: border-box; padding: 8px 10px; border: 1.5px solid var(--border); border-radius: 8px; font-size: 0.95rem; font-family: inherit; color: var(--text); background: var(--white); }
+    .stat-edit-field input:focus, .stat-edit-field select:focus { outline: none; border-color: var(--blue); }
+    .stat-edit-field .act-note { font-size: 0.72rem; color: var(--muted); margin-top: 3px; display: block; }
     .act-note { font-size: 0.72rem; color: var(--muted); margin-top: 1px; }
     .times-edit-wrap { padding: 0.85rem 1.1rem; border-top: 1.5px solid var(--border); }
     .event-add-row { display: flex; gap: 0.5rem; align-items: flex-end; flex-wrap: wrap; }
@@ -487,8 +490,26 @@
           <input class="ob-input" id="ob-gpa" type="number" step="0.01" min="0" max="4.0" placeholder="3.85" />
         </div>
         <div class="ob-field">
-          <label>SAT score (400–1600)</label>
+          <label>SAT (400–1600)</label>
           <input class="ob-input" id="ob-sat" type="number" step="10" min="400" max="1600" placeholder="1350" />
+        </div>
+      </div>
+      <div class="ob-row">
+        <div class="ob-field">
+          <label>ACT (1–36)</label>
+          <input class="ob-input" id="ob-act" type="number" step="1" min="1" max="36" placeholder="30" />
+        </div>
+        <div class="ob-field">
+          <label>Projected APs by graduation</label>
+          <select class="ob-input" id="ob-ap-count">
+            <option value="0">— not sure —</option>
+            <option value="1">1</option><option value="2">2</option><option value="3">3</option>
+            <option value="4">4</option><option value="5">5</option><option value="6">6</option>
+            <option value="7">7</option><option value="8">8</option><option value="9">9</option>
+            <option value="10">10</option><option value="11">11</option><option value="12">12</option>
+            <option value="13">13</option><option value="14">14</option><option value="15">15</option>
+            <option value="16">16</option>
+          </select>
         </div>
       </div>
     </div>
@@ -797,6 +818,8 @@ async function submitOnboarding() {
   const gradYear = gradEl.value;
   const gpa      = parseFloat(gpaEl.value) || 0;
   const sat      = parseInt(satEl.value)   || 0;
+  const act      = parseInt(document.getElementById('ob-act')?.value) || 0;
+  const apCount  = parseInt(document.getElementById('ob-ap-count')?.value) || 0;
 
   if (!name) {
     nameErr.textContent = 'Please enter a first name.';
@@ -836,14 +859,17 @@ async function submitOnboarding() {
   JAMES = {
     name,
     gradYear,
-    gpa:  gpa  || 0,
-    sat:  sat  || 0,
+    gpa:      gpa  || 0,
+    sat:      sat  || 0,
+    actScore: act  || 0,
+    apCount:  apCount || 0,
     satProjected: 0,
     mathSat: 0,
-    mathSatProjected: 0,
     times,
     vibe: {},
   };
+  if (act) { ACT_SCORE = act; SCORE_MODE = 'ACT'; } else { ACT_SCORE = null; SCORE_MODE = 'SAT'; }
+  ACT_PROJ = null;
   VIBE_STATE = {};
   MY_LIST    = [];
   CRM_DATA   = {};
@@ -917,6 +943,8 @@ function startNewSwimmer() {
   document.getElementById('ob-gradyear').value       = '2026';
   document.getElementById('ob-gpa').value            = '';
   document.getElementById('ob-sat').value            = '';
+  const obAct = document.getElementById('ob-act'); if (obAct) obAct.value = '';
+  const obAp  = document.getElementById('ob-ap-count'); if (obAp)  obAp.value  = '0';
   document.getElementById('ob-name-err').textContent  = '';
   document.getElementById('ob-times-err').textContent = '';
 
@@ -1814,15 +1842,16 @@ function actToSat(act) {
 
 function buildCurrentProfile() {
   return {
-    name:             JAMES.name,
-    gradYear:         JAMES.gradYear,
-    gpa:              JAMES.gpa,
-    sat:              JAMES.sat,
-    satProjected:     JAMES.satProjected,
-    mathSat:          JAMES.mathSat,
-    mathSatProjected: JAMES.mathSatProjected,
-    times:            JAMES.times,
-    vibe:             JAMES.vibe,
+    name:         JAMES.name,
+    gradYear:     JAMES.gradYear,
+    gpa:          JAMES.gpa,
+    sat:          JAMES.sat,
+    actScore:     JAMES.actScore,
+    apCount:      JAMES.apCount,
+    satProjected: JAMES.satProjected,
+    mathSat:      JAMES.mathSat,
+    times:        JAMES.times,
+    vibe:         JAMES.vibe,
   };
 }
 
@@ -1851,22 +1880,25 @@ function renderStats() {
   const panel = document.getElementById('stats-edit-panel');
   if (!el) return;
 
-  if (SCORE_MODE === 'ACT' && ACT_SCORE) {
+  const apLabel = JAMES.apCount ? `${JAMES.apCount} APs` : '—';
+  const actVal  = JAMES.actScore || ACT_SCORE;
+
+  if (SCORE_MODE === 'ACT' && actVal) {
     const statTiles = [
-      { val: JAMES.gpa, lbl: 'GPA' },
-      { val: `${ACT_SCORE} ACT`, lbl: `≈ ${actToSat(ACT_SCORE)} SAT equiv` },
-      { val: ACT_PROJ ? `${ACT_PROJ} ACT` : '—', lbl: ACT_PROJ ? `≈ ${actToSat(ACT_PROJ)} SAT proj` : 'Projected ACT' },
-      { val: JAMES.mathSat, lbl: 'Math SAT' },
+      { val: JAMES.gpa || '—',                          lbl: 'GPA' },
+      { val: `${actVal} ACT`,                            lbl: `≈ ${actToSat(actVal)} SAT equiv` },
+      { val: ACT_PROJ ? `${ACT_PROJ} target ACT` : '—', lbl: 'Target ACT' },
+      { val: apLabel,                                    lbl: 'Projected APs' },
     ];
     el.innerHTML = statTiles.map(s =>
       `<div class="stat-tile"><div class="stat-val">${esc(String(s.val))}</div><div class="stat-lbl">${esc(s.lbl)}</div></div>`
     ).join('');
   } else {
     const statTiles = [
-      { val: JAMES.gpa,          lbl: 'GPA' },
-      { val: JAMES.sat,          lbl: 'SAT' },
-      { val: JAMES.satProjected, lbl: 'Projected SAT' },
-      { val: JAMES.mathSat,      lbl: 'Math SAT' },
+      { val: JAMES.gpa || '—',         lbl: 'GPA' },
+      { val: JAMES.sat || '—',         lbl: 'SAT' },
+      { val: actVal  || '—',           lbl: 'ACT' },
+      { val: apLabel,                  lbl: 'Projected APs' },
     ];
     el.innerHTML = statTiles.map(s =>
       `<div class="stat-tile"><div class="stat-val">${esc(String(s.val))}</div><div class="stat-lbl">${esc(s.lbl)}</div></div>`
@@ -1878,45 +1910,56 @@ function renderStats() {
   panel.style.display = 'block';
 
   const isSAT = SCORE_MODE === 'SAT';
-  const actEq = ACT_SCORE ? `≈ ${actToSat(ACT_SCORE)} SAT (used for scoring)` : 'enter score to see SAT equivalent';
-  const actPEq = ACT_PROJ  ? `≈ ${actToSat(ACT_PROJ)} SAT` : '';
+  const actEq  = actVal ? `≈ ${actToSat(actVal)} SAT (used for scoring)` : '';
+  const actPEq = ACT_PROJ ? `≈ ${actToSat(ACT_PROJ)} SAT` : '';
+  const apOptions = Array.from({length: 16}, (_, i) => i + 1)
+    .map(n => `<option value="${n}" ${JAMES.apCount === n ? 'selected' : ''}>${n}</option>`).join('');
 
   panel.innerHTML = `
   <div class="card" style="margin-top:0.6rem;margin-bottom:0.75rem;">
     <div class="score-mode-toggle">
       <button class="score-mode-btn ${isSAT ? 'active' : ''}" onclick="setScoreMode('SAT')">SAT</button>
-      <button class="score-mode-btn ${!isSAT ? 'active' : ''}" onclick="setScoreMode('ACT')">ACT</button>
+      <button class="score-mode-btn ${!isSAT ? 'active' : ''}" onclick="setScoreMode('ACT')">ACT only</button>
     </div>
     <div class="stat-edit-grid">
       <div class="stat-edit-field">
         <label>GPA (unweighted)</label>
-        <input id="edit-gpa" type="number" step="0.01" min="0" max="4.0" value="${JAMES.gpa}" placeholder="3.85">
+        <input id="edit-gpa" type="number" step="0.01" min="0" max="4.0" value="${JAMES.gpa || ''}" placeholder="3.85">
       </div>
       ${isSAT ? `
       <div class="stat-edit-field">
         <label>SAT composite</label>
-        <input id="edit-sat" type="number" step="10" min="400" max="1600" value="${JAMES.sat}" placeholder="1450">
+        <input id="edit-sat" type="number" step="10" min="400" max="1600" value="${JAMES.sat || ''}" placeholder="1450">
       </div>
       <div class="stat-edit-field">
-        <label>Projected SAT</label>
-        <input id="edit-sat-proj" type="number" step="10" min="400" max="1600" value="${JAMES.satProjected}" placeholder="1500">
+        <label>ACT score (if taken)</label>
+        <input id="edit-act-score" type="number" step="1" min="1" max="36" value="${JAMES.actScore || ''}" placeholder="32"
+          oninput="ACT_SCORE=parseInt(this.value)||null; document.getElementById('act-score-eq').textContent=parseInt(this.value)?'≈ '+actToSat(parseInt(this.value))+' SAT':''">
+        <span class="act-note" id="act-score-eq">${JAMES.actScore ? '≈ ' + actToSat(JAMES.actScore) + ' SAT' : ''}</span>
       </div>
       <div class="stat-edit-field">
         <label>Math SAT</label>
-        <input id="edit-math-sat" type="number" step="10" min="200" max="800" value="${JAMES.mathSat}" placeholder="750">
+        <input id="edit-math-sat" type="number" step="10" min="200" max="800" value="${JAMES.mathSat || ''}" placeholder="750">
       </div>` : `
       <div class="stat-edit-field">
         <label>ACT composite</label>
-        <input id="edit-act" type="number" step="1" min="1" max="36" value="${ACT_SCORE || ''}" placeholder="33"
+        <input id="edit-act" type="number" step="1" min="1" max="36" value="${actVal || ''}" placeholder="33"
           oninput="ACT_SCORE=parseInt(this.value)||null; document.getElementById('act-eq').textContent=ACT_SCORE?'≈ '+actToSat(ACT_SCORE)+' SAT (used for scoring)':''">
         <span class="act-note" id="act-eq">${actEq}</span>
       </div>
       <div class="stat-edit-field">
-        <label>Projected ACT</label>
+        <label>Target ACT</label>
         <input id="edit-act-proj" type="number" step="1" min="1" max="36" value="${ACT_PROJ || ''}" placeholder="35"
           oninput="ACT_PROJ=parseInt(this.value)||null; document.getElementById('act-peq').textContent=ACT_PROJ?'≈ '+actToSat(ACT_PROJ)+' SAT':''">
         <span class="act-note" id="act-peq">${actPEq}</span>
       </div>`}
+      <div class="stat-edit-field">
+        <label>Projected APs by graduation</label>
+        <select id="edit-ap-count">
+          <option value="0" ${!JAMES.apCount ? 'selected' : ''}>— not sure —</option>
+          ${apOptions}
+        </select>
+      </div>
     </div>
     <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
       <button class="btn btn-primary" onclick="saveStats()">Save &amp; Rescore</button>
@@ -1932,21 +1975,25 @@ function setScoreMode(mode) {
 
 async function saveStats() {
   const gpaVal = parseFloat(document.getElementById('edit-gpa')?.value);
-  if (!isNaN(gpaVal) && gpaVal > 0 && gpaVal <= 4.0) JAMES.gpa = gpaVal;
+  if (!isNaN(gpaVal) && gpaVal >= 0 && gpaVal <= 4.0) JAMES.gpa = gpaVal;
 
   if (SCORE_MODE === 'SAT') {
-    const sat  = parseInt(document.getElementById('edit-sat')?.value);
-    const proj = parseInt(document.getElementById('edit-sat-proj')?.value);
-    const math = parseInt(document.getElementById('edit-math-sat')?.value);
-    if (sat  >= 400 && sat  <= 1600) JAMES.sat = sat;
-    if (proj >= 400 && proj <= 1600) JAMES.satProjected = proj;
-    if (math >= 200 && math <= 800)  JAMES.mathSat = math;
+    const sat      = parseInt(document.getElementById('edit-sat')?.value);
+    const actScore = parseInt(document.getElementById('edit-act-score')?.value);
+    const math     = parseInt(document.getElementById('edit-math-sat')?.value);
+    if (sat      >= 400 && sat      <= 1600) JAMES.sat = sat;
+    if (actScore >= 1   && actScore <= 36)   { JAMES.actScore = actScore; ACT_SCORE = actScore; }
+    if (math     >= 200 && math     <= 800)  JAMES.mathSat = math;
   } else {
     const act  = parseInt(document.getElementById('edit-act')?.value);
     const actP = parseInt(document.getElementById('edit-act-proj')?.value);
-    if (act  >= 1 && act  <= 36) { ACT_SCORE = act;  JAMES.sat = actToSat(act); }
-    if (actP >= 1 && actP <= 36) { ACT_PROJ  = actP; JAMES.satProjected = actToSat(actP); }
+    if (act  >= 1 && act  <= 36) { ACT_SCORE = act;  JAMES.actScore = act; JAMES.sat = actToSat(act); }
+    if (actP >= 1 && actP <= 36) { ACT_PROJ  = actP; }
   }
+
+  const apVal = parseInt(document.getElementById('edit-ap-count')?.value);
+  if (apVal >= 1 && apVal <= 16) JAMES.apCount = apVal;
+  else if (apVal === 0) JAMES.apCount = 0;
 
   EDIT_STATS = false;
   const btn = document.getElementById('stats-edit-btn');
@@ -2069,22 +2116,23 @@ function renderProfile() {
 function renderVibeQuestions() {
   const el = document.getElementById('vibe-questions');
   el.innerHTML = VIBE_QUESTIONS.map(q => {
-    const current = VIBE_STATE[q.id] || null;
+    const current = VIBE_STATE[q.id] || '';
     const opts = q.options.map(o =>
-      `<span class="vibe-opt ${current === o ? 'picked' : ''}"
-        onclick='setVibe(${JSON.stringify(q.id)}, ${JSON.stringify(o)})'>${esc(o)}</span>`
+      `<option value="${esc(o)}" ${current === o ? 'selected' : ''}>${esc(o)}</option>`
     ).join('');
     return `
       <div class="vibe-q">
         <div class="vibe-q-label">${esc(q.question)}</div>
-        <div class="vibe-options">${opts}</div>
+        <select class="vibe-select" onchange='setVibe(${JSON.stringify(q.id)}, this.value)'>
+          <option value="">— choose one —</option>
+          ${opts}
+        </select>
       </div>`;
   }).join('');
 }
 
 function setVibe(id, value) {
-  VIBE_STATE[id] = VIBE_STATE[id] === value ? null : value;
-  renderVibeQuestions();
+  VIBE_STATE[id] = value || null;
   saveToStorage();
 }
 
