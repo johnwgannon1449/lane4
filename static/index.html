@@ -417,13 +417,13 @@
       </div>
       <div class="ob-field">
         <label>Password</label>
-        <div style="position:relative;">
+        <div style="position:relative;display:block;width:100%;">
           <input class="ob-input" id="auth-password" type="password" placeholder="••••••••" autocomplete="current-password"
-            style="padding-right:2.5rem;"
+            style="padding-right:2.6rem;width:100%;box-sizing:border-box;"
             onkeydown="if(event.key==='Enter')authSubmit()" />
           <button type="button" onclick="toggleAuthPasswordVisibility()"
             id="auth-pw-eye"
-            style="position:absolute;right:0.65rem;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;padding:0;color:var(--muted);line-height:1;font-size:1.1rem;"
+            style="position:absolute;right:0.7rem;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;padding:0;color:var(--muted);line-height:1;font-size:1.05rem;"
             title="Show/hide password">👁</button>
         </div>
       </div>
