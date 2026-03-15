@@ -71,7 +71,7 @@ adjPts  = rawPts × PSF   (PSF from Team_Tiers lookup)
 | < 4 | Reach |
 | < 10 | Recruitable |
 | < 18 | Priority Recruit |
-| < 35 | Likely Commit |
+| < 35 | Top Recruit |
 | < 50 | Conference Star |
 | ≥ 50 | High-Point Contender |
 
@@ -85,7 +85,7 @@ swimBoost  = 1 if psf <= 0.78
              3 if psf <= 1.00
              4 if psf > 1.00
 swimBoost += 2 if tier in [High-Point Contender, Conference Star]
-swimBoost += 1 if tier in [Likely Commit, Priority Recruit]
+swimBoost += 1 if tier in [Top Recruit, Priority Recruit]
 
 total = acadScore + swimBoost
 ```

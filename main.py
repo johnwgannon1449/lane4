@@ -916,7 +916,7 @@ def admission_chance(school, sat, gpa, adj_tier, psf):
     else:             swim = 4    # weaker program — maximum coach leverage
 
     if adj_tier in ('High-Point Contender', 'Conference Star'):  swim += 2
-    elif adj_tier in ('Likely Commit', 'Priority Recruit'):      swim += 1
+    elif adj_tier in ('Top Recruit', 'Priority Recruit'):        swim += 1
 
     total = acad + swim
 
