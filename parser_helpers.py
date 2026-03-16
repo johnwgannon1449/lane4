@@ -1,7 +1,7 @@
 """
 Lane4 Data Harvester — parser_helpers.py
 Helper functions for PDF extraction, event normalization, metadata parsing,
-bundle grouping, and session detection.
+bundle grouping, session detection, and gender classification.
 """
 
 import re
@@ -10,7 +10,7 @@ import os
 from pathlib import Path
 
 
-# ── Target events ─────────────────────────────────────────────────────────────
+# ── Target events (gender-neutral names) ──────────────────────────────────────
 
 TARGET_EVENTS = [
     "50 Free",
@@ -47,42 +47,57 @@ _EVENT_NORM_MAP = {
     ("400",  "im"):      "400 IM",
 }
 
-# Valid event distances — used to reject event-sequence numbers (e.g. "Event 3")
 _VALID_DISTS = {"50", "100", "200", "400", "500", "1000", "1650"}
 
-# Relay keywords — skip any line matching
 _RELAY_KEYWORDS = re.compile(r"\brelay\b|\b4x\b|\b4 x\b", re.IGNORECASE)
 
-# Diving keywords
 _DIVING_KEYWORDS = re.compile(
     r"\bdiv(ing|e)?\b|\bplatform\b|\bspringboard\b", re.IGNORECASE
 )
 
 
 # ── Sanity ranges for 1st-place anchor times ──────────────────────────────────
-# (min_sec, max_sec) for plausible men's collegiate winning times.
-# Too fast → probably a misparse or prelim heat seed. Too slow → bad extraction.
+# (min_sec, max_sec) for plausible men's and women's collegiate winning times.
 _SANITY_RANGES = {
-    "50 Free":    (17.5,  23.0),
-    "100 Free":   (39.0,  50.0),
-    "200 Free":   (85.0,  110.0),
-    "500 Free":   (232.0, 300.0),
-    "1000 Free":  (500.0, 640.0),
-    "1650 Free":  (850.0, 1080.0),
-    "100 Back":   (43.0,  56.0),
-    "200 Back":   (95.0,  124.0),
-    "100 Breast": (50.0,  65.0),
-    "200 Breast": (110.0, 145.0),
-    "100 Fly":    (43.0,  56.0),
-    "200 Fly":    (96.0,  126.0),
-    "200 IM":     (94.0,  122.0),
-    "400 IM":     (206.0, 268.0),
+    "men": {
+        "50 Free":    (17.5,  23.0),
+        "100 Free":   (39.0,  50.0),
+        "200 Free":   (85.0,  110.0),
+        "500 Free":   (232.0, 300.0),
+        "1000 Free":  (500.0, 640.0),
+        "1650 Free":  (850.0, 1080.0),
+        "100 Back":   (43.0,  56.0),
+        "200 Back":   (95.0,  124.0),
+        "100 Breast": (50.0,  65.0),
+        "200 Breast": (110.0, 145.0),
+        "100 Fly":    (43.0,  56.0),
+        "200 Fly":    (96.0,  126.0),
+        "200 IM":     (94.0,  122.0),
+        "400 IM":     (206.0, 268.0),
+    },
+    "women": {
+        "50 Free":    (21.0,  27.0),
+        "100 Free":   (45.0,  56.0),
+        "200 Free":   (98.0,  124.0),
+        "500 Free":   (264.0, 335.0),
+        "1000 Free":  (560.0, 710.0),
+        "1650 Free":  (950.0, 1200.0),
+        "100 Back":   (49.0,  63.0),
+        "200 Back":   (108.0, 138.0),
+        "100 Breast": (57.0,  73.0),
+        "200 Breast": (124.0, 160.0),
+        "100 Fly":    (49.0,  63.0),
+        "200 Fly":    (110.0, 142.0),
+        "200 IM":     (106.0, 136.0),
+        "400 IM":     (232.0, 302.0),
+    },
 }
 
 
-def is_time_plausible(event_name: str, seconds: float) -> bool:
-    """Return True if `seconds` is within the expected range for the event winner."""
-    r = _SANITY_RANGES.get(event_name)
+def is_time_plausible(event_name: str, seconds: float, gender: str = "men") -> bool:
+    """Return True if seconds is within the expected range for the event winner."""
+    gender_key = gender if gender in _SANITY_RANGES else "men"
+    r = _SANITY_RANGES[gender_key].get(event_name)
     if r is None:
         return True
     return r[0] <= seconds <= r[1]
@@ -109,7 +124,6 @@ _DAY_OF_WEEK_TOKENS = frozenset([
     "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday",
     "mon", "tue", "tues", "wed", "thu", "thur", "thurs", "fri", "sat", "sun",
 ])
-# All tokens we strip before building a conference slug from the filename
 _META_STRIP_TOKENS = (
     _GENDER_WOMEN_TOKENS | _GENDER_MEN_TOKENS | _GENDER_COMBINED_TOKENS |
     _SESSION_PRELIM_TOKENS | _SESSION_FINAL_TOKENS | _DAY_OF_WEEK_TOKENS |
@@ -119,12 +133,11 @@ _META_STRIP_TOKENS = (
         "results", "result", "conference", "ncaa", "session",
         "event", "events", "day", "daily", "meet", "invite", "invitational",
         "full", "complete", "final", "finals",
-        "pdf",  # e.g. "Big_12_S_D_Champ_Results_pdf.pdf"
-        "w",    # "w" alone is ambiguous — strip it; gender detected separately
+        "pdf",   # e.g. "Big_12_S_D_Champ_Results_pdf.pdf"
+        "w",     # "w" alone is ambiguous — strip it; gender detected separately
     ])
 )
 
-# Built-in conference keyword list (supplement to conference_map.json)
 _BUILTIN_CONF = [
     ("nescac",        "NESCAC"),
     ("ncac",          "NCAC"),
@@ -164,8 +177,10 @@ _BUILTIN_CONF = [
     ("glvc",          "GLVC"),
     ("psac",          "PSAC"),
     ("summitleague",  "Summit League"),
+    ("summit",        "Summit League"),
     ("americaeast",   "America East"),
     ("horizonleague", "Horizon League"),
+    ("horizon",       "Horizon League"),
     ("atlantic10",    "Atlantic 10"),
     ("atlanticten",   "Atlantic 10"),
     ("a10",           "Atlantic 10"),
@@ -183,20 +198,13 @@ _BUILTIN_CONF = [
     ("nia",           "NIA"),
     ("cc",            "CC"),
     ("d3swim",        "D3Swim"),
+    ("sac",           "SAC"),     # Southern / Sooner Athletic Conference
 ]
 
 
 # ── Time helpers ──────────────────────────────────────────────────────────────
 
 def time_to_seconds(time_str: str) -> float | None:
-    """
-    Convert a swim time string to decimal seconds.
-      "19.85"    → 19.85
-      "1:39.22"  → 99.22
-      "15:48.90" → 948.90
-
-    Returns None for DQ, NS, NT, SCR, or unparseable strings.
-    """
     if not time_str:
         return None
     s = time_str.strip().upper()
@@ -219,7 +227,6 @@ def time_to_seconds(time_str: str) -> float | None:
 
 
 def seconds_to_time(sec: float) -> str:
-    """Format seconds back to M:SS.hh for display."""
     if sec is None:
         return ""
     if sec < 60:
@@ -235,33 +242,8 @@ def seconds_to_time(sec: float) -> str:
 
 # ── Event name normalization ──────────────────────────────────────────────────
 
-def normalize_event_name(raw: str) -> str | None:
-    """
-    Normalize a raw event name string → canonical event label or None.
-
-    Returns None for relays, diving, women's events, or unrecognized patterns.
-    Handles all of:
-      "Event 3 Men 500 Yard Freestyle"  → "500 Free"
-      "Men 500 Freestyle"               → "500 Free"
-      "500 Freestyle"                   → "500 Free"
-      "500 Yard Free"                   → "500 Free"
-      "100 Butterfly"                   → "100 Fly"
-      "200 Butterfly"                   → "200 Fly"
-      "1650 Freestyle"                  → "1650 Free"
-      "Men's 200 IM"                    → "200 IM"
-    """
-    raw_lower = raw.lower()
-
-    if _RELAY_KEYWORDS.search(raw_lower):
-        return None
-    if _DIVING_KEYWORDS.search(raw_lower):
-        return None
-
-    # Reject women's labels in any spelling
-    if re.search(r"\bwomens?\b|\bwomen'?s\b|\bwomen\b", raw_lower):
-        return None
-
-    # Identify stroke
+def _extract_stroke_and_distance(raw_lower: str):
+    """Extract (stroke_key, distance_str) from a lowercased line, or (None, None)."""
     stroke = None
     if re.search(r"freestyle|(?<!\w)free(?!\w)", raw_lower):
         stroke = "free"
@@ -273,26 +255,70 @@ def normalize_event_name(raw: str) -> str | None:
         stroke = "fly"
     elif re.search(r"individual\s+medley|medley(?!\s+relay)|\bim\b", raw_lower):
         stroke = "im"
-
     if stroke is None:
-        return None
+        return None, None
 
-    # Extract distance — scan right-to-left so we pick the real distance
-    # rather than an event-sequence number that appears earlier in the string
     numbers = re.findall(r"\b(\d+)\b", raw_lower)
     for num in reversed(numbers):
         if num in _VALID_DISTS:
-            result = _EVENT_NORM_MAP.get((num, stroke))
-            if result:
-                return result
+            return stroke, num
+    return stroke, None
 
+
+def normalize_event_name(raw: str) -> str | None:
+    """
+    Normalize a raw event name → canonical label or None.
+    Rejects women's, relays, diving. Men's or bare headers are accepted.
+    """
+    raw_lower = raw.lower()
+    if _RELAY_KEYWORDS.search(raw_lower):
+        return None
+    if _DIVING_KEYWORDS.search(raw_lower):
+        return None
+    if re.search(r"\bwomens?\b|\bwomen'?s\b|\bwomen\b", raw_lower):
+        return None
+
+    stroke, dist = _extract_stroke_and_distance(raw_lower)
+    if stroke and dist:
+        return _EVENT_NORM_MAP.get((dist, stroke))
     return None
+
+
+def normalize_event_name_any(raw: str) -> tuple[str | None, str]:
+    """
+    Normalize a raw event name for EITHER gender.
+
+    Returns (canonical_event, gender) where:
+        gender = 'men'    — explicit men's label found
+        gender = 'women'  — explicit women's label found
+        gender = 'either' — no gender label (bare header like "500 Freestyle")
+        gender = 'none'   — unrecognized / relay / diving
+
+    Returns (None, 'none') when the line is not an event header.
+    """
+    raw_lower = raw.lower()
+    if _RELAY_KEYWORDS.search(raw_lower):
+        return None, "none"
+    if _DIVING_KEYWORDS.search(raw_lower):
+        return None, "none"
+
+    has_women = bool(re.search(r"\bwomens?\b|\bwomen'?s\b|\bwomen\b", raw_lower))
+    has_men   = bool(re.search(r"\bmens?\b|\bmen'?s\b", raw_lower)) and not has_women
+
+    gender = "women" if has_women else ("men" if has_men else "either")
+
+    stroke, dist = _extract_stroke_and_distance(raw_lower)
+    if stroke and dist:
+        canonical = _EVENT_NORM_MAP.get((dist, stroke))
+        if canonical:
+            return canonical, gender
+
+    return None, "none"
 
 
 # ── Conference detection ──────────────────────────────────────────────────────
 
 def load_conference_map() -> dict:
-    """Load conference_map.json from the project root."""
     map_path = Path(__file__).parent / "conference_map.json"
     if map_path.exists():
         with open(map_path, "r") as f:
@@ -302,30 +328,16 @@ def load_conference_map() -> dict:
 
 
 def _conf_token_match(key: str, text: str) -> bool:
-    """
-    Match a conference key against text using word-boundary regex.
-
-    Also tries matching the key against a de-underscored/de-spaced version of
-    the text so that 'bigeast' matches 'big_east' and 'a10' matches 'a_10'.
-
-    Prevents short keys like 'cc' from matching inside 'acc'.
-    """
     pattern = r"(?<![a-z0-9])" + re.escape(key) + r"(?![a-z0-9])"
     if re.search(pattern, text):
         return True
-    # Also try against text with separators removed
     compressed = re.sub(r"[_\-\s]", "", text)
     return bool(re.search(pattern, compressed))
 
 
 def detect_conference(filename: str, pdf_title_text: str = "") -> str:
-    """
-    Detect conference name from filename (after stripping metadata tokens),
-    then from PDF title text, then fall back to "Unknown".
-    """
     conf_map = load_conference_map()
 
-    # Strip metadata from filename before matching
     stem = Path(filename).stem.lower()
     tokens = re.split(r"[_\s\-]+", stem)
     clean_tokens = [
@@ -338,18 +350,15 @@ def detect_conference(filename: str, pdf_title_text: str = "") -> str:
     clean_stem = "_".join(clean_tokens)
     fname_lower = filename.lower()
 
-    # conf_map first (user-defined takes priority)
     for key, conf_name in conf_map.items():
         k = key.lower()
         if _conf_token_match(k, fname_lower) or _conf_token_match(k, clean_stem):
             return conf_name
 
-    # Built-in list — word-boundary match to avoid 'cc' inside 'acc'
     for key, name in _BUILTIN_CONF:
         if _conf_token_match(key, clean_stem) or _conf_token_match(key, fname_lower):
             return name
 
-    # PDF title text fallback
     title_lower = pdf_title_text.lower()
     for key, name in _BUILTIN_CONF:
         if _conf_token_match(key, title_lower):
@@ -361,29 +370,15 @@ def detect_conference(filename: str, pdf_title_text: str = "") -> str:
 # ── Filename metadata parsing ─────────────────────────────────────────────────
 
 def parse_filename_metadata(filename: str) -> dict:
-    """
-    Extract meet metadata from a PDF filename.
-
-    Returns a dict with:
-        year            (str | None)   — e.g. "2026"
-        gender          (str)          — 'men', 'women', or 'combined'
-        is_prelim       (bool)         — True if filename says prelim/heats
-        is_final        (bool)         — True if filename says finals
-        day             (str | None)   — e.g. 'day1', 'friday'
-        conference_hint (str)          — slug of conf tokens only, no metadata
-    """
     stem = Path(filename).stem.lower()
     tokens = re.split(r"[_\s\-]+", stem)
 
-    # ── Year ──────────────────────────────────────────────────────────────────
     year = None
     for t in tokens:
         if re.fullmatch(r"20\d\d", t):
             year = t
             break
 
-    # ── Gender ────────────────────────────────────────────────────────────────
-    # "w" alone is treated as women (e.g. "acc_2026_w_day1").
     gender = "combined"
     for t in tokens:
         if t in _GENDER_WOMEN_TOKENS or t == "w":
@@ -396,17 +391,14 @@ def parse_filename_metadata(filename: str) -> dict:
             gender = "combined"
             break
 
-    # ── Session ───────────────────────────────────────────────────────────────
     is_prelim = any(t in _SESSION_PRELIM_TOKENS for t in tokens)
     is_final  = any(t in _SESSION_FINAL_TOKENS  for t in tokens) and not is_prelim
 
-    # ── Day ───────────────────────────────────────────────────────────────────
     day = None
     for i, t in enumerate(tokens):
         if re.fullmatch(r"day[1-9]", t) or re.fullmatch(r"d[1-9]", t):
             day = t
             break
-        # Handle "day_3" → tokens ['day', '3'] split by separator
         if t == "day" and i + 1 < len(tokens) and re.fullmatch(r"[1-9]", tokens[i + 1]):
             day = f"day{tokens[i + 1]}"
             break
@@ -414,8 +406,6 @@ def parse_filename_metadata(filename: str) -> dict:
             day = t
             break
 
-    # ── Conference hint ───────────────────────────────────────────────────────
-    # Keep only tokens that aren't metadata.
     conf_tokens = []
     for t in tokens:
         if t in _META_STRIP_TOKENS:
@@ -436,22 +426,73 @@ def parse_filename_metadata(filename: str) -> dict:
     }
 
 
+# ── File gender classification from content ──────────────────────────────────
+
+def detect_file_gender_from_content(pages: list[str]) -> str:
+    """
+    Classify a PDF as 'men', 'women', 'combined', or 'unknown' from its text.
+
+    Heuristic: count explicit gender mentions near event headers and section
+    headers in the first 8 pages.
+    """
+    sample = " ".join(pages[:8]).lower()
+
+    # Count gender-specific event mentions
+    men_event_hits   = len(re.findall(
+        r"\bmen'?s?\s+\d+", sample
+    ))
+    women_event_hits = len(re.findall(
+        r"\bwomen'?s?\s+\d+", sample
+    ))
+
+    # Count section header mentions
+    men_section   = len(re.findall(r"\bmen'?s?\s+(?:swimming|results|individual|championship)", sample))
+    women_section = len(re.findall(r"\bwomen'?s?\s+(?:swimming|results|individual|championship)", sample))
+
+    men_total   = men_event_hits   + men_section   * 3
+    women_total = women_event_hits + women_section * 3
+
+    if men_total > 0 and women_total > 0:
+        return "combined"
+    if women_total > 0:
+        return "women"
+    if men_total > 0:
+        return "men"
+    return "unknown"  # bare headers, no gender labels — treat as combined
+
+
+def classify_file_gender(meta: dict, pages: list[str]) -> str:
+    """
+    Final file gender type, prioritising filename then content.
+
+    Returns one of: 'men', 'women', 'combined', 'unknown'
+    """
+    fname_gender = meta.get("gender", "combined")
+
+    if fname_gender == "men":
+        return "men"
+    if fname_gender == "women":
+        return "women"
+
+    # combined / unknown: look at content
+    content_gender = detect_file_gender_from_content(pages)
+    if content_gender != "unknown":
+        return content_gender
+
+    # No content signal at all — default to combined
+    return "combined"
+
+
 # ── Bundle grouping ───────────────────────────────────────────────────────────
 
 def group_into_bundles(pdf_paths: list, conf_map: dict | None = None) -> dict:
     """
-    Group PDF paths into meet bundles.
+    Group PDF paths into bundles keyed by (conference, year).
 
-    A bundle = (conference, year, gender).
-    Day/session/prelim labels are metadata *within* a bundle, not separators.
-
-    Returns dict of bundle_id → {
-        'bundle_id': str,
-        'conference': str,
-        'year': str,
-        'gender': str,
-        'paths': [(Path, meta_dict), ...]
-    }
+    Unlike v1, gender is NOT part of the bundle key — instead each bundle
+    holds files of any gender mix, and the merge step extracts men's and
+    women's rows separately.  This allows combined files and gender-split
+    files to share the same conference bundle.
     """
     if conf_map is None:
         conf_map = load_conference_map()
@@ -461,7 +502,6 @@ def group_into_bundles(pdf_paths: list, conf_map: dict | None = None) -> dict:
     for path in pdf_paths:
         meta = parse_filename_metadata(path.name)
 
-        # Resolve conference from hint and raw filename
         conf = "Unknown"
         hint = meta["conference_hint"]
         fname_lower = path.name.lower()
@@ -479,19 +519,16 @@ def group_into_bundles(pdf_paths: list, conf_map: dict | None = None) -> dict:
                     break
 
         meta["conference"] = conf
-        year   = meta["year"]   or "unknown"
-        gender = meta["gender"]
+        year = meta["year"] or "unknown"
 
-        # Bundle key: slugify conference + year + gender
         conf_slug = re.sub(r"[^a-z0-9]", "", conf.lower())
-        bundle_id = f"{conf_slug}_{year}_{gender}"
+        bundle_id = f"{conf_slug}_{year}"
 
         if bundle_id not in bundles:
             bundles[bundle_id] = {
                 "bundle_id":  bundle_id,
                 "conference": conf,
                 "year":       year,
-                "gender":     gender,
                 "paths":      [],
             }
         bundles[bundle_id]["paths"].append((path, meta))
@@ -521,7 +558,6 @@ def extract_text_pymupdf(pdf_path: str) -> list[str]:
 
 
 def extract_pages(pdf_path: str) -> list[str]:
-    """Try pdfplumber, fall back to PyMuPDF. Returns list of page strings."""
     try:
         pages = extract_text_pdfplumber(pdf_path)
         if sum(1 for p in pages if len(p.strip()) > 50) == 0:
@@ -536,32 +572,27 @@ def extract_pages(pdf_path: str) -> list[str]:
             )
 
 
-# ── Session type detection from PDF content ───────────────────────────────────
+# ── Session type detection ────────────────────────────────────────────────────
 
 def detect_session_type_from_text(pages: list[str]) -> str:
     """
-    Detect whether a PDF contains finals or prelim results from text content.
     Returns 'finals', 'prelims', or 'unknown'.
 
     Scoring:
-      +3 per "championship final" / "b final" / "consolation final"
-      +1 per plain "final(s)"
-      -3 per "preliminary" / "preliminaries"
-      -1 per plain "prelim(s)" / "heats"
+      +3  championship/consolation/b-final/c-final mentions
+      +1  plain "final(s)"
+      -3  "preliminary/ies" (strongly suggests prelims)
+      -1  "prelim(s)" / "heats"
     """
     sample = " ".join(pages[:8]).lower()
 
     score = 0
-    # Strong finals signals
     score += 3 * len(re.findall(
         r"championship\s+final|consolation\s+final|b[\-\s]?final|c[\-\s]?final",
         sample
     ))
-    # Plain finals
     score += 1 * len(re.findall(r"\bfinals?\b", sample))
-    # Strong prelim signals
     score -= 3 * len(re.findall(r"\bpreliminar(?:y|ies)\b", sample))
-    # Plain prelim
     score -= 1 * len(re.findall(r"\bprelims?\b|\bheats?\b", sample))
 
     if score > 0:
@@ -571,12 +602,9 @@ def detect_session_type_from_text(pages: list[str]) -> str:
     return "unknown"
 
 
-# ── Psych-sheet / heat-sheet detection ───────────────────────────────────────
+# ── Psych-sheet detection ─────────────────────────────────────────────────────
 
 def looks_like_psych_sheet(pages: list[str]) -> bool:
-    """
-    Return True if the PDF looks like a psych/heat sheet rather than results.
-    """
     sample = " ".join(pages[:3]).lower()
     if any(kw in sample for kw in ["psych sheet", "heat sheet", "time trial"]):
         return True
@@ -587,25 +615,24 @@ def looks_like_psych_sheet(pages: list[str]) -> bool:
     return False
 
 
-# ── Event header detection ────────────────────────────────────────────────────
+# ── Event header regexes ──────────────────────────────────────────────────────
 
-# Primary pattern: "Event N Men 500 Yard Freestyle" or "Men 500 Freestyle"
-# Unit (Yard/Meter) is OPTIONAL — many PDFs omit it.
+# Matches men's or bare (no gender label) event headers.
+# Unit (Yard/Meter) is OPTIONAL.
 _MEN_EVENT_RE = re.compile(
     r"""
-    (?:event\s+\d+\s+)?                 # optional "Event N "
-    (?:men'?s?\s+)?                     # optional "Men's "
-    (\d+)\s*                            # distance
-    (?:(?:yard|yd|meter|m)s?\s+)?       # optional unit  ← was required, now optional
+    (?:event\s+\d+\s+)?                     # optional "Event N "
+    (?:men'?s?\s+)?                         # optional "Men's "
+    (\d+)\s*                                # distance
+    (?:(?:yard|yd|meter|m)s?\s+)?           # optional unit
     (freestyle|free|backstroke|back|
      breaststroke|breast|butterfly|fly|
      individual\s+medley|medley|im)
-    (?:\s*[-–]\s*(?:championship\s+)?finals?)?  # optional "- Final" / "- Championship Final"
+    (?:\s*[-–]\s*(?:championship\s+)?finals?)?
     """,
     re.IGNORECASE | re.VERBOSE,
 )
 
-# Alternative explicit "Event X Men's N Yard stroke" format
 _ALT_EVENT_RE = re.compile(
     r"event\s+\d+\s+men'?s?\s+(\d+)\s*(?:(?:yard|yd|meter|m)s?\s+)?"
     r"(freestyle|free|backstroke|back|breaststroke|breast|butterfly|fly|"
@@ -613,7 +640,7 @@ _ALT_EVENT_RE = re.compile(
     re.IGNORECASE,
 )
 
-# Women's equivalent (for section detection in combined PDFs)
+# Women's event header (same structure, explicit women's label required)
 _WOMEN_EVENT_RE = re.compile(
     r"""
     (?:event\s+\d+\s+)?
@@ -622,23 +649,48 @@ _WOMEN_EVENT_RE = re.compile(
     (freestyle|free|backstroke|back|
      breaststroke|breast|butterfly|fly|
      individual\s+medley|medley|im)
+    (?:\s*[-–]\s*(?:championship\s+)?finals?)?
     """,
     re.IGNORECASE | re.VERBOSE,
 )
 
+_TIME_PAT = r"(?:\d{1,2}:)?\d{1,2}:\d{2}\.\d{2}|\d{1,3}\.\d{2}"
+
+# Section header patterns that indicate a gender shift
+_MEN_SECTION_RE = re.compile(
+    r"\bmen'?s?\s+(?:swimming|results|championship|individual|events?)\b"
+    r"|^\s*men'?s?\s*$",
+    re.IGNORECASE | re.MULTILINE,
+)
+_WOMEN_SECTION_RE = re.compile(
+    r"\bwomen'?s?\s+(?:swimming|results|championship|individual|events?)\b"
+    r"|^\s*women'?s?\s*$",
+    re.IGNORECASE | re.MULTILINE,
+)
+
+
+def is_event_header_any(line: str) -> bool:
+    """
+    Return True if `line` looks like a swim event header (either gender).
+    Result-row guard: rejects lines that start with a place number AND contain a time.
+    """
+    stripped = line.strip()
+    if not stripped:
+        return False
+    if _RELAY_KEYWORDS.search(stripped) or _DIVING_KEYWORDS.search(stripped):
+        return False
+    m = re.match(r"^(\d{1,2})\b", stripped)
+    if m and int(m.group(1)) <= 64 and re.search(_TIME_PAT, stripped):
+        return False
+    return (
+        bool(_MEN_EVENT_RE.search(stripped))
+        or bool(_ALT_EVENT_RE.search(stripped))
+        or bool(_WOMEN_EVENT_RE.search(stripped))
+    )
+
 
 def is_men_event_header(line: str) -> bool:
-    """
-    Return True if `line` looks like a men's swimming event header.
-
-    Guards:
-    - No relay or diving keywords.
-    - No women's label.
-    - If the line starts with a small number (1-64) AND contains a time-like
-      pattern, treat it as a result row, not a header.
-      (Handles "50 Freestyle", "100 Butterfly" which are valid bare headers
-      that start with a digit that is the distance, not a place.)
-    """
+    """Return True if line is a men's (or bare) event header."""
     stripped = line.strip()
     if not stripped:
         return False
@@ -646,7 +698,6 @@ def is_men_event_header(line: str) -> bool:
         return False
     if re.search(r"\bwomens?\b|\bwomen'?s?\b", stripped, re.IGNORECASE):
         return False
-    # Reject lines that look like result rows: small leading number + a time
     m = re.match(r"^(\d{1,2})\b", stripped)
     if m and int(m.group(1)) <= 64 and re.search(_TIME_PAT, stripped):
         return False
@@ -654,10 +705,14 @@ def is_men_event_header(line: str) -> bool:
 
 
 def is_women_event_header(line: str) -> bool:
+    """Return True if line is explicitly a women's event header."""
     stripped = line.strip()
-    if not stripped or re.match(r"^\d", stripped):
+    if not stripped:
         return False
     if _RELAY_KEYWORDS.search(stripped) or _DIVING_KEYWORDS.search(stripped):
+        return False
+    m = re.match(r"^(\d{1,2})\b", stripped)
+    if m and int(m.group(1)) <= 64 and re.search(_TIME_PAT, stripped):
         return False
     if re.search(r"\bwomens?\b|\bwomen'?s?\b", stripped, re.IGNORECASE):
         return bool(_WOMEN_EVENT_RE.search(stripped)) or bool(
@@ -668,58 +723,46 @@ def is_women_event_header(line: str) -> bool:
 
 # ── Result row parsing ────────────────────────────────────────────────────────
 
-_TIME_PAT = r"(?:\d{1,2}:)?\d{1,2}:\d{2}\.\d{2}|\d{1,3}\.\d{2}"
-
-
 def parse_place_and_time(line: str) -> tuple[int | None, str | None]:
-    """
-    Extract (place, time_str) from a result row.
-    Returns (None, None) if the line doesn't look like a result row.
-    """
     line = line.strip()
     if not line:
         return None, None
-
     m = re.match(r"^(\d{1,2})\b", line)
     if not m:
         return None, None
     place = int(m.group(1))
     if place < 1 or place > 64:
         return None, None
-
     times = re.findall(_TIME_PAT, line)
     if not times:
         return None, None
-
-    # Accept the first time ≥ 10 seconds (filters score-like decimals)
     for t in times:
         sec = time_to_seconds(t)
         if sec is not None and sec >= 10:
             return place, t
-
-    # 50 Free times can be < 20 s — accept any positive
     if times:
         return place, times[0]
-
     return None, None
 
 
 # ── Team score parsing ────────────────────────────────────────────────────────
 
 _TEAM_SCORE_HEADER_RE = re.compile(
-    r"(?:team|men'?s?)\s+(?:final\s+)?(?:team\s+)?(?:scores?|standings?|results?)",
+    r"(?:team|men'?s?|women'?s?)\s+(?:final\s+)?(?:team\s+)?(?:scores?|standings?|results?)",
     re.IGNORECASE,
 )
 
 
-def parse_team_scores(pages: list[str], conference: str, source_file: str) -> list[dict]:
+def parse_team_scores(
+    pages: list[str], conference: str, source_file: str, gender: str = "men"
+) -> list[dict]:
     """
-    Scan pages for a men's team standings block.
-    Returns list of dicts: {Conference, Team, Team_Score, Source_File}
+    Scan pages for a team standings block matching `gender`.
+    Returns list of dicts: {Conference, Team, Team_Score, Source_File, Gender}
     """
     results = []
     in_team_section = False
-    in_women = False
+    current_section_gender = "unknown"
 
     for page_text in pages:
         for line in page_text.splitlines():
@@ -729,16 +772,26 @@ def parse_team_scores(pages: list[str], conference: str, source_file: str) -> li
 
             if _TEAM_SCORE_HEADER_RE.search(stripped):
                 in_team_section = True
-                in_women = bool(re.search(r"women'?s?", stripped, re.IGNORECASE))
+                if re.search(r"women'?s?", stripped, re.IGNORECASE):
+                    current_section_gender = "women"
+                elif re.search(r"\bmen'?s?\b", stripped, re.IGNORECASE):
+                    current_section_gender = "men"
+                else:
+                    current_section_gender = gender
                 continue
 
-            if in_team_section:
-                if re.search(r"women'?s?\s+(team|final|standing)", stripped, re.IGNORECASE):
-                    in_women = True
-                if re.search(r"\bmen'?s?\s+(team|final|standing)", stripped, re.IGNORECASE):
-                    in_women = False
+            if not in_team_section:
+                continue
 
-            if not in_team_section or in_women:
+            # Section switch inside standings block
+            if re.search(r"women'?s?\s+(team|final|standing)", stripped, re.IGNORECASE):
+                current_section_gender = "women"
+                continue
+            if re.search(r"\bmen'?s?\s+(team|final|standing)", stripped, re.IGNORECASE):
+                current_section_gender = "men"
+                continue
+
+            if current_section_gender != gender:
                 continue
 
             m = re.match(
@@ -755,6 +808,7 @@ def parse_team_scores(pages: list[str], conference: str, source_file: str) -> li
                     "Team":        team_name,
                     "Team_Score":  score,
                     "Source_File": source_file,
+                    "Gender":      gender,
                 })
 
     return results

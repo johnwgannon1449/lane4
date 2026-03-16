@@ -1,0 +1,170 @@
+I want you to patch the harvester and then do a limited test run on 5 conference bundles only.
+
+CONTEXT
+The harvester was originally built around men's data, but I have now fed it a mix of:
+- men-only PDFs
+- women-only PDFs
+- combined men/women PDFs
+- multi-file bundles split by day
+- multi-file bundles split by both day and gender
+
+The full run processed all files, but the results show the parser is still not extracting enough usable event anchors.
+
+Recent results:
+- PDFs processed: 41
+- Bundles processed: 26
+- Event anchors output: 201
+- Team rows output: 0
+- Flags generated: 235
+- Events still missing: 163 across 26 bundles
+
+Observed issues:
+1. No women's results appear in output
+2. Some conferences are missing whole event families
+3. At least one conference took prelims instead of finals
+4. Two conferences came through as Unknown
+5. I suspect the parser does not yet have a proper gender-aware architecture, and this may be hurting men's extraction too
+
+GOAL
+Patch the harvester carefully, especially gender handling, finals/prelims preference, and debug visibility. Then run only 5 conference bundles as a test.
+
+PART 1 — PATCH THE PARSER
+
+A. GENDER-AWARE PARSING
+Refactor the parsing flow so gender classification happens first.
+
+For each file, classify it as:
+- men-only
+- women-only
+- combined
+- unknown
+
+Rules:
+1. If men-only, process men normally
+2. If women-only, do not try to output men's anchors from it, but log it clearly
+3. If combined, parse both sections internally and isolate the men's section correctly
+4. Do not let women's sections cause the parser to skip, stop early, or misclassify the whole file
+5. In bundled meets, allow men-only files and combined files to contribute to the same men's conference bundle
+6. Women-only files should never be mistaken for missing men's data
+
+Add debug visibility for each file:
+- detected file gender classification
+- whether men's section was found
+- whether women's section was found
+- whether the file contributed men's events to the final bundle
+
+B. EVENT HEADER RECOGNITION
+Expand event recognition to catch more wording variations, including:
+- Men 500 Yard Freestyle
+- Event XX Men 500 Yard Freestyle
+- 500 Freestyle
+- 500 Yard Free
+- Men 100 Yard Butterfly
+- 100 Butterfly
+- 200 Butterfly
+- 1650 Freestyle
+- 1650 Yard Freestyle
+- 1000 Freestyle
+- 1000 Yard Freestyle
+
+Normalize all correctly to my fixed event names.
+
+C. FINALS VS PRELIMS
+Strengthen logic to prefer finals over prelims.
+Use clues from:
+- filename
+- page text
+- section text
+Prefer finals over prelims whenever both exist in a bundle.
+If both versions of the same event exist, keep finals only.
+
+D. BUNDLE MERGING
+Make sure all files in a bundle contribute before the final event set is written.
+Do not stop after the first usable file.
+For each conference/year/gender bundle, collect all candidate event versions, then choose the best version per event after comparing finals/prelims/completeness.
+
+E. CONFERENCE DETECTION
+Improve conference-name detection using:
+- normalized filename
+- title text
+- conference_map.json override
+
+Do not let day/gender/session words pollute conference names.
+
+F. SANITY CHECKS
+Add light sanity checks so absurd anchor times are flagged and do not silently become accepted finals output if a better candidate exists.
+
+G. REVIEW FLAGS
+Expand review_flags.csv to include clearer issues such as:
+- women-only file
+- combined file parsed successfully
+- combined file contained no detectable men's section
+- gender classification ambiguous
+- event missing from final merged bundle
+- only prelim version found
+- multiple event candidates found, finals selected
+- conference unknown, guessed from filename
+- implausible anchor time flagged
+
+PART 2 — DEBUG OUTPUT
+
+Create:
+1. output/debug_bundle_report.csv
+2. output/debug_bundle_summary.csv
+
+debug_bundle_report.csv columns:
+- Bundle_ID
+- Conference
+- Source_File
+- File_Gender_Type
+- Men_Section_Found
+- Women_Section_Found
+- Raw_Event_Header
+- Canonical_Event
+- Section_Type
+- Places_Found
+- Status
+- Reason
+
+debug_bundle_summary.csv columns:
+- Bundle_ID
+- Conference
+- Files_In_Bundle
+- Detected_Gender
+- Events_Detected
+- Events_Mapped
+- Events_Output
+- Events_Missing
+- Missing_Event_List
+- Team_Scores_Found
+- Notes
+
+PART 3 — LIMITED TEST RUN ONLY
+
+After patching, do NOT run the full batch first.
+Instead, run only 5 conference bundles as a test.
+
+Pick 5 bundles that represent different cases:
+1. one clean combined conference
+2. one split by gender
+3. one split by day
+4. one conference that previously came through as Unknown
+5. one conference that was missing many events
+
+Use your judgment to choose representative bundles from the existing PDFs.
+
+After the 5-bundle test run, report:
+- which 5 bundles you chose
+- PDFs processed
+- bundles processed
+- event anchors output
+- team rows output
+- flags generated
+- events still missing
+- whether unknown conference detection improved
+- whether men's extraction from combined files improved
+
+Also tell me, in plain English:
+- what improved
+- what still looks broken
+- whether you recommend running the full batch
