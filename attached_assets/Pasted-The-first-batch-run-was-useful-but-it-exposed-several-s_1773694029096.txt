@@ -1,0 +1,82 @@
+The first batch run was useful, but it exposed several specific problems. Please patch the harvester carefully without redesigning it.
+
+Observed problems from the first run:
+
+1. Women’s results do not appear in output, which is acceptable for now if men’s extraction is correct, but I want to make sure combined files are not being misread or skipped because of gender detection.
+
+2. Several conferences are missing whole event groups.
+Examples:
+- Ivy is missing 500 Free, 1000 Free, 1650 Free, 100 Fly, 200 Fly
+- Big East, Big West, CCIW, PSAC, ODAC, and CCIC are also missing several events
+
+This suggests event header recognition and/or bundle merging is incomplete.
+
+3. Two conferences came through as "Unknown".
+One of these is clearly Big 12 based on the times.
+Conference-name detection needs to rely more heavily on filename normalization and conference_map.json.
+
+4. At least one conference used prelim results instead of finals.
+Example:
+- Unknown conference with 50 Free winning time of 18.47 was clearly not a finals anchor
+The parser must strongly prefer finals over prelims.
+
+Please patch the harvester with these improvements:
+
+A. EVENT HEADER RECOGNITION
+Expand event recognition to catch more wording variations, including:
+- Men 500 Yard Freestyle
+- Event XX Men 500 Yard Freestyle
+- 500 Freestyle
+- 500 Yard Free
+- Men 100 Yard Butterfly
+- 100 Butterfly
+- 200 Butterfly
+- 1650 Freestyle
+- 1650 Yard Freestyle
+- 1000 Freestyle
+- 1000 Yard Freestyle
+
+Normalize all of these correctly to my fixed event names.
+
+B. FINALS VS PRELIMS
+Strengthen logic to prefer finals over prelims.
+Use these clues:
+- filename contains finals
+- page text contains Finals
+- section text contains Championship Final / Consolation Final / Final
+- prelim/preliminary/prelims should rank lower
+If both prelims and finals versions of the same event exist in a bundle, keep finals only.
+
+C. SANITY CHECKS
+Add a light sanity check so absurd anchor times do not silently become final outputs.
+For example, if a conference/event winner is implausibly fast relative to known swim ranges, flag it for review and prefer another candidate version if available.
+
+D. BUNDLE MERGING
+Make sure all files in a bundle are contributing events before the final event set is written.
+Do not stop after the first usable file.
+For each conference/year/gender bundle, collect all candidate event versions, then choose the best version per event after comparing finals/prelims/completeness.
+
+E. CONFERENCE DETECTION
+Improve conference detection with stronger filename parsing.
+Also let conference_map.json override unknown detections.
+If a file bundle is unknown but the filename strongly implies a conference, use that.
+
+F. REVIEW OUTPUT
+In review_flags.csv, add more precise issues such as:
+- Event missing from final merged bundle
+- Only prelim version found
+- Multiple event candidates found, finals selected
+- Conference unknown, guessed from filename
+- Event header variation used
+- Implausible anchor time flagged
+
+G. DEBUG OUTPUT
+After patching, print a short summary for each bundle:
+- bundle id
+- detected conference
+- detected gender
+- files included
+- events found
+- events missing
+
+Do not rebuild from scratch. Patch the current harvester pragmatically.

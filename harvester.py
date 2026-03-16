@@ -34,6 +34,7 @@ from parser_helpers import (
     extract_pages,
     group_into_bundles,
     is_men_event_header,
+    is_time_plausible,
     load_conference_map,
     looks_like_psych_sheet,
     normalize_event_name,
@@ -72,10 +73,20 @@ class EventAccumulator:
     """Collects (place → seconds) for one event from one PDF."""
 
     def __init__(self, name: str, source: str, session: str, is_prelim: bool):
-        self.name     = name
-        self.source   = source       # filename this came from
-        self.session  = session      # 'finals', 'prelims', 'unknown'
-        self.is_prelim = is_prelim   # from filename metadata
+        self.name      = name
+        self.source    = source       # filename this came from
+        self.session   = session      # 'finals', 'prelims', 'unknown'
+        self.is_prelim = is_prelim    # from filename metadata
+
+        # session_score: higher = more likely to be finals
+        # finals=3, unknown=1, prelims=0
+        self.session_score = 3 if session == "finals" else (0 if session == "prelims" else 1)
+        # Bump score if filename also says finals
+        if not is_prelim and session in ("finals", "unknown"):
+            self.session_score = max(self.session_score, 1)
+        if is_prelim:
+            self.session_score = 0
+
         self.places: dict[int, float] = {}
 
     def add(self, place: int, time_str: str):
@@ -88,14 +99,8 @@ class EventAccumulator:
         return sum(1 for p in ANCHOR_PLACES if p in self.places)
 
     def is_finals(self) -> bool:
-        """Best guess that this is a finals result, not prelims."""
-        if self.is_prelim:
-            return False
-        if self.session == "finals":
-            return True
-        if self.session == "prelims":
-            return False
-        return True  # unknown → assume finals
+        """True unless this is explicitly a prelim result."""
+        return self.session_score > 0
 
     def anchor(self) -> dict | None:
         """Return anchor dict if all 3 places present, else None."""
@@ -168,6 +173,7 @@ def parse_pdf_raw(
         if resolved != "Unknown":
             bundle["conference"] = resolved
             conference = resolved
+            flag_rows.append(flag("", f"Conference unknown from filename — guessed from PDF text: {resolved}"))
 
     # ── Women-only file check ─────────────────────────────────────────────────
     if gender == "women":
@@ -181,7 +187,7 @@ def parse_pdf_raw(
         return events, [], flag_rows
 
     # ── Detect session type ───────────────────────────────────────────────────
-    # Filename metadata takes priority; PDF content is a tiebreaker
+    # Filename metadata takes priority; PDF content is a tiebreaker.
     if meta["is_prelim"]:
         session = "prelims"
     elif meta["is_final"]:
@@ -195,6 +201,7 @@ def parse_pdf_raw(
         all_lines.extend(page.splitlines())
         all_lines.append("<<<PAGE_BREAK>>>")
 
+    # Check if combined PDF uses explicit section headers
     has_section_headers = any(
         re.search(r"\bwomen'?s?\s+(swimming|results|championship)", ln, re.IGNORECASE)
         for ln in all_lines
@@ -203,6 +210,7 @@ def parse_pdf_raw(
     current_event: EventAccumulator | None = None
     in_women_section = False
     finalized: dict[str, EventAccumulator] = {}
+    unrecognized_headers: list[str] = []
 
     def finalize():
         nonlocal current_event
@@ -237,7 +245,7 @@ def parse_pdf_raw(
         if in_women_section:
             continue
 
-        # Event header
+        # Event header detection
         if is_men_event_header(line):
             event_name = normalize_event_name(line)
             if event_name and event_name in TARGET_EVENTS:
@@ -245,6 +253,13 @@ def parse_pdf_raw(
                 current_event = EventAccumulator(
                     event_name, source, session, meta["is_prelim"]
                 )
+            else:
+                # Header detected but normalization failed.
+                # IMPORTANT: finalize and close current event to avoid bleeding
+                # results from the next unrecognized event into the previous one.
+                finalize()
+                if line not in unrecognized_headers:
+                    unrecognized_headers.append(line)
             continue
 
         # Result row
@@ -254,6 +269,10 @@ def parse_pdf_raw(
                 current_event.add(place, time_str)
 
     finalize()
+
+    # Flag unrecognized headers (deduped, capped at 5 to avoid log spam)
+    for h in unrecognized_headers[:5]:
+        flag_rows.append(flag("", f"Event header variation not normalized: {h!r}"))
 
     if not finalized:
         flag_rows.append(flag("", "No men's target events found in PDF"))
@@ -269,14 +288,17 @@ def parse_pdf_raw(
 def merge_bundle(
     bundle: dict,
     file_results: list[tuple[dict[str, EventAccumulator], list[dict], list[dict]]],
-) -> tuple[list[dict], list[dict], list[dict]]:
+) -> tuple[list[dict], list[dict], list[dict], dict]:
     """
     Merge raw results from all files in a bundle into final CSV rows.
 
     Deduplication strategy per event:
-    1. Finals beats prelims (any completeness).
-    2. Among same session type, most complete (more anchor places) wins.
-    3. Tie → keep the version with the more complete set; flag if conflicting.
+    1. Higher session_score (finals > unknown > prelims) wins.
+    2. Among same score tier, most complete (anchor places) wins.
+    3. Tie → keep the version with more total places.
+    4. Sanity check 1st-place time; flag if implausible.
+
+    Returns (event_rows, team_rows, flag_rows, summary_dict).
     """
     conference = bundle["conference"]
     year       = bundle["year"]
@@ -294,14 +316,13 @@ def merge_bundle(
             "Issue":       issue,
         }
 
-    # Collect all accumulators keyed by event name → list of EventAccumulator
+    # Collect all accumulators per event name
     all_accs: dict[str, list[EventAccumulator]] = {}
     all_team_rows: list[dict] = []
     all_flag_rows: list[dict] = []
 
     for evs, tms, fls in file_results:
         all_flag_rows.extend(fls)
-        # Team rows: only add if we don't already have scores for this bundle
         for t in tms:
             all_team_rows.append({
                 **t,
@@ -312,7 +333,7 @@ def merge_bundle(
         for name, acc in evs.items():
             all_accs.setdefault(name, []).append(acc)
 
-    # Deduplicate team rows — keep one row per team name
+    # Deduplicate team rows — keep first occurrence per team
     seen_teams: set[str] = set()
     unique_teams: list[dict] = []
     for row in all_team_rows:
@@ -325,41 +346,77 @@ def merge_bundle(
         sources = ", ".join(str(p.name) for p, _ in bundle["paths"])
         all_flag_rows.append(flag("", sources, "Team scores not found in any bundle file"))
 
-    # Choose the best accumulator for each event
+    # Per-event merging
     event_rows: list[dict] = []
+    events_found:   list[str] = []
+    events_missing: list[str] = []
 
     for event_name in TARGET_EVENTS:
         accs = all_accs.get(event_name)
         if not accs:
-            continue  # event simply absent from this meet
+            events_missing.append(event_name)
+            continue
 
-        # Separate finals vs prelims candidates
-        finals_accs  = [a for a in accs if a.is_finals()]
-        prelim_accs  = [a for a in accs if not a.is_finals()]
+        events_found.append(event_name)
 
-        # Pick best from finals first; fall back to prelims
-        pool = finals_accs if finals_accs else prelim_accs
-        only_prelims = len(finals_accs) == 0 and len(prelim_accs) > 0
+        # Sort candidates: highest session_score first, then most complete
+        accs_sorted = sorted(
+            accs,
+            key=lambda a: (a.session_score, a.completeness(), len(a.places)),
+            reverse=True,
+        )
+        best = accs_sorted[0]
 
-        # Best = most complete, then prefer more places overall
-        best = max(pool, key=lambda a: (a.completeness(), len(a.places)))
-
+        # Flag session choice
+        only_prelims = all(a.session_score == 0 for a in accs)
         if only_prelims:
-            all_flag_rows.append(flag(event_name, best.source, "Only prelim results found — no finals detected"))
+            all_flag_rows.append(flag(
+                event_name, best.source,
+                "Only prelim results found — no finals detected"
+            ))
+        elif best.session_score == 1:
+            # session was 'unknown' — note it
+            pass  # don't spam flags for every unknown-session event
 
-        # Flag if multiple finals versions conflict meaningfully
+        # Flag multiple conflicting finals versions
+        finals_accs = [a for a in accs if a.session_score >= 2]
         if len(finals_accs) > 1:
-            times_1st = set(round(a.places[1], 2) for a in finals_accs if 1 in a.places)
+            times_1st = {round(a.places[1], 2) for a in finals_accs if 1 in a.places}
             if len(times_1st) > 1:
                 sources_str = ", ".join(a.source for a in finals_accs)
                 all_flag_rows.append(flag(
                     event_name, sources_str,
-                    f"Multiple conflicting finals versions — 1st-place times: "
-                    + ", ".join(seconds_to_time(t) for t in times_1st)
+                    "Multiple conflicting finals versions — 1st-place times: "
+                    + ", ".join(seconds_to_time(t) for t in sorted(times_1st))
                 ))
 
         anchor = best.anchor()
         if anchor:
+            # Sanity check on 1st-place time
+            t1_sec = anchor["1st_seconds"]
+            plausible = is_time_plausible(event_name, t1_sec)
+            if not plausible:
+                # Try next best candidate that is plausible
+                fallback = None
+                for alt in accs_sorted[1:]:
+                    if 1 in alt.places and is_time_plausible(event_name, alt.places[1]):
+                        if alt.anchor():
+                            fallback = alt
+                            break
+                if fallback:
+                    all_flag_rows.append(flag(
+                        event_name, best.source,
+                        f"Implausible 1st-place time {anchor['1st']} — "
+                        f"using fallback from {fallback.source}"
+                    ))
+                    best = fallback
+                    anchor = best.anchor()
+                else:
+                    all_flag_rows.append(flag(
+                        event_name, best.source,
+                        f"Implausible 1st-place time {anchor['1st']} — no better candidate, kept"
+                    ))
+
             event_rows.append({
                 "Conference":    conference,
                 "Year":          year,
@@ -379,9 +436,27 @@ def merge_bundle(
             missing = best.missing_places()
             place_labels = {1: "1st", 8: "8th", 16: "16th"}
             miss_str = ", ".join(place_labels[p] for p in missing)
-            all_flag_rows.append(flag(event_name, best.source, f"Missing {miss_str} place"))
+            all_flag_rows.append(flag(
+                event_name, best.source,
+                f"Event missing from final merged bundle — {miss_str} place not found"
+            ))
+            events_missing.append(event_name)
+            events_found.remove(event_name)
 
-    return event_rows, unique_teams, all_flag_rows
+    summary = {
+        "bundle_id":      bundle_id,
+        "conference":     conference,
+        "year":           year,
+        "gender":         gender,
+        "files":          [str(p.name) for p, _ in bundle["paths"]],
+        "events_found":   events_found,
+        "events_missing": events_missing,
+        "n_anchors":      len(event_rows),
+        "n_teams":        len(unique_teams),
+        "n_flags":        len(all_flag_rows),
+    }
+
+    return event_rows, unique_teams, all_flag_rows, summary
 
 
 # ── CSV writer ────────────────────────────────────────────────────────────────
@@ -391,6 +466,30 @@ def write_csv(path: Path, header: list[str], rows: list[dict]):
         writer = csv.DictWriter(f, fieldnames=header, extrasaction="ignore")
         writer.writeheader()
         writer.writerows(rows)
+
+
+# ── Bundle summary printer ─────────────────────────────────────────────────────
+
+def print_bundle_summary(summary: dict):
+    bid   = summary["bundle_id"]
+    conf  = summary["conference"]
+    year  = summary["year"]
+    gend  = summary["gender"]
+    files = summary["files"]
+    found = summary["events_found"]
+    miss  = summary["events_missing"]
+
+    print(f"\n  ┌─ Bundle Summary: {bid}")
+    print(f"  │  Conference : {conf}")
+    print(f"  │  Year       : {year}   Gender: {gend}")
+    print(f"  │  Files      : {len(files)}")
+    for f in files:
+        print(f"  │    · {f}")
+    print(f"  │  Events found   ({len(found):2d}): {', '.join(found) if found else '—'}")
+    if miss:
+        print(f"  │  Events missing ({len(miss):2d}): {', '.join(miss)}")
+    print(f"  │  Anchors: {summary['n_anchors']}  Teams: {summary['n_teams']}  Flags: {summary['n_flags']}")
+    print(f"  └{'─'*55}")
 
 
 # ── Main batch runner ─────────────────────────────────────────────────────────
@@ -417,7 +516,7 @@ def run(input_dir: Path, output_dir: Path):
     print(f"  Output:  {output_dir}/")
     print(f"{'='*64}\n")
 
-    # Print bundle plan
+    # Print bundle plan before processing
     for bid, b in sorted(bundles.items()):
         file_names = [p.name for p, _ in b["paths"]]
         print(f"  Bundle [{bid}]  ({len(file_names)} file{'s' if len(file_names) != 1 else ''})")
@@ -425,30 +524,29 @@ def run(input_dir: Path, output_dir: Path):
             print(f"    · {fn}")
     print()
 
-    all_events: list[dict] = []
-    all_teams:  list[dict] = []
-    all_flags:  list[dict] = []
+    all_events:    list[dict] = []
+    all_teams:     list[dict] = []
+    all_flags:     list[dict] = []
+    all_summaries: list[dict] = []
 
     for bid, bundle in sorted(bundles.items()):
         print(f"  Processing bundle: {bid}")
         file_results = []
 
         for path, meta in bundle["paths"]:
-            print(f"    [{meta.get('gender','?'):8s}] {path.name} ...", end=" ", flush=True)
+            session_label = (
+                "prelims" if meta["is_prelim"] else
+                "finals"  if meta["is_final"]  else "?"
+            )
+            print(f"    [{meta.get('gender','?'):8s}|{session_label:7s}] {path.name} ...",
+                  end=" ", flush=True)
             try:
                 evs, tms, fls = parse_pdf_raw(path, meta, bundle)
                 file_results.append((evs, tms, fls))
-                n_events  = len(evs)
-                n_teams   = len(tms)
-                n_flags   = len(fls)
-                session   = (
-                    "prelims" if meta["is_prelim"] else
-                    "finals"  if meta["is_final"] else "?"
-                )
+                n_flags = len(fls)
                 print(
-                    f"{n_events} event(s), {n_teams} team row(s)"
+                    f"{len(evs)} event(s), {len(tms)} team row(s)"
                     + (f", {n_flags} flag(s)" if n_flags else "")
-                    + f"  [{session}]"
                 )
             except Exception as exc:
                 print(f"FAILED — {exc}")
@@ -468,27 +566,29 @@ def run(input_dir: Path, output_dir: Path):
             print(f"    → No results to merge for this bundle.\n")
             continue
 
-        ev_rows, tm_rows, fl_rows = merge_bundle(bundle, file_results)
+        ev_rows, tm_rows, fl_rows, summary = merge_bundle(bundle, file_results)
         all_events.extend(ev_rows)
         all_teams.extend(tm_rows)
         all_flags.extend(fl_rows)
-        print(
-            f"    → Merged: {len(ev_rows)} event anchor(s), "
-            f"{len(tm_rows)} team row(s), "
-            f"{len(fl_rows)} flag(s)\n"
-        )
+        all_summaries.append(summary)
+
+        print_bundle_summary(summary)
 
     write_csv(output_dir / "event_anchors.csv", ANCHOR_HEADER, all_events)
     write_csv(output_dir / "team_scores.csv",   TEAM_HEADER,   all_teams)
     write_csv(output_dir / "review_flags.csv",  FLAG_HEADER,   all_flags)
 
-    print(f"{'='*64}")
+    print(f"\n{'='*64}")
     print(f"  Done.")
     print(f"  PDFs processed:        {total_pdfs}")
-    print(f"  Bundles processed:     {len(bundles)}")
+    print(f"  Bundles processed:     {len(all_summaries)}")
     print(f"  Event anchors output:  {len(all_events)}")
     print(f"  Team rows output:      {len(all_teams)}")
     print(f"  Flags generated:       {len(all_flags)}")
+    if all_summaries:
+        total_missing = sum(len(s["events_missing"]) for s in all_summaries)
+        if total_missing:
+            print(f"  Events still missing:  {total_missing} across {len(all_summaries)} bundles")
     print(f"\n  Outputs:")
     print(f"    {output_dir}/event_anchors.csv")
     print(f"    {output_dir}/team_scores.csv")

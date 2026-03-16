@@ -59,6 +59,35 @@ _DIVING_KEYWORDS = re.compile(
 )
 
 
+# ── Sanity ranges for 1st-place anchor times ──────────────────────────────────
+# (min_sec, max_sec) for plausible men's collegiate winning times.
+# Too fast → probably a misparse or prelim heat seed. Too slow → bad extraction.
+_SANITY_RANGES = {
+    "50 Free":    (17.5,  23.0),
+    "100 Free":   (39.0,  50.0),
+    "200 Free":   (85.0,  110.0),
+    "500 Free":   (232.0, 300.0),
+    "1000 Free":  (500.0, 640.0),
+    "1650 Free":  (850.0, 1080.0),
+    "100 Back":   (43.0,  56.0),
+    "200 Back":   (95.0,  124.0),
+    "100 Breast": (50.0,  65.0),
+    "200 Breast": (110.0, 145.0),
+    "100 Fly":    (43.0,  56.0),
+    "200 Fly":    (96.0,  126.0),
+    "200 IM":     (94.0,  122.0),
+    "400 IM":     (206.0, 268.0),
+}
+
+
+def is_time_plausible(event_name: str, seconds: float) -> bool:
+    """Return True if `seconds` is within the expected range for the event winner."""
+    r = _SANITY_RANGES.get(event_name)
+    if r is None:
+        return True
+    return r[0] <= seconds <= r[1]
+
+
 # ── Filename metadata token sets ──────────────────────────────────────────────
 
 _GENDER_WOMEN_TOKENS = frozenset([
@@ -90,7 +119,8 @@ _META_STRIP_TOKENS = (
         "results", "result", "conference", "ncaa", "session",
         "event", "events", "day", "daily", "meet", "invite", "invitational",
         "full", "complete", "final", "finals",
-        "w",  # "w" alone is ambiguous — strip it; gender detected separately
+        "pdf",  # e.g. "Big_12_S_D_Champ_Results_pdf.pdf"
+        "w",    # "w" alone is ambiguous — strip it; gender detected separately
     ])
 )
 
@@ -110,49 +140,49 @@ _BUILTIN_CONF = [
     ("landmark",      "Landmark"),
     ("midwest",       "Midwest"),
     ("heartland",     "Heartland"),
-    ("empireeight",      "Empire 8"),
-    ("empire8",          "Empire 8"),
-    ("patriot",          "Patriot"),
-    ("ivyleague",        "Ivy League"),
-    ("ivyl",             "Ivy League"),
-    ("ivy",              "Ivy League"),
-    ("pac12",            "Pac-12"),
-    ("pac10",            "Pac-10"),
-    ("bigten",           "Big Ten"),
-    ("big10",            "Big Ten"),
-    ("bigeight",         "Big Eight"),
-    ("big12",            "Big 12"),
-    ("bigwest",          "Big West"),
-    ("bigeast",          "Big East"),
-    ("acc",              "ACC"),
-    ("sec",              "SEC"),
-    ("maac",             "MAAC"),
-    ("asun",             "ASUN"),
-    ("caa",              "CAA"),
-    ("cciw",             "CCIW"),
-    ("gliac",            "GLIAC"),
-    ("glvc",             "GLVC"),
-    ("psac",             "PSAC"),
-    ("summitleague",     "Summit League"),
-    ("americaeast",      "America East"),
-    ("horizonleague",    "Horizon League"),
-    ("atlantic10",       "Atlantic 10"),
-    ("atlanticten",      "Atlantic 10"),
-    ("a10",              "Atlantic 10"),
-    ("wac",              "WAC"),
-    ("mac",              "MAC"),
-    ("meac",             "MEAC"),
-    ("socon",            "SoCon"),
-    ("southernconf",     "SoCon"),
-    ("sunbelt",          "Sun Belt"),
-    ("ovc",              "OVC"),
-    ("mvc",              "MVC"),
-    ("cac",              "CAC"),
-    ("csac",             "CSAC"),
-    ("amcc",             "AMCC"),
-    ("nia",              "NIA"),
-    ("cc",               "CC"),
-    ("d3swim",           "D3Swim"),
+    ("empireeight",   "Empire 8"),
+    ("empire8",       "Empire 8"),
+    ("patriot",       "Patriot"),
+    ("ivyleague",     "Ivy League"),
+    ("ivyl",          "Ivy League"),
+    ("ivy",           "Ivy League"),
+    ("pac12",         "Pac-12"),
+    ("pac10",         "Pac-10"),
+    ("bigten",        "Big Ten"),
+    ("big10",         "Big Ten"),
+    ("bigeight",      "Big Eight"),
+    ("big12",         "Big 12"),
+    ("bigwest",       "Big West"),
+    ("bigeast",       "Big East"),
+    ("acc",           "ACC"),
+    ("sec",           "SEC"),
+    ("maac",          "MAAC"),
+    ("asun",          "ASUN"),
+    ("caa",           "CAA"),
+    ("cciw",          "CCIW"),
+    ("gliac",         "GLIAC"),
+    ("glvc",          "GLVC"),
+    ("psac",          "PSAC"),
+    ("summitleague",  "Summit League"),
+    ("americaeast",   "America East"),
+    ("horizonleague", "Horizon League"),
+    ("atlantic10",    "Atlantic 10"),
+    ("atlanticten",   "Atlantic 10"),
+    ("a10",           "Atlantic 10"),
+    ("wac",           "WAC"),
+    ("mac",           "MAC"),
+    ("meac",          "MEAC"),
+    ("socon",         "SoCon"),
+    ("southernconf",  "SoCon"),
+    ("sunbelt",       "Sun Belt"),
+    ("ovc",           "OVC"),
+    ("mvc",           "MVC"),
+    ("cac",           "CAC"),
+    ("csac",          "CSAC"),
+    ("amcc",          "AMCC"),
+    ("nia",           "NIA"),
+    ("cc",            "CC"),
+    ("d3swim",        "D3Swim"),
 ]
 
 
@@ -210,7 +240,15 @@ def normalize_event_name(raw: str) -> str | None:
     Normalize a raw event name string → canonical event label or None.
 
     Returns None for relays, diving, women's events, or unrecognized patterns.
-    Handles "Event 3 Men 500 Yard Freestyle", "Men's 200 IM", "100 Butterfly", etc.
+    Handles all of:
+      "Event 3 Men 500 Yard Freestyle"  → "500 Free"
+      "Men 500 Freestyle"               → "500 Free"
+      "500 Freestyle"                   → "500 Free"
+      "500 Yard Free"                   → "500 Free"
+      "100 Butterfly"                   → "100 Fly"
+      "200 Butterfly"                   → "200 Fly"
+      "1650 Freestyle"                  → "1650 Free"
+      "Men's 200 IM"                    → "200 IM"
     """
     raw_lower = raw.lower()
 
@@ -267,15 +305,15 @@ def _conf_token_match(key: str, text: str) -> bool:
     """
     Match a conference key against text using word-boundary regex.
 
-    Also tries matching the key against a de-underscored version of the text
-    so that 'bigeast' matches 'big_east' and 'a10' matches 'a_10'.
+    Also tries matching the key against a de-underscored/de-spaced version of
+    the text so that 'bigeast' matches 'big_east' and 'a10' matches 'a_10'.
 
     Prevents short keys like 'cc' from matching inside 'acc'.
     """
     pattern = r"(?<![a-z0-9])" + re.escape(key) + r"(?![a-z0-9])"
     if re.search(pattern, text):
         return True
-    # Also try against text with underscores/hyphens/spaces removed
+    # Also try against text with separators removed
     compressed = re.sub(r"[_\-\s]", "", text)
     return bool(re.search(pattern, compressed))
 
@@ -300,8 +338,7 @@ def detect_conference(filename: str, pdf_title_text: str = "") -> str:
     clean_stem = "_".join(clean_tokens)
     fname_lower = filename.lower()
 
-    # conf_map first (user-defined takes priority) — substring is fine here
-    # because the user controls the keys
+    # conf_map first (user-defined takes priority)
     for key, conf_name in conf_map.items():
         k = key.lower()
         if _conf_token_match(k, fname_lower) or _conf_token_match(k, clean_stem):
@@ -328,12 +365,12 @@ def parse_filename_metadata(filename: str) -> dict:
     Extract meet metadata from a PDF filename.
 
     Returns a dict with:
-        year           (str | None)   — e.g. "2026"
-        gender         (str)          — 'men', 'women', or 'combined'
-        is_prelim      (bool)         — True if filename says prelim/heats
-        is_final       (bool)         — True if filename says finals
-        day            (str | None)   — e.g. 'day1', 'friday'
-        conference_hint (str)         — slug of conf tokens only, no metadata
+        year            (str | None)   — e.g. "2026"
+        gender          (str)          — 'men', 'women', or 'combined'
+        is_prelim       (bool)         — True if filename says prelim/heats
+        is_final        (bool)         — True if filename says finals
+        day             (str | None)   — e.g. 'day1', 'friday'
+        conference_hint (str)          — slug of conf tokens only, no metadata
     """
     stem = Path(filename).stem.lower()
     tokens = re.split(r"[_\s\-]+", stem)
@@ -346,7 +383,6 @@ def parse_filename_metadata(filename: str) -> dict:
             break
 
     # ── Gender ────────────────────────────────────────────────────────────────
-    # Scan in order; first match wins.
     # "w" alone is treated as women (e.g. "acc_2026_w_day1").
     gender = "combined"
     for t in tokens:
@@ -506,14 +542,31 @@ def detect_session_type_from_text(pages: list[str]) -> str:
     """
     Detect whether a PDF contains finals or prelim results from text content.
     Returns 'finals', 'prelims', or 'unknown'.
+
+    Scoring:
+      +3 per "championship final" / "b final" / "consolation final"
+      +1 per plain "final(s)"
+      -3 per "preliminary" / "preliminaries"
+      -1 per plain "prelim(s)" / "heats"
     """
-    sample = " ".join(pages[:6]).lower()
-    # Count weighted signals
-    finals_hits  = len(re.findall(r"\bfinals?\b", sample))
-    prelim_hits  = len(re.findall(r"\bprelim(?:inar(?:y|ies))?\b|\bheats?\b", sample))
-    if finals_hits > prelim_hits:
+    sample = " ".join(pages[:8]).lower()
+
+    score = 0
+    # Strong finals signals
+    score += 3 * len(re.findall(
+        r"championship\s+final|consolation\s+final|b[\-\s]?final|c[\-\s]?final",
+        sample
+    ))
+    # Plain finals
+    score += 1 * len(re.findall(r"\bfinals?\b", sample))
+    # Strong prelim signals
+    score -= 3 * len(re.findall(r"\bpreliminar(?:y|ies)\b", sample))
+    # Plain prelim
+    score -= 1 * len(re.findall(r"\bprelims?\b|\bheats?\b", sample))
+
+    if score > 0:
         return "finals"
-    if prelim_hits > finals_hits:
+    if score < 0:
         return "prelims"
     return "unknown"
 
@@ -536,33 +589,36 @@ def looks_like_psych_sheet(pages: list[str]) -> bool:
 
 # ── Event header detection ────────────────────────────────────────────────────
 
+# Primary pattern: "Event N Men 500 Yard Freestyle" or "Men 500 Freestyle"
+# Unit (Yard/Meter) is OPTIONAL — many PDFs omit it.
 _MEN_EVENT_RE = re.compile(
     r"""
-    (?:event\s+\d+\s+)?         # optional "Event N "
-    (?:men'?s?\s+)?             # optional "Men's "
-    (\d+)\s*                    # distance
-    (?:yard|yd|meter|m)s?\s+   # unit
+    (?:event\s+\d+\s+)?                 # optional "Event N "
+    (?:men'?s?\s+)?                     # optional "Men's "
+    (\d+)\s*                            # distance
+    (?:(?:yard|yd|meter|m)s?\s+)?       # optional unit  ← was required, now optional
     (freestyle|free|backstroke|back|
      breaststroke|breast|butterfly|fly|
      individual\s+medley|medley|im)
-    (?:\s*[-–]\s*finals?)?      # optional "- Final"
+    (?:\s*[-–]\s*(?:championship\s+)?finals?)?  # optional "- Final" / "- Championship Final"
     """,
     re.IGNORECASE | re.VERBOSE,
 )
 
+# Alternative explicit "Event X Men's N Yard stroke" format
 _ALT_EVENT_RE = re.compile(
-    r"event\s+\d+\s+men'?s?\s+(\d+)\s*(?:yard|yd|meter|m)s?\s+"
+    r"event\s+\d+\s+men'?s?\s+(\d+)\s*(?:(?:yard|yd|meter|m)s?\s+)?"
     r"(freestyle|free|backstroke|back|breaststroke|breast|butterfly|fly|"
     r"individual\s+medley|medley|im)",
     re.IGNORECASE,
 )
 
-# Women's equivalent patterns (needed for combined-PDF section detection)
+# Women's equivalent (for section detection in combined PDFs)
 _WOMEN_EVENT_RE = re.compile(
     r"""
     (?:event\s+\d+\s+)?
     women'?s?\s+
-    (\d+)\s*(?:yard|yd|meter|m)s?\s+
+    (\d+)\s*(?:(?:yard|yd|meter|m)s?\s+)?
     (freestyle|free|backstroke|back|
      breaststroke|breast|butterfly|fly|
      individual\s+medley|medley|im)
@@ -572,19 +628,40 @@ _WOMEN_EVENT_RE = re.compile(
 
 
 def is_men_event_header(line: str) -> bool:
-    if _RELAY_KEYWORDS.search(line) or _DIVING_KEYWORDS.search(line):
+    """
+    Return True if `line` looks like a men's swimming event header.
+
+    Guards:
+    - No relay or diving keywords.
+    - No women's label.
+    - If the line starts with a small number (1-64) AND contains a time-like
+      pattern, treat it as a result row, not a header.
+      (Handles "50 Freestyle", "100 Butterfly" which are valid bare headers
+      that start with a digit that is the distance, not a place.)
+    """
+    stripped = line.strip()
+    if not stripped:
         return False
-    if re.search(r"\bwomens?\b|\bwomen'?s?\b", line, re.IGNORECASE):
+    if _RELAY_KEYWORDS.search(stripped) or _DIVING_KEYWORDS.search(stripped):
         return False
-    return bool(_MEN_EVENT_RE.search(line)) or bool(_ALT_EVENT_RE.search(line))
+    if re.search(r"\bwomens?\b|\bwomen'?s?\b", stripped, re.IGNORECASE):
+        return False
+    # Reject lines that look like result rows: small leading number + a time
+    m = re.match(r"^(\d{1,2})\b", stripped)
+    if m and int(m.group(1)) <= 64 and re.search(_TIME_PAT, stripped):
+        return False
+    return bool(_MEN_EVENT_RE.search(stripped)) or bool(_ALT_EVENT_RE.search(stripped))
 
 
 def is_women_event_header(line: str) -> bool:
-    if _RELAY_KEYWORDS.search(line) or _DIVING_KEYWORDS.search(line):
+    stripped = line.strip()
+    if not stripped or re.match(r"^\d", stripped):
         return False
-    if re.search(r"\bwomens?\b|\bwomen'?s?\b", line, re.IGNORECASE):
-        return bool(_WOMEN_EVENT_RE.search(line)) or bool(
-            re.search(r"event\s+\d+\s+women'?s?\s+\d+", line, re.IGNORECASE)
+    if _RELAY_KEYWORDS.search(stripped) or _DIVING_KEYWORDS.search(stripped):
+        return False
+    if re.search(r"\bwomens?\b|\bwomen'?s?\b", stripped, re.IGNORECASE):
+        return bool(_WOMEN_EVENT_RE.search(stripped)) or bool(
+            re.search(r"event\s+\d+\s+women'?s?\s+\d+", stripped, re.IGNORECASE)
         )
     return False
 
