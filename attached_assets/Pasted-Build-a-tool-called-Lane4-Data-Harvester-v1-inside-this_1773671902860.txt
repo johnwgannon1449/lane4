@@ -1,0 +1,227 @@
+Build a tool called “Lane4 Data Harvester v1” inside this Replit project.
+
+GOAL
+Create a batch PDF parser for NCAA swim conference championship result PDFs. I want to drop many PDFs into a folder and have the tool process all of them automatically into a clean export matching my existing dataset schema.
+
+IMPORTANT
+Do not redesign my model.
+Do not change my schema philosophy.
+Match my current dataset structure as closely as possible.
+This is a zero-drift expansion tool.
+
+CORE WORKFLOW
+
+Create a folder called input_pdfs/
+
+Create a folder called output/
+
+The tool should scan every PDF in input_pdfs/
+
+For each PDF, extract men’s individual event results
+
+For each target event, identify:
+
+1st place time
+
+8th place time
+
+16th place time
+
+Convert those times to seconds
+
+Compute sec_per_place using:
+
+(16th_seconds - 1st_seconds) / 15
+
+Output rows in a CSV matching this structure as closely as possible:
+
+Conference, Event, 1st, 8th, 16th, 1st_seconds, 8th_seconds, 16th_seconds, Sec_per_place, Source_File
+
+Also create a second CSV for team scoring if team standings are detected:
+
+Conference, Team, Team_Score, Source_File
+
+Save outputs into output/
+
+TARGET EVENTS (INDIVIDUAL EVENTS ONLY)
+
+Use exactly this event list and naming:
+
+50 Free
+100 Free
+200 Free
+500 Free
+1000 Free
+1650 Free
+100 Back
+200 Back
+100 Breast
+200 Breast
+100 Fly
+200 Fly
+200 IM
+400 IM
+
+EVENT RULES
+
+Process only individual events
+
+Ignore all relays
+
+Ignore diving
+
+If a PDF contains both men and women, extract men’s results only
+
+Only use final placement results, not psych sheets
+
+If both prelims and finals appear, prefer final results
+
+PARSING REQUIREMENTS
+
+Use Python
+
+Prefer pdfplumber for text extraction
+
+If necessary, use PyMuPDF (fitz) as fallback
+
+Do not use OCR unless absolutely necessary
+
+Detect event headers such as:
+
+Event 3 Men 500 Yard Freestyle
+Men 100 Yard Breaststroke
+
+Parse:
+
+Place
+Athlete
+School/Team
+Final time
+
+Normalize event names to the fixed naming list above.
+
+TIME CONVERSION
+
+Create a helper function that converts swim times to seconds:
+
+19.85 → 19.85
+1:39.22 → 99.22
+15:48.90 → 948.90
+
+Handle DQ / NS / NT by skipping those rows.
+
+ANCHOR RULES
+
+For each event:
+
+1st = time for place 1
+8th = time for place 8
+16th = time for place 16
+
+If exact place 8 or 16 is missing, do not invent it.
+Instead flag the event in a review CSV.
+
+TEAM SCORE EXTRACTION
+
+If the PDF contains final men’s team standings, extract:
+
+Conference
+Team
+Team_Score
+Source_File
+
+If both men’s and women’s standings exist, keep men’s only.
+
+CONFERENCE NAME DETECTION
+
+Attempt to determine conference name from:
+
+PDF filename
+
+Title text inside the PDF
+
+A manual mapping file
+
+Create a config file called conference_map.json where I can map filenames to conference names manually.
+
+REVIEW / AUDIT OUTPUT
+
+Create three files:
+
+output/event_anchors.csv
+output/team_scores.csv
+output/review_flags.csv
+
+review_flags.csv should contain:
+
+Source_File
+Conference
+Event
+Issue
+
+Examples of Issue:
+
+Missing 16th place
+Could not determine men’s section
+Event name ambiguous
+No team scores found
+PDF looked like psych sheet
+
+USER INTERFACE
+
+Provide either:
+
+A simple button: “Process All PDFs”
+
+OR
+
+A CLI command:
+
+python harvester.py
+
+When run, the tool should:
+
+list PDFs found in input_pdfs/
+
+process them one by one
+
+display status
+
+show summary counts:
+
+PDFs processed
+Event rows extracted
+Team rows extracted
+Flags generated
+
+FILE STRUCTURE
+
+Create:
+
+harvester.py
+parser_helpers.py
+conference_map.json
+input_pdfs/
+output/
+
+IMPLEMENTATION STYLE
+
+Clean modular code
+
+Good comments
+
+Defensive error handling
+
+Log per-file failures but continue processing the rest
+
+Never crash the batch because of one bad PDF
+
+SUCCESS CRITERIA
+
+When I drop multiple conference championship PDFs into input_pdfs/ and run the tool, it should generate:
+
+event_anchors.csv
+team_scores.csv
+review_flags.csv
+
+with rows that match my existing Lane4 conference dataset structure closely enough to paste directly into my workbook.

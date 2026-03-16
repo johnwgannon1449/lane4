@@ -1,0 +1,30 @@
+{
+  "_comment": "Map PDF filenames (or partial names) to conference names. Keys are matched as substrings of the filename (case-insensitive). First match wins. Add entries for each championship PDF you use.",
+  "mappings": {
+    "centennial":         "Centennial",
+    "liberty_league":     "Liberty League",
+    "liberty league":     "Liberty League",
+    "nescac":             "NESCAC",
+    "ncac":               "NCAC",
+    "uaa":                "UAA",
+    "new_england":        "New England",
+    "newmac":             "NEWMAC",
+    "miac":               "MIAC",
+    "cc":                 "Colorado College",
+    "sciac":              "SCIAC",
+    "odac":               "ODAC",
+    "oac":                "OAC",
+    "saa":                "SAA",
+    "ccc":                "CCC",
+    "landmark":           "Landmark",
+    "presidents":         "Presidents",
+    "midwest":            "Midwest",
+    "heartland":          "Heartland",
+    "northwest":          "Northwest"
+  },
+  "_instructions": [
+    "Keys are matched as substrings of the PDF filename (case-insensitive).",
+    "Add as many entries as you need.",
+    "If no match is found, the tool falls back to reading the title text inside the PDF."
+  ]
+}
