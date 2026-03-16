@@ -615,6 +615,80 @@ def looks_like_psych_sheet(pages: list[str]) -> bool:
     return False
 
 
+# ── Final-section (A/B/C Final) detection ─────────────────────────────────────
+
+# Standalone or embedded labels indicating which heat of finals this section is.
+# Must be specific enough to not match "Final Day" or "Friday Final Results".
+
+_A_FINAL_RE = re.compile(
+    r"""
+    \b(?:
+        a\s*[-–]\s*final            # "A - Final", "A-Final"
+        | a\s+final\b               # "A Final"
+        | championship\s+final      # "Championship Final"
+        | champion\s+final          # "Champion Final"
+    )\b
+    """,
+    re.IGNORECASE | re.VERBOSE,
+)
+
+_B_FINAL_RE = re.compile(
+    r"""
+    \b(?:
+        b\s*[-–]\s*final            # "B - Final", "B-Final"
+        | b\s+final\b               # "B Final"
+        | consolation\s+final       # "Consolation Final"
+        | consol\.?\s+final         # "Consol. Final"
+    )\b
+    """,
+    re.IGNORECASE | re.VERBOSE,
+)
+
+_C_FINAL_RE = re.compile(
+    r"\b(?:c\s*[-–]\s*final|c\s+final)\b",
+    re.IGNORECASE,
+)
+
+# Place offset per final type (displayed place → actual overall place)
+# B Final:  place 1-8 in PDF  → actual overall places  9-16
+# A Final:  place 1-8 in PDF  → actual overall places  1-8
+# C Final:  place 1-8 in PDF  → actual overall places 17-24
+FINAL_PLACE_OFFSETS: dict[str, int] = {
+    "A":       0,
+    "B":       8,
+    "C":      16,
+    "unknown": 0,   # default: treat as A-Final
+}
+
+
+def detect_final_type(line: str) -> str | None:
+    """
+    Detect whether `line` contains (or is) an A/B/C Final section label.
+
+    Returns 'A', 'B', 'C', or None.
+
+    Deliberately strict: will not match generic uses of "final" (e.g. "Friday
+    Final Results", "Final Day") because those don't include the letter prefix
+    or "championship / consolation" keywords.
+
+    Fast-path: returns None immediately if the word "final" isn't in the line
+    (case-insensitive), avoiding three regex searches on the vast majority of
+    result rows.
+    """
+    stripped = line.strip()
+    if not stripped:
+        return None
+    if "final" not in stripped.lower():
+        return None
+    if _C_FINAL_RE.search(stripped):
+        return "C"
+    if _B_FINAL_RE.search(stripped):
+        return "B"
+    if _A_FINAL_RE.search(stripped):
+        return "A"
+    return None
+
+
 # ── Event header regexes ──────────────────────────────────────────────────────
 
 # Matches men's or bare (no gender label) event headers.

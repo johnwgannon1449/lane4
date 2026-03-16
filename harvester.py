@@ -28,7 +28,9 @@ from pathlib import Path
 from parser_helpers import (
     TARGET_EVENTS,
     detect_conference,
+    detect_final_type,
     extract_pages,
+    FINAL_PLACE_OFFSETS,
     group_into_bundles,
     is_event_header_any,
     is_time_plausible,
@@ -69,7 +71,7 @@ DEBUG_REPORT_HEADER = [
     "Bundle_ID", "Conference", "Source_File", "File_Gender_Type",
     "Men_Section_Found", "Women_Section_Found",
     "Raw_Event_Header", "Canonical_Event", "Section_Type",
-    "Places_Found", "Status", "Reason", "Pass",
+    "Final_Section", "Places_Found", "Status", "Reason", "Pass",
 ]
 
 DEBUG_SUMMARY_HEADER = [
@@ -87,7 +89,16 @@ BOTH_GENDERS = ("men", "women")
 # ── Event result accumulator ──────────────────────────────────────────────────
 
 class EventAccumulator:
-    """Collects (place → seconds) for one event from one PDF, one gender."""
+    """
+    Collects (overall_place → seconds) for one event from one PDF, one gender.
+
+    Places are stored by their **normalized overall place** (1-based across the
+    entire field), not the displayed heat place.  The caller is responsible for
+    applying the A/B/C-final offset before calling add().
+
+    final_sections_seen tracks which heat types contributed data so we can
+    distinguish "no B-final" (fewer_than_16_finalists) from genuine parse gaps.
+    """
 
     def __init__(
         self,
@@ -111,12 +122,58 @@ class EventAccumulator:
         else:
             self.session_score = 1  # unknown → assume finals but rank lower
 
+        # overall_place → seconds
         self.places: dict[int, float] = {}
 
-    def add(self, place: int, time_str: str):
+        # Which final sections contributed to this accumulator
+        self.final_sections_seen: set[str] = set()
+
+    @property
+    def has_b_final(self) -> bool:
+        return "B" in self.final_sections_seen
+
+    def add(self, place: int, time_str: str, final_type: str = "unknown"):
+        """
+        Add a result.  `place` must already be the normalized overall place
+        (caller applied A/B/C offset).  `final_type` tracks heat origin.
+        """
         sec = time_to_seconds(time_str)
         if sec is not None and place not in self.places:
             self.places[place] = sec
+            if final_type:
+                self.final_sections_seen.add(final_type)
+
+    def merge_from(self, other: "EventAccumulator"):
+        """
+        Smart merge from another accumulator for the same event.
+
+        Two cases:
+        (a) Non-overlapping place ranges (B Final + A Final): merge all places,
+            union section sets.  Overlap ≤ 3 is the threshold.
+        (b) Substantially overlapping place ranges (Prelims vs Finals, or A-Final
+            seen twice): keep the higher-quality data, i.e. prefer the accumulator
+            with the better session_score, then completeness.
+        """
+        overlap = set(self.places) & set(other.places)
+        if len(overlap) <= 3:
+            # Non-overlapping sections → merge (B Final + A Final scenario)
+            for p, t in other.places.items():
+                if p not in self.places:
+                    self.places[p] = t
+            self.final_sections_seen |= other.final_sections_seen
+            if other.session_score > self.session_score:
+                self.session_score = other.session_score
+        else:
+            # Overlapping sections → keep the better-quality accumulator's data
+            other_is_better = (
+                other.session_score > self.session_score
+                or (other.session_score == self.session_score
+                    and other.completeness() > self.completeness())
+            )
+            if other_is_better:
+                self.places = dict(other.places)
+                self.final_sections_seen = set(other.final_sections_seen)
+                self.session_score = other.session_score
 
     def completeness(self) -> int:
         return sum(1 for p in ANCHOR_PLACES if p in self.places)
@@ -196,6 +253,7 @@ def parse_pdf_raw(
         raw_header: str,
         canonical: str | None,
         section: str,
+        final_section: str,
         places: int,
         status: str,
         reason: str,
@@ -211,6 +269,7 @@ def parse_pdf_raw(
             "Raw_Event_Header":    raw_header,
             "Canonical_Event":     canonical or "",
             "Section_Type":        section,
+            "Final_Section":       final_section,
             "Places_Found":        places,
             "Status":              status,
             "Reason":              reason,
@@ -278,6 +337,10 @@ def parse_pdf_raw(
     women_section_found = False
     unrecognized_headers: list[str] = []
 
+    # Current heat-section type: 'A', 'B', 'C', or 'unknown'.
+    # Reset to 'unknown' at each new event header; updated by standalone labels.
+    current_final_type: str = "unknown"
+
     def finalize():
         nonlocal current_event
         if current_event and current_event.places:
@@ -285,8 +348,10 @@ def parse_pdf_raw(
             existing = target.get(current_event.name)
             if existing is None:
                 target[current_event.name] = current_event
-            elif current_event.completeness() > existing.completeness():
-                target[current_event.name] = current_event
+            else:
+                # Merge so B-final (places 9-16 after offset) and A-final
+                # (places 1-8) accumulate in one object → complete 16-place anchor.
+                existing.merge_from(current_event)
         current_event = None
 
     for raw_line in all_lines:
@@ -298,6 +363,7 @@ def parse_pdf_raw(
             if file_gender_type != "women":
                 current_section = "men"
                 men_section_found = True
+            current_final_type = "unknown"
             continue
 
         if _WOMEN_SECTION_RE.search(line):
@@ -305,6 +371,7 @@ def parse_pdf_raw(
             if file_gender_type != "men":
                 current_section = "women"
                 women_section_found = True
+            current_final_type = "unknown"
             continue
 
         # ── Skip wrong-gender sections ────────────────────────────────────────
@@ -313,15 +380,32 @@ def parse_pdf_raw(
         if file_gender_type == "women" and current_section == "men":
             continue
 
+        # Compute once and reuse — is_event_header_any runs 3 regexes.
+        _is_evt_hdr = is_event_header_any(line)
+
+        # ── Standalone final-section label (e.g. "B Final", "A - Final") ──────
+        # Only lines that are NOT event headers can be standalone final labels.
+        # detect_final_type has its own "final" fast-path so this is cheap on
+        # the vast majority of result rows.
+        if not _is_evt_hdr:
+            ft = detect_final_type(line)
+            if ft:
+                current_final_type = ft
+                # Stay in the same event; the offset changes for upcoming rows.
+                continue
+
         # ── Event header detection ─────────────────────────────────────────────
-        if is_event_header_any(line):
+        if _is_evt_hdr:
             canonical, ev_gender = normalize_event_name_any(line)
+
+            # Extract any final-type label embedded in the event header itself
+            # e.g. "Event 26 Men 200 Yard Butterfly - B Final"
+            ft_in_header = detect_final_type(line)
 
             if canonical and canonical in TARGET_EVENTS:
                 # Resolve gender: explicit label > current_section > file type
                 if ev_gender in ("men", "women"):
                     resolved_gender = ev_gender
-                    # Update section tracking
                     if ev_gender == "men":
                         men_section_found = True
                         if file_gender_type != "women":
@@ -337,9 +421,10 @@ def parse_pdf_raw(
                     resolved_gender = None
 
                 finalize()
+                # Reset final type for the new event; use embedded label if present
+                current_final_type = ft_in_header if ft_in_header else "unknown"
 
                 if resolved_gender in ("men", "women"):
-                    # Only collect if file_gender_type allows this gender
                     if (
                         file_gender_type == "men"     and resolved_gender == "men"
                         or file_gender_type == "women"   and resolved_gender == "women"
@@ -352,17 +437,20 @@ def parse_pdf_raw(
                             file_gender_type,
                             men_section_found, women_section_found,
                             line, canonical, resolved_gender,
+                            current_final_type,
                             0, "recognized", f"session={session}",
                         ))
             else:
                 # Event header shape but unrecognized — close current to stop bleed
                 finalize()
+                current_final_type = ft_in_header if ft_in_header else "unknown"
                 if line not in unrecognized_headers:
                     unrecognized_headers.append(line)
                 debug_rows.append(debug_row(
                     file_gender_type,
                     men_section_found, women_section_found,
                     line, None, current_section,
+                    current_final_type,
                     0, "unrecognized", "normalize_event_name_any returned None",
                 ))
             continue
@@ -371,7 +459,14 @@ def parse_pdf_raw(
         if current_event:
             place, time_str = parse_place_and_time(line)
             if place is not None:
-                current_event.add(place, time_str)
+                # Apply section offset ONLY if the displayed place looks like a
+                # heat rank (1-8).  Some PDFs (e.g. ACC) show overall ranks
+                # directly (B-Final: 9-16, C-Final: 17-24), so no offset is
+                # needed.  Others (e.g. Big 12) show heat ranks 1-8 in every
+                # section and need the offset to reach the overall rank.
+                raw_offset = FINAL_PLACE_OFFSETS.get(current_final_type, 0)
+                offset = raw_offset if (raw_offset > 0 and place <= 8) else 0
+                current_event.add(place + offset, time_str, current_final_type)
 
     finalize()
 
@@ -515,13 +610,17 @@ def _second_pass_scan_file(
 
     current_event: str | None = None    # which missing event we are collecting for
     current_acc: EventAccumulator | None = None
+    current_final_type: str = "unknown"
 
     def finalize_current():
         nonlocal current_event, current_acc
         if current_event and current_acc and current_acc.places:
             prev = found.get(current_event)
-            if prev is None or current_acc.completeness() > prev.completeness():
+            if prev is None:
                 found[current_event] = current_acc
+            else:
+                # Merge so B/A-final sections accumulate into one object
+                prev.merge_from(current_acc)
         current_event = None
         current_acc = None
 
@@ -533,15 +632,30 @@ def _second_pass_scan_file(
                 # fruitless section — abandon and try again on next page
                 current_event = None
                 current_acc = None
+                current_final_type = "unknown"
             continue
 
         if not line:
             continue
 
+        # Compute once for this line — reused in standalone-label check and
+        # the is_event_header guard inside the else branch below.
+        _is_evt_hdr = is_event_header_any(line)
+
+        # Standalone final-section label: update offset without closing accumulator
+        if not _is_evt_hdr:
+            ft = detect_final_type(line)
+            if ft:
+                current_final_type = ft
+                continue
+
         # Check if this line loosely matches any of the missing events
         for ev in missing_events:
             if loose_event_match(line, ev, gender):
                 finalize_current()
+                # Extract embedded final type from the matching header
+                ft_in_header = detect_final_type(line)
+                current_final_type = ft_in_header if ft_in_header else "unknown"
                 current_event = ev
                 current_acc = EventAccumulator(ev, source, session, is_prelim, gender)
                 match_lines[ev] = line
@@ -549,18 +663,22 @@ def _second_pass_scan_file(
         else:
             if current_acc:
                 # Stop collecting if a different (first-pass) event header begins
-                if is_event_header_any(line):
+                if _is_evt_hdr:
                     finalize_current()
+                    current_final_type = "unknown"
                     continue
                 place, time_str = parse_place_and_time(line)
                 if place is not None:
-                    current_acc.add(place, time_str)
+                    raw_offset = FINAL_PLACE_OFFSETS.get(current_final_type, 0)
+                    offset = raw_offset if (raw_offset > 0 and place <= 8) else 0
+                    current_acc.add(place + offset, time_str, current_final_type)
 
     finalize_current()
 
     # Build debug rows for each recovered event
     debug_rows: list[dict] = []
     for ev, acc in found.items():
+        sections_label = "/".join(sorted(acc.final_sections_seen)) if acc.final_sections_seen else "unknown"
         debug_rows.append({
             "Bundle_ID":           bundle_id,
             "Conference":          conference,
@@ -571,6 +689,7 @@ def _second_pass_scan_file(
             "Raw_Event_Header":    match_lines.get(ev, ""),
             "Canonical_Event":     ev,
             "Section_Type":        gender,
+            "Final_Section":       sections_label,
             "Places_Found":        len(acc.places),
             "Status":              "recovered",
             "Reason":              f"loose_event_match pass2 session={session}",
@@ -838,9 +957,27 @@ def merge_bundle(
                 place_labels = {1: "1st", 8: "8th", 16: "16th"}
                 miss_str     = ", ".join(place_labels[p] for p in missing)
                 pass_label   = "both passes" if event_name in targeted else "first pass"
+
+                # Distinguish a genuine field-size limitation from a parse gap.
+                # If ONLY 16th is missing and the event never had B-Final data,
+                # the conference likely ran fewer than 16 finalists.
+                if missing == [16] and not best.has_b_final:
+                    issue = (
+                        "fewer_than_16_finalists — no B-Final section detected; "
+                        "event likely had fewer than 16 entrants"
+                    )
+                elif missing == [16] and best.has_b_final:
+                    issue = (
+                        f"Event incomplete after {pass_label} — "
+                        "16th place not found despite B-Final data present"
+                    )
+                else:
+                    issue = (
+                        f"Event incomplete after {pass_label} — "
+                        f"{miss_str} place not found"
+                    )
                 all_flag_rows.append(flag_fn(
-                    gender, event_name, best.source,
-                    f"Event incomplete after {pass_label} — {miss_str} place not found",
+                    gender, event_name, best.source, issue,
                 ))
                 gender_events_missing.append(f"{gender}:{event_name}")
 

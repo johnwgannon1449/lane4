@@ -1,0 +1,47 @@
+This debug result was very helpful. The main remaining event-anchor problem is now clearly identified.
+
+Please make one targeted patch focused on final-section place normalization.
+
+Observed structure in some conference PDFs (especially ACC and Big 12):
+- B Final sections list places 1-8, but these actually represent overall places 9-16
+- A Final sections then list places 1-8, representing actual overall places 1-8
+
+Current problem:
+The parser currently treats both sections literally, so when B Finals are read first, it stores places 1-8 and then discards the A Final rows as duplicates.
+
+This causes:
+- loss of true 1st through 8th anchors
+- inability to recover true 16th anchors correctly
+- missing or wrong event outputs even though the event is present
+
+Please patch the parser to explicitly detect and normalize final-section place meaning.
+
+Target behavior:
+1. If a section is identified as A Final / Championship Final:
+   - place 1-8 should map to actual overall places 1-8
+
+2. If a section is identified as B Final / Consolation Final:
+   - place 1-8 should map to actual overall places 9-16
+
+3. If a section is identified as C Final:
+   - place 1-8 should map to actual overall places 17-24
+
+4. Store both the displayed place and the normalized overall place internally
+
+5. Deduplication should use normalized overall place, not displayed place
+
+6. When generating anchors:
+   - 1st should come from normalized overall place 1
+   - 8th should come from normalized overall place 8
+   - 16th should come from normalized overall place 16
+
+7. If an event only has A Finals and no B Finals, allow 1st and 8th to populate and flag 16th as unavailable rather than treating the whole event as broken
+
+8. If an event has fewer than 16 real entrants in the source, flag as fewer_than_16_finalists instead of generic missing_16th
+
+9. Add debug output showing:
+   - section type (A/B/C final)
+   - displayed place
+   - normalized overall place
+
+10. Do not redesign the whole parser. Just patch final-section interpretation carefully.

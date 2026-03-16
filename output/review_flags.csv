@@ -4,127 +4,67 @@ Source_File,Bundle_ID,Conference,Year,Gender,Event,Issue
 2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,,,Event header variation not normalized: 'Event 553 Women 50 Yard Breaststroke Time Trial'
 2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,,,Event header variation not normalized: 'Event 554 Men 50 Yard Breaststroke Time Trial'
 2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,,,Event header variation not normalized: 'Event 954 Men 50 Yard Breaststroke Time Trial'
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,men,500 Free,Event found on second-pass loose scan (places found: 8)
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,men,50 Free,Event found on second-pass loose scan (places found: 8)
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,men,400 IM,Event found on second-pass loose scan (places found: 14)
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,men,100 Fly,Event found on second-pass loose scan (places found: 14)
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,men,200 Fly,Event found on second-pass loose scan (places found: 17)
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,men,100 Breast,Event found on second-pass loose scan (places found: 18)
+2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,men,400 IM,Event found on second-pass loose scan (places found: 37)
 2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,men,1650 Free,Event found on second-pass loose scan (places found: 11)
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,men,200 Breast,Event found on second-pass loose scan (places found: 8)
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,women,500 Free,Event found on second-pass loose scan (places found: 8)
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,women,50 Free,Event found on second-pass loose scan (places found: 11)
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,women,400 IM,Event found on second-pass loose scan (places found: 15)
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,women,200 Fly,Event found on second-pass loose scan (places found: 13)
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,women,100 Breast,Event found on second-pass loose scan (places found: 11)
+2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,women,200 Fly,Event found on second-pass loose scan (places found: 25)
 2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,,,Team scores not found in any bundle file
 2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,men,50 Free,Only prelim results found — no finals detected
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,men,50 Free,Event incomplete after both passes — 16th place not found
 2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,men,100 Free,Only prelim results found — no finals detected
 2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,men,200 Free,Only prelim results found — no finals detected
 2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,men,500 Free,Only prelim results found — no finals detected
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,men,500 Free,Event incomplete after both passes — 16th place not found
 2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,men,1650 Free,Only prelim results found — no finals detected
 2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,men,1650 Free,"Event incomplete after both passes — 8th, 16th place not found"
 2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,men,100 Back,Only prelim results found — no finals detected
 2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,men,200 Back,Only prelim results found — no finals detected
 2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,men,100 Breast,Only prelim results found — no finals detected
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,men,100 Breast,Event incomplete after both passes — 1st place not found
 2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,men,200 Breast,Only prelim results found — no finals detected
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,men,200 Breast,Event incomplete after both passes — 16th place not found
 2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,men,100 Fly,Only prelim results found — no finals detected
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,men,100 Fly,Event incomplete after both passes — 16th place not found
 2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,men,200 Fly,Only prelim results found — no finals detected
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,men,200 Fly,Event incomplete after both passes — 1st place not found
 2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,men,200 IM,Only prelim results found — no finals detected
 2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,men,400 IM,Only prelim results found — no finals detected
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,men,400 IM,Event incomplete after both passes — 16th place not found
+2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,men,400 IM,Event incomplete after both passes — 8th place not found
 2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,women,50 Free,Only prelim results found — no finals detected
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,women,50 Free,Event incomplete after both passes — 16th place not found
 2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,women,100 Free,Only prelim results found — no finals detected
 2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,women,200 Free,Only prelim results found — no finals detected
 2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,women,500 Free,Only prelim results found — no finals detected
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,women,500 Free,Event incomplete after both passes — 16th place not found
 2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,women,1650 Free,Only prelim results found — no finals detected
 2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,women,100 Back,Only prelim results found — no finals detected
 2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,women,100 Back,"Implausible 1st-place time 48.83 — no better candidate, kept"
 2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,women,200 Back,Only prelim results found — no finals detected
 2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,women,100 Breast,Only prelim results found — no finals detected
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,women,100 Breast,Event incomplete after both passes — 16th place not found
 2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,women,200 Breast,Only prelim results found — no finals detected
 2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,women,200 Breast,"Implausible 1st-place time 2:03.72 — no better candidate, kept"
 2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,women,100 Fly,Only prelim results found — no finals detected
 2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,women,200 Fly,Only prelim results found — no finals detected
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,women,200 Fly,Event incomplete after both passes — 16th place not found
+2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,women,200 Fly,Event incomplete after both passes — 16th place not found despite B-Final data present
 2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,women,200 IM,Only prelim results found — no finals detected
 2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,women,400 IM,Only prelim results found — no finals detected
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,women,400 IM,Event incomplete after both passes — 1st place not found
 Big_12_S_D_Champ_Results_pdf.pdf,big12_unknown,Big 12,unknown,combined,,Combined/unknown file — parsing both sections (combined)
 Big_12_S_D_Champ_Results_pdf.pdf,big12_unknown,Big 12,unknown,,,Event header variation not normalized: 'Event 145 Women 50 Yard Backstroke Time Trial'
 Big_12_S_D_Champ_Results_pdf.pdf,big12_unknown,Big 12,unknown,,,Event header variation not normalized: 'Event 147 Women 50 Yard Butterfly Time Trial'
 Big_12_S_D_Champ_Results_pdf.pdf,big12_unknown,Big 12,unknown,,,Event header variation not normalized: 'Event 148 Men 50 Yard Butterfly Time Trial'
 Big_12_S_D_Champ_Results_pdf.pdf,big12_unknown,Big 12,unknown,,,Event header variation not normalized: 'Event 149 Women 50 Yard Breaststroke Time Trial'
 Big_12_S_D_Champ_Results_pdf.pdf,big12_unknown,Big 12,unknown,,,Event header variation not normalized: 'Event 246 Men 50 Yard Backstroke Time Trial'
-Big_12_S_D_Champ_Results_pdf.pdf,big12_unknown,Big 12,unknown,men,500 Free,Event found on second-pass loose scan (places found: 10)
-Big_12_S_D_Champ_Results_pdf.pdf,big12_unknown,Big 12,unknown,men,400 IM,Event found on second-pass loose scan (places found: 14)
 Big_12_S_D_Champ_Results_pdf.pdf,big12_unknown,Big 12,unknown,men,1650 Free,Event found on second-pass loose scan (places found: 15)
-Big_12_S_D_Champ_Results_pdf.pdf,big12_unknown,Big 12,unknown,women,500 Free,Event found on second-pass loose scan (places found: 11)
-Big_12_S_D_Champ_Results_pdf.pdf,big12_unknown,Big 12,unknown,women,400 IM,Event found on second-pass loose scan (places found: 14)
-Big_12_S_D_Champ_Results_pdf.pdf,big12_unknown,Big 12,unknown,women,1650 Free,Event found on second-pass loose scan (places found: 10)
+Big_12_S_D_Champ_Results_pdf.pdf,big12_unknown,Big 12,unknown,women,1650 Free,Event found on second-pass loose scan (places found: 15)
 Big_12_S_D_Champ_Results_pdf.pdf,big12_unknown,Big 12,unknown,,,Team scores not found in any bundle file
-Big_12_S_D_Champ_Results_pdf.pdf,big12_unknown,Big 12,unknown,men,500 Free,Event incomplete after both passes — 16th place not found
 Big_12_S_D_Champ_Results_pdf.pdf,big12_unknown,Big 12,unknown,men,1650 Free,Event incomplete after both passes — 1st place not found
-Big_12_S_D_Champ_Results_pdf.pdf,big12_unknown,Big 12,unknown,men,400 IM,Event incomplete after both passes — 16th place not found
-Big_12_S_D_Champ_Results_pdf.pdf,big12_unknown,Big 12,unknown,women,500 Free,Event incomplete after both passes — 16th place not found
-Big_12_S_D_Champ_Results_pdf.pdf,big12_unknown,Big 12,unknown,women,1650 Free,Event incomplete after both passes — 16th place not found
-Big_12_S_D_Champ_Results_pdf.pdf,big12_unknown,Big 12,unknown,women,400 IM,Event incomplete after both passes — 16th place not found
+Big_12_S_D_Champ_Results_pdf.pdf,big12_unknown,Big 12,unknown,women,1650 Free,fewer_than_16_finalists — no B-Final section detected; event likely had fewer than 16 entrants
 2026_big_west_friday_final_results_women.pdf,bigwest_2026,Big West,2026,women,,Women-only file — men's anchors skipped; extracting women's events
 2026_big_west_saturday_final_results.pdf,bigwest_2026,Big West,2026,combined,,Combined/unknown file — parsing both sections (combined)
 2026_big_west_thursday_final_results_women.pdf,bigwest_2026,Big West,2026,women,,Women-only file — men's anchors skipped; extracting women's events
 2026_big_west_wednesday_final_results_men.pdf,bigwest_2026,Big West,2026,men,,No men's target events found in PDF
 2026_big_west_wednesday_final_results_women.pdf,bigwest_2026,Big West,2026,women,,Women-only file — men's anchors skipped; extracting women's events
 2026_big_west_wednesday_final_results_women.pdf,bigwest_2026,Big West,2026,women,,No women's target events found in PDF
-2026_big_west_friday_final_results_men.pdf,bigwest_2026,Big West,2026,men,400 IM,Event found on second-pass loose scan (places found: 14)
-2026_big_west_friday_final_results_men.pdf,bigwest_2026,Big West,2026,men,200 Free,Event found on second-pass loose scan (places found: 13)
-2026_big_west_friday_final_results_men.pdf,bigwest_2026,Big West,2026,men,100 Breast,Event found on second-pass loose scan (places found: 11)
-2026_big_west_friday_final_results_women.pdf,bigwest_2026,Big West,2026,women,400 IM,Event found on second-pass loose scan (places found: 14)
-2026_big_west_friday_final_results_women.pdf,bigwest_2026,Big West,2026,women,200 Free,Event found on second-pass loose scan (places found: 13)
-2026_big_west_friday_final_results_women.pdf,bigwest_2026,Big West,2026,women,100 Breast,Event found on second-pass loose scan (places found: 10)
 2026_big_west_saturday_final_results.pdf,bigwest_2026,Big West,2026,men,1650 Free,Event found on second-pass loose scan (places found: 13)
-2026_big_west_saturday_final_results.pdf,bigwest_2026,Big West,2026,men,100 Free,Event found on second-pass loose scan (places found: 10)
 2026_big_west_saturday_final_results.pdf,bigwest_2026,Big West,2026,men,200 Breast,Event found on second-pass loose scan (places found: 15)
-2026_big_west_saturday_final_results.pdf,bigwest_2026,Big West,2026,men,200 Fly,Event found on second-pass loose scan (places found: 8)
-2026_big_west_saturday_final_results.pdf,bigwest_2026,Big West,2026,women,200 Back,Event found on second-pass loose scan (places found: 18)
-2026_big_west_saturday_final_results.pdf,bigwest_2026,Big West,2026,women,100 Free,Event found on second-pass loose scan (places found: 15)
-2026_big_west_saturday_final_results.pdf,bigwest_2026,Big West,2026,women,200 Breast,Event found on second-pass loose scan (places found: 14)
-2026_big_west_saturday_final_results.pdf,bigwest_2026,Big West,2026,women,200 Fly,Event found on second-pass loose scan (places found: 15)
-2026_big_west_thursday_final_results_men.pdf,bigwest_2026,Big West,2026,men,500 Free,Event found on second-pass loose scan (places found: 14)
-2026_big_west_thursday_final_results_men.pdf,bigwest_2026,Big West,2026,men,200 IM,Event found on second-pass loose scan (places found: 14)
-2026_big_west_thursday_final_results_men.pdf,bigwest_2026,Big West,2026,men,50 Free,Event found on second-pass loose scan (places found: 31)
+2026_big_west_thursday_final_results_men.pdf,bigwest_2026,Big West,2026,men,200 IM,Event found on second-pass loose scan (places found: 29)
 2026_big_west_thursday_final_results_women.pdf,bigwest_2026,Big West,2026,women,500 Free,Event found on second-pass loose scan (places found: 14)
-2026_big_west_thursday_final_results_women.pdf,bigwest_2026,Big West,2026,women,200 IM,Event found on second-pass loose scan (places found: 24)
-2026_big_west_thursday_final_results_women.pdf,bigwest_2026,Big West,2026,women,50 Free,Event found on second-pass loose scan (places found: 30)
 "2026_big_west_friday_final_results_men.pdf, 2026_big_west_friday_final_results_women.pdf, 2026_big_west_saturday_final_results.pdf, 2026_big_west_thursday_final_results_men.pdf, 2026_big_west_thursday_final_results_women.pdf, 2026_big_west_wednesday_final_results_men.pdf, 2026_big_west_wednesday_final_results_women.pdf",bigwest_2026,Big West,2026,,,Team scores not found in any bundle file
-2026_big_west_thursday_final_results_men.pdf,bigwest_2026,Big West,2026,men,50 Free,Event incomplete after both passes — 1st place not found
-2026_big_west_saturday_final_results.pdf,bigwest_2026,Big West,2026,men,100 Free,Event incomplete after both passes — 16th place not found
-2026_big_west_friday_final_results_men.pdf,bigwest_2026,Big West,2026,men,200 Free,Event incomplete after both passes — 1st place not found
-2026_big_west_thursday_final_results_men.pdf,bigwest_2026,Big West,2026,men,500 Free,Event incomplete after both passes — 16th place not found
-2026_big_west_saturday_final_results.pdf,bigwest_2026,Big West,2026,men,1650 Free,Event incomplete after both passes — 16th place not found
-2026_big_west_friday_final_results_men.pdf,bigwest_2026,Big West,2026,men,100 Breast,Event incomplete after both passes — 16th place not found
-2026_big_west_saturday_final_results.pdf,bigwest_2026,Big West,2026,men,200 Breast,Event incomplete after both passes — 16th place not found
-2026_big_west_saturday_final_results.pdf,bigwest_2026,Big West,2026,men,200 Fly,Event incomplete after both passes — 16th place not found
-2026_big_west_thursday_final_results_men.pdf,bigwest_2026,Big West,2026,men,200 IM,Event incomplete after both passes — 16th place not found
-2026_big_west_friday_final_results_men.pdf,bigwest_2026,Big West,2026,men,400 IM,Event incomplete after both passes — 1st place not found
-2026_big_west_thursday_final_results_women.pdf,bigwest_2026,Big West,2026,women,50 Free,Event incomplete after both passes — 1st place not found
-2026_big_west_saturday_final_results.pdf,bigwest_2026,Big West,2026,women,100 Free,Event incomplete after both passes — 1st place not found
-2026_big_west_friday_final_results_women.pdf,bigwest_2026,Big West,2026,women,200 Free,Event incomplete after both passes — 1st place not found
-2026_big_west_thursday_final_results_women.pdf,bigwest_2026,Big West,2026,women,500 Free,Event incomplete after both passes — 16th place not found
-2026_big_west_saturday_final_results.pdf,bigwest_2026,Big West,2026,women,200 Back,Event incomplete after both passes — 16th place not found
-2026_big_west_friday_final_results_women.pdf,bigwest_2026,Big West,2026,women,100 Breast,Event incomplete after both passes — 16th place not found
-2026_big_west_saturday_final_results.pdf,bigwest_2026,Big West,2026,women,200 Breast,Event incomplete after both passes — 16th place not found
-2026_big_west_saturday_final_results.pdf,bigwest_2026,Big West,2026,women,200 Fly,Event incomplete after both passes — 1st place not found
-2026_big_west_thursday_final_results_women.pdf,bigwest_2026,Big West,2026,women,200 IM,Event incomplete after both passes — 1st place not found
-2026_big_west_friday_final_results_women.pdf,bigwest_2026,Big West,2026,women,400 IM,Event incomplete after both passes — 1st place not found
+2026_big_west_saturday_final_results.pdf,bigwest_2026,Big West,2026,men,1650 Free,fewer_than_16_finalists — no B-Final section detected; event likely had fewer than 16 entrants
+2026_big_west_saturday_final_results.pdf,bigwest_2026,Big West,2026,men,200 Breast,Event incomplete after both passes — 16th place not found despite B-Final data present
+2026_big_west_thursday_final_results_men.pdf,bigwest_2026,Big West,2026,men,200 IM,Event incomplete after both passes — 16th place not found despite B-Final data present
+2026_big_west_thursday_final_results_women.pdf,bigwest_2026,Big West,2026,women,500 Free,Event incomplete after both passes — 16th place not found despite B-Final data present
 caa 2026 friday results.pdf,caa_2026,CAA,2026,combined,,Combined/unknown file — parsing both sections (combined)
 caa 2026 saturday results.pdf,caa_2026,CAA,2026,combined,,Combined/unknown file — parsing both sections (combined)
 caa 2026 thursday results.pdf,caa_2026,CAA,2026,combined,,Combined/unknown file — parsing both sections (combined)
@@ -132,78 +72,48 @@ caa 2026 wed results.pdf,caa_2026,CAA,2026,combined,,Combined/unknown file — p
 caa 2026 wed results.pdf,caa_2026,CAA,2026,men,,No men's target events found in PDF
 caa 2026 wed results.pdf,caa_2026,CAA,2026,women,,No women's target events found in PDF
 caa 2026 friday results.pdf,caa_2026,CAA,2026,men,100 Fly,Event found on second-pass loose scan (places found: 15)
-caa 2026 friday results.pdf,caa_2026,CAA,2026,men,400 IM,Event found on second-pass loose scan (places found: 9)
-caa 2026 friday results.pdf,caa_2026,CAA,2026,men,200 Free,Event found on second-pass loose scan (places found: 10)
-caa 2026 friday results.pdf,caa_2026,CAA,2026,men,100 Breast,Event found on second-pass loose scan (places found: 13)
-caa 2026 friday results.pdf,caa_2026,CAA,2026,women,400 IM,Event found on second-pass loose scan (places found: 17)
-caa 2026 friday results.pdf,caa_2026,CAA,2026,women,200 Free,Event found on second-pass loose scan (places found: 12)
 caa 2026 saturday results.pdf,caa_2026,CAA,2026,men,1650 Free,Event found on second-pass loose scan (places found: 13)
-caa 2026 saturday results.pdf,caa_2026,CAA,2026,men,100 Free,Event found on second-pass loose scan (places found: 16)
-caa 2026 saturday results.pdf,caa_2026,CAA,2026,men,200 Breast,Event found on second-pass loose scan (places found: 12)
-caa 2026 saturday results.pdf,caa_2026,CAA,2026,women,200 Back,Event found on second-pass loose scan (places found: 27)
-caa 2026 saturday results.pdf,caa_2026,CAA,2026,women,100 Free,Event found on second-pass loose scan (places found: 20)
-caa 2026 saturday results.pdf,caa_2026,CAA,2026,women,200 Breast,Event found on second-pass loose scan (places found: 11)
-caa 2026 saturday results.pdf,caa_2026,CAA,2026,women,200 Fly,Event found on second-pass loose scan (places found: 12)
-caa 2026 thursday results.pdf,caa_2026,CAA,2026,men,500 Free,Event found on second-pass loose scan (places found: 11)
-caa 2026 thursday results.pdf,caa_2026,CAA,2026,men,200 IM,Event found on second-pass loose scan (places found: 13)
-caa 2026 thursday results.pdf,caa_2026,CAA,2026,women,500 Free,Event found on second-pass loose scan (places found: 12)
-caa 2026 thursday results.pdf,caa_2026,CAA,2026,women,200 IM,Event found on second-pass loose scan (places found: 15)
+caa 2026 thursday results.pdf,caa_2026,CAA,2026,men,200 IM,Event found on second-pass loose scan (places found: 15)
 "caa 2026 friday results.pdf, caa 2026 saturday results.pdf, caa 2026 thursday results.pdf, caa 2026 wed results.pdf",caa_2026,CAA,2026,,,Team scores not found in any bundle file
-caa 2026 saturday results.pdf,caa_2026,CAA,2026,men,100 Free,Event incomplete after both passes — 1st place not found
-caa 2026 friday results.pdf,caa_2026,CAA,2026,men,200 Free,Event incomplete after both passes — 16th place not found
-caa 2026 thursday results.pdf,caa_2026,CAA,2026,men,500 Free,Event incomplete after both passes — 16th place not found
 caa 2026 saturday results.pdf,caa_2026,CAA,2026,men,1650 Free,"Event incomplete after both passes — 8th, 16th place not found"
-caa 2026 friday results.pdf,caa_2026,CAA,2026,men,100 Breast,Event incomplete after both passes — 16th place not found
-caa 2026 saturday results.pdf,caa_2026,CAA,2026,men,200 Breast,Event incomplete after both passes — 1st place not found
 caa 2026 friday results.pdf,caa_2026,CAA,2026,men,100 Fly,Event incomplete after both passes — 8th place not found
 caa 2026 saturday results.pdf,caa_2026,CAA,2026,men,200 Fly,"Implausible 1st-place time 4:21.45 — no better candidate, kept"
-caa 2026 thursday results.pdf,caa_2026,CAA,2026,men,200 IM,Event incomplete after both passes — 16th place not found
-caa 2026 friday results.pdf,caa_2026,CAA,2026,men,400 IM,Event incomplete after both passes — 16th place not found
-caa 2026 saturday results.pdf,caa_2026,CAA,2026,women,100 Free,Event incomplete after both passes — 1st place not found
-caa 2026 friday results.pdf,caa_2026,CAA,2026,women,200 Free,Event incomplete after both passes — 16th place not found
-caa 2026 thursday results.pdf,caa_2026,CAA,2026,women,500 Free,Event incomplete after both passes — 16th place not found
-caa 2026 saturday results.pdf,caa_2026,CAA,2026,women,200 Back,Event incomplete after both passes — 1st place not found
-caa 2026 saturday results.pdf,caa_2026,CAA,2026,women,200 Breast,Event incomplete after both passes — 16th place not found
-caa 2026 saturday results.pdf,caa_2026,CAA,2026,women,200 Fly,Event incomplete after both passes — 16th place not found
-caa 2026 thursday results.pdf,caa_2026,CAA,2026,women,200 IM,Event incomplete after both passes — 16th place not found
-caa 2026 friday results.pdf,caa_2026,CAA,2026,women,400 IM,Event incomplete after both passes — 1st place not found
+caa 2026 thursday results.pdf,caa_2026,CAA,2026,men,200 IM,fewer_than_16_finalists — no B-Final section detected; event likely had fewer than 16 entrants
 odac 2026 WOMENS swim_results.pdf,odac_2026,ODAC,2026,women,,Women-only file — men's anchors skipped; extracting women's events
 odac 2026 MENS swim-full-results.pdf,odac_2026,ODAC,2026,men,50 Free,Event found on second-pass loose scan (places found: 37)
-odac 2026 MENS swim-full-results.pdf,odac_2026,ODAC,2026,men,400 IM,Event found on second-pass loose scan (places found: 29)
-odac 2026 MENS swim-full-results.pdf,odac_2026,ODAC,2026,men,100 Fly,Event found on second-pass loose scan (places found: 29)
-odac 2026 MENS swim-full-results.pdf,odac_2026,ODAC,2026,men,100 Breast,Event found on second-pass loose scan (places found: 15)
-odac 2026 MENS swim-full-results.pdf,odac_2026,ODAC,2026,men,100 Back,Event found on second-pass loose scan (places found: 17)
+odac 2026 MENS swim-full-results.pdf,odac_2026,ODAC,2026,men,400 IM,Event found on second-pass loose scan (places found: 25)
+odac 2026 MENS swim-full-results.pdf,odac_2026,ODAC,2026,men,100 Fly,Event found on second-pass loose scan (places found: 28)
+odac 2026 MENS swim-full-results.pdf,odac_2026,ODAC,2026,men,100 Breast,Event found on second-pass loose scan (places found: 23)
+odac 2026 MENS swim-full-results.pdf,odac_2026,ODAC,2026,men,100 Back,Event found on second-pass loose scan (places found: 20)
 odac 2026 MENS swim-full-results.pdf,odac_2026,ODAC,2026,men,1650 Free,Event found on second-pass loose scan (places found: 18)
-odac 2026 MENS swim-full-results.pdf,odac_2026,ODAC,2026,men,200 Back,Event found on second-pass loose scan (places found: 12)
-odac 2026 MENS swim-full-results.pdf,odac_2026,ODAC,2026,men,100 Free,Event found on second-pass loose scan (places found: 15)
+odac 2026 MENS swim-full-results.pdf,odac_2026,ODAC,2026,men,100 Free,Event found on second-pass loose scan (places found: 18)
 odac 2026 WOMENS swim_results.pdf,odac_2026,ODAC,2026,women,400 IM,Event found on second-pass loose scan (places found: 29)
 odac 2026 WOMENS swim_results.pdf,odac_2026,ODAC,2026,women,100 Fly,Event found on second-pass loose scan (places found: 29)
-odac 2026 WOMENS swim_results.pdf,odac_2026,ODAC,2026,women,100 Back,Event found on second-pass loose scan (places found: 29)
+odac 2026 WOMENS swim_results.pdf,odac_2026,ODAC,2026,women,100 Back,Event found on second-pass loose scan (places found: 28)
 odac 2026 WOMENS swim_results.pdf,odac_2026,ODAC,2026,women,1650 Free,Event found on second-pass loose scan (places found: 28)
-odac 2026 WOMENS swim_results.pdf,odac_2026,ODAC,2026,women,200 Back,Event found on second-pass loose scan (places found: 20)
-odac 2026 WOMENS swim_results.pdf,odac_2026,ODAC,2026,women,200 Breast,Event found on second-pass loose scan (places found: 20)
+odac 2026 WOMENS swim_results.pdf,odac_2026,ODAC,2026,women,200 Breast,Event found on second-pass loose scan (places found: 29)
+odac 2026 WOMENS swim_results.pdf,odac_2026,ODAC,2026,women,200 Fly,Event found on second-pass loose scan (places found: 10)
 "odac 2026 MENS swim-full-results.pdf, odac 2026 WOMENS swim_results.pdf",odac_2026,ODAC,2026,,,Team scores not found in any bundle file
 odac 2026 MENS swim-full-results.pdf,odac_2026,ODAC,2026,men,50 Free,Only prelim results found — no finals detected
 odac 2026 MENS swim-full-results.pdf,odac_2026,ODAC,2026,men,50 Free,Event incomplete after both passes — 8th place not found
 odac 2026 MENS swim-full-results.pdf,odac_2026,ODAC,2026,men,100 Free,Only prelim results found — no finals detected
-odac 2026 MENS swim-full-results.pdf,odac_2026,ODAC,2026,men,100 Free,Event incomplete after both passes — 16th place not found
+odac 2026 MENS swim-full-results.pdf,odac_2026,ODAC,2026,men,100 Free,Event incomplete after both passes — 16th place not found despite B-Final data present
 odac 2026 MENS swim-full-results.pdf,odac_2026,ODAC,2026,men,200 Free,Only prelim results found — no finals detected
 odac 2026 MENS swim-full-results.pdf,odac_2026,ODAC,2026,men,500 Free,Only prelim results found — no finals detected
 odac 2026 MENS swim-full-results.pdf,odac_2026,ODAC,2026,men,1650 Free,Only prelim results found — no finals detected
-odac 2026 MENS swim-full-results.pdf,odac_2026,ODAC,2026,men,1650 Free,Event incomplete after both passes — 16th place not found
+odac 2026 MENS swim-full-results.pdf,odac_2026,ODAC,2026,men,1650 Free,fewer_than_16_finalists — no B-Final section detected; event likely had fewer than 16 entrants
 odac 2026 MENS swim-full-results.pdf,odac_2026,ODAC,2026,men,100 Back,Only prelim results found — no finals detected
 odac 2026 MENS swim-full-results.pdf,odac_2026,ODAC,2026,men,100 Back,Event incomplete after both passes — 1st place not found
 odac 2026 MENS swim-full-results.pdf,odac_2026,ODAC,2026,men,200 Back,Only prelim results found — no finals detected
-odac 2026 MENS swim-full-results.pdf,odac_2026,ODAC,2026,men,200 Back,Event incomplete after both passes — 16th place not found
 odac 2026 MENS swim-full-results.pdf,odac_2026,ODAC,2026,men,100 Breast,Only prelim results found — no finals detected
-odac 2026 MENS swim-full-results.pdf,odac_2026,ODAC,2026,men,100 Breast,"Event incomplete after both passes — 1st, 8th place not found"
+odac 2026 MENS swim-full-results.pdf,odac_2026,ODAC,2026,men,100 Breast,Event incomplete after both passes — 8th place not found
 odac 2026 MENS swim-full-results.pdf,odac_2026,ODAC,2026,men,200 Breast,Only prelim results found — no finals detected
 odac 2026 MENS swim-full-results.pdf,odac_2026,ODAC,2026,men,100 Fly,Only prelim results found — no finals detected
-odac 2026 MENS swim-full-results.pdf,odac_2026,ODAC,2026,men,100 Fly,Event incomplete after both passes — 16th place not found
+odac 2026 MENS swim-full-results.pdf,odac_2026,ODAC,2026,men,100 Fly,Event incomplete after both passes — 8th place not found
 odac 2026 MENS swim-full-results.pdf,odac_2026,ODAC,2026,men,200 Fly,Only prelim results found — no finals detected
 odac 2026 MENS swim-full-results.pdf,odac_2026,ODAC,2026,men,200 IM,Only prelim results found — no finals detected
 odac 2026 MENS swim-full-results.pdf,odac_2026,ODAC,2026,men,400 IM,Only prelim results found — no finals detected
-odac 2026 MENS swim-full-results.pdf,odac_2026,ODAC,2026,men,400 IM,Event incomplete after both passes — 16th place not found
+odac 2026 MENS swim-full-results.pdf,odac_2026,ODAC,2026,men,400 IM,Event incomplete after both passes — 8th place not found
 odac 2026 WOMENS swim_results.pdf,odac_2026,ODAC,2026,women,50 Free,Only prelim results found — no finals detected
 odac 2026 WOMENS swim_results.pdf,odac_2026,ODAC,2026,women,50 Free,"Implausible 1st-place time 3:52.43 — no better candidate, kept"
 odac 2026 WOMENS swim_results.pdf,odac_2026,ODAC,2026,women,100 Free,Only prelim results found — no finals detected
@@ -215,14 +125,13 @@ odac 2026 WOMENS swim_results.pdf,odac_2026,ODAC,2026,women,1650 Free,Event inco
 odac 2026 WOMENS swim_results.pdf,odac_2026,ODAC,2026,women,100 Back,Only prelim results found — no finals detected
 odac 2026 WOMENS swim_results.pdf,odac_2026,ODAC,2026,women,100 Back,Event incomplete after both passes — 1st place not found
 odac 2026 WOMENS swim_results.pdf,odac_2026,ODAC,2026,women,200 Back,Only prelim results found — no finals detected
-odac 2026 WOMENS swim_results.pdf,odac_2026,ODAC,2026,women,200 Back,Event incomplete after both passes — 16th place not found
 odac 2026 WOMENS swim_results.pdf,odac_2026,ODAC,2026,women,100 Breast,Only prelim results found — no finals detected
 odac 2026 WOMENS swim_results.pdf,odac_2026,ODAC,2026,women,200 Breast,Only prelim results found — no finals detected
 odac 2026 WOMENS swim_results.pdf,odac_2026,ODAC,2026,women,200 Breast,Event incomplete after both passes — 1st place not found
 odac 2026 WOMENS swim_results.pdf,odac_2026,ODAC,2026,women,100 Fly,Only prelim results found — no finals detected
-odac 2026 WOMENS swim_results.pdf,odac_2026,ODAC,2026,women,100 Fly,Event incomplete after both passes — 16th place not found
+odac 2026 WOMENS swim_results.pdf,odac_2026,ODAC,2026,women,100 Fly,Event incomplete after both passes — 8th place not found
 odac 2026 WOMENS swim_results.pdf,odac_2026,ODAC,2026,women,200 Fly,Only prelim results found — no finals detected
-odac 2026 WOMENS swim_results.pdf,odac_2026,ODAC,2026,women,200 Fly,"Implausible 1st-place time 3:31.37 — no better candidate, kept"
+odac 2026 WOMENS swim_results.pdf,odac_2026,ODAC,2026,women,200 Fly,fewer_than_16_finalists — no B-Final section detected; event likely had fewer than 16 entrants
 odac 2026 WOMENS swim_results.pdf,odac_2026,ODAC,2026,women,200 IM,Only prelim results found — no finals detected
 odac 2026 WOMENS swim_results.pdf,odac_2026,ODAC,2026,women,400 IM,Only prelim results found — no finals detected
-odac 2026 WOMENS swim_results.pdf,odac_2026,ODAC,2026,women,400 IM,Event incomplete after both passes — 16th place not found
+odac 2026 WOMENS swim_results.pdf,odac_2026,ODAC,2026,women,400 IM,Event incomplete after both passes — 8th place not found
