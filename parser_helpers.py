@@ -745,70 +745,293 @@ def parse_place_and_time(line: str) -> tuple[int | None, str | None]:
     return None, None
 
 
+# ── Loose event matching for second-pass recovery ─────────────────────────────
+
+# Maps canonical event → (stroke_key, distance_string)
+_CANONICAL_TO_STROKE_DIST: dict[str, tuple[str, str]] = {
+    "50 Free":    ("free",   "50"),
+    "100 Free":   ("free",   "100"),
+    "200 Free":   ("free",   "200"),
+    "500 Free":   ("free",   "500"),
+    "1000 Free":  ("free",   "1000"),
+    "1650 Free":  ("free",   "1650"),
+    "100 Back":   ("back",   "100"),
+    "200 Back":   ("back",   "200"),
+    "100 Breast": ("breast", "100"),
+    "200 Breast": ("breast", "200"),
+    "100 Fly":    ("fly",    "100"),
+    "200 Fly":    ("fly",    "200"),
+    "200 IM":     ("im",     "200"),
+    "400 IM":     ("im",     "400"),
+}
+
+# Per-stroke keyword patterns used in the loose scan
+_LOOSE_STROKE_RE: dict[str, re.Pattern] = {
+    "free":   re.compile(r"freestyle|(?<!\w)free(?!\w)", re.IGNORECASE),
+    "back":   re.compile(r"backstroke|(?<!\w)back(?!\w)", re.IGNORECASE),
+    "breast": re.compile(r"breaststroke|(?<!\w)breast(?!\w)", re.IGNORECASE),
+    "fly":    re.compile(r"butterfly|(?<!\w)fly(?!\w)", re.IGNORECASE),
+    "im":     re.compile(r"individual\s+medley|medley(?!\s+relay)|\bim\b", re.IGNORECASE),
+}
+
+
+def loose_event_match(line: str, canonical: str, gender: str = "both") -> bool:
+    """
+    Loosely match a line against a specific canonical event name.
+
+    More permissive than is_event_header_any:
+      - Does not require a specific prefix structure (Event N, Men's, etc.)
+      - Only needs the correct distance AND stroke keyword on the line
+      - Still rejects result rows, relays, and diving
+
+    gender: 'men'   → reject lines with explicit women's label
+            'women' → reject lines with explicit men's (but not women's) label
+            'both'  → accept any
+    """
+    stripped = line.strip()
+    if not stripped:
+        return False
+
+    lower = stripped.lower()
+
+    # Hard rejects
+    if _RELAY_KEYWORDS.search(lower) or _DIVING_KEYWORDS.search(lower):
+        return False
+
+    # Reject result rows: small leading place number + a time
+    m = re.match(r"^(\d{1,2})\b", stripped)
+    if m and int(m.group(1)) <= 64 and re.search(_TIME_PAT, lower):
+        return False
+
+    # Gender filter
+    has_women_label = bool(re.search(r"\bwomens?\b|\bwomen'?s\b", lower))
+    has_men_label   = bool(re.search(r"\bmens?\b|\bmen'?s\b", lower)) and not has_women_label
+
+    if gender == "men" and has_women_label:
+        return False
+    if gender == "women" and has_men_label and not has_women_label:
+        return False
+
+    # Must contain the canonical distance as a word boundary
+    stroke_key, dist = _CANONICAL_TO_STROKE_DIST[canonical]
+    if not re.search(r"(?<!\d)" + re.escape(dist) + r"(?!\d)", lower):
+        return False
+
+    # Must contain the stroke keyword
+    if not _LOOSE_STROKE_RE[stroke_key].search(lower):
+        return False
+
+    return True
+
+
 # ── Team score parsing ────────────────────────────────────────────────────────
 
+# Broad header regex — catches many formats seen in real championship PDFs
 _TEAM_SCORE_HEADER_RE = re.compile(
-    r"(?:team|men'?s?|women'?s?)\s+(?:final\s+)?(?:team\s+)?(?:scores?|standings?|results?)",
+    r"""
+    (?:
+        \bteam\s+(?:final\s+)?(?:scores?|standings?|rankings?|results?|points?)\b
+        | \bfinal\s+(?:team\s+)?(?:scores?|standings?|rankings?|results?|points?)\b
+        | \b(?:men'?s?|women'?s?)\s*[-–]?\s*(?:team\s+)?(?:final\s+)?
+          (?:scores?|standings?|rankings?|results?|points?)\b
+        | \boverall\s+(?:team\s+)?(?:scores?|standings?|rankings?)\b
+    )
+    """,
+    re.IGNORECASE | re.VERBOSE,
+)
+
+# Header/column label lines to skip inside a standings block
+_TEAM_SCORE_SKIP_RE = re.compile(
+    r"^\s*(?:rank|place|pos|#|team|school|points?|score|pts)\s*$",
     re.IGNORECASE,
 )
 
+# Words that are definitely NOT team names
+_TEAM_NAME_SKIP_WORDS = frozenset([
+    "team", "place", "score", "school", "rank", "points", "pts",
+    "total", "women", "mens", "women's", "men's",
+    "conference", "championship", "standings", "final",
+])
+
+
+def _is_valid_team_name(name: str) -> bool:
+    """Return True if `name` looks like a real team/school name."""
+    if not name or len(name) < 3 or len(name) > 60:
+        return False
+    if name.lower() in _TEAM_NAME_SKIP_WORDS:
+        return False
+    if any(kw in name.lower() for kw in _TEAM_NAME_SKIP_WORDS):
+        return False
+    # Must start with a letter
+    if not re.match(r"[A-Za-z]", name):
+        return False
+    return True
+
+
+def _parse_score_line(stripped: str) -> tuple[str | None, str | None]:
+    """
+    Attempt to extract (team_name, score) from a standings line.
+
+    Tries multiple formats:
+      1. "1  Michigan            1234.5"   (rank + name + score)
+      2. "Michigan               987.0"    (name + score)
+      3. "1. Michigan  1234"              (rank with punctuation)
+      4. Tab/multi-space delimited
+
+    Returns (None, None) if line doesn't look like a score row.
+    """
+    if not stripped or len(stripped) < 5:
+        return None, None
+
+    # Pattern A: optional rank (1-3 digits + separator) then name then score
+    m = re.match(
+        r"^(?:\d{1,3}\s*[.):\-]?\s+)?(.+?)\s{2,}(\d{1,5}(?:\.\d{1,2})?)\s*$",
+        stripped,
+    )
+    if m:
+        name  = m.group(1).strip()
+        score = m.group(2).strip()
+        # Strip leading rank from name if still present
+        name = re.sub(r"^\d{1,3}\s*[.):\-]?\s*", "", name).strip()
+        if _is_valid_team_name(name):
+            try:
+                s = float(score)
+                if s > 0:
+                    return name, score
+            except ValueError:
+                pass
+
+    # Pattern B: tab-delimited
+    parts = re.split(r"\t", stripped)
+    if len(parts) >= 2:
+        name_part  = re.sub(r"^\d{1,3}\s*[.):\-]?\s*", "", parts[0]).strip()
+        score_part = parts[-1].strip()
+        m_score = re.fullmatch(r"\d{1,5}(?:\.\d{1,2})?", score_part)
+        if m_score and _is_valid_team_name(name_part):
+            try:
+                if float(score_part) > 0:
+                    return name_part, score_part
+            except ValueError:
+                pass
+
+    # Pattern C: single space between name and integer score (tighter)
+    m = re.match(
+        r"^(?:\d{1,3}\s+)?([A-Za-z][A-Za-z\s,.'&\-()+]{2,50}?)\s+(\d{2,5}(?:\.\d{1,2})?)\s*$",
+        stripped,
+    )
+    if m:
+        name  = m.group(1).strip()
+        score = m.group(2).strip()
+        if _is_valid_team_name(name):
+            try:
+                s = float(score)
+                if s > 0:
+                    return name, score
+            except ValueError:
+                pass
+
+    return None, None
+
+
+def _detect_score_section_gender(header_line: str, default: str) -> str:
+    """Infer gender from a team score section header line."""
+    lower = header_line.lower()
+    if re.search(r"\bwomen'?s?\b", lower):
+        return "women"
+    if re.search(r"\bmen'?s?\b", lower):
+        return "men"
+    return default
+
 
 def parse_team_scores(
-    pages: list[str], conference: str, source_file: str, gender: str = "men"
+    pages: list[str],
+    conference: str,
+    source_file: str,
+    gender: str = "men",
+    reverse_pages: bool = False,
 ) -> list[dict]:
     """
     Scan pages for a team standings block matching `gender`.
+
+    Args:
+        pages:        List of page text strings.
+        conference:   Conference name for output rows.
+        source_file:  Filename for output rows.
+        gender:       'men' or 'women' — which block to extract.
+        reverse_pages: If True, scan from the last page backward (end-of-meet strategy).
+
     Returns list of dicts: {Conference, Team, Team_Score, Source_File, Gender}
     """
-    results = []
+    results: list[dict] = []
     in_team_section = False
     current_section_gender = "unknown"
+    consecutive_misses = 0   # stop collecting after N non-score lines in a row
+    MAX_MISSES = 12
 
-    for page_text in pages:
-        for line in page_text.splitlines():
+    scan_pages = list(reversed(pages)) if reverse_pages else pages
+
+    for page_text in scan_pages:
+        lines = page_text.splitlines()
+        if reverse_pages:
+            lines = list(reversed(lines))
+
+        for line in lines:
             stripped = line.strip()
             if not stripped:
+                if in_team_section:
+                    consecutive_misses += 1
                 continue
 
+            # Detect a team score section header
             if _TEAM_SCORE_HEADER_RE.search(stripped):
                 in_team_section = True
-                if re.search(r"women'?s?", stripped, re.IGNORECASE):
-                    current_section_gender = "women"
-                elif re.search(r"\bmen'?s?\b", stripped, re.IGNORECASE):
-                    current_section_gender = "men"
-                else:
-                    current_section_gender = gender
+                consecutive_misses = 0
+                current_section_gender = _detect_score_section_gender(stripped, gender)
                 continue
+
+            # In-block gender switches
+            if in_team_section:
+                if re.search(r"\bwomen'?s?\s*(team|final|standing|score|rank)", stripped, re.IGNORECASE):
+                    current_section_gender = "women"
+                    consecutive_misses = 0
+                    continue
+                if re.search(r"\bmen'?s?\s*(team|final|standing|score|rank)", stripped, re.IGNORECASE):
+                    current_section_gender = "men"
+                    consecutive_misses = 0
+                    continue
 
             if not in_team_section:
                 continue
 
-            # Section switch inside standings block
-            if re.search(r"women'?s?\s+(team|final|standing)", stripped, re.IGNORECASE):
-                current_section_gender = "women"
-                continue
-            if re.search(r"\bmen'?s?\s+(team|final|standing)", stripped, re.IGNORECASE):
-                current_section_gender = "men"
+            # Skip column headers inside the block
+            if _TEAM_SCORE_SKIP_RE.match(stripped):
                 continue
 
-            if current_section_gender != gender:
+            # Stop collecting if we've drifted too far from the last score row
+            if consecutive_misses >= MAX_MISSES:
+                in_team_section = False
+                consecutive_misses = 0
                 continue
 
-            m = re.match(
-                r"(?:\d+\s+)?([A-Za-z][\w\s,.'&\-]{2,40?}?)\s+(\d+(?:\.\d+)?)\s*$",
-                stripped,
-            )
-            if m:
-                team_name = m.group(1).strip()
-                score     = m.group(2).strip()
-                if any(kw in team_name.lower() for kw in ["team", "place", "score", "school"]):
-                    continue
+            if current_section_gender != gender and current_section_gender != "unknown":
+                consecutive_misses += 1
+                continue
+
+            name, score = _parse_score_line(stripped)
+            if name and score:
                 results.append({
                     "Conference":  conference,
-                    "Team":        team_name,
+                    "Team":        name,
                     "Team_Score":  score,
                     "Source_File": source_file,
                     "Gender":      gender,
                 })
+                consecutive_misses = 0
+            else:
+                consecutive_misses += 1
+
+        # If we found results scanning this page and are in reverse mode, stop
+        if reverse_pages and results:
+            break
 
     return results

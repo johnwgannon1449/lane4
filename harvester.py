@@ -34,6 +34,7 @@ from parser_helpers import (
     is_time_plausible,
     load_conference_map,
     looks_like_psych_sheet,
+    loose_event_match,
     normalize_event_name_any,
     parse_filename_metadata,
     parse_place_and_time,
@@ -68,13 +69,14 @@ DEBUG_REPORT_HEADER = [
     "Bundle_ID", "Conference", "Source_File", "File_Gender_Type",
     "Men_Section_Found", "Women_Section_Found",
     "Raw_Event_Header", "Canonical_Event", "Section_Type",
-    "Places_Found", "Status", "Reason",
+    "Places_Found", "Status", "Reason", "Pass",
 ]
 
 DEBUG_SUMMARY_HEADER = [
     "Bundle_ID", "Conference", "Files_In_Bundle", "Detected_Gender",
     "Events_Detected", "Events_Mapped", "Events_Output", "Events_Missing",
-    "Missing_Event_List", "Team_Scores_Found", "Notes",
+    "Events_Recovered_Pass2", "Missing_Event_List",
+    "Team_Scores_Found", "Team_Score_Strategy", "Notes",
 ]
 
 ANCHOR_PLACES = [1, 8, 16]
@@ -197,20 +199,22 @@ def parse_pdf_raw(
         places: int,
         status: str,
         reason: str,
+        pass_num: str = "first",
     ) -> dict:
         return {
-            "Bundle_ID":          bundle_id,
-            "Conference":         conference,
-            "Source_File":        source,
-            "File_Gender_Type":   file_gender_type,
-            "Men_Section_Found":  men_found,
+            "Bundle_ID":           bundle_id,
+            "Conference":          conference,
+            "Source_File":         source,
+            "File_Gender_Type":    file_gender_type,
+            "Men_Section_Found":   men_found,
             "Women_Section_Found": women_found,
-            "Raw_Event_Header":   raw_header,
-            "Canonical_Event":    canonical or "",
-            "Section_Type":       section,
-            "Places_Found":       places,
-            "Status":             status,
-            "Reason":             reason,
+            "Raw_Event_Header":    raw_header,
+            "Canonical_Event":     canonical or "",
+            "Section_Type":        section,
+            "Places_Found":        places,
+            "Status":              status,
+            "Reason":              reason,
+            "Pass":                pass_num,
         }
 
     # ── Extract pages ─────────────────────────────────────────────────────────
@@ -464,12 +468,128 @@ def _pick_best_acc(
     return best
 
 
+# ── Second-pass event recovery helpers ───────────────────────────────────────
+
+def _sort_paths_last_day_first(paths: list[tuple]) -> list[tuple]:
+    """
+    Sort (path, meta) pairs so the last day's file comes first.
+    Uses day number in meta if present; falls back to reverse filename order.
+    """
+    def day_sort_key(path_meta):
+        path, meta = path_meta
+        day = meta.get("day") or ""
+        m = re.search(r"(\d+)", str(day))
+        if m:
+            return -int(m.group(1))
+        return path.name[::-1]  # reverse filename as tiebreaker
+
+    return sorted(paths, key=day_sort_key)
+
+
+def _second_pass_scan_file(
+    pages: list[str],
+    missing_events: list[str],
+    gender: str,
+    source: str,
+    session: str,
+    is_prelim: bool,
+    bundle_id: str,
+    conference: str,
+    year: str,
+) -> tuple[dict[str, EventAccumulator], list[dict]]:
+    """
+    Loose-scan one PDF's pages for ALL missing events in a single pass.
+
+    Reads pages once and collects result rows for whichever target events appear.
+    Returns ({event_name: EventAccumulator}, [debug_rows]).
+    Only events with at least one result row are included in the output dict.
+    """
+    all_lines: list[str] = []
+    for page in pages:
+        all_lines.extend(page.splitlines())
+        all_lines.append("<<<PAGE_BREAK>>>")
+
+    # State per missing event: keep the best accumulator found so far
+    found: dict[str, EventAccumulator] = {}
+    match_lines: dict[str, str] = {}
+
+    current_event: str | None = None    # which missing event we are collecting for
+    current_acc: EventAccumulator | None = None
+
+    def finalize_current():
+        nonlocal current_event, current_acc
+        if current_event and current_acc and current_acc.places:
+            prev = found.get(current_event)
+            if prev is None or current_acc.completeness() > prev.completeness():
+                found[current_event] = current_acc
+        current_event = None
+        current_acc = None
+
+    for raw_line in all_lines:
+        line = raw_line.strip()
+
+        if line == "<<<PAGE_BREAK>>>":
+            if current_acc and not current_acc.places:
+                # fruitless section — abandon and try again on next page
+                current_event = None
+                current_acc = None
+            continue
+
+        if not line:
+            continue
+
+        # Check if this line loosely matches any of the missing events
+        for ev in missing_events:
+            if loose_event_match(line, ev, gender):
+                finalize_current()
+                current_event = ev
+                current_acc = EventAccumulator(ev, source, session, is_prelim, gender)
+                match_lines[ev] = line
+                break
+        else:
+            if current_acc:
+                # Stop collecting if a different (first-pass) event header begins
+                if is_event_header_any(line):
+                    finalize_current()
+                    continue
+                place, time_str = parse_place_and_time(line)
+                if place is not None:
+                    current_acc.add(place, time_str)
+
+    finalize_current()
+
+    # Build debug rows for each recovered event
+    debug_rows: list[dict] = []
+    for ev, acc in found.items():
+        debug_rows.append({
+            "Bundle_ID":           bundle_id,
+            "Conference":          conference,
+            "Source_File":         source,
+            "File_Gender_Type":    "second_pass",
+            "Men_Section_Found":   gender == "men",
+            "Women_Section_Found": gender == "women",
+            "Raw_Event_Header":    match_lines.get(ev, ""),
+            "Canonical_Event":     ev,
+            "Section_Type":        gender,
+            "Places_Found":        len(acc.places),
+            "Status":              "recovered",
+            "Reason":              f"loose_event_match pass2 session={session}",
+            "Pass":                "second",
+        })
+
+    return found, debug_rows
+
+
 def merge_bundle(
     bundle: dict,
     file_results: list[tuple],
 ) -> tuple[list[dict], list[dict], list[dict], list[dict], dict]:
     """
     Merge raw results from all files in a bundle.
+
+    Phase 1: collect first-pass accumulators from parse_pdf_raw results.
+    Phase 2: for events still missing, re-scan bundle PDFs with loose matching.
+    Phase 3: extract team scores, prioritising the last-day file.
 
     Returns (event_rows, team_rows, flag_rows, debug_rows, summary_dict).
     """
@@ -488,13 +608,12 @@ def merge_bundle(
             "Issue":       issue,
         }
 
-    # Collect per-gender accumulators
+    # ── Phase 1: collect first-pass accumulators ──────────────────────────────
     gender_accs: dict[str, dict[str, list[EventAccumulator]]] = {
         "men":   {},
         "women": {},
     }
-    all_team_rows: list[dict] = []
-    all_flag_rows: list[dict] = []
+    all_flag_rows:  list[dict] = []
     all_debug_rows: list[dict] = []
     file_gender_types: list[str] = []
 
@@ -502,47 +621,180 @@ def merge_bundle(
         all_flag_rows.extend(fls)
         all_debug_rows.extend(drs)
         file_gender_types.append(fg_type)
-        for t in tms:
-            all_team_rows.append({
-                **t,
-                "Year":      year,
-                "Bundle_ID": bundle_id,
-            })
         for name, acc in men_evs.items():
             gender_accs["men"].setdefault(name, []).append(acc)
         for name, acc in women_evs.items():
             gender_accs["women"].setdefault(name, []).append(acc)
 
-    # Deduplicate team rows
-    seen_teams: set[str] = set()
-    unique_teams: list[dict] = []
-    for row in all_team_rows:
-        key = f"{row['Team'].lower()}|{row.get('Gender','')}"
-        if key not in seen_teams:
-            seen_teams.add(key)
-            unique_teams.append(row)
-
-    if not unique_teams:
-        sources = ", ".join(str(p.name) for p, _ in bundle["paths"])
-        all_flag_rows.append(flag_fn("", "", sources, "Team scores not found in any bundle file"))
-
-    # Per-event, per-gender merging
-    event_rows: list[dict] = []
-    events_found:   list[str] = []
-    events_missing: list[str] = []
-    events_detected: set[str] = set()
-
     # Track which genders have data in this bundle
-    bundle_genders = set()
+    bundle_genders: set[str] = set()
     for g in ("men", "women"):
         if gender_accs[g]:
             bundle_genders.add(g)
     if not bundle_genders:
-        bundle_genders = {"men"}  # default fallback for reporting
+        bundle_genders = {"men"}
+
+    # ── Phase 2: second-pass targeted recovery ────────────────────────────────
+    # Identify events that are still missing or have no complete anchor
+    missing_by_gender: dict[str, list[str]] = {}
+    for gender in sorted(bundle_genders):
+        missing_for_gender = []
+        for event_name in TARGET_EVENTS:
+            accs = gender_accs[gender].get(event_name, [])
+            if not accs:
+                missing_for_gender.append(event_name)
+            else:
+                best = max(accs, key=lambda a: (a.completeness(), len(a.places)))
+                if not best.anchor():
+                    missing_for_gender.append(event_name)
+        if missing_for_gender:
+            missing_by_gender[gender] = missing_for_gender
+
+    pass2_recovered: list[str] = []  # "gender:event" strings
+
+    # Build a pages cache shared between Phase 2 and Phase 3 to avoid re-reading PDFs
+    _pages_cache: dict[str, list[str]] = {}
+
+    def _get_pages(path) -> list[str] | None:
+        key = str(path)
+        if key not in _pages_cache:
+            try:
+                _pages_cache[key] = extract_pages(key)
+            except Exception:
+                _pages_cache[key] = []
+        return _pages_cache[key] or None
+
+    if missing_by_gender:
+        for path, meta in bundle["paths"]:
+            pages = _get_pages(path)
+            if pages is None:
+                continue
+
+            fg_type = classify_file_gender(meta, pages)
+            session  = (
+                "prelims" if meta["is_prelim"] else
+                "finals"  if meta["is_final"]  else
+                detect_session_type_from_text(pages)
+            )
+
+            for gender, missing_list in missing_by_gender.items():
+                if fg_type == "men"   and gender == "women":
+                    continue
+                if fg_type == "women" and gender == "men":
+                    continue
+
+                # Filter out events that are already complete after earlier pass2 files
+                still_needed = [
+                    ev for ev in missing_list
+                    if not any(
+                        a.anchor()
+                        for a in gender_accs[gender].get(ev, [])
+                    )
+                ]
+                if not still_needed:
+                    continue
+
+                # One PDF read → scan for ALL still-needed events simultaneously
+                found_map, drs = _second_pass_scan_file(
+                    pages, still_needed, gender,
+                    path.name, session, meta["is_prelim"],
+                    bundle_id, conference, year,
+                )
+                all_debug_rows.extend(drs)
+
+                for event_name, acc in found_map.items():
+                    gender_accs[gender].setdefault(event_name, []).append(acc)
+                    all_flag_rows.append(flag_fn(
+                        gender, event_name, path.name,
+                        f"Event found on second-pass loose scan "
+                        f"(places found: {len(acc.places)})",
+                    ))
+
+    # ── Phase 3: team score extraction (last-day-first strategy) ─────────────
+    all_team_rows: list[dict] = []
+    team_score_strategy = "none"
+    paths_sorted = _sort_paths_last_day_first(bundle["paths"])
+
+    # Try last-day file's final pages first — reuse pages cache
+    for path, meta in paths_sorted:
+        pages = _get_pages(path)
+        if pages is None:
+            continue
+
+        fg_type = classify_file_gender(meta, pages)
+        found_in_this_file = False
+
+        for gender in sorted(bundle_genders):
+            if fg_type == "men"   and gender == "women":
+                continue
+            if fg_type == "women" and gender == "men":
+                continue
+
+            # Try last 5 pages first
+            end_rows = parse_team_scores(
+                pages[-5:], conference, path.name, gender, reverse_pages=True
+            )
+            if end_rows:
+                all_team_rows.extend(end_rows)
+                found_in_this_file = True
+                team_score_strategy = f"end_pages:{path.name}"
+                all_flag_rows.append(flag_fn(
+                    gender, "", path.name,
+                    f"Team scores found on final pages of {path.name}",
+                ))
+                continue
+
+            # Fall back to full file scan
+            full_rows = parse_team_scores(
+                pages, conference, path.name, gender
+            )
+            if full_rows:
+                all_team_rows.extend(full_rows)
+                found_in_this_file = True
+                team_score_strategy = f"full_scan:{path.name}"
+                all_flag_rows.append(flag_fn(
+                    gender, "", path.name,
+                    f"Team scores found via full scan of {path.name}",
+                ))
+
+        if found_in_this_file:
+            all_flag_rows.append(flag_fn(
+                "", "", path.name,
+                f"Team scores searched on last-day file: {path.name}",
+            ))
+            break  # stop once scores found in any file
+
+    # If still nothing found, note it
+    if not all_team_rows:
+        sources = ", ".join(str(p.name) for p, _ in bundle["paths"])
+        all_flag_rows.append(flag_fn("", "", sources, "Team scores not found in any bundle file"))
+        team_score_strategy = "not_found"
+
+    # Deduplicate team rows
+    seen_teams: set[str] = set()
+    unique_teams: list[dict] = []
+    for row in all_team_rows:
+        row_with_meta = {**row, "Year": year, "Bundle_ID": bundle_id}
+        key = f"{row['Team'].lower()}|{row.get('Gender','')}"
+        if key not in seen_teams:
+            seen_teams.add(key)
+            unique_teams.append(row_with_meta)
+
+    # ── Final merge: pick best accumulator per event per gender ───────────────
+    # pass2_targeted: events that lacked a complete anchor after first pass
+    pass2_targeted: dict[str, set[str]] = {
+        g: set(evs) for g, evs in missing_by_gender.items()
+    }
+
+    event_rows:      list[dict] = []
+    events_found:    list[str]  = []
+    events_missing:  list[str]  = []
+    events_detected: set[str]   = set()
 
     for gender in sorted(bundle_genders):
         gender_events_found   = []
         gender_events_missing = []
+        targeted = pass2_targeted.get(gender, set())
 
         for event_name in TARGET_EVENTS:
             accs = gender_accs[gender].get(event_name)
@@ -559,6 +811,13 @@ def merge_bundle(
             anchor = best.anchor()
             if anchor:
                 gender_events_found.append(event_name)
+                # Recovered = was targeted for pass2 AND now has a complete anchor
+                if event_name in targeted:
+                    pass2_recovered.append(f"{gender}:{event_name}")
+                    all_flag_rows.append(flag_fn(
+                        gender, event_name, best.source,
+                        f"Event recovered on second-pass (complete anchor now available)",
+                    ))
                 event_rows.append({
                     "Conference":    conference,
                     "Year":          year,
@@ -575,12 +834,13 @@ def merge_bundle(
                     "Source_File":   best.source,
                 })
             else:
-                missing = best.missing_places()
+                missing      = best.missing_places()
                 place_labels = {1: "1st", 8: "8th", 16: "16th"}
-                miss_str = ", ".join(place_labels[p] for p in missing)
+                miss_str     = ", ".join(place_labels[p] for p in missing)
+                pass_label   = "both passes" if event_name in targeted else "first pass"
                 all_flag_rows.append(flag_fn(
                     gender, event_name, best.source,
-                    f"Event missing from final merged bundle — {miss_str} place not found",
+                    f"Event incomplete after {pass_label} — {miss_str} place not found",
                 ))
                 gender_events_missing.append(f"{gender}:{event_name}")
 
@@ -593,21 +853,25 @@ def merge_bundle(
         notes_parts.append("some files had unknown gender")
     if "psych" in file_gender_types or "error" in file_gender_types:
         notes_parts.append("some files skipped (psych/error)")
+    if pass2_recovered:
+        notes_parts.append(f"pass2 recovered {len(pass2_recovered)} event(s)")
 
     summary = {
-        "bundle_id":        bundle_id,
-        "conference":       conference,
-        "year":             year,
-        "detected_gender":  detected_gender,
-        "files":            [str(p.name) for p, _ in bundle["paths"]],
-        "file_gender_types": file_gender_types,
-        "events_detected":  len(events_detected),
-        "events_mapped":    len(events_found),
-        "events_output":    len(event_rows),
+        "bundle_id":           bundle_id,
+        "conference":          conference,
+        "year":                year,
+        "detected_gender":     detected_gender,
+        "files":               [str(p.name) for p, _ in bundle["paths"]],
+        "file_gender_types":   file_gender_types,
+        "events_detected":     len(events_detected),
+        "events_mapped":       len(events_found),
+        "events_output":       len(event_rows),
         "events_missing_list": events_missing,
-        "n_teams":          len(unique_teams),
-        "n_flags":          len(all_flag_rows),
-        "notes":            "; ".join(notes_parts) if notes_parts else "",
+        "events_recovered_p2": len(pass2_recovered),
+        "n_teams":             len(unique_teams),
+        "team_score_strategy": team_score_strategy,
+        "n_flags":             len(all_flag_rows),
+        "notes":               "; ".join(notes_parts) if notes_parts else "",
     }
 
     return event_rows, unique_teams, all_flag_rows, all_debug_rows, summary
@@ -630,13 +894,21 @@ def print_bundle_summary(summary: dict):
     gend  = summary["detected_gender"]
     files = summary["files"]
     miss  = summary["events_missing_list"]
+    p2    = summary["events_recovered_p2"]
 
     print(f"\n  ┌─ Bundle: {bid}")
     print(f"  │  Conference : {conf}  |  Gender(s): {gend}")
     print(f"  │  Files ({len(files)}): " + ", ".join(files[:3])
           + (" ..." if len(files) > 3 else ""))
-    print(f"  │  Anchors out: {summary['events_output']:2d}  "
-          f"Teams: {summary['n_teams']:2d}  Flags: {summary['n_flags']}")
+    line = (
+        f"  │  Anchors out: {summary['events_output']:2d}  "
+        f"Teams: {summary['n_teams']:2d}  Flags: {summary['n_flags']}"
+    )
+    if p2:
+        line += f"  Pass2-recovered: {p2}"
+    print(line)
+    if summary["team_score_strategy"] != "none":
+        print(f"  │  Team scores  : {summary['team_score_strategy']}")
     if miss:
         print(f"  │  Missing ({len(miss)}): {', '.join(miss[:6])}"
               + (" ..." if len(miss) > 6 else ""))
@@ -742,17 +1014,19 @@ def run(input_dir: Path, output_dir: Path, bundle_filter: list[str] | None = Non
 
         # Build debug summary row
         all_debug_s.append({
-            "Bundle_ID":          summary["bundle_id"],
-            "Conference":         summary["conference"],
-            "Files_In_Bundle":    len(summary["files"]),
-            "Detected_Gender":    summary["detected_gender"],
-            "Events_Detected":    summary["events_detected"],
-            "Events_Mapped":      summary["events_mapped"],
-            "Events_Output":      summary["events_output"],
-            "Events_Missing":     len(summary["events_missing_list"]),
-            "Missing_Event_List": ", ".join(summary["events_missing_list"]),
-            "Team_Scores_Found":  summary["n_teams"],
-            "Notes":              summary["notes"],
+            "Bundle_ID":              summary["bundle_id"],
+            "Conference":             summary["conference"],
+            "Files_In_Bundle":        len(summary["files"]),
+            "Detected_Gender":        summary["detected_gender"],
+            "Events_Detected":        summary["events_detected"],
+            "Events_Mapped":          summary["events_mapped"],
+            "Events_Output":          summary["events_output"],
+            "Events_Missing":         len(summary["events_missing_list"]),
+            "Events_Recovered_Pass2": summary["events_recovered_p2"],
+            "Missing_Event_List":     ", ".join(summary["events_missing_list"]),
+            "Team_Scores_Found":      summary["n_teams"],
+            "Team_Score_Strategy":    summary["team_score_strategy"],
+            "Notes":                  summary["notes"],
         })
 
         all_summaries.append(summary)
@@ -764,8 +1038,9 @@ def run(input_dir: Path, output_dir: Path, bundle_filter: list[str] | None = Non
     write_csv(output_dir / "debug_bundle_report.csv",  DEBUG_REPORT_HEADER, all_debug_r)
     write_csv(output_dir / "debug_bundle_summary.csv", DEBUG_SUMMARY_HEADER, all_debug_s)
 
-    total_anchors = len(all_events)
-    total_missing = sum(len(s["events_missing_list"]) for s in all_summaries)
+    total_anchors  = len(all_events)
+    total_missing  = sum(len(s["events_missing_list"]) for s in all_summaries)
+    total_pass2    = sum(s["events_recovered_p2"] for s in all_summaries)
 
     print(f"\n{'='*64}")
     print(f"  Done.")
@@ -774,6 +1049,8 @@ def run(input_dir: Path, output_dir: Path, bundle_filter: list[str] | None = Non
     print(f"  Event anchors output:  {total_anchors}  "
           f"(men: {sum(1 for r in all_events if r['Gender']=='men')}, "
           f"women: {sum(1 for r in all_events if r['Gender']=='women')})")
+    if total_pass2:
+        print(f"  Pass-2 recovered:      {total_pass2} event(s)")
     print(f"  Team rows output:      {len(all_teams)}")
     print(f"  Flags generated:       {len(all_flags)}")
     if total_missing:

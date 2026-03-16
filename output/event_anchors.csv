@@ -1,4 +1,17 @@
 Conference,Year,Gender,Bundle_ID,Event,1st,8th,16th,1st_seconds,8th_seconds,16th_seconds,Sec_per_place,Source_File
+ACC,2026,men,acc_2026,100 Free,41.28,41.71,42.32,41.28,41.71,42.32,0.0693,2026_acc_championship_full_meet_results.pdf
+ACC,2026,men,acc_2026,200 Free,1:32.27,1:32.80,1:33.12,92.27,92.8,93.12,0.0567,2026_acc_championship_full_meet_results.pdf
+ACC,2026,men,acc_2026,100 Back,45.51,44.87,45.82,45.51,44.87,45.82,0.0207,2026_acc_championship_full_meet_results.pdf
+ACC,2026,men,acc_2026,200 Back,1:40.13,1:39.93,1:41.81,100.13,99.93,101.81,0.112,2026_acc_championship_full_meet_results.pdf
+ACC,2026,men,acc_2026,200 IM,1:42.65,1:42.46,1:44.38,102.65,102.46,104.38,0.1153,2026_acc_championship_full_meet_results.pdf
+ACC,2026,women,acc_2026,100 Free,45.98,47.57,48.34,45.98,47.57,48.34,0.1573,2026_acc_championship_full_meet_results.pdf
+ACC,2026,women,acc_2026,200 Free,1:44.74,1:44.02,1:45.33,104.74,104.02,105.33,0.0393,2026_acc_championship_full_meet_results.pdf
+ACC,2026,women,acc_2026,1650 Free,15:52.95,8:04.63,16:14.82,952.95,484.63,974.82,1.458,2026_acc_championship_full_meet_results.pdf
+ACC,2026,women,acc_2026,100 Back,48.83,51.35,52.03,48.83,51.35,52.03,0.2133,2026_acc_championship_full_meet_results.pdf
+ACC,2026,women,acc_2026,200 Back,1:53.31,1:51.31,1:54.69,113.31,111.31,114.69,0.092,2026_acc_championship_full_meet_results.pdf
+ACC,2026,women,acc_2026,200 Breast,2:03.72,2:09.07,2:10.24,123.72,129.07,130.24,0.4347,2026_acc_championship_full_meet_results.pdf
+ACC,2026,women,acc_2026,100 Fly,50.12,51.18,52.68,50.12,51.18,52.68,0.1707,2026_acc_championship_full_meet_results.pdf
+ACC,2026,women,acc_2026,200 IM,1:56.69,1:55.87,1:57.75,116.69,115.87,117.75,0.0707,2026_acc_championship_full_meet_results.pdf
 Big 12,unknown,men,big12_unknown,50 Free,18.47,19.22,19.91,18.47,19.22,19.91,0.096,Big_12_S_D_Champ_Results_pdf.pdf
 Big 12,unknown,men,big12_unknown,100 Free,41.94,42.64,43.60,41.94,42.64,43.6,0.1107,Big_12_S_D_Champ_Results_pdf.pdf
 Big 12,unknown,men,big12_unknown,200 Free,1:31.23,1:31.88,1:36.48,91.23,91.88,96.48,0.35,Big_12_S_D_Champ_Results_pdf.pdf
@@ -19,3 +32,30 @@ Big 12,unknown,women,big12_unknown,200 Breast,2:10.29,2:12.19,2:13.34,130.29,132
 Big 12,unknown,women,big12_unknown,100 Fly,52.41,53.22,54.21,52.41,53.22,54.21,0.12,Big_12_S_D_Champ_Results_pdf.pdf
 Big 12,unknown,women,big12_unknown,200 Fly,1:57.46,2:00.82,2:02.08,117.46,120.82,122.08,0.308,Big_12_S_D_Champ_Results_pdf.pdf
 Big 12,unknown,women,big12_unknown,200 IM,1:58.98,1:59.86,2:01.32,118.98,119.86,121.32,0.156,Big_12_S_D_Champ_Results_pdf.pdf
+Big West,2026,men,bigwest_2026,100 Back,47.50,47.71,49.01,47.5,47.71,49.01,0.1007,2026_big_west_friday_final_results_men.pdf
+Big West,2026,men,bigwest_2026,200 Back,1:40.13,1:46.05,1:50.16,100.13,106.05,110.16,0.6687,2026_big_west_saturday_final_results.pdf
+Big West,2026,men,bigwest_2026,100 Fly,46.55,47.60,48.48,46.55,47.6,48.48,0.1287,2026_big_west_friday_final_results_men.pdf
+Big West,2026,women,bigwest_2026,1650 Free,16:55.37,8:33.96,16:09.37,1015.37,513.96,969.37,-3.0667,2026_big_west_saturday_final_results.pdf
+Big West,2026,women,bigwest_2026,100 Back,53.68,55.52,56.45,53.68,55.52,56.45,0.1847,2026_big_west_friday_final_results_women.pdf
+Big West,2026,women,bigwest_2026,100 Fly,53.26,54.22,55.76,53.26,54.22,55.76,0.1667,2026_big_west_friday_final_results_women.pdf
+CAA,2026,men,caa_2026,50 Free,19.77,20.09,20.54,19.77,20.09,20.54,0.0513,caa 2026 thursday results.pdf
+CAA,2026,men,caa_2026,100 Back,47.87,48.04,51.29,47.87,48.04,51.29,0.228,caa 2026 friday results.pdf
+CAA,2026,men,caa_2026,200 Back,1:42.14,1:45.65,1:48.80,102.14,105.65,108.8,0.444,caa 2026 saturday results.pdf
+CAA,2026,men,caa_2026,200 Fly,4:21.45,3:46.65,1:50.72,261.45,226.65,110.72,-10.0487,caa 2026 saturday results.pdf
+CAA,2026,women,caa_2026,50 Free,22.41,23.22,23.33,22.41,23.22,23.33,0.0613,caa 2026 thursday results.pdf
+CAA,2026,women,caa_2026,1650 Free,16:48.75,8:27.58,16:25.29,1008.75,507.58,985.29,-1.564,caa 2026 saturday results.pdf
+CAA,2026,women,caa_2026,100 Back,53.01,55.21,56.58,53.01,55.21,56.58,0.238,caa 2026 friday results.pdf
+CAA,2026,women,caa_2026,100 Breast,1:00.30,1:03.80,1:05.31,60.3,63.8,65.31,0.334,caa 2026 friday results.pdf
+CAA,2026,women,caa_2026,100 Fly,52.28,54.70,56.22,52.28,54.7,56.22,0.2627,caa 2026 friday results.pdf
+ODAC,2026,men,odac_2026,200 Free,1:35.12,1:44.54,53.67,95.12,104.54,53.67,-2.7633,odac 2026 MENS swim-full-results.pdf
+ODAC,2026,men,odac_2026,500 Free,4:32.27,4:48.31,4:52.86,272.27,288.31,292.86,1.3727,odac 2026 MENS swim-full-results.pdf
+ODAC,2026,men,odac_2026,200 Breast,1:54.89,2:08.09,2:13.84,114.89,128.09,133.84,1.2633,odac 2026 MENS swim-full-results.pdf
+ODAC,2026,men,odac_2026,200 Fly,2:00.39,2:08.14,2:16.93,120.39,128.14,136.93,1.1027,odac 2026 MENS swim-full-results.pdf
+ODAC,2026,men,odac_2026,200 IM,1:44.71,1:57.11,1:57.74,104.71,117.11,117.74,0.8687,odac 2026 MENS swim-full-results.pdf
+ODAC,2026,women,odac_2026,50 Free,3:52.43,5:00.94,16.56,232.43,300.94,16.56,-14.3913,odac 2026 WOMENS swim_results.pdf
+ODAC,2026,women,odac_2026,100 Free,2:04.69,2:12.07,2:20.98,124.69,132.07,140.98,1.086,odac 2026 WOMENS swim_results.pdf
+ODAC,2026,women,odac_2026,200 Free,1:46.12,1:00.12,1:02.77,106.12,60.12,62.77,-2.89,odac 2026 WOMENS swim_results.pdf
+ODAC,2026,women,odac_2026,500 Free,5:06.61,5:20.73,5:32.30,306.61,320.73,332.3,1.7127,odac 2026 WOMENS swim_results.pdf
+ODAC,2026,women,odac_2026,100 Breast,1:03.54,1:08.27,2:04.68,63.54,68.27,124.68,4.076,odac 2026 WOMENS swim_results.pdf
+ODAC,2026,women,odac_2026,200 Fly,3:31.37,2:17.34,4:07.45,211.37,137.34,247.45,2.4053,odac 2026 WOMENS swim_results.pdf
+ODAC,2026,women,odac_2026,200 IM,1:59.63,2:12.42,2:15.00,119.63,132.42,135.0,1.0247,odac 2026 WOMENS swim_results.pdf
