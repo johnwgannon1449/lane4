@@ -1,0 +1,168 @@
+Before I run the harvester, I need you to harden it for real-world conference result PDFs.
+
+CONTEXT
+I have now loaded many 2026 conference championship PDFs into input_pdfs/.
+Some conferences are represented by:
+- one clean combined PDF
+- separate men and women PDFs
+- separate daily PDFs (day1/day2/day3/day4)
+- separate PDFs split by both gender and day
+- filenames that may use day number OR day of week
+- filenames that may include prelims/finals language
+
+I want the harvester to handle this intelligently before I run the batch.
+
+GOAL
+Make the parser robust enough to process multi-file conference meets with minimal duplicate rows and minimal false conference splits.
+
+CRITICAL REQUIREMENTS
+
+1. FILE BUNDLING / GROUPING
+Group files that belong to the same meet into one bundle.
+A bundle should be determined primarily from:
+- conference name
+- year
+- gender bucket: men / women / combined
+
+Treat these as metadata, not as separate conferences:
+- day1, day2, day3, day4
+- day_1, day_2, etc.
+- monday, tuesday, wednesday, thursday, friday, saturday, sunday
+- mon, tue, tues, wed, thu, thur, thurs, fri, sat, sun
+- prelims, finals
+- session labels
+
+Examples:
+acc_2026_men_day1.pdf
+acc_2026_men_day2.pdf
+acc_2026_men_day3.pdf
+should be grouped into one men’s ACC 2026 bundle.
+
+2. CONFERENCE NAME DETECTION
+Improve conference-name detection so that conference names are inferred from:
+- normalized filename
+- title text inside PDF
+- conference_map.json fallback
+
+Do NOT let day/gender/session words pollute the detected conference name.
+
+3. GENDER DETECTION
+Detect whether each file is:
+- men
+- women
+- combined
+using both filename and PDF text.
+
+Rules:
+- If a file is clearly men-only, process only men.
+- If clearly women-only, process only women.
+- If combined, extract both but keep outputs separated by gender internally.
+- For my current event anchor output, prioritize men’s results.
+- If only women’s files exist for a bundle, flag clearly in review_flags.csv instead of pretending they are men’s.
+
+4. MULTI-FILE MERGING
+For each meet bundle, merge event results across all associated files.
+If the same event appears in multiple files:
+- prefer finals over prelims
+- prefer final placement results over psych sheets
+- avoid duplicate event rows
+- keep the best complete version of the event
+
+5. EVENT OUTPUT DEDUPLICATION
+Do not output duplicate rows for the same:
+- conference
+- year
+- gender
+- event
+
+Only one final anchor row should exist per event per bundle.
+
+6. TEAM SCORE MERGING
+If final men’s team standings appear in only one file of the bundle, still use them for the bundle.
+Do not require team scores to appear in every day file.
+
+7. REVIEW FLAGS
+Expand review_flags.csv so it clearly reports problems like:
+- Missing place 8
+- Missing place 16
+- Could not determine men’s section
+- Women-only file found
+- Bundle had multiple conflicting versions of same event
+- PDF looked like psych sheet
+- Conference name ambiguous
+- Bundle incomplete
+- Team scores not found
+- Only prelims found for event
+- Duplicate event versions encountered
+
+8. FILENAME PARSING
+Aggressively parse filename metadata.
+Recognize patterns like:
+- men
+- womens / women / w
+- combined / full / complete
+- day1 day2 day3 day4
+- d1 d2 d3 d4 when clearly used as meet-day indicator
+- mon tue wed thu fri sat sun
+- prelims
+- finals
+
+9. SAFETY / FALLBACKS
+Do not crash the whole batch because one file is weird.
+If a file cannot be confidently parsed:
+- continue processing the rest
+- log a review flag
+- include the source filename
+
+10. OUTPUTS
+Keep the current outputs:
+- output/event_anchors.csv
+- output/team_scores.csv
+- output/review_flags.csv
+
+But make event_anchors.csv more robust by including:
+- Conference
+- Year
+- Gender
+- Event
+- 1st
+- 8th
+- 16th
+- 1st_seconds
+- 8th_seconds
+- 16th_seconds
+- Sec_per_place
+- Source_File
+- Bundle_ID
+
+Likewise for team_scores.csv include:
+- Conference
+- Year
+- Gender
+- Team
+- Team_Score
+- Source_File
+- Bundle_ID
+
+11. TARGET BEHAVIOR
+I want to be able to drop many PDFs into input_pdfs/ and run one command:
+python harvester.py
+
+The tool should:
+- detect bundled files correctly
+- merge daily PDFs into one meet result set
+- merge gender-split files correctly
+- avoid duplicate event rows
+- produce the cleanest possible event anchors from messy real-world inputs
+
+12. IMPLEMENTATION STYLE
+Please patch the existing code rather than rebuilding from scratch.
+Keep it simple and pragmatic.
+Use filename metadata aggressively.
+Prefer correct review flags over bad guesses.
+
+13. BEFORE FINISHING
+After patching, print a short summary of:
+- how bundling works
+- what filename patterns are recognized
+- any assumptions that could still cause issues
