@@ -76,7 +76,9 @@ DEBUG_REPORT_HEADER = [
 
 DEBUG_SUMMARY_HEADER = [
     "Bundle_ID", "Conference", "Files_In_Bundle", "Detected_Gender",
-    "Events_Detected", "Events_Mapped", "Events_Output", "Events_Missing",
+    "Events_Detected", "Events_Mapped", "Events_Output",
+    "Men_Events_Output", "Women_Events_Output",
+    "Events_Missing", "Men_Missing", "Women_Missing",
     "Events_Recovered_Pass2", "Missing_Event_List",
     "Team_Scores_Found", "Team_Score_Strategy", "Notes",
 ]
@@ -993,6 +995,11 @@ def merge_bundle(
     if pass2_recovered:
         notes_parts.append(f"pass2 recovered {len(pass2_recovered)} event(s)")
 
+    men_out   = sum(1 for r in event_rows if r["Gender"] == "men")
+    women_out = sum(1 for r in event_rows if r["Gender"] == "women")
+    men_miss   = sum(1 for e in events_missing if e.startswith("men:"))
+    women_miss = sum(1 for e in events_missing if e.startswith("women:"))
+
     summary = {
         "bundle_id":           bundle_id,
         "conference":          conference,
@@ -1003,7 +1010,11 @@ def merge_bundle(
         "events_detected":     len(events_detected),
         "events_mapped":       len(events_found),
         "events_output":       len(event_rows),
+        "men_events_output":   men_out,
+        "women_events_output": women_out,
         "events_missing_list": events_missing,
+        "men_missing":         men_miss,
+        "women_missing":       women_miss,
         "events_recovered_p2": len(pass2_recovered),
         "n_teams":             len(unique_teams),
         "team_score_strategy": team_score_strategy,
@@ -1037,8 +1048,11 @@ def print_bundle_summary(summary: dict):
     print(f"  │  Conference : {conf}  |  Gender(s): {gend}")
     print(f"  │  Files ({len(files)}): " + ", ".join(files[:3])
           + (" ..." if len(files) > 3 else ""))
+    men_out   = summary.get("men_events_output", 0)
+    women_out = summary.get("women_events_output", 0)
+    gender_detail = f"men:{men_out} women:{women_out}"
     line = (
-        f"  │  Anchors out: {summary['events_output']:2d}  "
+        f"  │  Anchors out: {summary['events_output']:2d}  ({gender_detail})  "
         f"Teams: {summary['n_teams']:2d}  Flags: {summary['n_flags']}"
     )
     if p2:
@@ -1047,7 +1061,10 @@ def print_bundle_summary(summary: dict):
     if summary["team_score_strategy"] != "none":
         print(f"  │  Team scores  : {summary['team_score_strategy']}")
     if miss:
-        print(f"  │  Missing ({len(miss)}): {', '.join(miss[:6])}"
+        men_miss   = summary.get("men_missing", 0)
+        women_miss = summary.get("women_missing", 0)
+        print(f"  │  Missing ({len(miss)}: men:{men_miss} women:{women_miss}): "
+              + ", ".join(miss[:6])
               + (" ..." if len(miss) > 6 else ""))
     if summary["notes"]:
         print(f"  │  Notes: {summary['notes']}")
@@ -1106,6 +1123,8 @@ def run(input_dir: Path, output_dir: Path, bundle_filter: list[str] | None = Non
     all_debug_r:  list[dict] = []
     all_debug_s:  list[dict] = []
     all_summaries: list[dict] = []
+    # Cross-bundle dedup: key = (Conference, Year, Gender, Event)
+    seen_anchors: set[tuple] = set()
 
     for bid, bundle in sorted(bundles.items()):
         print(f"  Processing bundle: {bid}")
@@ -1144,7 +1163,21 @@ def run(input_dir: Path, output_dir: Path, bundle_filter: list[str] | None = Non
             continue
 
         ev_rows, tm_rows, fl_rows, dr_rows, summary = merge_bundle(bundle, file_results)
-        all_events.extend(ev_rows)
+        for row in ev_rows:
+            anchor_key = (row["Conference"], row["Year"], row["Gender"], row["Event"])
+            if anchor_key in seen_anchors:
+                all_flags.append({
+                    "Source_File": row.get("Source_File", ""),
+                    "Bundle_ID":   row.get("Bundle_ID", ""),
+                    "Conference":  row["Conference"],
+                    "Year":        row["Year"],
+                    "Gender":      row["Gender"],
+                    "Event":       row["Event"],
+                    "Issue":       "Duplicate anchor suppressed — same Conference/Year/Gender/Event already output",
+                })
+            else:
+                seen_anchors.add(anchor_key)
+                all_events.append(row)
         all_teams.extend(tm_rows)
         all_flags.extend(fl_rows)
         all_debug_r.extend(dr_rows)
@@ -1158,7 +1191,11 @@ def run(input_dir: Path, output_dir: Path, bundle_filter: list[str] | None = Non
             "Events_Detected":        summary["events_detected"],
             "Events_Mapped":          summary["events_mapped"],
             "Events_Output":          summary["events_output"],
+            "Men_Events_Output":      summary["men_events_output"],
+            "Women_Events_Output":    summary["women_events_output"],
             "Events_Missing":         len(summary["events_missing_list"]),
+            "Men_Missing":            summary["men_missing"],
+            "Women_Missing":          summary["women_missing"],
             "Events_Recovered_Pass2": summary["events_recovered_p2"],
             "Missing_Event_List":     ", ".join(summary["events_missing_list"]),
             "Team_Scores_Found":      summary["n_teams"],
