@@ -1,0 +1,203 @@
+=======================================================================
+WAC 2025 — Lifecycle / Root Cause Diagnostic
+Diagnosis only — no parser changes made.
+=======================================================================
+
+OVERALL CONTEXT
+---------------
+The WAC PDF ("WAC 2025 RESULTS.pdf") is a COMBINED meet results file with 51 pages.
+The parser runs in NORMAL mode (plain pdfplumber extract_text).
+Many pages are 2-column layouts (split at x≈184–196 px).
+
+pdfplumber's extract_text() interleaves left and right column content by y-position.
+This means a left-column swimmer row and a right-column section label appearing at the
+same vertical position get MERGED onto one line of parser input.
+
+That interleaving drives all three failure modes identified below.
+
+=======================================================================
+FAILURE MODE 1 — "Final-type label swallows swimmer row"
+=======================================================================
+EVENTS AFFECTED: Men 100 Fly (p8=None), Women 100 Back (p16=None)
+
+The state machine's line classification order is:
+  1. is_event_header_any?
+  2. detect_final_type?   ← if yes → set ft and CONTINUE (skip rest)
+  3. parse_place_and_time?
+
+When the right column's section label ("A - Final", "B - Final") falls at the
+same y-position as the left column's swimmer row, pdfplumber merges them:
+
+  Men 100 Fly, page 19, line 41:
+    "8 Man, Brendan SR CBU 47.34 q A - Final"
+    → is_event_header_any = False
+    → detect_final_type("... A - Final") = A   ← FIRES on embedded label
+    → current_final_type = A; CONTINUE
+    → Swimmer place 8 (47.34) is DISCARDED entirely
+
+  Women 100 Back, page 27, line ~X:
+    "16 Orloff, Griffith SO WYO 55.53 q B - Final"
+    → detect_final_type fires → B
+    → Swimmer place 16 (55.53) is DISCARDED entirely
+
+Result: The 8th-place (or 16th-place) swimmer row is consumed as a section
+label change and never reaches parse_place_and_time. The anchor place
+remains None. Anchor emission fails.
+
+=======================================================================
+FAILURE MODE 2 — "Prelim offset pre-empts B-Final slot"
+=======================================================================
+EVENTS AFFECTED: Men 50 Free (p16=None), Women 100 Back (p16=None, secondary)
+
+When ft=B is active and a PRELIMS row from the right column (prelim rank 1–8)
+appears in the interleaved stream, the B-final offset (+8) is applied:
+  prelim rank 8 → place 8+8 = 16
+
+acc.add() has "first-write wins": if place 16 is already set by the prelim row,
+the actual B-final 16th swimmer arrives and is DROPPED (place already taken).
+
+  Men 50 Free, page 15, line 48:
+    "8 Teller, Quinn SR WYO 20.05 q"   ← PRELIMS rank 8
+    ft=B (set by "B - Final" on line 29)
+    → place = 8+8 = 16; stored: place 16 = 20.05s (Teller prelim time)
+
+  Men 50 Free, page 15, line 59:
+    "16 O'Connor, Luke FR WYO 20.52 1"  ← ACTUAL B-Final 16th place
+    ft=B; 16>8 → offset=0 → tries to store as place 16
+    → DROPPED: place_slot_16_already_taken (existing=20.05)
+
+The spurious 20.05 at place 16 later survives a finalize cascade that
+replaces the accumulator with a "better quality" version (based on
+completeness score), resulting in place 16 = None in the final accumulator.
+
+=======================================================================
+FAILURE MODE 3 — "B-Final header opens with ft=B, A-Final data gets offset"
+=======================================================================
+EVENTS AFFECTED: Women 400 IM (p8=None, p16=corrupt)
+
+The Women 400 IM first-ever event header on page 20 is:
+  "B - Final ... (Event 19 Women 400 Yard IM) 2 Macsok, Fruzsina SR GCU 4:22.97 q"
+
+This opens the accumulator with ft=B (embedded in the header itself).
+The A-Final swimmer rows (places 1–8) follow in the left column and are
+processed UNDER ft=B:
+  A-final place 1 → 1+8 = place 9  (stored)
+  A-final place 2 → 2+8 = place 10 (stored)
+  ...
+  A-final place 8 → 8+8 = place 16 (stored, ~4:30 IM time)
+
+Then the actual B-Final swimmers (overall places 9–16) arrive:
+  B-final 9th → offset=0 (9>8) → tries place 9 → DROPPED (A-final 1st is there)
+  B-final 16th → offset=0 → tries place 16 → place 16 taken by A-final 8th
+
+Final result: places 1–8 = EMPTY; places 9–16 filled with A-final times;
+the "16th place" time is a ~4:30 400 IM time (looks valid but is wrong swimmer).
+
+On top of this, a second Preliminaries header fires:
+  "Preliminaries ... (Event 19 Women 400 Yard IM) B - Final"
+  → ft_in_header = B (from embedded "B - Final" at end of merged line)
+  → All Prelims rows 1–8 get ANOTHER +8 offset applied → land in 9–16 range
+
+After three finalize+reopen cycles and multiple merge_from calls, the Women
+400 IM accumulator has p8=None and p16 set to a split time (30.38s — corrupt).
+
+=======================================================================
+ADDITIONAL FINDING — Time Trial pages (pp. 47–51)
+=======================================================================
+Pages 47–51 contain TIME TRIAL results in a different multi-column layout.
+Headers like "Event 118 Men 100 Yard Butterfly Time Trial" are recognized
+as canonical "100 Fly / men" and trigger finalize+reopen cycles.
+
+Time trial swimmers (places 1–3) then attempt to merge into the existing
+finalized data. These merges do not fix missing anchor places; they only
+add more garbled high-place-number entries. Not a root cause, but they add
+noise to the final accumulators.
+
+=======================================================================
+ANCHOR SELECTION FAILURE SUMMARY
+=======================================================================
+
+Event             Gender  p1        p8        p16        Anchor  Root Cause
+----------------  ------  --------  --------  ---------  ------  -----------
+50 Free           men     19.04 ✓   20.15 ✓   None  ✗   FAIL    Mode 2
+100 Fly           men     46.45 ✓   None  ✗   corrupt✗   FAIL    Mode 1
+200 Fly           men     None  ✗   123.18✓   corrupt✗   FAIL    Modes 1+2
+200 Breast        men     113.15✓   31.75(!)  None  ✗    FAIL    Mode 2+split
+100 Back          women   54.83 ✓   55.49 ✓   None  ✗   FAIL    Modes 1+2
+200 Back          women   115.07✓   122.51✓   None  ✗   FAIL    Mode 2
+100 Breast        women   61.22 ✓   32.59(!)  None  ✗   FAIL    Mode 2+split
+400 IM            women   259.47✓   None  ✗   30.38(!)   FAIL    Mode 3
+
+(!) = corrupt value (split time or diving score injected at anchor place
+
+=======================================================================
+LIFECYCLE ANSWERS — per debug question
+=======================================================================
+
+Q1: Initial event header detected?
+  YES for all 3 target events. All continuation headers ("A - Final ... (Event N ...)",
+  "Preliminaries ... (Event N ...)") are correctly recognized by is_event_header_any
+  and normalized by normalize_event_name_any. No header detection failures.
+
+Q2: Event state opened?
+  YES for all 3 target events. parse_pdf_raw opens an EventAccumulator correctly.
+  Multiple re-opens happen due to duplicate headers from interleaved columns.
+
+Q3: Swimmer rows attached?
+  PARTIALLY. Men 50 Free: 26 attached, 10 dropped. Men 100 Fly: 26 attached, 14 dropped.
+  Women 400 IM: 21 attached, 11 dropped. Women 100 Back: 30 attached, 34 dropped.
+  The drops are primarily from place slots already being taken (Mode 2) or
+  swimmer rows consumed as section labels (Mode 1).
+
+Q4: Continuation headers recognized?
+  YES. "A - Final ... (Event 15 Men 50 Yard Freestyle)" → is_event_header=True,
+  ft=A, canonical=50 Free, gender=men. All continuation headers parse correctly.
+  However, each continuation header triggers finalize+reopen, fragmenting data
+  across multiple accumulators.
+
+Q5: Finals/Prelims lifecycle?
+  All rounds (A-Final, B-Final, C-Final, Prelims) appear in the interleaved text.
+  The B-Final transition is the critical break point — it is when prelim rows from
+  the right column are processed under the B-offset, corrupting places 9–16.
+
+Q6: When does the event state close?
+  Multiple closures. Each continuation header (including interleaved ones) triggers
+  finalize(). Key premature closures:
+    - Men 100 Fly closes after only 4 places (p19 finalize), missing A-final 5th–8th.
+    - Women 400 IM closes after 14 places (B-final only), missing A-final entirely.
+    - Men 50 Free closes after 7, 7, 17, 24, 26 places across 5 finalize events.
+
+Q7: Why was no anchor emitted?
+  The EventAccumulators DO have data (swimmer_count 10–26 in staged run).
+  Anchors fail at acc.anchor() because _anchor_time() returns None for at least
+  one of {1st, 8th, 16th}. Specific missing places by event documented above.
+  Root causes: Failure Modes 1, 2, and 3 as documented.
+
+=======================================================================
+SUMMARY: ROOT CAUSE
+=======================================================================
+
+WAC fails primarily due to TWO INTERACTING bugs triggered by
+2-column page layout in normal (single-column extract) mode:
+
+  BUG A: detect_final_type fires on merged "swimmer_row A - Final" lines
+          → swimmer row consumed as section label, discarded via `continue`
+          → Anchor place (8th or 16th) never written to accumulator
+
+  BUG B: After "B - Final" label, right-column prelim rows (ranks 1–8)
+          get +8 offset → pre-empt actual B-final places 9–16 in the acc
+          → Actual B-final data dropped ("first-write wins")
+          → Anchor place (16th) either missing or holds wrong time
+
+These two bugs interact with the finalize+reopen cascade caused by interleaved
+event headers from adjacent columns, making the merge_from accumulator selection
+unable to recover a clean complete anchor.
+
+RECOMMENDED FIX DIRECTION (not implemented here — diagnosis only):
+  WAC needs targeted multi-column extraction (like ODAC/MPSF/PCSC) so each
+  column is extracted independently. However, WAC's column layout is irregular
+  (split point varies page-by-page: 184, 196, 263 px). A WAC-specific
+  parse mode would need per-page split detection rather than a fixed split.
+  Alternatively, Bug A alone could be fixed by checking parse_place_and_time
+  BEFORE detect_final_type when a leading place number is present, preventing
+  swimmer rows from being consumed as section labels.

@@ -1,0 +1,135 @@
+WAC needs targeted diagnosis before any new patch.
+
+We now have multiple manually confirmed missed WAC events that are clearly present and look structurally normal:
+
+1. Men 50 Free
+- finals + prelims
+- continuation headers across pages
+- many valid swimmer rows
+
+2. Men 100 Fly
+- finals + prelims
+- many valid swimmer rows
+- standard HY-TEK formatting
+
+3. Women 400 IM
+- finals + B-final continuation + prelims + prelim continuation
+- many valid swimmer rows
+- split-heavy but still normal HY-TEK formatting
+
+These misses do NOT look like thin fields or missing source data.
+
+==================================================
+GOAL
+==================================================
+
+Do a WAC-only lifecycle/debug investigation.
+
+Do NOT patch yet.
+
+I want to know exactly where the parser is failing for these events:
+- header detection
+- event-state opening
+- row attachment
+- continuation handling
+- round transitions
+- premature finalization
+- anchor emission
+
+==================================================
+TARGET EVENTS
+==================================================
+
+Please debug these missed WAC events specifically:
+- Men 50 Yard Freestyle
+- Men 100 Yard Butterfly
+- Women 400 Yard IM
+
+If helpful, include 1 additional missed WAC event for comparison.
+
+==================================================
+DEBUG QUESTIONS TO ANSWER
+==================================================
+
+For each target event, report:
+
+1. Initial event header
+- Was the initial event header detected?
+- If yes, what raw header text was matched?
+- What normalized event/gender/round was assigned?
+
+2. Event state opening
+- Did the parser open an event state for this event?
+- If not, why not?
+
+3. Row attachment
+- Were swimmer primary rows detected under this event?
+- If yes, how many?
+- Were they attached to the active event correctly?
+- If not, why not?
+
+4. Continuation headers
+- Were continuation headers like:
+  - "A - Final ... (Event 15 Men 50 Yard Freestyle)"
+  - "Preliminaries ... (Event 19 Women 400 Yard IM)"
+  recognized as continuation within the same event family?
+- Or did they reset / replace / prematurely close the event?
+
+5. Finals vs prelims lifecycle
+- Did finals get captured?
+- Did prelims get captured?
+- Did transition from finals to prelims break the event lifecycle?
+
+6. Finalization
+- At what exact point did the event state close?
+- Was it closed too early?
+- If so, what line triggered closure?
+
+7. Anchor emission
+- Why was no anchor emitted for the event?
+- Was the event never captured?
+- Was it captured but later overwritten?
+- Was it captured but failed selection?
+- Was it captured but rejected downstream?
+
+==================================================
+DEBUG OUTPUT
+==================================================
+
+Create a WAC-focused debug output if helpful, for example:
+output/wac_lifecycle_debug.csv
+
+Suggested columns:
+- Source_File
+- Page_Number
+- Raw_Line_Text
+- Line_Type
+- Event_Name_Normalized
+- Gender_Normalized
+- Round_Normalized
+- Event_State_Before
+- Event_State_Action
+- Event_State_After
+- Attached_To_Event_YN
+- Rejection_Reason
+- Notes
+
+Also produce a short human-readable summary for each of the 3 target events.
+
+==================================================
+IMPORTANT
+==================================================
+
+Do NOT fix anything yet.
+This step is diagnosis only.
+
+I want the root cause identified clearly before any new WAC patch is attempted.
+
+Goal:
+Determine whether WAC is mainly failing because of:
+- mixed per-page layout
+- continuation-header handling
+- finals/prelims lifecycle handling
+- premature finalize logic
+- row attachment issues
+- or a combination of these
