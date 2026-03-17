@@ -428,29 +428,44 @@ def parse_filename_metadata(filename: str) -> dict:
 
 # ── File gender classification from content ──────────────────────────────────
 
+_GENDER_MEN_EVENT_RE   = re.compile(r"\bmen'?s?\s+\d+")
+_GENDER_WOMEN_EVENT_RE = re.compile(r"\bwomen'?s?\s+\d+")
+_GENDER_MEN_SECT_RE    = re.compile(r"\bmen'?s?\s+(?:swimming|results|individual|championship)")
+_GENDER_WOMEN_SECT_RE  = re.compile(r"\bwomen'?s?\s+(?:swimming|results|individual|championship)")
+
+
+def _gender_counts(text: str) -> tuple[int, int]:
+    """Return (men_total, women_total) gender signal counts for a text sample."""
+    low = text.lower()
+    men   = len(_GENDER_MEN_EVENT_RE.findall(low))   + len(_GENDER_MEN_SECT_RE.findall(low))   * 3
+    women = len(_GENDER_WOMEN_EVENT_RE.findall(low)) + len(_GENDER_WOMEN_SECT_RE.findall(low)) * 3
+    return men, women
+
+
 def detect_file_gender_from_content(pages: list[str]) -> str:
     """
     Classify a PDF as 'men', 'women', 'combined', or 'unknown' from its text.
 
-    Heuristic: count explicit gender mentions near event headers and section
-    headers in the first 8 pages.
+    Samples both the front and back of the file to handle HY-TEK combined PDFs
+    that list ALL women's events first (pages 1-N) followed by ALL men's events
+    (pages N+1 to end).  Sampling only the first 8 pages would mis-classify
+    such files as women-only.
+
+    Strategy:
+      1. Sample first 8 pages — catches the more common layout where the gender
+         is obvious early on.
+      2. Sample last 8 pages — catches the all-women-first layout.
+      3. Union the signals: if both genders appear in either sample → combined.
     """
-    sample = " ".join(pages[:8]).lower()
+    n = len(pages)
+    front_text = " ".join(pages[:8])
+    back_text  = " ".join(pages[max(0, n - 8):])
 
-    # Count gender-specific event mentions
-    men_event_hits   = len(re.findall(
-        r"\bmen'?s?\s+\d+", sample
-    ))
-    women_event_hits = len(re.findall(
-        r"\bwomen'?s?\s+\d+", sample
-    ))
+    men_f, women_f = _gender_counts(front_text)
+    men_b, women_b = _gender_counts(back_text)
 
-    # Count section header mentions
-    men_section   = len(re.findall(r"\bmen'?s?\s+(?:swimming|results|individual|championship)", sample))
-    women_section = len(re.findall(r"\bwomen'?s?\s+(?:swimming|results|individual|championship)", sample))
-
-    men_total   = men_event_hits   + men_section   * 3
-    women_total = women_event_hits + women_section * 3
+    men_total   = men_f   + men_b
+    women_total = women_f + women_b
 
     if men_total > 0 and women_total > 0:
         return "combined"

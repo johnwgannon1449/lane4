@@ -164,3 +164,73 @@ Single-page app at `/` with:
 - Vibe questions on Profile tab
 - CRM (My List with status, notes, reminders)
 - CAMPUS_PHOTOS
+
+---
+
+## Data Harvester — `harvester.py`
+
+Batch-parses NCAA conference championship PDFs into structured CSV anchor data.
+
+### Architecture
+- **`parser_helpers.py`** — PDF extraction, event header detection, gender classification, time parsing, column-mode routing
+- **`harvester.py`** — State machine, EventAccumulator, bundle merging, CSV output
+- **`conference_map.json`** — Filename→conference name mapping, bundle grouping
+- **Input**: `input_pdfs/` — one or more PDFs per conference bundle
+- **Output**: `output/event_anchors.csv`, `output/event_coverage_report.csv`, `output/review_flags.csv`, `output/debug_bundle_report.csv`
+
+### Anchor Schema (`event_anchors.csv`)
+`Conference, Year, Gender, Bundle_ID, Event, 1st, 8th, 16th, 1st_seconds, 8th_seconds, 16th_seconds, Sec_per_place, Source_File, Data_Quality, 1st_flags, 8th_flags, 16th_flags`
+
+The `*_flags` columns carry raw annotation suffixes stripped from time tokens (e.g. `*` = conference record, `# NCAA B` = cut standard).
+
+### Parse Modes
+| Mode | Trigger | Description |
+|---|---|---|
+| `normal` | default | pdfplumber `extract_text()` — works for most conferences |
+| `multi_column_2` | ODAC | 2-column extraction with y-coordinate row pairing |
+| `multi_column_3` | Patriot | 3-column extraction with fixed pixel boundaries |
+
+### Known Conference-Specific Configuration
+| Item | Value | Rationale |
+|---|---|---|
+| `CONFERENCE_PARSE_MODE["ODAC"]` | `multi_column_2` | ODAC PDFs render in 2-column layout |
+| `CONFERENCE_PARSE_MODE["Patriot"]` | `multi_column_3` | Patriot PDFs render in 3-column layout |
+| `_PATRIOT_COL_BOUNDARIES` | `(196.0, 400.0)` | Hardcoded pixel column splits for Patriot PDF |
+| `LIKELY_NOT_CONTESTED["ODAC"]` | `{"1000 Free"}` | Confirmed absent from championship program |
+| `LIKELY_NOT_CONTESTED["Patriot"]` | `{"1000 Free"}` | Confirmed absent from championship program |
+| `LIKELY_NOT_CONTESTED["Summit League"]` | `{"1000 Free"}` | Confirmed absent from championship program |
+
+### Tolerance Mechanisms (conference-agnostic)
+- **DQ-gap interpolation**: if anchor place *p* is absent but neighbors *p-1* and *p+1* are both present, linearly interpolate (handles DQ/DNS gaps)
+- **Small-field tolerance**: if all places 1…max are present (max ≥ 8, max < target anchor), substitute max-place time for the missing anchor
+- **Pending-place**: if a swimmer name row has no inline time, hold the place and pair it with the time on the immediately following line
+
+### Coverage Results (2026 Championships)
+| Conference | Score | Notes |
+|---|---|---|
+| GLIAC | 28/28 | Perfect |
+| PSAC | 28/28 | Perfect |
+| SAC | 28/28 | Perfect |
+| ACC | 26/28 | 1000 Free absent (DI) |
+| America East | 26/28 | 1000 Free absent |
+| Big 12 | 26/28 | 1000 Free absent |
+| Big East | 26/28 | 1000 Free absent (men recovered via Mode B fix) |
+| Big West | 26/28 | 1000 Free absent |
+| Horizon League | 26/28 | 1000 Free absent |
+| Landmark | 26/28 | 1000 Free absent |
+| ODAC | 26/28 | 1000 Free confirmed not contested |
+| Patriot | 26/28 | 1000 Free confirmed not contested |
+| SEC | 26/28 | 1000 Free absent |
+| Summit League | 26/28 | 1000 Free confirmed not contested |
+| CCIW | 22/28 | 1000 Free + 100/200 Fly absent (D3) |
+| CAA | 25/28 | 1000 Free + men's 100 Fly missing |
+| MAAC | 25/28 | 1000 Free + women's 100 Free missing |
+| Atlantic 10 | 21/28 | 100 Free, 100/200 Fly naming variants |
+| Ivy League | 18/28 | Women's PDF format differs |
+| ASUN | 17/28 | Multi-day split + event naming gaps |
+| Big Ten | 4/28 | Women's PDF format unrecognized; men multi-day |
+
+### Mode B Fix (session note)
+Root cause of men:0 in Big East and CCIW: `detect_file_gender_from_content` sampled only the first 8 pages. HY-TEK combined PDFs that list ALL women's events first (pages 1-44) then ALL men's events (pages 45+) were misclassified as women-only.
+
+Fix: sample both first 8 AND last 8 pages, union the gender signals. Belt-and-suspenders: state machine dynamically upgrades `file_gender_type` from `"women"` to `"combined"` when an explicit men's event header is encountered and the filename did not indicate women-only.

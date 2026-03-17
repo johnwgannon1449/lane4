@@ -502,6 +502,17 @@ def parse_pdf_raw(
                         men_section_found = True
                         if file_gender_type != "women":
                             current_section = "men"
+                        # Dynamic re-classification: content scan said "women" but
+                        # an explicit men's event header has now appeared.  Upgrade
+                        # to "combined" unless the FILENAME itself said "women"
+                        # (filename classification is authoritative; content is not).
+                        elif meta.get("gender") != "women":
+                            file_gender_type = "combined"
+                            current_section  = "men"
+                            flag_rows.append(flag(
+                                "combined", "",
+                                "file_gender_type upgraded women→combined: explicit men's event header found",
+                            ))
                     else:
                         women_section_found = True
                         if file_gender_type != "men":
