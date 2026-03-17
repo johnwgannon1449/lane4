@@ -17,7 +17,7 @@ Profile variables
 
 Signal classification — HARD vs SOFT
 --------------------------------------
-HARD signals (can push a row to likely_wrong_event independently):
+HARD signals — a row is only flagged when at least one of these fires:
   1. anchor_order_broken   sw > deep
   2. sw_absurdly_fast      family guardrail
   3. sw_absurdly_slow      family guardrail or profile-derived
@@ -25,29 +25,31 @@ HARD signals (can push a row to likely_wrong_event independently):
   5. deep_extreme_outlier  z > 5.0 on deep (population level)
   6. very_strong_cross     claimed_dist / best_other_dist > 4.0
 
-SOFT signals (field-variation / depth — can produce review alone):
+SOFT signals — computed for the confidence score only; do NOT flag:
   7. sw outliers (soft/hard)
   8. deep soft/hard outliers
-  9. spread implausible (hard/extreme MAD z-score)
-  10. shape implausible (hard/extreme MAD z-score)
-  11. closer_to_other_event  (moderate cross-event ratio 2–4×)
+  9. spread implausible (any MAD z-score)
+  10. shape implausible (any MAD z-score)
+  11. moderate cross-event mismatch (ratio 2–4×)
 
 Label gating rule
 -----------------
-  likely_wrong_event normally requires at least one HARD signal.
-  If only SOFT signals are present and confidence < 50, the label is
-  capped at review, UNLESS all of these hold simultaneously:
-    - at least 3 extreme-soft tokens fired
-      (spread_implausible, shape_implausible, deep_hard_outlier, sw_hard_outlier)
-    - AND the cross-event ratio exceeds 4.0 (very_strong_cross threshold)
-  That combined exception catches severe multi-signal failures without
-  ever triggering on spread/shape alone.
+  A row is flagged (review or likely_wrong_event) only when at least one
+  HARD signal is present.  If only SOFT signals fired, the row is labeled
+  valid and excluded from event_validation_report.csv — field-depth
+  variation in weaker conferences is not a parser error.
+
+  For rows with a HARD signal, the label is score-based as usual:
+    valid           ≥ 80
+    review          50 – 79
+    likely_wrong_event  < 50
 
 Sprint-event calibration
 -------------------------
   50 Free and 100 Free use looser spread/shape z-score thresholds
   (soft=2.5, hard=4.5 instead of 2.0/3.0) to avoid penalising conferences
   where one elite winner creates a legitimately wide field ratio.
+  (Affects the confidence score only; does not change flagging behaviour.)
 """
 
 from __future__ import annotations
@@ -78,14 +80,6 @@ _HARD_REASON_TOKENS: frozenset[str] = frozenset({
 
 # Threshold above which claimed_dist/best_other_dist is treated as HARD.
 VERY_STRONG_CROSS_RATIO: float = 4.0
-
-# Soft-signal tokens counted when deciding whether the gating exception fires.
-_EXTREME_SOFT_TOKENS: frozenset[str] = frozenset({
-    "spread_implausible",
-    "shape_implausible",
-    "deep_hard_outlier",
-    "sw_hard_outlier",
-})
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -334,10 +328,13 @@ def validate_row(
         confidence_score, validation_label, reasons,
         closest_other_event, claimed_event_distance, closest_other_event_distance
 
-    Label gating is applied at the end:
-      - likely_wrong_event requires at least one HARD signal (or a very-strong
-        cross-event mismatch), unless an extreme multi-soft exception fires.
-      - Sprint events (50 Free, 100 Free) use looser spread/shape thresholds.
+    Flagging rule:
+      - A row is flagged (review / likely_wrong_event) only when at least one
+        HARD structural signal fired (ordering break, family absurdity,
+        deep_extreme_outlier, very-strong cross-event mismatch).
+      - Soft-only rows are labeled valid regardless of confidence score.
+      - Sprint events (50 Free, 100 Free) use looser spread/shape thresholds
+        for the confidence score, but this does not affect the flagging rule.
     """
     gender_norm = gender.lower().strip()
     event_norm  = normalize_event(event)
@@ -458,45 +455,32 @@ def validate_row(
 
         if claimed_dist is not None and best_dist is not None and best_dist > 0:
             cross_ratio = claimed_dist / best_dist
-            if cross_ratio > 3.0:
+            # Only very-strong mismatch (ratio > 4.0) is actionable — it is
+            # treated as a HARD signal and penalised.  Moderate mismatch (2–4×)
+            # is a SOFT signal: computed but not penalised and not flagged.
+            if cross_ratio > VERY_STRONG_CROSS_RATIO:
                 confidence -= 15.0
-                if "closer_to_other_event" not in reasons:
-                    reasons.append("closer_to_other_event")
-            elif cross_ratio > 2.0:
-                confidence -= 10.0
                 if "closer_to_other_event" not in reasons:
                     reasons.append("closer_to_other_event")
 
     # ── Label gating ──────────────────────────────────────────────────────
-    # A row reaches likely_wrong_event (< 50) only when at least one HARD
-    # signal is present, OR a very-strong cross-event mismatch exists, OR
-    # an extreme multi-soft exception fires.
+    # A row is flagged only when at least one HARD signal fired.
+    # Soft-only rows (field-depth variation, spread/shape anomalies) are
+    # labeled valid — they represent legitimate conference differences,
+    # not parser errors.
     confidence = max(0.0, min(100.0, confidence))
 
-    if confidence < 50.0:
-        # Check whether any HARD reason fired.
-        has_hard = bool(_HARD_REASON_TOKENS.intersection(reasons))
+    has_hard = bool(_HARD_REASON_TOKENS.intersection(reasons))
+    # very_strong_cross fires when cross_ratio > VERY_STRONG_CROSS_RATIO;
+    # that already added "closer_to_other_event" to reasons and applied a
+    # penalty above, so we just re-check the ratio here for the gating decision.
+    if cross_ratio is not None and cross_ratio > VERY_STRONG_CROSS_RATIO:
+        has_hard = True
 
-        # Very-strong cross-event ratio also counts as HARD.
-        if cross_ratio is not None and cross_ratio > VERY_STRONG_CROSS_RATIO:
-            has_hard = True
-
-        if not has_hard:
-            # Only soft signals present.  Allow likely_wrong_event only when
-            # the failure is severe enough on both the soft AND cross-event axes.
-            extreme_soft_count = sum(
-                1 for r in reasons if r in _EXTREME_SOFT_TOKENS
-            )
-            very_strong_cross = (
-                cross_ratio is not None
-                and cross_ratio > VERY_STRONG_CROSS_RATIO
-                and "closer_to_other_event" in reasons
-            )
-            if not (extreme_soft_count >= 3 and very_strong_cross):
-                # Cap at the bottom of review band.
-                confidence = 50.0
-
-    if confidence >= 80.0:
+    if not has_hard:
+        # No structural signal — soft anomalies only.  Treat as valid.
+        label = "valid"
+    elif confidence >= 80.0:
         label = "valid"
     elif confidence >= 50.0:
         label = "review"

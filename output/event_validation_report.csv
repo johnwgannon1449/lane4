@@ -1,129 +1,44 @@
 Conference,Bundle_ID,Source_File,Gender,Event,sw_seconds,deep_seconds,spread_seconds,shape_ratio,validation_label,confidence_score,reasons,closest_other_event,claimed_event_distance,closest_other_event_distance
-ACC,acc_2026,2026_acc_championship_full_meet_results.pdf,women,100 Back,48.38,52.07,3.69,1.0763,review,74.0,sw_hard_outlier; deep_soft_outlier; closer_to_other_event,100 free,1.986,0.746
-ACC,acc_2026,2026_acc_championship_full_meet_results.pdf,women,200 Breast,124.82,130.19,5.37,1.043,review,79.0,sw_soft_outlier; deep_soft_outlier; closer_to_other_event,200 fly,1.884,0.938
 ACC,acc_2026,2026_acc_championship_full_meet_results.pdf,women,200 IM,111.27,118.59,7.32,1.0658,review,69.0,sw_hard_outlier; deep_soft_outlier; closer_to_other_event,200 free,1.621,0.372
-ACC,acc_2026,2026_acc_championship_full_meet_results.pdf,women,400 IM,239.11,253.01,13.9,1.0581,review,79.0,sw_soft_outlier; deep_hard_outlier,500 free,1.976,3.306
-Big 12,big12_unknown,Big_12_S_D_Champ_Results_pdf.pdf,men,50 Free,18.46,21.01,2.55,1.1381,review,52.0,spread_soft_outlier; shape_implausible,100 back,4.029,6.553
-Big East,bigeast_2026,big east 2026_full_results.pdf,men,100 Free,46.29,46.86,0.57,1.0123,review,77.0,sw_soft_outlier; spread_soft_outlier; shape_soft_outlier,100 back,2.315,2.252
 Big Ten,bigten_2026,Mens_2026 Big 10_Friday results_-_all__1_.pdf,men,50 Free,398.5,297.05,-101.45,0.7454,likely_wrong_event,0.0,anchor_order_broken; sw_absurdly_slow; sw_extreme_outlier; deep_extreme_outlier; spread_implausible; shape_implausible; closer_to_other_event,1650 free,321.626,11.075
-Big Ten,bigten_2026,mens 2026 Big 10 saturday_results_-_all__1_.pdf,men,200 Back,442.55,102.8,-339.75,0.2323,likely_wrong_event,0.0,anchor_order_broken; sw_absurdly_slow; sw_extreme_outlier; spread_implausible; shape_implausible; closer_to_other_event,1650 free,54.21,17.029
+Big Ten,bigten_2026,mens 2026 Big 10 saturday_results_-_all__1_.pdf,men,200 Back,442.55,102.8,-339.75,0.2323,likely_wrong_event,0.0,anchor_order_broken; sw_absurdly_slow; sw_extreme_outlier; spread_implausible; shape_implausible,1650 free,54.21,17.029
 Big Ten,bigten_2026,mens 2026_Big 10 _Thursday_Results.pdf,men,100 Breast,378.15,53.12,-325.03,0.1405,likely_wrong_event,0.0,anchor_order_broken; sw_absurdly_slow; sw_extreme_outlier; spread_implausible; shape_implausible; closer_to_other_event,1650 free,109.384,18.48
-Big Ten,bigten_2026,2026_women_s_b10_swim_meet_results.pdf,women,200 IM,112.81,119.83,7.02,1.0622,review,79.0,sw_soft_outlier; deep_soft_outlier; closer_to_other_event,200 free,1.468,0.608
-CAA,caa_2026,caa 2026 saturday results.pdf,men,200 Fly,280.45,113.13,-167.32,0.4034,likely_wrong_event,0.0,anchor_order_broken; sw_absurdly_slow; sw_extreme_outlier; spread_implausible; shape_implausible; closer_to_other_event,1650 free,33.687,15.789
-CCIW,cciw_2026,CCIW_2026_Final_Results.pdf,men,50 Free,20.84,23.08,2.24,1.1075,review,62.0,deep_hard_outlier; spread_soft_outlier; shape_soft_outlier,100 back,2.974,6.032
-CCIW,cciw_2026,CCIW_2026_Final_Results.pdf,men,100 Free,45.83,51.4,5.57,1.1215,review,72.0,deep_soft_outlier; spread_soft_outlier; closer_to_other_event,100 back,2.57,0.895
+CAA,caa_2026,caa 2026 saturday results.pdf,men,200 Fly,280.45,113.13,-167.32,0.4034,likely_wrong_event,0.0,anchor_order_broken; sw_absurdly_slow; sw_extreme_outlier; spread_implausible; shape_implausible,1650 free,33.687,15.789
 CCIW,cciw_2026,CCIW_2026_Final_Results.pdf,men,200 Free,99.33,126.33,27.0,1.2718,likely_wrong_event,0.0,deep_extreme_outlier; spread_implausible; shape_implausible,200 back,6.311,3.18
-CCIW,cciw_2026,CCIW_2026_Final_Results.pdf,men,500 Free,273.46,328.86,55.4,1.2026,review,50.0,deep_soft_outlier; spread_implausible; shape_implausible,400 im,4.727,4.533
-CCIW,cciw_2026,CCIW_2026_Final_Results.pdf,men,200 Back,111.73,135.99,24.26,1.2171,review,60.0,deep_soft_outlier; spread_implausible; shape_soft_outlier,200 fly,2.643,3.702
-CCIW,cciw_2026,CCIW_2026_Final_Results.pdf,men,200 Breast,120.45,149.38,28.93,1.2402,review,50.0,deep_hard_outlier; spread_implausible; shape_implausible,200 back,6.194,3.753
-CCIW,cciw_2026,CCIW_2026_Final_Results.pdf,men,100 Fly,49.43,57.2,7.77,1.1572,review,50.0,deep_hard_outlier; spread_implausible; shape_implausible; closer_to_other_event,100 breast,4.581,1.634
-CCIW,cciw_2026,CCIW_2026_Final_Results.pdf,men,200 IM,110.85,132.21,21.36,1.1927,review,50.0,deep_hard_outlier; spread_implausible; shape_implausible,200 back,3.996,2.093
-CCIW,cciw_2026,CCIW_2026_Final_Results.pdf,men,400 IM,244.74,287.82,43.08,1.176,review,59.0,sw_soft_outlier; deep_hard_outlier; spread_soft_outlier; shape_soft_outlier,500 free,2.443,3.47
-CCIW,cciw_2026,CCIW_2026_Final_Results.pdf,women,100 Free,52.93,57.92,4.99,1.0943,review,69.0,sw_hard_outlier; deep_soft_outlier; closer_to_other_event,100 fly,1.829,0.482
-CCIW,cciw_2026,CCIW_2026_Final_Results.pdf,women,200 Free,115.82,127.43,11.61,1.1002,review,74.0,sw_soft_outlier; deep_soft_outlier; closer_to_other_event,200 fly,1.839,0.528
-CCIW,cciw_2026,CCIW_2026_Final_Results.pdf,women,500 Free,306.03,347.8,41.77,1.1365,review,50.0,sw_soft_outlier; deep_soft_outlier; spread_implausible; shape_implausible,400 im,3.259,4.667
-CCIW,cciw_2026,CCIW_2026_Final_Results.pdf,women,1650 Free,1051.53,1223.3,171.77,1.1634,review,72.0,deep_soft_outlier; spread_soft_outlier; shape_soft_outlier,500 free,2.803,51.937
-CCIW,cciw_2026,CCIW_2026_Final_Results.pdf,women,200 Back,127.2,145.18,17.98,1.1414,review,59.0,sw_soft_outlier; deep_soft_outlier; spread_soft_outlier; shape_soft_outlier; closer_to_other_event,200 fly,2.493,1.131
 CCIW,cciw_2026,CCIW_2026_Final_Results.pdf,women,100 Breast,65.81,100.56,34.75,1.528,likely_wrong_event,0.0,deep_extreme_outlier; spread_implausible; shape_implausible,200 fly,11.442,7.752
-CCIW,cciw_2026,CCIW_2026_Final_Results.pdf,women,200 Breast,145.17,172.63,27.46,1.1892,review,50.0,sw_soft_outlier; deep_soft_outlier; spread_implausible; shape_implausible,200 fly,3.59,3.45
-CCIW,cciw_2026,CCIW_2026_Final_Results.pdf,women,100 Fly,59.87,64.76,4.89,1.0817,review,79.0,sw_soft_outlier; deep_soft_outlier; closer_to_other_event,100 breast,1.378,0.475
-CCIW,cciw_2026,CCIW_2026_Final_Results.pdf,women,200 Fly,126.71,157.46,30.75,1.2427,review,72.0,deep_soft_outlier; spread_soft_outlier; shape_soft_outlier,200 breast,2.667,4.525
 CCIW,cciw_2026,CCIW_2026_Final_Results.pdf,women,200 IM,123.94,141.17,17.23,1.139,likely_wrong_event,1.0,deep_soft_outlier; spread_implausible; shape_implausible; closer_to_other_event,200 fly,4.814,0.844
-CCIW,cciw_2026,CCIW_2026_Final_Results.pdf,women,400 IM,261.41,314.4,52.99,1.2027,review,50.0,deep_hard_outlier; spread_implausible; shape_implausible,500 free,3.622,5.154
-Colorado College,coloradocollege_unknown,CC_Champs_Final_Results_2_22_26.pdf,women,1650 Free,1040.61,1249.87,209.26,1.2011,review,60.0,deep_soft_outlier; spread_implausible; shape_soft_outlier,500 free,3.767,53.02
-GLIAC,gliac_2026,GLIAC_2026_Final_Results.pdf,men,100 Back,47.0,62.33,15.33,1.3262,review,50.0,deep_soft_outlier; spread_implausible; shape_implausible,100 breast,6.498,5.099
 Horizon League,horizonleague_2026,full_meet_results_horizon_league_2026.pdf,men,100 Back,294.35,50.9,-243.45,0.1729,likely_wrong_event,0.0,anchor_order_broken; sw_absurdly_slow; sw_extreme_outlier; spread_implausible; shape_implausible; closer_to_other_event,1650 free,109.971,18.38
 Ivy League,ivyleague_2026,2026 Ivy Womens Conf.pdf,women,50 Free,293.65,22.98,-270.67,0.0783,likely_wrong_event,0.0,anchor_order_broken; sw_absurdly_slow; sw_extreme_outlier; spread_implausible; shape_implausible; closer_to_other_event,1650 free,549.841,23.241
 Ivy League,ivyleague_2026,2026 Ivy Womens Conf.pdf,women,1650 Free,52.31,117.22,64.91,2.2409,likely_wrong_event,0.0,sw_absurdly_fast; sw_extreme_outlier; deep_extreme_outlier; shape_implausible,200 fly,26.087,15.544
 Ivy League,ivyleague_2026,2026 Ivy Womens Conf.pdf,women,100 Breast,60.55,54.09,-6.46,0.8933,likely_wrong_event,0.0,anchor_order_broken; deep_hard_outlier; spread_implausible; shape_implausible,100 fly,4.691,6.059
-Landmark,landmark_2026,landmark_champs_2026_final_full_results.pdf,men,100 Free,44.99,50.32,5.33,1.1185,review,72.0,deep_soft_outlier; spread_soft_outlier; closer_to_other_event,100 back,2.25,0.909
 Landmark,landmark_2026,landmark_champs_2026_final_full_results.pdf,men,200 Free,102.56,112.65,10.09,1.0984,review,74.0,sw_soft_outlier; deep_soft_outlier; closer_to_other_event,200 back,1.545,0.334
-Landmark,landmark_2026,landmark_champs_2026_final_full_results.pdf,men,100 Back,48.83,58.53,9.7,1.1986,review,56.0,spread_implausible; shape_implausible,100 breast,3.129,2.467
-Landmark,landmark_2026,landmark_champs_2026_final_full_results.pdf,men,100 Breast,55.3,64.62,9.32,1.1685,review,72.0,deep_soft_outlier; spread_soft_outlier; shape_soft_outlier,100 back,2.294,3.221
-Landmark,landmark_2026,landmark_champs_2026_final_full_results.pdf,men,200 Breast,126.68,144.09,17.41,1.1374,review,50.0,deep_hard_outlier; spread_implausible; shape_soft_outlier,200 back,2.948,2.51
-Landmark,landmark_2026,landmark_champs_2026_final_full_results.pdf,men,100 Fly,48.14,55.71,7.57,1.1572,review,50.0,deep_soft_outlier; spread_implausible; shape_implausible; closer_to_other_event,100 breast,4.339,1.732
-Landmark,landmark_2026,landmark_champs_2026_final_full_results.pdf,men,200 Fly,111.19,132.52,21.33,1.1918,review,50.0,deep_hard_outlier; spread_implausible; shape_implausible,200 back,3.024,2.098
-Landmark,landmark_2026,landmark_champs_2026_final_full_results.pdf,men,200 IM,112.87,124.03,11.16,1.0989,review,79.0,sw_soft_outlier; deep_soft_outlier; closer_to_other_event,200 back,1.511,0.73
-Landmark,landmark_2026,landmark_champs_2026_final_full_results.pdf,women,100 Free,53.32,62.51,9.19,1.1724,review,50.0,sw_hard_outlier; deep_hard_outlier; spread_implausible; shape_implausible; closer_to_other_event,100 breast,4.445,2.216
-Landmark,landmark_2026,landmark_champs_2026_final_full_results.pdf,women,1650 Free,1071.98,1251.55,179.57,1.1675,review,69.0,sw_soft_outlier; deep_soft_outlier; spread_soft_outlier; shape_soft_outlier,500 free,3.109,53.49
-Landmark,landmark_2026,landmark_champs_2026_final_full_results.pdf,women,100 Back,57.5,66.24,8.74,1.152,review,69.0,sw_soft_outlier; deep_soft_outlier; spread_soft_outlier; shape_soft_outlier,100 breast,2.683,1.535
-Landmark,landmark_2026,landmark_champs_2026_final_full_results.pdf,women,200 Back,125.36,162.86,37.5,1.2991,review,50.0,deep_hard_outlier; spread_implausible; shape_implausible; closer_to_other_event,200 fly,7.649,3.53
-Landmark,landmark_2026,landmark_champs_2026_final_full_results.pdf,women,100 Breast,64.98,75.08,10.1,1.1554,review,72.0,deep_soft_outlier; spread_soft_outlier; shape_soft_outlier,100 fly,2.094,4.281
-Landmark,landmark_2026,landmark_champs_2026_final_full_results.pdf,women,100 Fly,57.08,67.02,9.94,1.1741,review,50.0,deep_soft_outlier; spread_implausible; shape_implausible,100 breast,3.401,1.984
-Landmark,landmark_2026,landmark_champs_2026_final_full_results.pdf,women,200 Fly,128.49,176.37,47.88,1.3726,review,50.0,sw_soft_outlier; deep_hard_outlier; spread_implausible; shape_implausible,200 breast,4.931,8.483
 Landmark,landmark_2026,landmark_champs_2026_final_full_results.pdf,women,200 IM,128.53,145.14,16.61,1.1292,likely_wrong_event,0.0,sw_soft_outlier; deep_hard_outlier; spread_implausible; shape_implausible; closer_to_other_event,200 fly,4.505,1.107
-Landmark,landmark_2026,landmark_champs_2026_final_full_results.pdf,women,400 IM,277.35,308.35,31.0,1.1118,review,79.0,sw_soft_outlier; deep_hard_outlier,500 free,1.95,1.874
-MAC,mac_2026,2026 MAC MENS full_meet_results.pdf,men,50 Free,20.49,22.65,2.16,1.1054,review,72.0,deep_soft_outlier; spread_soft_outlier; shape_soft_outlier,100 back,2.66,6.114
-MAC,mac_2026,2026 MAC MENS full_meet_results.pdf,men,100 Free,45.84,50.38,4.54,1.099,review,77.0,deep_soft_outlier; closer_to_other_event,100 back,1.716,0.501
 MAC,mac_2026,2026 MAC MENS full_meet_results.pdf,men,200 Free,102.58,115.6,13.02,1.1269,review,54.0,sw_soft_outlier; deep_soft_outlier; spread_soft_outlier; shape_soft_outlier; closer_to_other_event,200 back,2.313,0.491
-MAC,mac_2026,2026 MAC MENS full_meet_results.pdf,men,100 Back,50.78,59.46,8.68,1.1709,review,68.0,spread_implausible; shape_soft_outlier,100 breast,2.57,1.903
-MAC,mac_2026,2026 MAC MENS full_meet_results.pdf,men,200 Breast,126.82,144.64,17.82,1.1405,review,50.0,deep_hard_outlier; spread_implausible; shape_soft_outlier,200 back,3.07,2.564
-MAC,mac_2026,2026 MAC MENS full_meet_results.pdf,men,100 Fly,48.7,56.67,7.97,1.1637,review,50.0,deep_hard_outlier; spread_implausible; shape_implausible; closer_to_other_event,100 breast,4.756,1.793
-MAC,mac_2026,2026 MAC MENS full_meet_results.pdf,men,200 Fly,116.03,134.34,18.31,1.1578,review,59.0,sw_soft_outlier; deep_hard_outlier; spread_soft_outlier; shape_soft_outlier,200 back,2.606,1.812
-MAC,mac_2026,2026 MAC MENS full_meet_results.pdf,men,200 IM,113.79,130.74,16.95,1.149,review,50.0,sw_soft_outlier; deep_hard_outlier; spread_implausible; shape_soft_outlier; closer_to_other_event,200 back,2.984,1.467
-MAC,mac_2026,2026 MAC WOMENS Complete_Results.pdf,women,100 Back,88.35,231.2,142.85,2.6169,likely_wrong_event,0.0,sw_extreme_outlier; deep_extreme_outlier; spread_implausible; shape_implausible; closer_to_other_event,200 fly,72.133,21.617
-NEWMAC,newmac_2026,2026_newmac_championships_full_results.pdf,men,100 Fly,46.94,51.99,5.05,1.1076,review,65.0,spread_soft_outlier; shape_soft_outlier; closer_to_other_event,100 back,1.737,0.501
+MAC,mac_2026,2026 MAC WOMENS Complete_Results.pdf,women,100 Back,88.35,231.2,142.85,2.6169,likely_wrong_event,0.0,sw_extreme_outlier; deep_extreme_outlier; spread_implausible; shape_implausible,200 fly,72.133,21.617
 NEWMAC,newmac_2026,2026_newmac_championships_full_results.pdf,men,200 Fly,499.45,119.31,-380.14,0.2389,likely_wrong_event,0.0,anchor_order_broken; sw_absurdly_slow; sw_extreme_outlier; spread_implausible; shape_implausible; closer_to_other_event,1650 free,71.56,16.798
 MIAC,miac_2026,2026_miac-sd-results_Final.pdf,men,200 Free,102.01,113.02,11.01,1.1079,review,77.0,deep_soft_outlier; closer_to_other_event,200 back,1.722,0.343
 MIAC,miac_2026,2026_miac-sd-results_Final.pdf,men,1650 Free,932.16,1418.58,486.42,1.5218,likely_wrong_event,0.0,deep_extreme_outlier; spread_implausible; shape_implausible,400 im,9.155,63.008
-MIAC,miac_2026,2026_miac-sd-results_Final.pdf,men,100 Breast,53.76,63.82,10.06,1.1871,review,72.0,deep_soft_outlier; spread_soft_outlier; shape_soft_outlier,100 back,2.529,3.464
-MIAC,miac_2026,2026_miac-sd-results_Final.pdf,men,200 Fly,111.56,139.98,28.42,1.2548,review,50.0,deep_hard_outlier; spread_implausible; shape_implausible,200 back,4.646,3.4
-MIAC,miac_2026,2026_miac-sd-results_Final.pdf,men,200 IM,112.8,124.27,11.47,1.1017,review,79.0,sw_soft_outlier; deep_soft_outlier; closer_to_other_event,200 back,1.572,0.736
-MIAC,miac_2026,2026_miac-sd-results_Final.pdf,men,400 IM,237.55,284.28,46.73,1.1967,review,72.0,deep_soft_outlier; spread_soft_outlier; shape_soft_outlier,500 free,2.578,4.133
 MPSF,mpsf_2026,MPSF 2026 RESULTS.pdf,men,500 Free,262.07,24.38,-237.69,0.093,likely_wrong_event,0.0,anchor_order_broken; deep_extreme_outlier; spread_implausible; shape_implausible,1650 free,32.601,19.507
 MPSF,mpsf_2026,MPSF 2026 RESULTS.pdf,women,200 Back,117.18,109.12,-8.06,0.9312,likely_wrong_event,0.0,anchor_order_broken; deep_soft_outlier; spread_implausible; shape_implausible,200 fly,4.949,2.793
 MPSF,mpsf_2026,MPSF 2026 RESULTS.pdf,women,100 Fly,53.74,48.82,-4.92,0.9084,likely_wrong_event,0.0,anchor_order_broken; deep_hard_outlier; spread_implausible; shape_implausible,100 breast,5.473,4.853
-MPSF,mpsf_2026,MPSF 2026 RESULTS.pdf,women,200 IM,119.18,111.7,-7.48,0.9372,likely_wrong_event,0.0,anchor_order_broken; deep_hard_outlier; spread_implausible; shape_implausible; closer_to_other_event,200 fly,8.496,2.656
+MPSF,mpsf_2026,MPSF 2026 RESULTS.pdf,women,200 IM,119.18,111.7,-7.48,0.9372,likely_wrong_event,0.0,anchor_order_broken; deep_hard_outlier; spread_implausible; shape_implausible,200 fly,8.496,2.656
 MPSF,mpsf_2026,MPSF 2026 RESULTS.pdf,women,400 IM,257.01,28.54,-228.47,0.111,likely_wrong_event,0.0,anchor_order_broken; deep_extreme_outlier; spread_implausible; shape_implausible,1650 free,28.044,22.751
-NEWMAC,newmac_2026,2026_newmac_championships_full_results.pdf,men,100 Fly,46.94,51.99,5.05,1.1076,review,65.0,spread_soft_outlier; shape_soft_outlier; closer_to_other_event,100 back,1.737,0.501
 NEWMAC,newmac_2026,2026_newmac_championships_full_results.pdf,men,200 Fly,499.45,119.31,-380.14,0.2389,likely_wrong_event,0.0,anchor_order_broken; sw_absurdly_slow; sw_extreme_outlier; spread_implausible; shape_implausible; closer_to_other_event,1650 free,71.56,16.798
-ODAC,odac_2026,odac 2026 MENS swim-full-results.pdf,men,100 Back,47.81,56.38,8.57,1.1793,review,68.0,spread_implausible; shape_soft_outlier,100 breast,2.493,2.124
-ODAC,odac_2026,odac 2026 MENS swim-full-results.pdf,men,100 Fly,48.18,53.53,5.35,1.111,review,65.0,spread_soft_outlier; shape_soft_outlier; closer_to_other_event,100 back,2.093,0.611
-ODAC,odac_2026,odac 2026 MENS swim-full-results.pdf,men,400 IM,242.35,288.83,46.48,1.1918,review,62.0,deep_hard_outlier; spread_soft_outlier; shape_soft_outlier,500 free,2.665,3.957
-ODAC,odac_2026,odac 2026 WOMENS swim_results.pdf,women,100 Free,52.33,61.54,9.21,1.176,review,50.0,sw_soft_outlier; deep_hard_outlier; spread_implausible; shape_implausible,100 breast,4.327,2.38
-ODAC,odac_2026,odac 2026 WOMENS swim_results.pdf,women,200 Free,115.15,127.41,12.26,1.1065,review,74.0,sw_soft_outlier; deep_soft_outlier; closer_to_other_event,200 fly,1.991,0.6
-ODAC,odac_2026,odac 2026 WOMENS swim_results.pdf,women,100 Back,56.8,65.47,8.67,1.1526,review,72.0,deep_soft_outlier; spread_soft_outlier; shape_soft_outlier,100 breast,2.579,1.588
-ODAC,odac_2026,odac 2026 WOMENS swim_results.pdf,women,200 Back,123.5,142.88,19.38,1.1569,review,50.0,deep_soft_outlier; spread_implausible; shape_soft_outlier; closer_to_other_event,200 fly,2.749,1.098
-ODAC,odac_2026,odac 2026 WOMENS swim_results.pdf,women,200 Breast,141.67,169.15,27.48,1.194,review,50.0,deep_soft_outlier; spread_implausible; shape_implausible,200 fly,3.545,3.158
-ODAC,odac_2026,odac 2026 WOMENS swim_results.pdf,women,100 Fly,56.83,64.79,7.96,1.1401,review,72.0,deep_soft_outlier; spread_soft_outlier; shape_soft_outlier,100 breast,2.272,1.378
 ODAC,odac_2026,odac 2026 WOMENS swim_results.pdf,women,200 Fly,126.83,247.45,120.62,1.951,likely_wrong_event,0.0,deep_extreme_outlier; spread_implausible; shape_implausible,400 im,14.594,18.107
 ODAC,odac_2026,odac 2026 WOMENS swim_results.pdf,women,400 IM,276.06,322.69,46.63,1.1689,review,50.0,deep_extreme_outlier; spread_soft_outlier; shape_soft_outlier,500 free,3.424,3.937
-PCSC,pcsc_2026,PCSC 2026 Results.pdf,men,200 Free,98.77,112.4,13.63,1.138,review,62.0,deep_soft_outlier; spread_soft_outlier; shape_soft_outlier; closer_to_other_event,200 back,2.262,0.825
-PCSC,pcsc_2026,PCSC 2026 Results.pdf,men,500 Free,267.96,308.09,40.13,1.1498,review,56.0,spread_implausible; shape_implausible,400 im,2.8,3.265
-PCSC,pcsc_2026,PCSC 2026 Results.pdf,men,200 Breast,120.1,142.93,22.83,1.1901,review,50.0,deep_hard_outlier; spread_implausible; shape_implausible,200 back,4.35,2.747
-PCSC,pcsc_2026,PCSC 2026 Results.pdf,men,200 Fly,108.84,132.97,24.13,1.2217,review,50.0,deep_hard_outlier; spread_implausible; shape_implausible,200 back,3.615,2.563
-PCSC,pcsc_2026,PCSC 2026 Results.pdf,men,200 IM,107.34,128.04,20.7,1.1928,review,50.0,deep_soft_outlier; spread_implausible; shape_implausible,200 back,3.737,1.899
-SAC,sac_2026,SAC 2026 sat_final_results.pdf,men,1650 Free,923.8,1151.05,227.25,1.246,review,72.0,deep_soft_outlier; spread_soft_outlier; shape_soft_outlier,500 free,3.306,48.335
-SAC,sac_2026,SAC 2026 fri_final_results.pdf,men,100 Back,48.02,58.81,10.79,1.2247,review,56.0,spread_implausible; shape_implausible,100 breast,3.782,2.997
-SAC,sac_2026,SAC 2026 sat_final_results.pdf,men,200 Back,105.58,132.65,27.07,1.2564,review,50.0,deep_soft_outlier; spread_implausible; shape_implausible,200 fly,3.102,4.294
-SAC,sac_2026,SAC 2026 sat_final_results.pdf,men,200 Breast,119.53,136.11,16.58,1.1387,review,68.0,spread_implausible; shape_soft_outlier,200 back,2.455,1.824
-SAC,sac_2026,SAC 2026 sat_final_results.pdf,women,1650 Free,1018.53,1228.08,209.55,1.2057,review,60.0,deep_soft_outlier; spread_implausible; shape_soft_outlier,500 free,3.742,51.755
-SAC,sac_2026,SAC 2026 sat_final_results.pdf,women,200 Back,119.92,139.31,19.39,1.1617,review,50.0,spread_implausible; shape_implausible; closer_to_other_event,200 fly,2.716,1.048
-SAC,sac_2026,SAC 2026 fri_final_results.pdf,women,200 Fly,121.35,158.43,37.08,1.3056,review,50.0,deep_soft_outlier; spread_implausible; shape_implausible,200 breast,3.46,6.256
-SCIAC,sciac_2026,2026_sciac_conference_results.pdf,women,200 Fly,121.01,155.1,34.09,1.2817,review,50.0,deep_soft_outlier; spread_implausible; shape_implausible,200 breast,3.054,5.564
-SEC,sec_2026,2026-SEC-Complete-Results.pdf,men,200 Breast,108.94,115.69,6.75,1.062,review,77.0,deep_soft_outlier; closer_to_other_event,200 im,1.216,0.316
 SEC,sec_2026,2026-SEC-Complete-Results.pdf,men,100 Fly,43.06,46.23,3.17,1.0736,review,74.0,sw_soft_outlier; deep_soft_outlier; closer_to_other_event,100 free,1.273,0.186
-SEC,sec_2026,2026-SEC-Complete-Results.pdf,women,100 Back,50.5,52.83,2.33,1.0461,review,79.0,sw_soft_outlier; deep_soft_outlier; closer_to_other_event,100 free,1.914,0.679
-SEC,sec_2026,2026-SEC-Complete-Results.pdf,women,400 IM,241.97,255.63,13.66,1.0565,review,79.0,sw_soft_outlier; deep_hard_outlier,500 free,1.803,3.14
 Summit League,summitleague_2026,SUMMIT LEAGUE 2026 RESULTS.pdf,men,100 Back,335.0,50.31,-284.69,0.1502,likely_wrong_event,0.0,anchor_order_broken; sw_absurdly_slow; sw_extreme_outlier; spread_implausible; shape_implausible; closer_to_other_event,1650 free,127.876,18.493
 UAA,uaa_2026,2026 UAA Championships-FullSWIMResults.pdf,men,200 Fly,200.42,111.25,-89.17,0.5551,likely_wrong_event,0.0,anchor_order_broken; sw_extreme_outlier; spread_implausible; shape_implausible,400 im,19.709,11.257
-Liberty League,unknown_2026,NEC 2026 Complete_Results.pdf,men,500 Free,268.26,309.4,41.14,1.1534,review,56.0,spread_implausible; shape_implausible,400 im,2.928,3.342
-Liberty League,unknown_2026,NEC 2026 Complete_Results.pdf,men,200 Breast,117.34,139.26,21.92,1.1868,review,50.0,deep_soft_outlier; spread_implausible; shape_implausible,200 back,4.057,2.454
-Liberty League,unknown_2026,NEC 2026 Complete_Results.pdf,men,200 Fly,108.5,126.55,18.05,1.1664,review,72.0,deep_soft_outlier; spread_soft_outlier; shape_soft_outlier,200 back,2.199,1.424
-Liberty League,unknown_2026,NEC 2026 Complete_Results.pdf,men,400 IM,238.02,279.36,41.34,1.1737,review,72.0,deep_soft_outlier; spread_soft_outlier; shape_soft_outlier,500 free,2.106,3.469
-NCAC,unknown_unknown,NCACSwimDiveChamps-FinalResults2026.pdf.pdf,women,200 Back,119.91,136.23,16.32,1.1361,review,70.0,spread_soft_outlier; shape_soft_outlier; closer_to_other_event,200 fly,1.868,0.629
-NCAC,unknown_unknown,NCACSwimDiveChamps-FinalResults2026.pdf.pdf,women,200 Breast,134.19,167.08,32.89,1.2451,review,50.0,deep_soft_outlier; spread_implausible; shape_implausible,200 fly,4.814,3.22
 NCAC,unknown_unknown,NCACSwimDiveChamps-FinalResults2026.pdf.pdf,women,200 IM,123.72,135.45,11.73,1.0948,review,65.0,spread_soft_outlier; shape_soft_outlier; closer_to_other_event,200 fly,1.905,0.33
 WAC,wac_2025,WAC 2025 RESULTS.pdf,men,200 Free,91.21,25.99,-65.22,0.2849,likely_wrong_event,0.0,anchor_order_broken; sw_soft_outlier; deep_extreme_outlier; spread_implausible; shape_implausible,200 back,22.678,15.697
 WAC,wac_2025,WAC 2025 RESULTS.pdf,men,500 Free,256.95,29.62,-227.33,0.1153,likely_wrong_event,0.0,anchor_order_broken; deep_extreme_outlier; spread_implausible; shape_implausible,1650 free,31.596,19.261
 WAC,wac_2025,WAC 2025 RESULTS.pdf,men,1650 Free,888.48,29.03,-859.45,0.0327,likely_wrong_event,0.0,anchor_order_broken; deep_extreme_outlier; spread_implausible; shape_implausible,400 im,21.779,65.959
 WAC,wac_2025,WAC 2025 RESULTS.pdf,men,100 Back,242.35,49.26,-193.09,0.2033,likely_wrong_event,0.0,anchor_order_broken; sw_absurdly_slow; sw_extreme_outlier; spread_implausible; shape_implausible; closer_to_other_event,1650 free,88.025,18.302
 WAC,wac_2025,WAC 2025 RESULTS.pdf,men,200 Back,104.43,28.36,-76.07,0.2716,likely_wrong_event,0.0,anchor_order_broken; deep_extreme_outlier; spread_implausible; shape_implausible,400 im,16.679,16.443
-WAC,wac_2025,WAC 2025 RESULTS.pdf,men,100 Breast,51.58,64.79,13.21,1.2561,review,50.0,deep_soft_outlier; spread_implausible; shape_implausible,100 back,3.925,5.106
 WAC,wac_2025,WAC 2025 RESULTS.pdf,men,400 IM,27.22,218.37,191.15,8.0224,likely_wrong_event,0.0,sw_absurdly_fast; sw_extreme_outlier; deep_soft_outlier; spread_implausible; shape_implausible,200 back,97.609,94.915
 WAC,wac_2025,WAC 2025 RESULTS.pdf,women,100 Free,47.1,26.8,-20.3,0.569,likely_wrong_event,0.0,anchor_order_broken; sw_hard_outlier; deep_extreme_outlier; spread_implausible; shape_implausible,200 fly,17.313,10.895
-WAC,wac_2025,WAC 2025 RESULTS.pdf,women,200 Free,108.4,243.65,135.25,2.2477,likely_wrong_event,0.0,deep_extreme_outlier; spread_implausible; shape_implausible; closer_to_other_event,200 fly,48.104,17.822
+WAC,wac_2025,WAC 2025 RESULTS.pdf,women,200 Free,108.4,243.65,135.25,2.2477,likely_wrong_event,0.0,deep_extreme_outlier; spread_implausible; shape_implausible,200 fly,48.104,17.822
 WAC,wac_2025,WAC 2025 RESULTS.pdf,women,1650 Free,0.19,31.99,31.8,168.3684,likely_wrong_event,0.0,sw_absurdly_fast; sw_extreme_outlier; deep_extreme_outlier; shape_implausible,200 fly,3063.284,1927.227
 WAC,wac_2025,WAC 2025 RESULTS.pdf,women,200 Breast,132.42,38.09,-94.33,0.2876,likely_wrong_event,0.0,anchor_order_broken; deep_extreme_outlier; spread_implausible; shape_implausible,200 fly,24.703,13.838
 WAC,wac_2025,WAC 2025 RESULTS.pdf,women,100 Fly,53.45,29.67,-23.78,0.5551,likely_wrong_event,0.0,anchor_order_broken; deep_extreme_outlier; spread_implausible; shape_implausible,200 fly,16.706,10.611
-WAC,wac_2025,WAC 2025 RESULTS.pdf,women,200 IM,118.84,29.75,-89.09,0.2503,likely_wrong_event,0.0,anchor_order_broken; deep_extreme_outlier; spread_implausible; shape_implausible; closer_to_other_event,200 fly,52.822,13.895
+WAC,wac_2025,WAC 2025 RESULTS.pdf,women,200 IM,118.84,29.75,-89.09,0.2503,likely_wrong_event,0.0,anchor_order_broken; deep_extreme_outlier; spread_implausible; shape_implausible,200 fly,52.822,13.895
