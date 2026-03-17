@@ -1,2 +1,2 @@
 Bundle_ID,Conference,Files_In_Bundle,Detected_Gender,Events_Detected,Events_Mapped,Events_Output,Men_Events_Output,Women_Events_Output,Events_Missing,Men_Missing,Women_Missing,Events_Recovered_Pass2,Missing_Event_List,Team_Scores_Found,Team_Score_Strategy,Notes
-nescac_2026,NESCAC,2,men/women,14,28,28,14,14,0,0,0,0,,0,not_found,
+ivyleague_2026,Ivy League,2,men/women,14,20,20,14,6,7,0,7,13,"women:500 Free, women:1650 Free, women:200 Back, women:200 Breast, women:100 Fly, women:200 IM, women:400 IM",1,end_pages:2026 Ivy Womens Conf.pdf,pass2 recovered 13 event(s)
