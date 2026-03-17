@@ -1,5 +1,3 @@
 Bundle_ID,Conference,Files_In_Bundle,Detected_Gender,Events_Detected,Events_Mapped,Events_Output,Men_Events_Output,Women_Events_Output,Events_Missing,Men_Missing,Women_Missing,Events_Recovered_Pass2,Missing_Event_List,Team_Scores_Found,Team_Score_Strategy,Notes
-gliac_2026,GLIAC,1,men/women,14,28,28,14,14,0,0,0,0,,0,not_found,
-odac_2026,ODAC,2,men/women,13,26,26,13,13,2,1,1,0,"men:1000 Free, women:1000 Free",0,not_found,
-patriot_2026,Patriot,1,men/women,13,26,26,13,13,2,1,1,0,"men:1000 Free, women:1000 Free",0,not_found,
-summitleague_2026,Summit League,1,men/women,13,26,26,13,13,2,1,1,0,"men:1000 Free, women:1000 Free",0,not_found,
+psac_2026,PSAC,1,men/women,14,28,28,14,14,0,0,0,0,,1,end_pages:PSAC 2026 RESULTS.pdf,
+sac_2026,SAC,4,men/women,14,28,28,14,14,0,0,0,0,,0,not_found,
