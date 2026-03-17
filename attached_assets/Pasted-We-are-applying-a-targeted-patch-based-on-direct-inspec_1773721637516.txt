@@ -1,0 +1,277 @@
+We are applying a targeted patch based on direct inspection of Patriot and ODAC PDFs.
+
+Critical instruction:
+DO NOT broaden changes.
+DO NOT modify the default parsing pipeline.
+ALL changes must be narrowly scoped to Patriot and ODAC only.
+
+==================================================
+PART 1 — FREEZE BASELINE (DO NOT TOUCH)
+==================================================
+
+The following must remain unchanged:
+
+- normal one-column parsing path
+- GLIAC performance (28/28)
+- Summit current behavior (including correct likely_not_contested for 1000 Free)
+- ODAC 2-column reading-order logic
+
+No global regex changes.
+No global anchor logic changes.
+No global column logic changes.
+
+==================================================
+PART 2 — PATRIOT: HEADER NORMALIZATION
+==================================================
+
+Observation:
+Patriot correctly exposes event headers, but they are not being normalized into canonical events.
+
+Headers appear like:
+- "#1 Women 200 Yard Medley Relay"
+- "#7 Men 500 Yard Free"
+- "#24 Men 100 Yard Back"
+- "#29 Men 1650 Yard Free"
+
+Implement Patriot-specific header normalization:
+
+Rules:
+- strip leading "#N" event numbers
+- preserve gender
+- normalize:
+  Freestyle → Free
+  Backstroke → Back
+  Breaststroke → Breast
+  Butterfly → Fly
+  Individual Medley → IM
+- normalize relay names into canonical labels
+- map to existing canonical event system
+
+DO NOT loosen global matching.
+
+Create:
+output/patriot_header_debug.csv
+
+Columns:
+- Source_File
+- Page_Number
+- Raw_Header
+- Cleaned_Header
+- Canonical_Event
+- Gender
+- Normalized_Success
+- Notes
+
+==================================================
+PART 3 — PATRIOT: PAGE-CONTINUATION + EVENT CONTEXT
+==================================================
+
+Observation:
+Patriot events span pages and include continuation headers like:
+
+- "Preliminaries ... (#7 Men 500 Yard Free)"
+- "A - Final ... (#24 Men 100 Yard Back)"
+
+Problem:
+Event context is being lost across pages and sections.
+
+Implement:
+
+1. Continuation detection
+   - detect "(#N Event Name)" inside continuation lines
+   - treat as authoritative event identity
+
+2. Context carry-forward
+   - when a page starts mid-event, preserve event context
+   - do NOT reset event on page breaks
+
+3. Section awareness
+   Recognize:
+   - Preliminaries
+   - A Final
+   - B Final
+   - C Final
+   - straight results sections
+
+4. Event merging
+   - multiple sections of same event must merge into one event object
+   - do NOT treat each section as a separate event
+
+Create:
+output/patriot_continuation_debug.csv
+
+Columns:
+- Source_File
+- Page_Number
+- Continuation_Header
+- Resolved_Event
+- Section_Type
+- Context_Carried_Successfully
+- Notes
+
+==================================================
+PART 4 — PATRIOT: ANCHOR FAILURE DIAGNOSTICS
+==================================================
+
+Current issue:
+Many events are:
+- event_detected_but_incomplete
+
+This PDF clearly contains valid results, so failure is post-detection.
+
+Diagnose per event:
+
+Create:
+output/patriot_anchor_failure_report.csv
+
+Columns:
+- Event_Name
+- Gender
+- Source_File
+- Page_Number
+- Header_Detected
+- Continuation_Context_Detected
+- Section_Type
+- Rows_Detected
+- Places_Found
+- Failure_Type (one of:)
+    header_normalization_failure
+    context_loss
+    section_split_failure
+    row_extraction_failure
+    insufficient_places
+    other
+- Notes
+
+DO NOT change anchor rules yet — diagnose first.
+
+==================================================
+PART 5 — ODAC: COMPLETENESS RESCUE (NOT STRUCTURE)
+==================================================
+
+Observation:
+ODAC missing events are NOT absent from the PDF.
+
+Confirmed present:
+- 100 Breast
+- 400 IM
+- 1650 Free
+
+Likely absent:
+- 1000 Free (must verify before marking missing)
+
+Problem:
+- event context breaks across pages
+- B-final / prelim continuation not merging correctly
+- long-distance events not accumulating correctly
+
+==================================================
+ODAC FIX RULES (TARGETED)
+==================================================
+
+For ODAC ONLY:
+
+1. Preserve 2-column logic exactly as is
+
+2. Add continuation handling similar to Patriot:
+   - detect "(#N Event Name)" in continuation headers
+   - carry event context across page breaks
+
+3. Section merging:
+   - A Final + B Final + Prelims must combine into one event
+
+4. Completion rescue:
+   - if A Final exists → prioritize it
+   - include B Final to extend place coverage
+   - use prelims only if needed
+
+5. Distance-event handling:
+   - for 1650:
+     - treat straight results as finals-style
+     - ignore split rows
+     - accumulate main rows only
+
+6. 1000 Free handling:
+   - if no clear event header exists → mark likely_not_contested
+   - do NOT mark missing
+
+Create:
+output/odac_completion_debug.csv
+
+Columns:
+- Event_Name
+- Gender
+- Source_File
+- Page_Number
+- Section_Types_Found
+- Context_Carried
+- Places_Found
+- Missing_Places
+- Source_Type_Used
+- Completion_Status
+- Notes
+
+==================================================
+PART 6 — DISTANCE EVENT AUDIT
+==================================================
+
+Create:
+output/distance_event_audit.csv
+
+For:
+- 500 Free
+- 1000 Free
+- 1650 Free
+
+Columns:
+- Bundle_ID
+- Conference
+- Gender
+- Event_Name
+- Detected
+- Source_Type
+- Status:
+    complete
+    incomplete
+    prelim_fallback
+    likely_not_contested
+    missing
+
+==================================================
+PART 7 — LIMITED TEST RUN ONLY
+==================================================
+
+Run ONLY:
+- Patriot
+- ODAC
+- Summit
+- GLIAC
+
+==================================================
+PART 8 — REPORT BACK
+==================================================
+
+Report:
+
+1. Patriot
+- total events detected
+- which events were newly recovered
+- top 3 failure types remaining
+
+2. ODAC
+- coverage improvement from 21/28
+- which specific events were recovered:
+    100 Breast
+    400 IM
+    1650 Free
+- whether 1000 Free is correctly labeled likely_not_contested
+
+3. Summit
+- confirm no regression
+
+4. GLIAC
+- confirm still 28/28
+
+5. Most important:
+For BOTH Patriot and ODAC:
+- list events OTHER THAN 1000 FREE that are still missing

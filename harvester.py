@@ -50,6 +50,7 @@ from parser_helpers import (
     seconds_to_time,
     _MEN_SECTION_RE,
     _WOMEN_SECTION_RE,
+    preprocess_lines_patriot,
 )
 
 # ── Output schema ─────────────────────────────────────────────────────────────
@@ -202,25 +203,57 @@ class EventAccumulator:
     def is_finals(self) -> bool:
         return self.session_score > 0
 
-    def anchor(self) -> dict | None:
-        if all(p in self.places for p in ANCHOR_PLACES):
-            t1  = self.places[1]
-            t8  = self.places[8]
-            t16 = self.places[16]
-            spp = round((t16 - t1) / 15, 4) if t16 != t1 else 0.0
-            return {
-                "1st":           seconds_to_time(t1),
-                "8th":           seconds_to_time(t8),
-                "16th":          seconds_to_time(t16),
-                "1st_seconds":   round(t1, 3),
-                "8th_seconds":   round(t8, 3),
-                "16th_seconds":  round(t16, 3),
-                "Sec_per_place": spp,
-            }
+    def _anchor_time(self, p: int) -> float | None:
+        """
+        Return the time for anchor place *p*, with two levels of tolerance.
+
+        1. **Exact**: place *p* is present → return its time.
+        2. **DQ-gap**: place *p* is absent but both neighbors (*p-1*, *p+1*)
+           are present → the gap is a DQ or DNS; interpolate linearly.
+        3. **Small-field**: place *p* is absent and the event has a
+           consecutive field from 1 to some max_place < *p* with at least 8
+           finalists (full A-Final) and no internal gaps.  In this situation
+           the conference simply had fewer than *p* entries; use the last
+           available time as a conservative substitute.
+        """
+        if p in self.places:
+            return self.places[p]
+        lo, hi = p - 1, p + 1
+        if lo in self.places and hi in self.places:
+            return (self.places[lo] + self.places[hi]) / 2.0
+        # Small-field: consecutive places 1…max_place with max_place ≥ 8 < p
+        if self.places:
+            present = sorted(self.places.keys())
+            max_p = present[-1]
+            if (
+                max_p >= 8
+                and max_p < p
+                and present[0] == 1
+                and present == list(range(1, max_p + 1))
+            ):
+                return self.places[max_p]
         return None
 
+    def anchor(self) -> dict | None:
+        t1  = self._anchor_time(1)
+        t8  = self._anchor_time(8)
+        t16 = self._anchor_time(16)
+        if t1 is None or t8 is None or t16 is None:
+            return None
+        spp = round((t16 - t1) / 15, 4) if t16 != t1 else 0.0
+        return {
+            "1st":           seconds_to_time(t1),
+            "8th":           seconds_to_time(t8),
+            "16th":          seconds_to_time(t16),
+            "1st_seconds":   round(t1, 3),
+            "8th_seconds":   round(t8, 3),
+            "16th_seconds":  round(t16, 3),
+            "Sec_per_place": spp,
+        }
+
     def missing_places(self) -> list[int]:
-        return [p for p in ANCHOR_PLACES if p not in self.places]
+        """Anchor places that are genuinely absent (not covered by DQ-gap tolerance)."""
+        return [p for p in ANCHOR_PLACES if self._anchor_time(p) is None]
 
 
 # ── Single-PDF parser (gender-aware) ─────────────────────────────────────────
@@ -352,6 +385,11 @@ def parse_pdf_raw(
         all_lines.extend(page.splitlines())
         all_lines.append("<<<PAGE_BREAK>>>")
 
+    # Patriot 3-col pages merge multiple swimmer results onto one line; split
+    # them into individual result lines before the state machine runs.
+    if parse_mode == "multi_column_3":
+        all_lines = preprocess_lines_patriot(all_lines)
+
     # ── State machine ─────────────────────────────────────────────────────────
     # current_section: which gender we're currently in
     if file_gender_type == "men":
@@ -371,9 +409,15 @@ def parse_pdf_raw(
     # Current heat-section type: 'A', 'B', 'C', or 'unknown'.
     # Reset to 'unknown' at each new event header; updated by standalone labels.
     current_final_type: str = "unknown"
+    # Pending place when parse_place_and_time found a swimmer name but no time
+    # (the time may appear on the very next line, e.g. after a record suffix).
+    _pending_place: int | None = None
+    _PENDING_TIME_RE = re.compile(
+        r"(?:\d{1,2}:)?\d{1,2}:\d{2}\.\d{2}|\d{1,3}\.\d{2}"
+    )
 
     def finalize():
-        nonlocal current_event
+        nonlocal current_event, _pending_place
         if current_event and current_event.places:
             target = men_finalized if current_event.gender == "men" else women_finalized
             existing = target.get(current_event.name)
@@ -384,6 +428,7 @@ def parse_pdf_raw(
                 # (places 1-8) accumulate in one object → complete 16-place anchor.
                 existing.merge_from(current_event)
         current_event = None
+        _pending_place = None  # clear on event boundary
 
     for raw_line in all_lines:
         line = raw_line.strip()
@@ -497,7 +542,22 @@ def parse_pdf_raw(
                 # section and need the offset to reach the overall rank.
                 raw_offset = FINAL_PLACE_OFFSETS.get(current_final_type, 0)
                 offset = raw_offset if (raw_offset > 0 and place <= 8) else 0
-                current_event.add(place + offset, time_str, current_final_type)
+                if time_str is not None:
+                    _pending_place = None
+                    current_event.add(place + offset, time_str, current_final_type)
+                else:
+                    # Swimmer name found but no inline time — hold effective
+                    # place so the next line's time can be paired with it.
+                    _pending_place = place + offset
+            elif _pending_place is not None:
+                # Not a swimmer row; check if this line carries the time for
+                # the pending place (e.g. "1:47.73* @" after a record swim).
+                for t in _PENDING_TIME_RE.findall(line):
+                    sec = time_to_seconds(t)
+                    if sec is not None and sec >= 10:
+                        current_event.add(_pending_place, t, current_final_type)
+                        _pending_place = None
+                        break
 
     finalize()
 
@@ -642,6 +702,10 @@ def _second_pass_scan_file(
     current_event: str | None = None    # which missing event we are collecting for
     current_acc: EventAccumulator | None = None
     current_final_type: str = "unknown"
+    _pending_place: int | None = None
+    _PENDING_TIME_RE = re.compile(
+        r"(?:\d{1,2}:)?\d{1,2}:\d{2}\.\d{2}|\d{1,3}\.\d{2}"
+    )
 
     def finalize_current():
         nonlocal current_event, current_acc
@@ -702,7 +766,18 @@ def _second_pass_scan_file(
                 if place is not None:
                     raw_offset = FINAL_PLACE_OFFSETS.get(current_final_type, 0)
                     offset = raw_offset if (raw_offset > 0 and place <= 8) else 0
-                    current_acc.add(place + offset, time_str, current_final_type)
+                    if time_str is not None:
+                        _pending_place = None
+                        current_acc.add(place + offset, time_str, current_final_type)
+                    else:
+                        _pending_place = place + offset
+                elif _pending_place is not None:
+                    for t in _PENDING_TIME_RE.findall(line):
+                        sec = time_to_seconds(t)
+                        if sec is not None and sec >= 10:
+                            current_acc.add(_pending_place, t, current_final_type)
+                            _pending_place = None
+                            break
 
     finalize_current()
 

@@ -671,42 +671,230 @@ def extract_pages(pdf_path: str) -> list[str]:
             )
 
 
+_STANDALONE_TIME_RE = re.compile(
+    r"^(?:\d{1,2}:)?\d{1,2}:\d{2}\.\d{2}$|^\d{2,3}\.\d{2}$"
+)
+_INLINE_TIME_RE = re.compile(
+    r"(?:\d{1,2}:)?\d{1,2}:\d{2}\.\d{2}|\d{2,3}\.\d{2}"
+)
+
+
+def _group_words_by_y(word_list: list[dict], y_tol: float = 4.0) -> dict:
+    """Group pdfplumber word dicts into rows keyed by rounded y-coordinate."""
+    rows: dict[float, list[dict]] = {}
+    for w in word_list:
+        y_key = round(w["top"] / y_tol) * y_tol
+        rows.setdefault(y_key, []).append(w)
+    return rows
+
+
+def _row_text(words: list[dict]) -> str:
+    return " ".join(w["text"] for w in sorted(words, key=lambda x: x["x0"])).strip()
+
+
+def _should_row_pair(col1_rows: dict) -> bool:
+    """
+    Return True when col1 has ≥2 rows that look like swimmer names with NO
+    inline time — meaning the times must be in col2 and need to be paired.
+
+    A row is an "orphaned name" when it:
+      • starts with a 1-2 digit place number then a capitalised last name
+        followed by a comma  (e.g. "11 Smith, John 19SOME-NC")
+      • contains NO time pattern
+
+    We intentionally check col1 rather than col2 to avoid false-positive
+    triggers from split-time fragments (e.g. "48.92") that look like
+    standalone times but are really per-50 split data lines.
+    """
+    _ORPHAN_NAME_RE = re.compile(r"^\d{1,2}\s+[A-Z][a-z][A-Za-z'.\-]+,")
+    count = sum(
+        1 for rw in col1_rows.values()
+        if (
+            _ORPHAN_NAME_RE.match(_row_text(rw))
+            and not _INLINE_TIME_RE.search(_row_text(rw))
+        )
+    )
+    return count >= 2
+
+
+def _row_pair_page(page) -> tuple[str, int, bool]:
+    """
+    Attempt ODAC row-pairing for a single page.
+
+    Returns (page_text, n_cols, was_row_paired).
+
+    Row-pairing only activates when EXACTLY one column split is detected
+    (true 2-column layout) AND col1 has ≥2 orphaned swimmer name rows with
+    no inline time.  Three-column pages are concatenated normally so that
+    col3's complete-result rows are not corrupted by merging col2 times onto
+    the same text line.
+
+    For each y-row on a row-paired page:
+      • col1 text has no inline time AND col2 text is a standalone time
+        → merge into one line  ("11 Smith, John 19SOME-NC 59.63")
+      • Otherwise emit col1 row then col2 row as separate lines.
+    """
+    words = page.extract_words(x_tolerance=3, y_tolerance=3)
+    if not words:
+        return page.extract_text() or "", 1, False
+
+    splits = _detect_column_splits(words, page.width)
+    if not splits:
+        return _words_to_text(words), 1, False
+
+    # ── 3-column pages: smart pairing of col1 (names) + col2 (times). ─────────
+    # When there are 2 splits the page has 3 columns.  The common ODAC pattern
+    # is col1=swimmer-names, col2=times-only, col3=consolation/complete results.
+    # Naively concatenating all three loses the name→time association for col1.
+    # Detect the orphan-name case and pair col1+col2 by y-coordinate; col3 is
+    # appended normally.  When col1 has NO orphans fall through to plain order.
+    if len(splits) > 1:
+        boundaries = [0.0] + splits + [page.width]
+        col_buckets = []
+        for i in range(len(boundaries) - 1):
+            col_buckets.append(
+                [w for w in words if boundaries[i] <= w["x0"] < boundaries[i + 1]]
+            )
+        col1r = _group_words_by_y(col_buckets[0])
+        col2r = _group_words_by_y(col_buckets[1])
+        if _should_row_pair(col1r):
+            # Pair col1 names with col2 times, then emit col3+ sequentially.
+            all_y12 = sorted(set(list(col1r.keys()) + list(col2r.keys())))
+            merged12: list[str] = []
+            for y in all_y12:
+                c1t = _row_text(col1r.get(y, []))
+                c2t = _row_text(col2r.get(y, []))
+                if c1t and c2t:
+                    c2_is_time = bool(_STANDALONE_TIME_RE.match(c2t))
+                    if c2_is_time and not _INLINE_TIME_RE.search(c1t):
+                        merged12.append(c1t + " " + c2t)
+                    else:
+                        merged12.append(c1t)
+                        merged12.append(c2t)
+                elif c1t:
+                    merged12.append(c1t)
+                elif c2t:
+                    merged12.append(c2t)
+            rest = [_words_to_text(col_buckets[i]) for i in range(2, len(col_buckets))]
+            parts = ["\n".join(merged12)] + rest
+            return "\n\n".join(p for p in parts if p), len(splits) + 1, True
+        else:
+            col_texts = [_words_to_text(cb) for cb in col_buckets]
+            return "\n\n".join(col_texts), len(splits) + 1, False
+
+    split_x = splits[0]
+    col1_words = [w for w in words if w["x0"] < split_x]
+    col2_words = [w for w in words if w["x0"] >= split_x]
+
+    col1_rows = _group_words_by_y(col1_words)
+    col2_rows = _group_words_by_y(col2_words)
+
+    if not _should_row_pair(col1_rows):
+        c1 = _words_to_text(col1_words)
+        c2 = _words_to_text(col2_words)
+        return (c1 + "\n\n" + c2).strip(), 2, False
+
+    all_y = sorted(set(list(col1_rows.keys()) + list(col2_rows.keys())))
+    merged: list[str] = []
+    for y in all_y:
+        c1_txt = _row_text(col1_rows.get(y, []))
+        c2_txt = _row_text(col2_rows.get(y, []))
+
+        if c1_txt and c2_txt:
+            c2_is_time = bool(_STANDALONE_TIME_RE.match(c2_txt))
+            c1_has_time = bool(_INLINE_TIME_RE.search(c1_txt))
+            if c2_is_time and not c1_has_time:
+                merged.append(c1_txt + " " + c2_txt)
+            else:
+                # Mixed-row fallback: col2 may start with a time that belongs
+                # to the col1 swimmer, followed by a complete col2 swimmer row
+                # (same y-bucket due to 1-2 pt vertical misalignment between
+                # the two columns).  Detect: first token is a standalone time
+                # and the remainder opens with digit+space+capital (a swimmer).
+                c2_words_list = c2_txt.split()
+                if (
+                    not c1_has_time
+                    and len(c2_words_list) >= 2
+                    and _STANDALONE_TIME_RE.match(c2_words_list[0])
+                    and re.match(r"^\d{1,2}\s+[A-Z]", " ".join(c2_words_list[1:]))
+                ):
+                    merged.append(c1_txt + " " + c2_words_list[0])
+                    merged.append(" ".join(c2_words_list[1:]))
+                else:
+                    merged.append(c1_txt)
+                    merged.append(c2_txt)
+        elif c1_txt:
+            merged.append(c1_txt)
+        elif c2_txt:
+            merged.append(c2_txt)
+
+    return "\n".join(merged), 2, True
+
+
 def _extract_pages_2col(pdf_path: str) -> tuple[list[str], list[dict]]:
     """
     ODAC-targeted 2-column extraction.
 
     Each page is split into at most 2 columns using the x0 histogram.
-    Columns are returned top-to-bottom within each column (left, then right)
-    so events stay fully within one column before the next begins.
+    Pages where B-Final names land in col1 with times in col2 are processed
+    with row-pairing so names and times are merged before the state machine
+    sees them.  All other pages use normal left-then-right column order.
     """
     import pdfplumber
     pages: list[str] = []
     col_debug: list[dict] = []
     with pdfplumber.open(pdf_path) as pdf:
         for page_num, page in enumerate(pdf.pages, start=1):
-            col_texts, n_cols = _extract_page_columns(page)
-            # Enforce 2-column cap: if only 1 detected keep as-is
-            pages.append("\n\n".join(col_texts))
+            text, n_cols, row_paired = _row_pair_page(page)
+            pages.append(text)
             col_debug.append({
-                "Page_Number":          page_num,
-                "Columns_Detected":     n_cols,
+                "Page_Number":            page_num,
+                "Columns_Detected":       n_cols,
                 "Event_Headers_Detected": "",
-                "Notes": "2col_mode" if n_cols > 1 else "1col_fallback",
+                "Notes": (
+                    "2col_row_paired" if row_paired
+                    else ("2col_mode" if n_cols > 1 else "1col_fallback")
+                ),
             })
     return pages, col_debug
 
 
+_PATRIOT_COL_BOUNDARIES: tuple[float, float] = (196.0, 400.0)
+"""
+Fixed column split x-positions for the Patriot League PDF.
+
+Empirically measured across all 31 result pages (pages 4-34):
+  col1 max x ≈ 182-194  |  col2 first x = 204.13  |  col3 first x ≈ 406-417
+
+Boundaries are placed in the clear white-space gaps:
+  col1: x  <  196  (A-Final / Women's results)
+  col2: x in [196, 400)  (B-Final)
+  col3: x >= 400  (C-Final)
+
+The Patriot PDF's column gaps are only ~22-25 px wide, which is below the
+≥3-bin (≥37 px) threshold in _detect_column_splits.  Hard-coding the
+boundaries avoids the gap-detection failure that caused 30/34 pages to fall
+back to mixed single-column mode.
+"""
+
+
 def _extract_pages_3col(pdf_path: str) -> tuple[list[str], list[dict]]:
     """
-    Patriot-targeted 3-column extraction.
+    Patriot-targeted 3-column extraction using fixed column boundaries.
 
-    Tries to detect 2 gaps and split into 3 vertical bands.  If only 1 gap is
-    found, adds a forced split at 2/3 of page width.  If no gap found the page
-    is treated as a single column (graceful fallback).
+    All pages are split at the two hard-coded x-positions in
+    _PATRIOT_COL_BOUNDARIES.  Each column is extracted top-to-bottom and the
+    three columns are concatenated with a blank-line separator, giving the
+    state machine a clean, column-ordered stream:
 
-    Columns are concatenated left-to-right (top-to-bottom within each column).
+        <col1 — A-Final / Women>
+
+        <col2 — B-Final>
+
+        <col3 — C-Final>
     """
     import pdfplumber
+    b1, b2 = _PATRIOT_COL_BOUNDARIES
     pages: list[str] = []
     col_debug: list[dict] = []
     with pdfplumber.open(pdf_path) as pdf:
@@ -715,47 +903,27 @@ def _extract_pages_3col(pdf_path: str) -> tuple[list[str], list[dict]]:
             if not words:
                 pages.append(page.extract_text() or "")
                 col_debug.append({
-                    "Page_Number":          page_num,
-                    "Columns_Detected":     1,
+                    "Page_Number":            page_num,
+                    "Columns_Detected":       1,
                     "Event_Headers_Detected": "",
-                    "Notes": "no_words_fallback",
+                    "Notes":                  "no_words_fallback",
                 })
                 continue
 
-            splits = _detect_column_splits(words, page.width)
-
-            # Need exactly 2 boundaries for 3 columns.
-            if len(splits) == 0:
-                # No gaps detected — treat as single column
-                pages.append(_words_to_text(words))
-                col_debug.append({
-                    "Page_Number":          page_num,
-                    "Columns_Detected":     1,
-                    "Event_Headers_Detected": "",
-                    "Notes": "no_gap_detected_1col",
-                })
-                continue
-            elif len(splits) == 1:
-                # Only 1 gap — add a forced third boundary at 2/3 of page
-                forced = page.width * 2 / 3
-                if abs(forced - splits[0]) > 30:
-                    splits.append(forced)
-                    splits.sort()
-
-            # Use the first 2 splits only (3 columns)
-            boundaries = [0.0] + splits[:2] + [page.width]
+            pw = page.width
+            bounds = [0.0, b1, b2, pw]
             col_texts = []
-            for i in range(len(boundaries) - 1):
+            for i in range(3):
                 col_words = [w for w in words
-                             if boundaries[i] <= w["x0"] < boundaries[i + 1]]
+                             if bounds[i] <= w["x0"] < bounds[i + 1]]
                 col_texts.append(_words_to_text(col_words))
 
             pages.append("\n\n".join(col_texts))
             col_debug.append({
-                "Page_Number":          page_num,
-                "Columns_Detected":     len(boundaries) - 1,
+                "Page_Number":            page_num,
+                "Columns_Detected":       3,
                 "Event_Headers_Detected": "",
-                "Notes": f"3col_mode splits={[round(s,1) for s in splits[:2]]}",
+                "Notes":                  f"3col_fixed splits=[{b1},{b2}]",
             })
     return pages, col_debug
 
@@ -796,8 +964,116 @@ CONFERENCE_PARSE_MODE: dict[str, str] = {
 
 # Events known to not be contested by certain conferences (used in coverage report).
 LIKELY_NOT_CONTESTED: dict[str, set[str]] = {
+    "ODAC":         {"1000 Free"},
+    "Patriot":      {"1000 Free"},
     "Summit League": {"1000 Free"},
 }
+
+
+# ── Patriot League line-splitting preprocessing ───────────────────────────────
+#
+# The Patriot 3-col extraction joins words across three heat columns by
+# y-coordinate.  This means one text line can contain multiple swimmer results
+# side-by-side (e.g. "4 Perecinsky, Martin 19NAVY-MD 4:19.73 17 Magner, Reid J
+# 18ARMY-MR 4:27.36") and embedded section labels ("B - Final", "C - Final").
+# preprocess_lines_patriot() splits these merged lines so the state machine
+# sees one swimmer result per line and section labels on their own lines.
+
+# Matches the start of a swimmer result: optional *, 1-2 digit place, then a
+# capitalised last name followed immediately by a comma.
+# E.g. "4 Perecinsky," or "*4 Schreiner," but NOT "26.0" or "3:54.16".
+_PATRIOT_SWIMMER_RE = re.compile(
+    r"(?:(?<=\s)|^)(\*?\d{1,2})\s+([A-Z][a-z][A-Za-z'.\-]+,)"
+)
+
+# Matches a standalone heat-section label at the END of a chunk of text so we
+# can split it onto its own line.  Anchored to end-of-string (with optional
+# trailing whitespace / asterisk junk).
+_PATRIOT_SECTION_TRAIL_RE = re.compile(
+    r"\s*\b([ABC]\s*-\s*Final)\s*\*?\s*$",
+    re.IGNORECASE,
+)
+
+
+def _patriot_split_text(text: str) -> list[str]:
+    """
+    Split a chunk of text that may contain trailing heat-section labels
+    (e.g. "A - Final ... (#7 Men 500 Yard Free) C - Final") into the
+    substantive part plus the section label on its own line.
+    """
+    text = text.strip()
+    if not text:
+        return []
+    m = _PATRIOT_SECTION_TRAIL_RE.search(text)
+    if m:
+        before = text[: m.start()].strip()
+        label = m.group(1).strip()
+        parts = []
+        if before:
+            parts.append(before)
+        parts.append(label)
+        return parts
+    return [text]
+
+
+def _split_patriot_line(line: str) -> list[str]:
+    """
+    Split a single extracted Patriot text line into individual pieces:
+    • swimmer result lines (one per swimmer)
+    • section label lines  ("B - Final", "C - Final")
+    • event header / split-data lines (passed through unchanged)
+
+    Leading '*' on place numbers (e.g. "*4 Schreiner,") is stripped so that
+    parse_place_and_time can see the bare digit.
+    """
+    line = line.strip()
+    if not line:
+        return []
+
+    # Find all positions where a new swimmer result begins.
+    starts: list[int] = []
+    for m in _PATRIOT_SWIMMER_RE.finditer(line):
+        place_str = m.group(1).lstrip("*")
+        place = int(place_str)
+        if 1 <= place <= 64:
+            starts.append(m.start())
+
+    if len(starts) == 0:
+        # No swimmer result in this line — check for trailing section label only.
+        return _patriot_split_text(line)
+
+    parts: list[str] = []
+
+    # Text before the first swimmer result (event header / split data / label).
+    if starts[0] > 0:
+        pre = line[: starts[0]].strip()
+        if pre:
+            parts.extend(_patriot_split_text(pre))
+
+    # Extract each swimmer slice.
+    for i, start in enumerate(starts):
+        end = starts[i + 1] if i + 1 < len(starts) else len(line)
+        chunk = line[start:end].strip().lstrip("*")
+        if chunk:
+            parts.append(chunk)
+
+    return parts
+
+
+def preprocess_lines_patriot(lines: list[str]) -> list[str]:
+    """
+    Apply Patriot-specific line splitting to the flat line list produced by
+    the 3-col extractor before the state machine processes it.
+
+    Each merged line is split into individual swimmer results + section labels.
+    """
+    out: list[str] = []
+    for line in lines:
+        if "<<<PAGE_BREAK>>>" in line:
+            out.append(line)
+            continue
+        out.extend(_split_patriot_line(line))
+    return out
 
 
 # ── Session type detection ────────────────────────────────────────────────────
@@ -1040,6 +1316,9 @@ def parse_place_and_time(line: str) -> tuple[int | None, str | None]:
     line = line.strip()
     if not line:
         return None, None
+    # Strip leading cut-standard marks (I=invited, @=NCAA-B, #=NCAA-A,
+    # !=meet-record, *=conference-record) that ODAC prefixes to result lines.
+    line = re.sub(r"^[I@#!*]\s+(?=\d)", "", line)
     m = re.match(r"^(\d{1,2})\b", line)
     if not m:
         return None, None
@@ -1049,11 +1328,17 @@ def parse_place_and_time(line: str) -> tuple[int | None, str | None]:
     # Split-line guard: real result rows always contain a swimmer name or school
     # abbreviation (≥ 2 consecutive letters).  Pure-number split lines don't.
     after_place = line[m.end():]
+    if after_place and after_place[0] == ":":
+        return None, None
     if not re.search(r"[A-Za-z]{2,}", after_place):
         return None, None
     times = re.findall(_TIME_PAT, line)
     if not times:
-        return None, None
+        # No time found, but the place and swimmer name are valid.
+        # Return (place, None) so the caller can watch the next line for a
+        # time that was pushed onto its own row (e.g. "1:47.73* @" after a
+        # record-setting swim where the cut marks cause a line-break).
+        return place, None
     for t in times:
         sec = time_to_seconds(t)
         if sec is not None and sec >= 10:

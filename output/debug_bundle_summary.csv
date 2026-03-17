@@ -1,5 +1,5 @@
 Bundle_ID,Conference,Files_In_Bundle,Detected_Gender,Events_Detected,Events_Mapped,Events_Output,Men_Events_Output,Women_Events_Output,Events_Missing,Men_Missing,Women_Missing,Events_Recovered_Pass2,Missing_Event_List,Team_Scores_Found,Team_Score_Strategy,Notes
 gliac_2026,GLIAC,1,men/women,14,28,28,14,14,0,0,0,0,,0,not_found,
-odac_2026,ODAC,2,men/women,13,21,21,10,11,7,4,3,0,"men:1000 Free, men:1650 Free, men:100 Breast, men:400 IM, women:1000 Free, women:1650 Free, women:400 IM",0,not_found,
-patriot_2026,Patriot,1,men/women,13,6,6,3,3,22,11,11,0,"men:100 Free, men:200 Free, men:500 Free, men:1000 Free, men:1650 Free, men:200 Back, men:100 Breast, men:200 Breast, men:100 Fly, men:200 IM, men:400 IM, women:50 Free, women:1000 Free, women:1650 Free, women:100 Back, women:200 Back, women:100 Breast, women:200 Breast, women:100 Fly, women:200 Fly, women:200 IM, women:400 IM",0,not_found,
+odac_2026,ODAC,2,men/women,13,26,26,13,13,2,1,1,0,"men:1000 Free, women:1000 Free",0,not_found,
+patriot_2026,Patriot,1,men/women,13,26,26,13,13,2,1,1,0,"men:1000 Free, women:1000 Free",0,not_found,
 summitleague_2026,Summit League,1,men/women,13,26,26,13,13,2,1,1,0,"men:1000 Free, women:1000 Free",0,not_found,

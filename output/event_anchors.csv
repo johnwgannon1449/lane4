@@ -1,82 +1,107 @@
 Conference,Year,Gender,Bundle_ID,Event,1st,8th,16th,1st_seconds,8th_seconds,16th_seconds,Sec_per_place,Source_File,Data_Quality
 GLIAC,2026,men,gliac_2026,50 Free,19.68,19.89,20.33,19.68,19.89,20.33,0.0433,GLIAC_2026_Final_Results.pdf,finals
 GLIAC,2026,men,gliac_2026,100 Free,43.85,44.42,45.02,43.85,44.42,45.02,0.078,GLIAC_2026_Final_Results.pdf,finals
-GLIAC,2026,men,gliac_2026,200 Free,1:34.74,1:38.69,1:39.31,94.74,98.69,99.31,0.3047,GLIAC_2026_Final_Results.pdf,finals
+GLIAC,2026,men,gliac_2026,200 Free,1:38.34,1:38.69,1:39.31,98.34,98.69,99.31,0.0647,GLIAC_2026_Final_Results.pdf,finals
 GLIAC,2026,men,gliac_2026,500 Free,4:28.37,4:32.21,4:32.35,268.37,272.21,272.35,0.2653,GLIAC_2026_Final_Results.pdf,finals
-GLIAC,2026,men,gliac_2026,1000 Free,9:20.57,8:58.94,9:38.97,560.57,538.94,578.97,1.2267,GLIAC_2026_Final_Results.pdf,finals
+GLIAC,2026,men,gliac_2026,1000 Free,9:20.57,9:21.12,9:38.97,560.57,561.12,578.97,1.2267,GLIAC_2026_Final_Results.pdf,finals
 GLIAC,2026,men,gliac_2026,1650 Free,15:44.49,15:49.91,16:21.16,944.49,949.91,981.16,2.4447,GLIAC_2026_Final_Results.pdf,finals
 GLIAC,2026,men,gliac_2026,100 Back,47.98,49.07,49.99,47.98,49.07,49.99,0.134,GLIAC_2026_Final_Results.pdf,finals
-GLIAC,2026,men,gliac_2026,200 Back,1:42.18,1:51.94,1:52.82,102.18,111.94,112.82,0.7093,GLIAC_2026_Final_Results.pdf,finals
+GLIAC,2026,men,gliac_2026,200 Back,1:46.90,1:51.94,1:52.82,106.9,111.94,112.82,0.3947,GLIAC_2026_Final_Results.pdf,finals
 GLIAC,2026,men,gliac_2026,100 Breast,53.77,55.53,56.54,53.77,55.53,56.54,0.1847,GLIAC_2026_Final_Results.pdf,finals
-GLIAC,2026,men,gliac_2026,200 Breast,1:55.12,2:02.80,2:04.08,115.12,122.8,124.08,0.5973,GLIAC_2026_Final_Results.pdf,finals
+GLIAC,2026,men,gliac_2026,200 Breast,2:01.00,2:02.80,2:04.08,121.0,122.8,124.08,0.2053,GLIAC_2026_Final_Results.pdf,finals
 GLIAC,2026,men,gliac_2026,100 Fly,47.08,47.82,49.45,47.08,47.82,49.45,0.158,GLIAC_2026_Final_Results.pdf,finals
-GLIAC,2026,men,gliac_2026,200 Fly,1:44.66,1:50.53,1:53.32,104.66,110.53,113.32,0.5773,GLIAC_2026_Final_Results.pdf,finals
-GLIAC,2026,men,gliac_2026,200 IM,1:44.60,1:50.19,1:52.04,104.6,110.19,112.04,0.496,GLIAC_2026_Final_Results.pdf,finals
+GLIAC,2026,men,gliac_2026,200 Fly,1:48.38,1:50.53,1:53.32,108.38,110.53,113.32,0.3293,GLIAC_2026_Final_Results.pdf,finals
+GLIAC,2026,men,gliac_2026,200 IM,1:48.67,1:50.19,1:52.04,108.67,110.19,112.04,0.2247,GLIAC_2026_Final_Results.pdf,finals
 GLIAC,2026,men,gliac_2026,400 IM,3:56.17,4:00.49,4:04.17,236.17,240.49,244.17,0.5333,GLIAC_2026_Final_Results.pdf,finals
 GLIAC,2026,women,gliac_2026,50 Free,22.89,24.03,24.64,22.89,24.03,24.64,0.1167,GLIAC_2026_Final_Results.pdf,finals
 GLIAC,2026,women,gliac_2026,100 Free,49.82,52.18,53.40,49.82,52.18,53.4,0.2387,GLIAC_2026_Final_Results.pdf,finals
-GLIAC,2026,women,gliac_2026,200 Free,1:47.32,1:53.07,1:56.65,107.32,113.07,116.65,0.622,GLIAC_2026_Final_Results.pdf,finals
+GLIAC,2026,women,gliac_2026,200 Free,1:47.60,1:53.07,1:56.65,107.6,113.07,116.65,0.6033,GLIAC_2026_Final_Results.pdf,finals
 GLIAC,2026,women,gliac_2026,500 Free,4:56.82,5:04.36,5:19.00,296.82,304.36,319.0,1.4787,GLIAC_2026_Final_Results.pdf,finals
 GLIAC,2026,women,gliac_2026,1000 Free,10:13.05,10:30.45,11:24.09,613.05,630.45,684.09,4.736,GLIAC_2026_Final_Results.pdf,finals
-GLIAC,2026,women,gliac_2026,1650 Free,17:17.20,17:53.73,16:31.17,1037.2,1073.73,991.17,-3.0687,GLIAC_2026_Final_Results.pdf,finals
+GLIAC,2026,women,gliac_2026,1650 Free,17:17.20,17:53.73,18:40.43,1037.2,1073.73,1120.43,5.5487,GLIAC_2026_Final_Results.pdf,finals
 GLIAC,2026,women,gliac_2026,100 Back,56.61,57.79,59.36,56.61,57.79,59.36,0.1833,GLIAC_2026_Final_Results.pdf,finals
-GLIAC,2026,women,gliac_2026,200 Back,1:57.00,2:05.88,2:11.51,117.0,125.88,131.51,0.9673,GLIAC_2026_Final_Results.pdf,finals
-GLIAC,2026,women,gliac_2026,100 Breast,1:01.03,1:04.43,1:07.37,61.03,64.43,67.37,0.4227,GLIAC_2026_Final_Results.pdf,finals
+GLIAC,2026,women,gliac_2026,200 Back,2:00.75,2:05.88,2:11.51,120.75,125.88,131.51,0.7173,GLIAC_2026_Final_Results.pdf,finals
+GLIAC,2026,women,gliac_2026,100 Breast,1:02.19,1:04.43,1:07.37,62.19,64.43,67.37,0.3453,GLIAC_2026_Final_Results.pdf,finals
 GLIAC,2026,women,gliac_2026,200 Breast,2:15.47,2:22.14,2:30.85,135.47,142.14,150.85,1.0253,GLIAC_2026_Final_Results.pdf,finals
 GLIAC,2026,women,gliac_2026,100 Fly,55.88,57.57,59.67,55.88,57.57,59.67,0.2527,GLIAC_2026_Final_Results.pdf,finals
-GLIAC,2026,women,gliac_2026,200 Fly,1:58.97,2:07.24,2:19.86,118.97,127.24,139.86,1.3927,GLIAC_2026_Final_Results.pdf,finals
-GLIAC,2026,women,gliac_2026,200 IM,1:59.39,2:07.99,2:11.44,119.39,127.99,131.44,0.8033,GLIAC_2026_Final_Results.pdf,finals
+GLIAC,2026,women,gliac_2026,200 Fly,2:06.41,2:07.24,2:19.86,126.41,127.24,139.86,0.8967,GLIAC_2026_Final_Results.pdf,finals
+GLIAC,2026,women,gliac_2026,200 IM,2:04.16,2:07.99,2:11.44,124.16,127.99,131.44,0.4853,GLIAC_2026_Final_Results.pdf,finals
 GLIAC,2026,women,gliac_2026,400 IM,4:19.98,4:32.09,4:44.79,259.98,272.09,284.79,1.654,GLIAC_2026_Final_Results.pdf,finals
 ODAC,2026,men,odac_2026,50 Free,20.29,21.41,21.92,20.29,21.41,21.92,0.1087,odac 2026 MENS swim-full-results.pdf,prelim_fallback
 ODAC,2026,men,odac_2026,100 Free,44.08,47.00,48.28,44.08,47.0,48.28,0.28,odac 2026 MENS swim-full-results.pdf,prelim_fallback
-ODAC,2026,men,odac_2026,200 Free,1:35.12,1:44.54,1:48.56,95.12,104.54,108.56,0.896,odac 2026 MENS swim-full-results.pdf,prelim_fallback
-ODAC,2026,men,odac_2026,500 Free,4:34.58,4:44.83,4:52.86,274.58,284.83,292.86,1.2187,odac 2026 MENS swim-full-results.pdf,prelim_fallback
+ODAC,2026,men,odac_2026,200 Free,1:37.65,1:44.54,1:48.56,97.65,104.54,108.56,0.7273,odac 2026 MENS swim-full-results.pdf,prelim_fallback
+ODAC,2026,men,odac_2026,500 Free,4:32.27,4:48.31,4:52.86,272.27,288.31,292.86,1.3727,odac 2026 MENS swim-full-results.pdf,prelim_fallback
+ODAC,2026,men,odac_2026,1650 Free,15:58.34,16:48.03,18:12.45,958.34,1008.03,1092.45,8.9407,odac 2026 MENS swim-full-results.pdf,prelim_fallback
 ODAC,2026,men,odac_2026,100 Back,47.81,53.61,56.38,47.81,53.61,56.38,0.5713,odac 2026 MENS swim-full-results.pdf,prelim_fallback
-ODAC,2026,men,odac_2026,200 Back,1:42.91,1:57.46,2:05.10,102.91,117.46,125.1,1.4793,odac 2026 MENS swim-full-results.pdf,prelim_fallback
-ODAC,2026,men,odac_2026,200 Breast,1:54.89,2:08.09,2:13.84,114.89,128.09,133.84,1.2633,odac 2026 MENS swim-full-results.pdf,prelim_fallback
+ODAC,2026,men,odac_2026,200 Back,1:47.73,1:57.46,2:05.10,107.73,117.46,125.1,1.158,odac 2026 MENS swim-full-results.pdf,prelim_fallback
+ODAC,2026,men,odac_2026,100 Breast,53.76,58.29,1:01.84,53.76,58.29,61.84,0.5387,odac 2026 MENS swim-full-results.pdf,prelim_fallback
+ODAC,2026,men,odac_2026,200 Breast,1:58.53,2:08.09,2:13.84,118.53,128.09,133.84,1.0207,odac 2026 MENS swim-full-results.pdf,prelim_fallback
 ODAC,2026,men,odac_2026,100 Fly,48.18,51.12,53.53,48.18,51.12,53.53,0.3567,odac 2026 MENS swim-full-results.pdf,prelim_fallback
-ODAC,2026,men,odac_2026,200 Fly,1:43.50,1:59.01,2:05.96,103.5,119.01,125.96,1.4973,odac 2026 MENS swim-full-results.pdf,prelim_fallback
-ODAC,2026,men,odac_2026,200 IM,1:44.71,1:57.11,1:57.74,104.71,117.11,117.74,0.8687,odac 2026 MENS swim-full-results.pdf,prelim_fallback
+ODAC,2026,men,odac_2026,200 Fly,1:50.89,1:59.01,2:05.96,110.89,119.01,125.96,1.0047,odac 2026 MENS swim-full-results.pdf,prelim_fallback
+ODAC,2026,men,odac_2026,200 IM,1:47.61,1:57.11,1:57.74,107.61,117.11,117.74,0.6753,odac 2026 MENS swim-full-results.pdf,prelim_fallback
+ODAC,2026,men,odac_2026,400 IM,4:02.35,4:13.74,4:48.83,242.35,253.74,288.83,3.0987,odac 2026 MENS swim-full-results.pdf,prelim_fallback
 ODAC,2026,women,odac_2026,50 Free,23.74,24.61,25.64,23.74,24.61,25.64,0.1267,odac 2026 WOMENS swim_results.pdf,prelim_fallback
 ODAC,2026,women,odac_2026,100 Free,52.33,54.83,1:01.54,52.33,54.83,61.54,0.614,odac 2026 WOMENS swim_results.pdf,prelim_fallback
-ODAC,2026,women,odac_2026,200 Free,1:46.12,1:59.00,2:07.41,106.12,119.0,127.41,1.4193,odac 2026 WOMENS swim_results.pdf,prelim_fallback
+ODAC,2026,women,odac_2026,200 Free,1:55.15,1:59.00,2:07.41,115.15,119.0,127.41,0.8173,odac 2026 WOMENS swim_results.pdf,prelim_fallback
 ODAC,2026,women,odac_2026,500 Free,5:06.61,5:20.73,5:32.30,306.61,320.73,332.3,1.7127,odac 2026 WOMENS swim_results.pdf,prelim_fallback
+ODAC,2026,women,odac_2026,1650 Free,17:29.61,18:40.31,19:36.29,1049.61,1120.31,1176.29,8.4453,odac 2026 WOMENS swim_results.pdf,prelim_fallback
 ODAC,2026,women,odac_2026,100 Back,56.80,1:01.84,1:05.47,56.8,61.84,65.47,0.578,odac 2026 WOMENS swim_results.pdf,prelim_fallback
-ODAC,2026,women,odac_2026,200 Back,1:56.50,2:14.85,2:22.88,116.5,134.85,142.88,1.7587,odac 2026 WOMENS swim_results.pdf,prelim_fallback
-ODAC,2026,women,odac_2026,100 Breast,1:03.54,1:08.27,1:13.22,63.54,68.27,73.22,0.6453,odac 2026 WOMENS swim_results.pdf,prelim_fallback
+ODAC,2026,women,odac_2026,200 Back,2:03.50,2:14.85,2:22.88,123.5,134.85,142.88,1.292,odac 2026 WOMENS swim_results.pdf,prelim_fallback
+ODAC,2026,women,odac_2026,100 Breast,1:04.49,1:08.27,1:13.22,64.49,68.27,73.22,0.582,odac 2026 WOMENS swim_results.pdf,prelim_fallback
 ODAC,2026,women,odac_2026,200 Breast,2:21.67,2:31.07,2:49.15,141.67,151.07,169.15,1.832,odac 2026 WOMENS swim_results.pdf,prelim_fallback
 ODAC,2026,women,odac_2026,100 Fly,56.83,1:01.12,1:04.79,56.83,61.12,64.79,0.5307,odac 2026 WOMENS swim_results.pdf,prelim_fallback
-ODAC,2026,women,odac_2026,200 Fly,1:58.70,2:17.34,4:07.45,118.7,137.34,247.45,8.5833,odac 2026 WOMENS swim_results.pdf,prelim_fallback
-ODAC,2026,women,odac_2026,200 IM,1:59.63,2:12.42,2:16.20,119.63,132.42,136.2,1.1047,odac 2026 WOMENS swim_results.pdf,prelim_fallback
-Patriot,2026,men,patriot_2026,50 Free,5:00.55,4:09.15,3:35.10,300.55,249.15,215.1,-5.6967,Patriot League 2026 results.pdf,prelim_fallback
-Patriot,2026,men,patriot_2026,100 Back,6:26.10,4:45.55,4:12.70,386.1,285.55,252.7,-8.8933,Patriot League 2026 results.pdf,prelim_fallback
-Patriot,2026,men,patriot_2026,200 Fly,1:41.85,1:52.05,1:47.91,101.85,112.05,107.91,0.404,Patriot League 2026 results.pdf,prelim_fallback
-Patriot,2026,women,patriot_2026,100 Free,48.85,1:47.98,1:49.89,48.85,107.98,109.89,4.0693,Patriot League 2026 results.pdf,prelim_fallback
-Patriot,2026,women,patriot_2026,200 Free,1:35.26,1:37.68,1:50.61,95.26,97.68,110.61,1.0233,Patriot League 2026 results.pdf,prelim_fallback
-Patriot,2026,women,patriot_2026,500 Free,4:47.33,4:56.70,5:01.51,287.33,296.7,301.51,0.9453,Patriot League 2026 results.pdf,prelim_fallback
+ODAC,2026,women,odac_2026,200 Fly,2:06.83,2:17.34,4:07.45,126.83,137.34,247.45,8.0413,odac 2026 WOMENS swim_results.pdf,prelim_fallback
+ODAC,2026,women,odac_2026,200 IM,2:06.68,2:12.42,2:16.20,126.68,132.42,136.2,0.6347,odac 2026 WOMENS swim_results.pdf,prelim_fallback
+ODAC,2026,women,odac_2026,400 IM,4:36.06,4:47.91,5:22.69,276.06,287.91,322.69,3.1087,odac 2026 WOMENS swim_results.pdf,prelim_fallback
+Patriot,2026,men,patriot_2026,50 Free,19.28,20.12,20.48,19.28,20.12,20.48,0.08,Patriot League 2026 results.pdf,prelim_fallback
+Patriot,2026,men,patriot_2026,100 Free,42.44,43.76,45.03,42.44,43.76,45.03,0.1727,Patriot League 2026 results.pdf,prelim_fallback
+Patriot,2026,men,patriot_2026,200 Free,1:34.07,1:37.68,1:39.72,94.07,97.68,99.72,0.3767,Patriot League 2026 results.pdf,prelim_fallback
+Patriot,2026,men,patriot_2026,500 Free,4:16.73,4:26.53,4:32.67,256.73,266.53,272.67,1.0627,Patriot League 2026 results.pdf,prelim_fallback
+Patriot,2026,men,patriot_2026,1650 Free,14:54.68,15:34.23,15:53.93,894.68,934.23,953.93,3.95,Patriot League 2026 results.pdf,prelim_fallback
+Patriot,2026,men,patriot_2026,100 Back,44.80,48.63,50.19,44.8,48.63,50.19,0.3593,Patriot League 2026 results.pdf,prelim_fallback
+Patriot,2026,men,patriot_2026,200 Back,1:40.13,1:47.98,1:49.89,100.13,107.98,109.89,0.6507,Patriot League 2026 results.pdf,prelim_fallback
+Patriot,2026,men,patriot_2026,100 Breast,51.69,53.09,56.69,51.69,53.09,56.69,0.3333,Patriot League 2026 results.pdf,prelim_fallback
+Patriot,2026,men,patriot_2026,200 Breast,1:52.82,1:59.92,2:03.03,112.82,119.92,123.03,0.6807,Patriot League 2026 results.pdf,prelim_fallback
+Patriot,2026,men,patriot_2026,100 Fly,46.11,48.11,48.98,46.11,48.11,48.98,0.1913,Patriot League 2026 results.pdf,prelim_fallback
+Patriot,2026,men,patriot_2026,200 Fly,1:41.87,1:52.05,1:52.08,101.87,112.05,112.08,0.6807,Patriot League 2026 results.pdf,prelim_fallback
+Patriot,2026,men,patriot_2026,200 IM,1:44.45,1:49.35,1:50.53,104.45,109.35,110.53,0.4053,Patriot League 2026 results.pdf,prelim_fallback
+Patriot,2026,men,patriot_2026,400 IM,3:47.66,3:52.54,4:01.19,227.66,232.54,241.19,0.902,Patriot League 2026 results.pdf,prelim_fallback
+Patriot,2026,women,patriot_2026,50 Free,22.56,23.41,23.76,22.56,23.41,23.76,0.08,Patriot League 2026 results.pdf,prelim_fallback
+Patriot,2026,women,patriot_2026,100 Free,49.43,50.88,51.56,49.43,50.88,51.56,0.142,Patriot League 2026 results.pdf,prelim_fallback
+Patriot,2026,women,patriot_2026,200 Free,1:46.38,1:50.70,1:54.73,106.38,110.7,114.73,0.5567,Patriot League 2026 results.pdf,prelim_fallback
+Patriot,2026,women,patriot_2026,500 Free,4:42.07,5:02.85,5:01.51,282.07,302.85,301.51,1.296,Patriot League 2026 results.pdf,prelim_fallback
+Patriot,2026,women,patriot_2026,1650 Free,16:31.72,17:07.90,17:25.30,991.72,1027.9,1045.3,3.572,Patriot League 2026 results.pdf,prelim_fallback
+Patriot,2026,women,patriot_2026,100 Back,52.83,56.04,56.31,52.83,56.04,56.31,0.232,Patriot League 2026 results.pdf,prelim_fallback
+Patriot,2026,women,patriot_2026,200 Back,1:56.51,2:01.59,2:04.58,116.51,121.59,124.58,0.538,Patriot League 2026 results.pdf,prelim_fallback
+Patriot,2026,women,patriot_2026,100 Breast,59.78,1:02.75,1:05.37,59.78,62.75,65.37,0.3727,Patriot League 2026 results.pdf,prelim_fallback
+Patriot,2026,women,patriot_2026,200 Breast,2:10.28,2:18.13,2:20.75,130.28,138.13,140.745,0.6977,Patriot League 2026 results.pdf,prelim_fallback
+Patriot,2026,women,patriot_2026,100 Fly,51.34,54.47,55.36,51.34,54.47,55.36,0.268,Patriot League 2026 results.pdf,prelim_fallback
+Patriot,2026,women,patriot_2026,200 Fly,1:58.63,2:03.70,2:07.05,118.63,123.7,127.05,0.5613,Patriot League 2026 results.pdf,prelim_fallback
+Patriot,2026,women,patriot_2026,200 IM,1:58.46,2:02.89,2:06.03,118.46,122.89,126.03,0.5047,Patriot League 2026 results.pdf,prelim_fallback
+Patriot,2026,women,patriot_2026,400 IM,4:16.24,4:29.95,4:38.87,256.24,269.95,278.87,1.5087,Patriot League 2026 results.pdf,prelim_fallback
 Summit League,2026,men,summitleague_2026,50 Free,19.56,20.45,20.58,19.56,20.45,20.58,0.068,SUMMIT LEAGUE 2026 RESULTS.pdf,finals
 Summit League,2026,men,summitleague_2026,100 Free,43.81,44.61,45.25,43.81,44.61,45.25,0.096,SUMMIT LEAGUE 2026 RESULTS.pdf,finals
-Summit League,2026,men,summitleague_2026,200 Free,1:33.93,1:39.76,1:40.76,93.93,99.76,100.76,0.4553,SUMMIT LEAGUE 2026 RESULTS.pdf,finals
+Summit League,2026,men,summitleague_2026,200 Free,1:38.70,1:39.76,1:40.76,98.7,99.76,100.76,0.1373,SUMMIT LEAGUE 2026 RESULTS.pdf,finals
 Summit League,2026,men,summitleague_2026,500 Free,4:23.74,4:32.81,4:33.66,263.74,272.81,273.66,0.6613,SUMMIT LEAGUE 2026 RESULTS.pdf,finals
 Summit League,2026,men,summitleague_2026,1650 Free,15:18.41,16:13.48,17:03.72,918.41,973.48,1023.72,7.0207,SUMMIT LEAGUE 2026 RESULTS.pdf,finals
 Summit League,2026,men,summitleague_2026,100 Back,5:17.90,4:49.00,49.11,317.9,289.0,49.11,-17.9193,SUMMIT LEAGUE 2026 RESULTS.pdf,finals
-Summit League,2026,men,summitleague_2026,200 Back,1:42.14,1:48.51,1:52.33,102.14,108.51,112.33,0.6793,SUMMIT LEAGUE 2026 RESULTS.pdf,finals
+Summit League,2026,men,summitleague_2026,200 Back,1:43.39,1:48.51,1:52.33,103.39,108.51,112.33,0.596,SUMMIT LEAGUE 2026 RESULTS.pdf,finals
 Summit League,2026,men,summitleague_2026,100 Breast,54.41,55.15,56.26,54.41,55.15,56.26,0.1233,SUMMIT LEAGUE 2026 RESULTS.pdf,finals
-Summit League,2026,men,summitleague_2026,200 Breast,1:54.95,2:00.37,2:09.00,114.95,120.37,129.0,0.9367,SUMMIT LEAGUE 2026 RESULTS.pdf,finals
+Summit League,2026,men,summitleague_2026,200 Breast,1:59.51,2:00.37,2:09.00,119.51,120.37,129.0,0.6327,SUMMIT LEAGUE 2026 RESULTS.pdf,finals
 Summit League,2026,men,summitleague_2026,100 Fly,47.11,48.93,49.28,47.11,48.93,49.28,0.1447,SUMMIT LEAGUE 2026 RESULTS.pdf,finals
-Summit League,2026,men,summitleague_2026,200 Fly,1:43.79,1:50.49,1:51.78,103.79,110.49,111.78,0.5327,SUMMIT LEAGUE 2026 RESULTS.pdf,finals
-Summit League,2026,men,summitleague_2026,200 IM,1:44.13,1:51.23,1:52.52,104.13,111.23,112.52,0.5593,SUMMIT LEAGUE 2026 RESULTS.pdf,finals
+Summit League,2026,men,summitleague_2026,200 Fly,1:49.46,1:50.49,1:51.78,109.46,110.49,111.78,0.1547,SUMMIT LEAGUE 2026 RESULTS.pdf,finals
+Summit League,2026,men,summitleague_2026,200 IM,1:48.23,1:51.23,1:52.52,108.23,111.23,112.52,0.286,SUMMIT LEAGUE 2026 RESULTS.pdf,finals
 Summit League,2026,men,summitleague_2026,400 IM,3:51.12,3:58.55,4:04.96,231.12,238.55,244.96,0.9227,SUMMIT LEAGUE 2026 RESULTS.pdf,finals
 Summit League,2026,women,summitleague_2026,50 Free,22.93,23.52,23.88,22.93,23.52,23.88,0.0633,SUMMIT LEAGUE 2026 RESULTS.pdf,finals
 Summit League,2026,women,summitleague_2026,100 Free,50.81,51.71,52.45,50.81,51.71,52.45,0.1093,SUMMIT LEAGUE 2026 RESULTS.pdf,finals
-Summit League,2026,women,summitleague_2026,200 Free,1:45.53,1:51.48,1:55.24,105.53,111.48,115.24,0.6473,SUMMIT LEAGUE 2026 RESULTS.pdf,finals
+Summit League,2026,women,summitleague_2026,200 Free,1:50.02,1:51.48,1:55.24,110.02,111.48,115.24,0.348,SUMMIT LEAGUE 2026 RESULTS.pdf,finals
 Summit League,2026,women,summitleague_2026,500 Free,4:50.92,5:03.69,5:09.14,290.92,303.69,309.14,1.2147,SUMMIT LEAGUE 2026 RESULTS.pdf,finals
-Summit League,2026,women,summitleague_2026,1650 Free,16:57.36,17:31.28,16:25.29,1017.36,1051.28,985.29,-2.138,SUMMIT LEAGUE 2026 RESULTS.pdf,finals
+Summit League,2026,women,summitleague_2026,1650 Free,16:57.36,17:31.28,17:59.68,1017.36,1051.28,1079.68,4.1547,SUMMIT LEAGUE 2026 RESULTS.pdf,finals
 Summit League,2026,women,summitleague_2026,100 Back,54.51,56.41,57.70,54.51,56.41,57.7,0.2127,SUMMIT LEAGUE 2026 RESULTS.pdf,finals
-Summit League,2026,women,summitleague_2026,200 Back,1:54.80,2:02.62,2:04.61,114.8,122.62,124.61,0.654,SUMMIT LEAGUE 2026 RESULTS.pdf,finals
-Summit League,2026,women,summitleague_2026,100 Breast,1:00.30,1:03.69,1:06.39,60.3,63.69,66.39,0.406,SUMMIT LEAGUE 2026 RESULTS.pdf,finals
+Summit League,2026,women,summitleague_2026,200 Back,1:58.18,2:02.62,2:04.61,118.18,122.62,124.61,0.4287,SUMMIT LEAGUE 2026 RESULTS.pdf,finals
+Summit League,2026,women,summitleague_2026,100 Breast,1:01.57,1:03.69,1:06.39,61.57,63.69,66.39,0.3213,SUMMIT LEAGUE 2026 RESULTS.pdf,finals
 Summit League,2026,women,summitleague_2026,200 Breast,2:16.08,2:18.42,2:24.76,136.08,138.42,144.76,0.5787,SUMMIT LEAGUE 2026 RESULTS.pdf,finals
 Summit League,2026,women,summitleague_2026,100 Fly,53.25,56.04,58.40,53.25,56.04,58.4,0.3433,SUMMIT LEAGUE 2026 RESULTS.pdf,finals
-Summit League,2026,women,summitleague_2026,200 Fly,1:57.11,2:06.12,2:17.88,117.11,126.12,137.88,1.3847,SUMMIT LEAGUE 2026 RESULTS.pdf,finals
-Summit League,2026,women,summitleague_2026,200 IM,1:57.88,2:04.11,2:07.62,117.88,124.11,127.62,0.6493,SUMMIT LEAGUE 2026 RESULTS.pdf,finals
+Summit League,2026,women,summitleague_2026,200 Fly,2:01.39,2:06.12,2:17.88,121.39,126.12,137.88,1.0993,SUMMIT LEAGUE 2026 RESULTS.pdf,finals
+Summit League,2026,women,summitleague_2026,200 IM,2:01.59,2:04.11,2:07.62,121.59,124.11,127.62,0.402,SUMMIT LEAGUE 2026 RESULTS.pdf,finals
 Summit League,2026,women,summitleague_2026,400 IM,4:18.48,4:32.67,4:40.77,258.48,272.67,280.77,1.486,SUMMIT LEAGUE 2026 RESULTS.pdf,finals
