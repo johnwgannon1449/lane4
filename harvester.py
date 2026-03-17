@@ -41,6 +41,7 @@ from parser_helpers import (
     looks_like_psych_sheet,
     loose_event_match,
     normalize_event_name_any,
+    normalize_cid,
     parse_filename_metadata,
     parse_place_and_time,
     extract_time_and_suffix,
@@ -104,6 +105,18 @@ EVENT_COVERAGE_HEADER = [
     "Bundle_ID", "Conference", "Year", "Gender", "Event_Name",
     "Detected", "Source_Type", "Notes",
 ]
+
+EVENT_HEADER_DEBUG_HEADER = [
+    "Bundle_ID", "Conference", "Source_File",
+    "Page_Number", "Raw_Header_Text",
+    "Gender_Normalized", "Event_Normalized",
+    "Round_Normalized", "Accepted_YN", "Rejection_Reason",
+    "State_Action", "Intervening_Line_Type",
+    "Dedupe_Key", "Notes",
+]
+
+# Events never required for full coverage — detected if present, silent if absent.
+_OPTIONAL_EVENTS: frozenset[str] = frozenset({"1000 Free"})
 
 ANCHOR_PLACES = [1, 8, 16]
 
@@ -318,7 +331,37 @@ def parse_pdf_raw(
             "Issue":       issue,
         }
 
-    col_debug_rows: list[dict] = []
+    col_debug_rows:  list[dict] = []
+    hdr_debug_rows:  list[dict] = []
+
+    def hdr_debug(
+        page_num: int,
+        raw: str,
+        gender_norm: str,
+        event_norm: str,
+        round_norm: str,
+        accepted: bool,
+        rejection: str,
+        action: str,
+        interv: str = "",
+        notes: str = "",
+    ) -> None:
+        hdr_debug_rows.append({
+            "Bundle_ID":             bundle_id,
+            "Conference":            conference,
+            "Source_File":           source,
+            "Page_Number":           page_num,
+            "Raw_Header_Text":       raw,
+            "Gender_Normalized":     gender_norm,
+            "Event_Normalized":      event_norm,
+            "Round_Normalized":      round_norm,
+            "Accepted_YN":           "yes" if accepted else "no",
+            "Rejection_Reason":      rejection,
+            "State_Action":          action,
+            "Intervening_Line_Type": interv,
+            "Dedupe_Key":            f"{gender_norm}:{event_norm}",
+            "Notes":                 notes,
+        })
 
     def debug_row(
         file_gender_type: str,
@@ -431,6 +474,7 @@ def parse_pdf_raw(
     _PENDING_TIME_RE = re.compile(
         r"(?:\d{1,2}:)?\d{1,2}:\d{2}\.\d{2}|\d{1,3}\.\d{2}"
     )
+    current_page: int = 1  # page counter for header debug CSV
 
     def finalize():
         nonlocal current_event, _pending_place
@@ -448,6 +492,9 @@ def parse_pdf_raw(
 
     for raw_line in all_lines:
         line = raw_line.strip()
+        if line == "<<<PAGE_BREAK>>>":
+            current_page += 1
+            continue
 
         # ── Section boundary detection ────────────────────────────────────────
         if _MEN_SECTION_RE.search(line):
@@ -543,12 +590,37 @@ def parse_pdf_raw(
                             current_final_type,
                             0, "recognized", f"session={session}",
                         ))
+                        hdr_debug(current_page, line,
+                                  resolved_gender, canonical,
+                                  current_final_type or "unknown",
+                                  True, "",
+                                  "finalize+open_event",
+                                  notes=f"session={session}")
+                    else:
+                        # Recognized but filtered by gender mismatch
+                        hdr_debug(current_page, line,
+                                  resolved_gender or "none", canonical,
+                                  ft_in_header or "unknown",
+                                  False, f"gender_mismatch: file={file_gender_type} event={resolved_gender}",
+                                  "finalize_only")
+                else:
+                    # Bare header — gender context unknown
+                    hdr_debug(current_page, line,
+                              ev_gender or "none", canonical,
+                              ft_in_header or "unknown",
+                              False, "gender_unknown_context",
+                              "finalize_only")
             else:
                 # Event header shape but unrecognized — close current to stop bleed
                 finalize()
                 current_final_type = ft_in_header if ft_in_header else "unknown"
                 if line not in unrecognized_headers:
                     unrecognized_headers.append(line)
+                hdr_debug(current_page, line,
+                          ev_gender or "none", canonical or "none",
+                          ft_in_header or "unknown",
+                          False, "normalize_event_name_any returned None or not in TARGET_EVENTS",
+                          "finalize_only")
                 debug_rows.append(debug_row(
                     file_gender_type,
                     men_section_found, women_section_found,
@@ -626,7 +698,7 @@ def parse_pdf_raw(
     if file_gender_type != "men":
         team_rows.extend(parse_team_scores(pages, conference, source, "women"))
 
-    return men_finalized, women_finalized, team_rows, flag_rows, debug_rows, file_gender_type, col_debug_rows
+    return men_finalized, women_finalized, team_rows, flag_rows, debug_rows, file_gender_type, col_debug_rows, hdr_debug_rows
 
 
 # ── Bundle merge ──────────────────────────────────────────────────────────────
@@ -884,12 +956,14 @@ def merge_bundle(
     all_flag_rows:      list[dict] = []
     all_debug_rows:     list[dict] = []
     all_col_debug_rows: list[dict] = []
+    all_hdr_debug_rows: list[dict] = []
     file_gender_types:  list[str]  = []
 
-    for men_evs, women_evs, tms, fls, drs, fg_type, cdr in file_results:
+    for men_evs, women_evs, tms, fls, drs, fg_type, cdr, hdr in file_results:
         all_flag_rows.extend(fls)
         all_debug_rows.extend(drs)
         all_col_debug_rows.extend(cdr)
+        all_hdr_debug_rows.extend(hdr)
         file_gender_types.append(fg_type)
         for name, acc in men_evs.items():
             gender_accs["men"].setdefault(name, []).append(acc)
@@ -1068,15 +1142,21 @@ def merge_bundle(
         targeted = pass2_targeted.get(gender, set())
 
         for event_name in TARGET_EVENTS:
+            # Optional events (1000 Free) are detected if present but never
+            # reported as required-missing.  They don't penalise the score.
+            is_optional = event_name in _OPTIONAL_EVENTS
+
             accs = gender_accs[gender].get(event_name)
             if not accs:
-                gender_events_missing.append(f"{gender}:{event_name}")
+                if not is_optional:
+                    gender_events_missing.append(f"{gender}:{event_name}")
                 continue
 
             events_detected.add(event_name)
             best = _pick_best_acc(event_name, accs, gender, flag_fn, all_flag_rows)
             if best is None:
-                gender_events_missing.append(f"{gender}:{event_name}")
+                if not is_optional:
+                    gender_events_missing.append(f"{gender}:{event_name}")
                 continue
 
             anchor = best.anchor()
@@ -1153,7 +1233,8 @@ def merge_bundle(
                 all_flag_rows.append(flag_fn(
                     gender, event_name, best.source, issue,
                 ))
-                gender_events_missing.append(f"{gender}:{event_name}")
+                if not is_optional:
+                    gender_events_missing.append(f"{gender}:{event_name}")
 
         events_found.extend(gender_events_found)
         events_missing.extend(gender_events_missing)
@@ -1194,7 +1275,7 @@ def merge_bundle(
         "notes":               "; ".join(notes_parts) if notes_parts else "",
     }
 
-    return event_rows, unique_teams, all_flag_rows, all_debug_rows, all_fallback_rows, all_col_debug_rows, summary
+    return event_rows, unique_teams, all_flag_rows, all_debug_rows, all_fallback_rows, all_col_debug_rows, all_hdr_debug_rows, summary
 
 
 # ── CSV writer ────────────────────────────────────────────────────────────────
@@ -1298,6 +1379,7 @@ def run(input_dir: Path, output_dir: Path, bundle_filter: list[str] | None = Non
     all_fallbacks: list[dict] = []
     all_col_debug: list[dict] = []
     all_coverage:  list[dict] = []
+    all_hdr_debug: list[dict] = []
     # Cross-bundle dedup: key = (Conference, Year, Gender, Event)
     seen_anchors: set[tuple] = set()
 
@@ -1318,7 +1400,7 @@ def run(input_dir: Path, output_dir: Path, bundle_filter: list[str] | None = Non
             print(f"    [{meta.get('gender','?'):8s}|{session_label:7s}] {path.name} ...",
                   end=" ", flush=True)
             try:
-                men_evs, women_evs, tms, fls, drs, fg_type, cdr = parse_pdf_raw(
+                men_evs, women_evs, tms, fls, drs, fg_type, cdr, hdr = parse_pdf_raw(
                     path, meta, bundle, parse_mode=parse_mode
                 )
                 # Tag col_debug rows with bundle/file context before storing
@@ -1327,7 +1409,7 @@ def run(input_dir: Path, output_dir: Path, bundle_filter: list[str] | None = Non
                     r["Conference"] = conference
                     r["Source_File"] = path.name
                     r["Parse_Mode"] = parse_mode
-                file_results.append((men_evs, women_evs, tms, fls, drs, fg_type, cdr))
+                file_results.append((men_evs, women_evs, tms, fls, drs, fg_type, cdr, hdr))
                 print(
                     f"men:{len(men_evs)} women:{len(women_evs)} events  "
                     f"teams:{len(tms)}  flags:{len(fls)}  [{fg_type}]"
@@ -1350,10 +1432,11 @@ def run(input_dir: Path, output_dir: Path, bundle_filter: list[str] | None = Non
             print(f"    → No results to merge.\n")
             continue
 
-        ev_rows, tm_rows, fl_rows, dr_rows, fb_rows, cd_rows, summary = merge_bundle(
+        ev_rows, tm_rows, fl_rows, dr_rows, fb_rows, cd_rows, hdr_rows, summary = merge_bundle(
             bundle, file_results, parse_mode=parse_mode
         )
         all_col_debug.extend(cd_rows)
+        all_hdr_debug.extend(hdr_rows)
         for row in ev_rows:
             anchor_key = (row["Conference"], row["Year"], row["Gender"], row["Event"])
             if anchor_key in seen_anchors:
@@ -1418,7 +1501,10 @@ def run(input_dir: Path, output_dir: Path, bundle_filter: list[str] | None = Non
                         "Notes":        "",
                     })
                 else:
-                    if event in not_contested:
+                    if event in _OPTIONAL_EVENTS:
+                        notes = "optional_not_required"
+                        src   = "not_required"
+                    elif event in not_contested:
                         notes = "likely_not_contested"
                         src   = "not_contested"
                     else:
@@ -1443,14 +1529,15 @@ def run(input_dir: Path, output_dir: Path, bundle_filter: list[str] | None = Non
         all_summaries.append(summary)
         print_bundle_summary(summary)
 
-    write_csv(output_dir / "event_anchors.csv",        ANCHOR_HEADER,           all_events)
-    write_csv(output_dir / "team_scores.csv",          TEAM_HEADER,             all_teams)
-    write_csv(output_dir / "review_flags.csv",         FLAG_HEADER,             all_flags)
-    write_csv(output_dir / "fallback_usage.csv",       FALLBACK_HEADER,         all_fallbacks)
-    write_csv(output_dir / "debug_bundle_report.csv",  DEBUG_REPORT_HEADER,     all_debug_r)
-    write_csv(output_dir / "debug_bundle_summary.csv", DEBUG_SUMMARY_HEADER,    all_debug_s)
-    write_csv(output_dir / "column_mode_debug.csv",    COLUMN_MODE_DEBUG_HEADER, all_col_debug)
-    write_csv(output_dir / "event_coverage_report.csv", EVENT_COVERAGE_HEADER,  all_coverage)
+    write_csv(output_dir / "event_anchors.csv",         ANCHOR_HEADER,            all_events)
+    write_csv(output_dir / "team_scores.csv",           TEAM_HEADER,              all_teams)
+    write_csv(output_dir / "review_flags.csv",          FLAG_HEADER,              all_flags)
+    write_csv(output_dir / "fallback_usage.csv",        FALLBACK_HEADER,          all_fallbacks)
+    write_csv(output_dir / "debug_bundle_report.csv",   DEBUG_REPORT_HEADER,      all_debug_r)
+    write_csv(output_dir / "debug_bundle_summary.csv",  DEBUG_SUMMARY_HEADER,     all_debug_s)
+    write_csv(output_dir / "column_mode_debug.csv",     COLUMN_MODE_DEBUG_HEADER, all_col_debug)
+    write_csv(output_dir / "event_coverage_report.csv", EVENT_COVERAGE_HEADER,    all_coverage)
+    write_csv(output_dir / "event_header_debug.csv",    EVENT_HEADER_DEBUG_HEADER, all_hdr_debug)
 
     total_anchors  = len(all_events)
     total_missing  = sum(len(s["events_missing_list"]) for s in all_summaries)
@@ -1470,11 +1557,12 @@ def run(input_dir: Path, output_dir: Path, bundle_filter: list[str] | None = Non
     if total_missing:
         print(f"  Events still missing:  {total_missing} across {len(all_summaries)} bundle(s)")
     print(f"\n  Outputs:")
-    print(f"    {output_dir}/event_anchors.csv          ({len(all_events)} rows)")
+    print(f"    {output_dir}/event_anchors.csv           ({len(all_events)} rows)")
     print(f"    {output_dir}/team_scores.csv")
     print(f"    {output_dir}/review_flags.csv")
-    print(f"    {output_dir}/fallback_usage.csv          ({len(all_fallbacks)} non-final anchors)")
-    print(f"    {output_dir}/event_coverage_report.csv   ({len(all_coverage)} rows)")
+    print(f"    {output_dir}/fallback_usage.csv           ({len(all_fallbacks)} non-final anchors)")
+    print(f"    {output_dir}/event_coverage_report.csv    ({len(all_coverage)} rows)")
+    print(f"    {output_dir}/event_header_debug.csv       ({len(all_hdr_debug)} header rows)")
     print(f"    {output_dir}/column_mode_debug.csv        ({len(all_col_debug)} page rows)")
     print(f"    {output_dir}/debug_bundle_report.csv")
     print(f"    {output_dir}/debug_bundle_summary.csv")

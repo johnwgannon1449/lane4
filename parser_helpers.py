@@ -651,12 +651,45 @@ def _extract_page_columns(page) -> tuple[list[str], int]:
     return col_texts, n_cols
 
 
+# ── CID ligature normalization ────────────────────────────────────────────────
+# pdfplumber renders unresolved font ligatures as "(cid:NNN)".
+# HY-TEK Meet Manager PDFs commonly use the "fl" ligature in "butterfly",
+# which renders as "(cid:976)" and silently breaks all butterfly event header
+# detection.  Normalise before any pattern matching.
+# CID → character mappings are FONT-SPECIFIC (not globally standardised).
+# These values are correct for the HY-TEK Meet Manager 8 fonts observed in
+# the 2026 championship PDFs.  "butterfly" = "Butter" + CID_976 + "ly" where
+# CID_976 encodes the single glyph "f" (not the "fl" ligature as one might
+# expect from Type-1 ligature tables).
+_CID_MAP: dict[str, str] = {
+    "(cid:976)": "f",    # 'f' glyph in HY-TEK MM8 font → e.g. "Butterfly"
+    "(cid:977)": "fi",   # fi ligature
+    "(cid:978)": "ffl",  # ffl ligature
+    "(cid:979)": "ffi",  # ffi ligature
+    "(cid:980)": "ff",   # ff ligature
+    "(cid:948)": "d",    # sometimes seen in older HY-TEK fonts
+}
+_CID_RE = re.compile(r"\(cid:\d+\)")
+
+
+def normalize_cid(text: str) -> str:
+    """Replace CID ligature escape sequences with their character equivalents.
+
+    Unknown CID codes are replaced with an empty string rather than left
+    as-is, because leaving them intact would corrupt the surrounding word
+    (e.g. "(cid:999)ly" instead of "fly") and still break pattern matching.
+    """
+    def _sub(m: re.Match) -> str:
+        return _CID_MAP.get(m.group(0), "")
+    return _CID_RE.sub(_sub, text)
+
+
 def extract_text_pymupdf(pdf_path: str) -> list[str]:
     import fitz
     pages = []
     doc = fitz.open(pdf_path)
     for page in doc:
-        pages.append(page.get_text())
+        pages.append(normalize_cid(page.get_text()))
     doc.close()
     return pages
 
@@ -673,7 +706,7 @@ def extract_pages(pdf_path: str) -> list[str]:
         pages: list[str] = []
         with pdfplumber.open(pdf_path) as pdf:
             for page in pdf.pages:
-                pages.append(page.extract_text() or "")
+                pages.append(normalize_cid(page.extract_text() or ""))
         if sum(1 for p in pages if len(p.strip()) > 50) == 0:
             raise ValueError("pdfplumber returned mostly empty pages")
         return pages
@@ -900,7 +933,7 @@ def _extract_pages_2col(pdf_path: str) -> tuple[list[str], list[dict]]:
     with pdfplumber.open(pdf_path) as pdf:
         for page_num, page in enumerate(pdf.pages, start=1):
             text, n_cols, row_paired = _row_pair_page(page)
-            pages.append(text)
+            pages.append(normalize_cid(text))
             col_debug.append({
                 "Page_Number":            page_num,
                 "Columns_Detected":       n_cols,
@@ -955,7 +988,7 @@ def _extract_pages_3col(pdf_path: str) -> tuple[list[str], list[dict]]:
         for page_num, page in enumerate(pdf.pages, start=1):
             words = page.extract_words(x_tolerance=3, y_tolerance=3)
             if not words:
-                pages.append(page.extract_text() or "")
+                pages.append(normalize_cid(page.extract_text() or ""))
                 col_debug.append({
                     "Page_Number":            page_num,
                     "Columns_Detected":       1,
@@ -972,7 +1005,7 @@ def _extract_pages_3col(pdf_path: str) -> tuple[list[str], list[dict]]:
                              if bounds[i] <= w["x0"] < bounds[i + 1]]
                 col_texts.append(_words_to_text(col_words))
 
-            pages.append("\n\n".join(col_texts))
+            pages.append(normalize_cid("\n\n".join(col_texts)))
             col_debug.append({
                 "Page_Number":            page_num,
                 "Columns_Detected":       3,
@@ -1392,24 +1425,41 @@ def parse_place_and_time(line: str) -> tuple[int | None, str | None, str]:
     if not re.search(r"[A-Za-z]{2,}", after_place):
         return None, None, ""
 
+    # Collect all valid times (≥ 10 s) and return the LAST one.
+    # HY-TEK "Prelim Time  Finals Time" rows carry two times on the same line:
+    #   "1 Smith, Ann SO School 1:02.34 1:01.89"
+    #              prelim time ↑       ↑ finals time
+    # Using the LAST valid time picks the finals time automatically.
+    # For single-time rows (normal format) LAST == FIRST, so no change.
+    last_valid_numeric: str | None = None
+    last_valid_suffix:  str        = ""
     for tm in re.finditer(_TIME_PAT, line):
         numeric_time = tm.group(0)
         sec = time_to_seconds(numeric_time)
         if sec is None or sec < 10:
             continue
-        # Extract any annotation suffix that immediately follows this time.
         rest = line[tm.end():]
         sfx_m = _TIME_SUFFIX_RE.match(rest)
         raw_suffix = sfx_m.group(1).strip() if (sfx_m and sfx_m.group(1)) else ""
-        return place, numeric_time, raw_suffix
+        last_valid_numeric = numeric_time
+        last_valid_suffix  = raw_suffix
 
-    # Try the first time found even if < 10 s (e.g. 50 Free heat in distance meet)
+    if last_valid_numeric is not None:
+        return place, last_valid_numeric, last_valid_suffix
+
+    # Fallback: last time found even if < 10 s (e.g. 50 Free in a distance meet)
+    last_any_numeric: str | None = None
+    last_any_suffix:  str        = ""
     for tm in re.finditer(_TIME_PAT, line):
         numeric_time = tm.group(0)
         rest = line[tm.end():]
         sfx_m = _TIME_SUFFIX_RE.match(rest)
         raw_suffix = sfx_m.group(1).strip() if (sfx_m and sfx_m.group(1)) else ""
-        return place, numeric_time, raw_suffix
+        last_any_numeric = numeric_time
+        last_any_suffix  = raw_suffix
+
+    if last_any_numeric is not None:
+        return place, last_any_numeric, last_any_suffix
 
     # No time found — return (place, None) so caller can watch the next line.
     return place, None, ""

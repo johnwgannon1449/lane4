@@ -1,0 +1,173 @@
+New concrete finding from CCIW fly:
+
+Women 100 Fly Finals is definitely present and structured like this:
+- event header
+- meet/open record lines
+- qualifying standard lines (ex: Q25, D3B)
+- table header line: "Name Yr School Prelim Time Finals Time"
+- subfinal labels like "A - Final", "B - Final"
+- swimmer result rows
+- split rows underneath each swimmer
+
+Example implication:
+The parser may be failing not because it misses the event header, but because it does not correctly treat this full block as a valid finals event section when there are:
+- record lines
+- cut-standard lines
+- A/B final subsection labels
+- split rows intermixed
+
+I want a GENERAL fix, not a CCIW-specific fix.
+
+==================================================
+TASK 1 — DIAGNOSE THE TRUE FAILURE MODE
+==================================================
+
+Use CCIW only as a debugging window into the general bug.
+
+For CCIW debug pages:
+- women pages 23-27
+- men pages 58-63
+
+Emit traces showing:
+- every event header candidate detected
+- whether the parser opens an event section after the header
+- what intervening lines are seen before first swimmer row
+- whether record lines / standards lines / A-Final / B-Final labels cause the event block to be rejected, reset, or overwritten
+- whether split rows are mistakenly treated as primary rows
+- whether the parser expects a simpler finals layout than what this file provides
+
+I specifically want to know:
+1. Was the fly event header detected?
+2. If yes, why did it fail to become a captured event anchor?
+3. Did A-Final / B-Final structure interfere?
+4. Did "Prelim Time / Finals Time" table format interfere?
+5. Did split rows interfere?
+6. Did page transitions interfere?
+
+==================================================
+TASK 2 — GENERAL FIX ONLY
+==================================================
+
+Implement a general parser fix that supports this common HY-TEK-style structure:
+
+Valid event sections may contain, after the event header and before primary swimmer rows:
+- meet/open/championship record lines
+- qualifying standard lines
+- table header lines
+- subsection labels like:
+  - A - Final
+  - B - Final
+  - C - Final
+  - Preliminaries
+
+These lines should be treated as allowed event-block scaffolding, not as reasons to reject/reset the event.
+
+General rules:
+A. Event block persistence
+- once a valid event header is detected, keep the event block open across allowable scaffolding lines until a true new event header appears
+
+B. Primary row recognition
+- treat swimmer result rows as the main rows
+- do not confuse split rows with primary swimmer rows
+
+C. Subfinal handling
+- A-Final / B-Final sections still belong to the same event+round family
+- they should not cause the event block to be dropped
+- if the page is finals-oriented, A/B finals should still count as finals data
+
+D. Table-format robustness
+- support formats like:
+  Name Yr School Prelim Time Finals Time
+  Name School Seed Time Finals Time
+  etc.
+- do not require one single exact header template
+
+E. Similar-event separation
+- 100 Fly and 200 Fly must remain fully distinct
+- do not collapse by stroke family
+
+F. Page-boundary continuity
+- preserve event state across page boundaries unless a true new event header appears
+
+==================================================
+TASK 3 — ANCHOR SELECTION AFTER CAPTURE
+==================================================
+
+Do not suppress valid sections too early.
+
+First:
+- detect and store all plausible event sections
+
+Then:
+- choose preferred anchor using hierarchy:
+  1. Finals
+  2. Best available
+  3. Prelims fallback
+
+This should happen after section capture, not before.
+
+==================================================
+TASK 4 — DEBUG OUTPUT
+==================================================
+
+Create or extend:
+output/event_header_debug.csv
+
+Columns:
+- Bundle_ID
+- Conference
+- Source_File
+- Page_Number
+- Raw_Header_Text
+- Gender_Normalized
+- Event_Normalized
+- Round_Normalized
+- Accepted_YN
+- Rejection_Reason
+- State_Action
+- Intervening_Line_Type
+- Dedupe_Key
+- Notes
+
+Also add a short summary for fly on tested bundles:
+- header detected? yes/no
+- event block opened? yes/no
+- first primary swimmer row found? yes/no
+- anchor selected? yes/no
+- if dropped, exact reason
+
+==================================================
+TASK 5 — 1000 FREE REPORTING RULE
+==================================================
+
+Still attempt to detect 1000 Free where present.
+
+But moving forward:
+- 1000 Free should never be reported as a required missing event
+- if found, good
+- if absent, do not count it as a failure in missing-event reporting
+
+==================================================
+TASK 6 — LIMITED VALIDATION RUN
+==================================================
+
+Run:
+- CCIW
+- Big East
+- Patriot
+- ODAC
+- one strong normal bundle like GLIAC or SEC
+
+Then report:
+1. whether CCIW now captures 100 Fly and 200 Fly for both genders
+2. whether Big East remains strong
+3. whether Patriot and ODAC remain stable
+4. whether the normal one-column bundle remains stable
+5. whether any non-fly regressions appeared
+6. which events are still missing, excluding 1000 Free from required-miss reporting
+
+Goal:
+- identify the true general bug
+- fix HY-TEK-style fly event parsing generally
+- preserve current wins
+- stop treating missing 1000 Free as a reportable failure

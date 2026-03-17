@@ -1,0 +1,313 @@
+Bundle_ID,Conference,Source_File,Page_Number,Raw_Header_Text,Gender_Normalized,Event_Normalized,Round_Normalized,Accepted_YN,Rejection_Reason,State_Action,Intervening_Line_Type,Dedupe_Key,Notes
+odac_2026,ODAC,odac 2026 MENS swim-full-results.pdf,2,Event 5 Men 500 Yard Freestyle,men,500 Free,unknown,yes,,finalize+open_event,,men:500 Free,session=prelims
+odac_2026,ODAC,odac 2026 MENS swim-full-results.pdf,2,Event 5 Men 500 Yard Freestyle,men,500 Free,unknown,yes,,finalize+open_event,,men:500 Free,session=prelims
+odac_2026,ODAC,odac 2026 MENS swim-full-results.pdf,3,Preliminaries ... (Event 5 Men 500 Yard Freestyle),men,500 Free,unknown,yes,,finalize+open_event,,men:500 Free,session=prelims
+odac_2026,ODAC,odac 2026 MENS swim-full-results.pdf,4,Preliminaries ... (Event 5 Men 500 Yard Freestyle),men,500 Free,unknown,yes,,finalize+open_event,,men:500 Free,session=prelims
+odac_2026,ODAC,odac 2026 MENS swim-full-results.pdf,4,Event 7 Men 200 Yard IM,men,200 IM,unknown,yes,,finalize+open_event,,men:200 IM,session=prelims
+odac_2026,ODAC,odac 2026 MENS swim-full-results.pdf,4,Event 7 Men 200 Yard IM,men,200 IM,unknown,yes,,finalize+open_event,,men:200 IM,session=prelims
+odac_2026,ODAC,odac 2026 MENS swim-full-results.pdf,5,Preliminaries ... (Event 7 Men 200 Yard IM),men,200 IM,unknown,yes,,finalize+open_event,,men:200 IM,session=prelims
+odac_2026,ODAC,odac 2026 MENS swim-full-results.pdf,5,Event 9 Men 50 Yard Freestyle,men,50 Free,unknown,yes,,finalize+open_event,,men:50 Free,session=prelims
+odac_2026,ODAC,odac 2026 MENS swim-full-results.pdf,5,Event 9 Men 50 Yard Freestyle,men,50 Free,unknown,yes,,finalize+open_event,,men:50 Free,session=prelims
+odac_2026,ODAC,odac 2026 MENS swim-full-results.pdf,6,Preliminaries ... (Event 9 Men 50 Yard Freestyle),men,50 Free,unknown,yes,,finalize+open_event,,men:50 Free,session=prelims
+odac_2026,ODAC,odac 2026 MENS swim-full-results.pdf,7,Event 15 Men 400 Yard IM,men,400 IM,unknown,yes,,finalize+open_event,,men:400 IM,session=prelims
+odac_2026,ODAC,odac 2026 MENS swim-full-results.pdf,8,Event 15 Men 400 Yard IM,men,400 IM,unknown,yes,,finalize+open_event,,men:400 IM,session=prelims
+odac_2026,ODAC,odac 2026 MENS swim-full-results.pdf,8,Event 17 Men 100 Yard Butterfly,men,100 Fly,unknown,yes,,finalize+open_event,,men:100 Fly,session=prelims
+odac_2026,ODAC,odac 2026 MENS swim-full-results.pdf,8,Event 17 Men 100 Yard Butterfly,men,100 Fly,unknown,yes,,finalize+open_event,,men:100 Fly,session=prelims
+odac_2026,ODAC,odac 2026 MENS swim-full-results.pdf,9,Preliminaries ... (Event 17 Men 100 Yard Butterfly),men,100 Fly,unknown,yes,,finalize+open_event,,men:100 Fly,session=prelims
+odac_2026,ODAC,odac 2026 MENS swim-full-results.pdf,9,Event 19 Men 200 Yard Freestyle,men,200 Free,unknown,yes,,finalize+open_event,,men:200 Free,session=prelims
+odac_2026,ODAC,odac 2026 MENS swim-full-results.pdf,10,Event 19 Men 200 Yard Freestyle,men,200 Free,unknown,yes,,finalize+open_event,,men:200 Free,session=prelims
+odac_2026,ODAC,odac 2026 MENS swim-full-results.pdf,10,Event 21 Men 100 Yard Breaststroke,men,100 Breast,unknown,yes,,finalize+open_event,,men:100 Breast,session=prelims
+odac_2026,ODAC,odac 2026 MENS swim-full-results.pdf,11,B - Final ... (Event 21 Men 100 Yard Breaststroke),men,100 Breast,B,yes,,finalize+open_event,,men:100 Breast,session=prelims
+odac_2026,ODAC,odac 2026 MENS swim-full-results.pdf,11,Event 21 Men 100 Yard Breaststroke,men,100 Breast,unknown,yes,,finalize+open_event,,men:100 Breast,session=prelims
+odac_2026,ODAC,odac 2026 MENS swim-full-results.pdf,11,Event 23 Men 100 Yard Backstroke,men,100 Back,unknown,yes,,finalize+open_event,,men:100 Back,session=prelims
+odac_2026,ODAC,odac 2026 MENS swim-full-results.pdf,12,B - Final ... (Event 23 Men 100 Yard Backstroke),men,100 Back,B,yes,,finalize+open_event,,men:100 Back,session=prelims
+odac_2026,ODAC,odac 2026 MENS swim-full-results.pdf,12,Event 23 Men 100 Yard Backstroke,men,100 Back,unknown,yes,,finalize+open_event,,men:100 Back,session=prelims
+odac_2026,ODAC,odac 2026 MENS swim-full-results.pdf,12,Event 25 Men 1650 Yard Freestyle,men,1650 Free,unknown,yes,,finalize+open_event,,men:1650 Free,session=prelims
+odac_2026,ODAC,odac 2026 MENS swim-full-results.pdf,13,(Event 25 Men 1650 Yard Freestyle),men,1650 Free,unknown,yes,,finalize+open_event,,men:1650 Free,session=prelims
+odac_2026,ODAC,odac 2026 MENS swim-full-results.pdf,14,(Event 25 Men 1650 Yard Freestyle),men,1650 Free,unknown,yes,,finalize+open_event,,men:1650 Free,session=prelims
+odac_2026,ODAC,odac 2026 MENS swim-full-results.pdf,14,Event 27 Men 200 Yard Backstroke,men,200 Back,unknown,yes,,finalize+open_event,,men:200 Back,session=prelims
+odac_2026,ODAC,odac 2026 MENS swim-full-results.pdf,14,Event 27 Men 200 Yard Backstroke,men,200 Back,unknown,yes,,finalize+open_event,,men:200 Back,session=prelims
+odac_2026,ODAC,odac 2026 MENS swim-full-results.pdf,15,Preliminaries ... (Event 27 Men 200 Yard Backstroke),men,200 Back,unknown,yes,,finalize+open_event,,men:200 Back,session=prelims
+odac_2026,ODAC,odac 2026 MENS swim-full-results.pdf,15,Event 29 Men 100 Yard Freestyle,men,100 Free,unknown,yes,,finalize+open_event,,men:100 Free,session=prelims
+odac_2026,ODAC,odac 2026 MENS swim-full-results.pdf,15,Event 29 Men 100 Yard Freestyle,men,100 Free,unknown,yes,,finalize+open_event,,men:100 Free,session=prelims
+odac_2026,ODAC,odac 2026 MENS swim-full-results.pdf,16,Preliminaries ... (Event 29 Men 100 Yard Freestyle),men,100 Free,unknown,yes,,finalize+open_event,,men:100 Free,session=prelims
+odac_2026,ODAC,odac 2026 MENS swim-full-results.pdf,16,Event 31 Men 200 Yard Breaststroke,men,200 Breast,unknown,yes,,finalize+open_event,,men:200 Breast,session=prelims
+odac_2026,ODAC,odac 2026 MENS swim-full-results.pdf,17,Event 31 Men 200 Yard Breaststroke,men,200 Breast,unknown,yes,,finalize+open_event,,men:200 Breast,session=prelims
+odac_2026,ODAC,odac 2026 MENS swim-full-results.pdf,17,Event 33 Men 200 Yard Butterfly,men,200 Fly,unknown,yes,,finalize+open_event,,men:200 Fly,session=prelims
+odac_2026,ODAC,odac 2026 MENS swim-full-results.pdf,18,Event 33 Men 200 Yard Butterfly,men,200 Fly,unknown,yes,,finalize+open_event,,men:200 Fly,session=prelims
+odac_2026,ODAC,odac 2026 MENS swim-full-results.pdf,21,Event 6 Women 500 Yard Freestyle,women,500 Free,unknown,no,gender_mismatch: file=men event=women,finalize_only,,women:500 Free,
+odac_2026,ODAC,odac 2026 MENS swim-full-results.pdf,21,Event 6 Women 500 Yard Freestyle,women,500 Free,unknown,no,gender_mismatch: file=men event=women,finalize_only,,women:500 Free,
+odac_2026,ODAC,odac 2026 MENS swim-full-results.pdf,23,Preliminaries ... (Event 6 Women 500 Yard Freestyle),women,500 Free,unknown,no,gender_mismatch: file=men event=women,finalize_only,,women:500 Free,
+odac_2026,ODAC,odac 2026 MENS swim-full-results.pdf,23,Event 8 Women 200 Yard IM,women,200 IM,unknown,no,gender_mismatch: file=men event=women,finalize_only,,women:200 IM,
+odac_2026,ODAC,odac 2026 MENS swim-full-results.pdf,23,Event 8 Women 200 Yard IM,women,200 IM,unknown,no,gender_mismatch: file=men event=women,finalize_only,,women:200 IM,
+odac_2026,ODAC,odac 2026 MENS swim-full-results.pdf,24,Preliminaries ... (Event 8 Women 200 Yard IM),women,200 IM,unknown,no,gender_mismatch: file=men event=women,finalize_only,,women:200 IM,
+odac_2026,ODAC,odac 2026 MENS swim-full-results.pdf,24,Event 10 Women 50 Yard Freestyle,women,50 Free,unknown,no,gender_mismatch: file=men event=women,finalize_only,,women:50 Free,
+odac_2026,ODAC,odac 2026 MENS swim-full-results.pdf,24,Event 10 Women 50 Yard Freestyle,women,50 Free,unknown,no,gender_mismatch: file=men event=women,finalize_only,,women:50 Free,
+odac_2026,ODAC,odac 2026 MENS swim-full-results.pdf,25,Preliminaries ... (Event 10 Women 50 Yard Freestyle),women,50 Free,unknown,no,gender_mismatch: file=men event=women,finalize_only,,women:50 Free,
+odac_2026,ODAC,odac 2026 MENS swim-full-results.pdf,26,Event 16 Women 400 Yard IM,women,400 IM,unknown,no,gender_mismatch: file=men event=women,finalize_only,,women:400 IM,
+odac_2026,ODAC,odac 2026 MENS swim-full-results.pdf,27,Event 16 Women 400 Yard IM,women,400 IM,unknown,no,gender_mismatch: file=men event=women,finalize_only,,women:400 IM,
+odac_2026,ODAC,odac 2026 MENS swim-full-results.pdf,27,Event 18 Women 100 Yard Butterfly,women,100 Fly,unknown,no,gender_mismatch: file=men event=women,finalize_only,,women:100 Fly,
+odac_2026,ODAC,odac 2026 MENS swim-full-results.pdf,27,Event 18 Women 100 Yard Butterfly,women,100 Fly,unknown,no,gender_mismatch: file=men event=women,finalize_only,,women:100 Fly,
+odac_2026,ODAC,odac 2026 MENS swim-full-results.pdf,28,Event 20 Women 200 Yard Freestyle,women,200 Free,unknown,no,gender_mismatch: file=men event=women,finalize_only,,women:200 Free,
+odac_2026,ODAC,odac 2026 MENS swim-full-results.pdf,28,Event 20 Women 200 Yard Freestyle,women,200 Free,unknown,no,gender_mismatch: file=men event=women,finalize_only,,women:200 Free,
+odac_2026,ODAC,odac 2026 MENS swim-full-results.pdf,29,Event 22 Women 100 Yard Breaststroke,women,100 Breast,unknown,no,gender_mismatch: file=men event=women,finalize_only,,women:100 Breast,
+odac_2026,ODAC,odac 2026 MENS swim-full-results.pdf,30,Event 22 Women 100 Yard Breaststroke,women,100 Breast,unknown,no,gender_mismatch: file=men event=women,finalize_only,,women:100 Breast,
+odac_2026,ODAC,odac 2026 MENS swim-full-results.pdf,30,Event 24 Women 100 Yard Backstroke,women,100 Back,unknown,no,gender_mismatch: file=men event=women,finalize_only,,women:100 Back,
+odac_2026,ODAC,odac 2026 MENS swim-full-results.pdf,31,Event 24 Women 100 Yard Backstroke,women,100 Back,unknown,no,gender_mismatch: file=men event=women,finalize_only,,women:100 Back,
+odac_2026,ODAC,odac 2026 MENS swim-full-results.pdf,31,Event 26 Women 1650 Yard Freestyle,women,1650 Free,unknown,no,gender_mismatch: file=men event=women,finalize_only,,women:1650 Free,
+odac_2026,ODAC,odac 2026 MENS swim-full-results.pdf,32,(Event 26 Women 1650 Yard Freestyle),women,1650 Free,unknown,no,gender_mismatch: file=men event=women,finalize_only,,women:1650 Free,
+odac_2026,ODAC,odac 2026 MENS swim-full-results.pdf,33,(Event 26 Women 1650 Yard Freestyle),women,1650 Free,unknown,no,gender_mismatch: file=men event=women,finalize_only,,women:1650 Free,
+odac_2026,ODAC,odac 2026 MENS swim-full-results.pdf,33,Event 28 Women 200 Yard Backstroke,women,200 Back,unknown,no,gender_mismatch: file=men event=women,finalize_only,,women:200 Back,
+odac_2026,ODAC,odac 2026 MENS swim-full-results.pdf,34,B - Final ... (Event 28 Women 200 Yard Backstroke),women,200 Back,B,no,gender_mismatch: file=men event=women,finalize_only,,women:200 Back,
+odac_2026,ODAC,odac 2026 MENS swim-full-results.pdf,34,Event 28 Women 200 Yard Backstroke,women,200 Back,unknown,no,gender_mismatch: file=men event=women,finalize_only,,women:200 Back,
+odac_2026,ODAC,odac 2026 MENS swim-full-results.pdf,34,Event 30 Women 100 Yard Freestyle,women,100 Free,unknown,no,gender_mismatch: file=men event=women,finalize_only,,women:100 Free,
+odac_2026,ODAC,odac 2026 MENS swim-full-results.pdf,35,B - Final ... (Event 30 Women 100 Yard Freestyle),women,100 Free,B,no,gender_mismatch: file=men event=women,finalize_only,,women:100 Free,
+odac_2026,ODAC,odac 2026 MENS swim-full-results.pdf,35,Event 30 Women 100 Yard Freestyle,women,100 Free,unknown,no,gender_mismatch: file=men event=women,finalize_only,,women:100 Free,
+odac_2026,ODAC,odac 2026 MENS swim-full-results.pdf,35,Event 32 Women 200 Yard Breaststroke,women,200 Breast,unknown,no,gender_mismatch: file=men event=women,finalize_only,,women:200 Breast,
+odac_2026,ODAC,odac 2026 MENS swim-full-results.pdf,36,A - Final ... (Event 32 Women 200 Yard Breaststroke),women,200 Breast,A,no,gender_mismatch: file=men event=women,finalize_only,,women:200 Breast,
+odac_2026,ODAC,odac 2026 MENS swim-full-results.pdf,36,Event 32 Women 200 Yard Breaststroke,women,200 Breast,unknown,no,gender_mismatch: file=men event=women,finalize_only,,women:200 Breast,
+odac_2026,ODAC,odac 2026 MENS swim-full-results.pdf,36,Event 34 Women 200 Yard Butterfly,women,200 Fly,unknown,no,gender_mismatch: file=men event=women,finalize_only,,women:200 Fly,
+odac_2026,ODAC,odac 2026 MENS swim-full-results.pdf,37,A - Final ... (Event 34 Women 200 Yard Butterfly),women,200 Fly,A,no,gender_mismatch: file=men event=women,finalize_only,,women:200 Fly,
+odac_2026,ODAC,odac 2026 MENS swim-full-results.pdf,37,Event 34 Women 200 Yard Butterfly,women,200 Fly,unknown,no,gender_mismatch: file=men event=women,finalize_only,,women:200 Fly,
+odac_2026,ODAC,odac 2026 WOMENS swim_results.pdf,2,Event 6 Women 500 Yard Freestyle,women,500 Free,unknown,yes,,finalize+open_event,,women:500 Free,session=prelims
+odac_2026,ODAC,odac 2026 WOMENS swim_results.pdf,2,Event 6 Women 500 Yard Freestyle,women,500 Free,unknown,yes,,finalize+open_event,,women:500 Free,session=prelims
+odac_2026,ODAC,odac 2026 WOMENS swim_results.pdf,4,Preliminaries ... (Event 6 Women 500 Yard Freestyle),women,500 Free,unknown,yes,,finalize+open_event,,women:500 Free,session=prelims
+odac_2026,ODAC,odac 2026 WOMENS swim_results.pdf,4,Event 8 Women 200 Yard IM,women,200 IM,unknown,yes,,finalize+open_event,,women:200 IM,session=prelims
+odac_2026,ODAC,odac 2026 WOMENS swim_results.pdf,4,Event 8 Women 200 Yard IM,women,200 IM,unknown,yes,,finalize+open_event,,women:200 IM,session=prelims
+odac_2026,ODAC,odac 2026 WOMENS swim_results.pdf,5,Preliminaries ... (Event 8 Women 200 Yard IM),women,200 IM,unknown,yes,,finalize+open_event,,women:200 IM,session=prelims
+odac_2026,ODAC,odac 2026 WOMENS swim_results.pdf,5,Event 10 Women 50 Yard Freestyle,women,50 Free,unknown,yes,,finalize+open_event,,women:50 Free,session=prelims
+odac_2026,ODAC,odac 2026 WOMENS swim_results.pdf,5,Event 10 Women 50 Yard Freestyle,women,50 Free,unknown,yes,,finalize+open_event,,women:50 Free,session=prelims
+odac_2026,ODAC,odac 2026 WOMENS swim_results.pdf,6,Preliminaries ... (Event 10 Women 50 Yard Freestyle),women,50 Free,unknown,yes,,finalize+open_event,,women:50 Free,session=prelims
+odac_2026,ODAC,odac 2026 WOMENS swim_results.pdf,7,Event 16 Women 400 Yard IM,women,400 IM,unknown,yes,,finalize+open_event,,women:400 IM,session=prelims
+odac_2026,ODAC,odac 2026 WOMENS swim_results.pdf,8,Event 16 Women 400 Yard IM,women,400 IM,unknown,yes,,finalize+open_event,,women:400 IM,session=prelims
+odac_2026,ODAC,odac 2026 WOMENS swim_results.pdf,8,Event 18 Women 100 Yard Butterfly,women,100 Fly,unknown,yes,,finalize+open_event,,women:100 Fly,session=prelims
+odac_2026,ODAC,odac 2026 WOMENS swim_results.pdf,8,Event 18 Women 100 Yard Butterfly,women,100 Fly,unknown,yes,,finalize+open_event,,women:100 Fly,session=prelims
+odac_2026,ODAC,odac 2026 WOMENS swim_results.pdf,9,Event 20 Women 200 Yard Freestyle,women,200 Free,unknown,yes,,finalize+open_event,,women:200 Free,session=prelims
+odac_2026,ODAC,odac 2026 WOMENS swim_results.pdf,9,Event 20 Women 200 Yard Freestyle,women,200 Free,unknown,yes,,finalize+open_event,,women:200 Free,session=prelims
+odac_2026,ODAC,odac 2026 WOMENS swim_results.pdf,10,Event 22 Women 100 Yard Breaststroke,women,100 Breast,unknown,yes,,finalize+open_event,,women:100 Breast,session=prelims
+odac_2026,ODAC,odac 2026 WOMENS swim_results.pdf,11,Event 22 Women 100 Yard Breaststroke,women,100 Breast,unknown,yes,,finalize+open_event,,women:100 Breast,session=prelims
+odac_2026,ODAC,odac 2026 WOMENS swim_results.pdf,11,Event 24 Women 100 Yard Backstroke,women,100 Back,unknown,yes,,finalize+open_event,,women:100 Back,session=prelims
+odac_2026,ODAC,odac 2026 WOMENS swim_results.pdf,12,Event 24 Women 100 Yard Backstroke,women,100 Back,unknown,yes,,finalize+open_event,,women:100 Back,session=prelims
+odac_2026,ODAC,odac 2026 WOMENS swim_results.pdf,12,Event 26 Women 1650 Yard Freestyle,women,1650 Free,unknown,yes,,finalize+open_event,,women:1650 Free,session=prelims
+odac_2026,ODAC,odac 2026 WOMENS swim_results.pdf,13,(Event 26 Women 1650 Yard Freestyle),women,1650 Free,unknown,yes,,finalize+open_event,,women:1650 Free,session=prelims
+odac_2026,ODAC,odac 2026 WOMENS swim_results.pdf,14,(Event 26 Women 1650 Yard Freestyle),women,1650 Free,unknown,yes,,finalize+open_event,,women:1650 Free,session=prelims
+odac_2026,ODAC,odac 2026 WOMENS swim_results.pdf,14,Event 28 Women 200 Yard Backstroke,women,200 Back,unknown,yes,,finalize+open_event,,women:200 Back,session=prelims
+odac_2026,ODAC,odac 2026 WOMENS swim_results.pdf,15,B - Final ... (Event 28 Women 200 Yard Backstroke),women,200 Back,B,yes,,finalize+open_event,,women:200 Back,session=prelims
+odac_2026,ODAC,odac 2026 WOMENS swim_results.pdf,15,Event 28 Women 200 Yard Backstroke,women,200 Back,unknown,yes,,finalize+open_event,,women:200 Back,session=prelims
+odac_2026,ODAC,odac 2026 WOMENS swim_results.pdf,15,Event 30 Women 100 Yard Freestyle,women,100 Free,unknown,yes,,finalize+open_event,,women:100 Free,session=prelims
+odac_2026,ODAC,odac 2026 WOMENS swim_results.pdf,16,B - Final ... (Event 30 Women 100 Yard Freestyle),women,100 Free,B,yes,,finalize+open_event,,women:100 Free,session=prelims
+odac_2026,ODAC,odac 2026 WOMENS swim_results.pdf,16,Event 30 Women 100 Yard Freestyle,women,100 Free,unknown,yes,,finalize+open_event,,women:100 Free,session=prelims
+odac_2026,ODAC,odac 2026 WOMENS swim_results.pdf,16,Event 32 Women 200 Yard Breaststroke,women,200 Breast,unknown,yes,,finalize+open_event,,women:200 Breast,session=prelims
+odac_2026,ODAC,odac 2026 WOMENS swim_results.pdf,17,A - Final ... (Event 32 Women 200 Yard Breaststroke),women,200 Breast,A,yes,,finalize+open_event,,women:200 Breast,session=prelims
+odac_2026,ODAC,odac 2026 WOMENS swim_results.pdf,17,Event 32 Women 200 Yard Breaststroke,women,200 Breast,unknown,yes,,finalize+open_event,,women:200 Breast,session=prelims
+odac_2026,ODAC,odac 2026 WOMENS swim_results.pdf,17,Event 34 Women 200 Yard Butterfly,women,200 Fly,unknown,yes,,finalize+open_event,,women:200 Fly,session=prelims
+odac_2026,ODAC,odac 2026 WOMENS swim_results.pdf,18,A - Final ... (Event 34 Women 200 Yard Butterfly),women,200 Fly,A,yes,,finalize+open_event,,women:200 Fly,session=prelims
+odac_2026,ODAC,odac 2026 WOMENS swim_results.pdf,18,Event 34 Women 200 Yard Butterfly,women,200 Fly,unknown,yes,,finalize+open_event,,women:200 Fly,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,3,#6 Women 500 Yard Free,women,500 Free,unknown,yes,,finalize+open_event,,women:500 Free,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,3,#6 Women 500 Yard Free,women,500 Free,unknown,yes,,finalize+open_event,,women:500 Free,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,4,Preliminaries ... (#6 Women 500 Yard Free),women,500 Free,unknown,yes,,finalize+open_event,,women:500 Free,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,4,#7 Men 500 Yard Free,men,500 Free,unknown,yes,,finalize+open_event,,men:500 Free,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,5,A - Final ... (#7 Men 500 Yard Free),men,500 Free,A,yes,,finalize+open_event,,men:500 Free,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,5,#7 Men 500 Yard Free,men,500 Free,unknown,yes,,finalize+open_event,,men:500 Free,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,6,Preliminaries ... (#7 Men 500 Yard Free),men,500 Free,unknown,yes,,finalize+open_event,,men:500 Free,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,6,#8 Women 200 Yard IM,women,200 IM,unknown,yes,,finalize+open_event,,women:200 IM,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,6,#8 Women 200 Yard IM,women,200 IM,unknown,yes,,finalize+open_event,,women:200 IM,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,7,Preliminaries ... (#8 Women 200 Yard IM),women,200 IM,unknown,yes,,finalize+open_event,,women:200 IM,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,7,#9 Men 200 Yard IM,men,200 IM,unknown,yes,,finalize+open_event,,men:200 IM,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,7,#9 Men 200 Yard IM,men,200 IM,unknown,yes,,finalize+open_event,,men:200 IM,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,8,Preliminaries ... (#9 Men 200 Yard IM),men,200 IM,unknown,yes,,finalize+open_event,,men:200 IM,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,8,#10 Women 50 Yard Free,women,50 Free,unknown,yes,,finalize+open_event,,women:50 Free,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,8,#10 Women 50 Yard Free,women,50 Free,unknown,yes,,finalize+open_event,,women:50 Free,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,9,Preliminaries ... (#10 Women 50 Yard Free),women,50 Free,unknown,yes,,finalize+open_event,,women:50 Free,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,9,#11 Men 50 Yard Free,men,50 Free,unknown,yes,,finalize+open_event,,men:50 Free,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,9,#11 Men 50 Yard Free,men,50 Free,unknown,yes,,finalize+open_event,,men:50 Free,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,10,Preliminaries ... (#11 Men 50 Yard Free),men,50 Free,unknown,yes,,finalize+open_event,,men:50 Free,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,11,#15 Women 100 Yard Fly,women,100 Fly,unknown,yes,,finalize+open_event,,women:100 Fly,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,11,#15 Women 100 Yard Fly,women,100 Fly,unknown,yes,,finalize+open_event,,women:100 Fly,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,12,Preliminaries ... (#15 Women 100 Yard Fly),women,100 Fly,unknown,yes,,finalize+open_event,,women:100 Fly,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,12,#16 Men 100 Yard Fly,men,100 Fly,unknown,yes,,finalize+open_event,,men:100 Fly,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,12,#16 Men 100 Yard Fly,men,100 Fly,unknown,yes,,finalize+open_event,,men:100 Fly,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,13,Preliminaries ... (#16 Men 100 Yard Fly),men,100 Fly,unknown,yes,,finalize+open_event,,men:100 Fly,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,13,#17 Women 400 Yard IM,women,400 IM,unknown,yes,,finalize+open_event,,women:400 IM,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,13,#17 Women 400 Yard IM,women,400 IM,unknown,yes,,finalize+open_event,,women:400 IM,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,14,Preliminaries ... (#17 Women 400 Yard IM),women,400 IM,unknown,yes,,finalize+open_event,,women:400 IM,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,14,#18 Men 400 Yard IM,men,400 IM,unknown,yes,,finalize+open_event,,men:400 IM,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,15,#18 Men 400 Yard IM,men,400 IM,unknown,yes,,finalize+open_event,,men:400 IM,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,15,#19 Women 200 Yard Free,women,200 Free,unknown,yes,,finalize+open_event,,women:200 Free,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,16,C - Final ... (#19 Women 200 Yard Free),women,200 Free,C,yes,,finalize+open_event,,women:200 Free,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,16,#19 Women 200 Yard Free,women,200 Free,unknown,yes,,finalize+open_event,,women:200 Free,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,16,#20 Men 200 Yard Free,men,200 Free,unknown,yes,,finalize+open_event,,men:200 Free,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,16,#20 Men 200 Yard Free,men,200 Free,unknown,yes,,finalize+open_event,,men:200 Free,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,17,Preliminaries ... (#20 Men 200 Yard Free),men,200 Free,unknown,yes,,finalize+open_event,,men:200 Free,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,17,#21 Women 100 Yard Breast,women,100 Breast,unknown,yes,,finalize+open_event,,women:100 Breast,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,17,#21 Women 100 Yard Breast,women,100 Breast,unknown,yes,,finalize+open_event,,women:100 Breast,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,18,Preliminaries ... (#21 Women 100 Yard Breast),women,100 Breast,unknown,yes,,finalize+open_event,,women:100 Breast,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,18,#22 Men 100 Yard Breast,men,100 Breast,unknown,yes,,finalize+open_event,,men:100 Breast,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,18,#22 Men 100 Yard Breast,men,100 Breast,unknown,yes,,finalize+open_event,,men:100 Breast,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,19,Preliminaries ... (#22 Men 100 Yard Breast),men,100 Breast,unknown,yes,,finalize+open_event,,men:100 Breast,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,19,#23 Women 100 Yard Back,women,100 Back,unknown,yes,,finalize+open_event,,women:100 Back,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,19,#23 Women 100 Yard Back,women,100 Back,unknown,yes,,finalize+open_event,,women:100 Back,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,19,#24 Men 100 Yard Back,men,100 Back,unknown,yes,,finalize+open_event,,men:100 Back,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,20,A - Final ... (#24 Men 100 Yard Back),men,100 Back,A,yes,,finalize+open_event,,men:100 Back,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,20,#24 Men 100 Yard Back,men,100 Back,unknown,yes,,finalize+open_event,,men:100 Back,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,21,#28 Women 1650 Yard Free,women,1650 Free,unknown,yes,,finalize+open_event,,women:1650 Free,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,22,(#28 Women 1650 Yard Free),women,1650 Free,unknown,yes,,finalize+open_event,,women:1650 Free,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,23,(#28 Women 1650 Yard Free),women,1650 Free,unknown,yes,,finalize+open_event,,women:1650 Free,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,23,#29 Men 1650 Yard Free,men,1650 Free,unknown,yes,,finalize+open_event,,men:1650 Free,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,24,(#29 Men 1650 Yard Free),men,1650 Free,unknown,yes,,finalize+open_event,,men:1650 Free,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,25,(#29 Men 1650 Yard Free),men,1650 Free,unknown,yes,,finalize+open_event,,men:1650 Free,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,25,#30 Women 200 Yard Back,women,200 Back,unknown,yes,,finalize+open_event,,women:200 Back,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,25,#30 Women 200 Yard Back,women,200 Back,unknown,yes,,finalize+open_event,,women:200 Back,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,25,#31 Men 200 Yard Back,men,200 Back,unknown,yes,,finalize+open_event,,men:200 Back,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,26,A - Final ... (#31 Men 200 Yard Back),men,200 Back,A,yes,,finalize+open_event,,men:200 Back,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,26,#31 Men 200 Yard Back,men,200 Back,unknown,yes,,finalize+open_event,,men:200 Back,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,26,#32 Women 100 Yard Free,women,100 Free,unknown,yes,,finalize+open_event,,women:100 Free,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,27,C - Final ... (#32 Women 100 Yard Free),women,100 Free,C,yes,,finalize+open_event,,women:100 Free,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,27,#32 Women 100 Yard Free,women,100 Free,unknown,yes,,finalize+open_event,,women:100 Free,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,27,#33 Men 100 Yard Free,men,100 Free,unknown,yes,,finalize+open_event,,men:100 Free,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,27,#33 Men 100 Yard Free,men,100 Free,unknown,yes,,finalize+open_event,,men:100 Free,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,28,Preliminaries ... (#33 Men 100 Yard Free),men,100 Free,unknown,yes,,finalize+open_event,,men:100 Free,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,28,#34 Women 200 Yard Breast,women,200 Breast,unknown,yes,,finalize+open_event,,women:200 Breast,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,28,#34 Women 200 Yard Breast,women,200 Breast,unknown,yes,,finalize+open_event,,women:200 Breast,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,29,Preliminaries ... (#34 Women 200 Yard Breast),women,200 Breast,unknown,yes,,finalize+open_event,,women:200 Breast,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,29,#35 Men 200 Yard Breast,men,200 Breast,unknown,yes,,finalize+open_event,,men:200 Breast,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,29,#35 Men 200 Yard Breast,men,200 Breast,unknown,yes,,finalize+open_event,,men:200 Breast,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,30,Preliminaries ... (#35 Men 200 Yard Breast),men,200 Breast,unknown,yes,,finalize+open_event,,men:200 Breast,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,30,#36 Women 200 Yard Fly,women,200 Fly,unknown,yes,,finalize+open_event,,women:200 Fly,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,30,#36 Women 200 Yard Fly,women,200 Fly,unknown,yes,,finalize+open_event,,women:200 Fly,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,30,#37 Men 200 Yard Fly,men,200 Fly,unknown,yes,,finalize+open_event,,men:200 Fly,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,31,A - Final ... (#37 Men 200 Yard Fly),men,200 Fly,A,yes,,finalize+open_event,,men:200 Fly,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,31,#37 Men 200 Yard Fly,men,200 Fly,unknown,yes,,finalize+open_event,,men:200 Fly,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,33,#110 Women 50 Yard Free Swim-off,women,50 Free,unknown,yes,,finalize+open_event,,women:50 Free,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,33,#122 Men 100 Yard Breast Swim-off,men,100 Breast,unknown,yes,,finalize+open_event,,men:100 Breast,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,33,#123 Women 100 Yard Back Swim-off,women,100 Back,unknown,yes,,finalize+open_event,,women:100 Back,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,33,#201 Women 500 Yard Free Time Trial,women,500 Free,unknown,yes,,finalize+open_event,,women:500 Free,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,33,#202 Women 50 Yard Free Time Trial,women,50 Free,unknown,yes,,finalize+open_event,,women:50 Free,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,33,#203 Women 100 Yard Fly Time Trial,women,100 Fly,unknown,yes,,finalize+open_event,,women:100 Fly,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,33,#204 Women 100 Yard Back Time Trial,women,100 Back,unknown,yes,,finalize+open_event,,women:100 Back,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,33,#205 Men 200 Yard Back Time Trial,men,200 Back,unknown,yes,,finalize+open_event,,men:200 Back,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,33,#206 Men 100 Yard Free Time Trial,men,100 Free,unknown,yes,,finalize+open_event,,men:100 Free,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,33,#301 Men 100 Yard Fly Time Trial,men,100 Fly,unknown,yes,,finalize+open_event,,men:100 Fly,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,33,#302 Women 50 Yard Free Time Trial,women,50 Free,unknown,yes,,finalize+open_event,,women:50 Free,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,33,#303 Men 50 Yard Free Time Trial,men,50 Free,unknown,yes,,finalize+open_event,,men:50 Free,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,33,#401 Men 50 Yard Free Time Trial,men,50 Free,unknown,yes,,finalize+open_event,,men:50 Free,session=prelims
+patriot_2026,Patriot,Patriot League 2026 results.pdf,33,#402 Women 100 Yard Free Time Trial,women,100 Free,unknown,yes,,finalize+open_event,,women:100 Free,session=prelims
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,7,Event 7 Women 500 Yard Freestyle,women,500 Free,unknown,yes,,finalize+open_event,,women:500 Free,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,8,A - Final ... (Event 7 Women 500 Yard Freestyle),women,500 Free,A,yes,,finalize+open_event,,women:500 Free,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,9,Preliminaries ... (Event 7 Women 500 Yard Freestyle),women,500 Free,unknown,yes,,finalize+open_event,,women:500 Free,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,9,Event 7 Women 500 Yard Freestyle,women,500 Free,unknown,yes,,finalize+open_event,,women:500 Free,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,10,Preliminaries ... (Event 7 Women 500 Yard Freestyle),women,500 Free,unknown,yes,,finalize+open_event,,women:500 Free,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,11,Preliminaries ... (Event 7 Women 500 Yard Freestyle),women,500 Free,unknown,yes,,finalize+open_event,,women:500 Free,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,11,Event 8 Men 500 Yard Freestyle,men,500 Free,unknown,yes,,finalize+open_event,,men:500 Free,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,12,A - Final ... (Event 8 Men 500 Yard Freestyle),men,500 Free,A,yes,,finalize+open_event,,men:500 Free,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,13,B - Final ... (Event 8 Men 500 Yard Freestyle),men,500 Free,B,yes,,finalize+open_event,,men:500 Free,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,13,Event 8 Men 500 Yard Freestyle,men,500 Free,unknown,yes,,finalize+open_event,,men:500 Free,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,14,Preliminaries ... (Event 8 Men 500 Yard Freestyle),men,500 Free,unknown,yes,,finalize+open_event,,men:500 Free,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,15,Preliminaries ... (Event 8 Men 500 Yard Freestyle),men,500 Free,unknown,yes,,finalize+open_event,,men:500 Free,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,16,Preliminaries ... (Event 8 Men 500 Yard Freestyle),men,500 Free,unknown,yes,,finalize+open_event,,men:500 Free,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,16,Event 9 Women 200 Yard IM,women,200 IM,unknown,yes,,finalize+open_event,,women:200 IM,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,17,B - Final ... (Event 9 Women 200 Yard IM),women,200 IM,B,yes,,finalize+open_event,,women:200 IM,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,17,Event 9 Women 200 Yard IM,women,200 IM,unknown,yes,,finalize+open_event,,women:200 IM,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,18,Preliminaries ... (Event 9 Women 200 Yard IM),women,200 IM,unknown,yes,,finalize+open_event,,women:200 IM,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,19,Preliminaries ... (Event 9 Women 200 Yard IM),women,200 IM,unknown,yes,,finalize+open_event,,women:200 IM,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,19,Event 10 Men 200 Yard IM,men,200 IM,unknown,yes,,finalize+open_event,,men:200 IM,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,20,B - Final ... (Event 10 Men 200 Yard IM),men,200 IM,B,yes,,finalize+open_event,,men:200 IM,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,20,Event 10 Men 200 Yard IM,men,200 IM,unknown,yes,,finalize+open_event,,men:200 IM,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,21,Preliminaries ... (Event 10 Men 200 Yard IM),men,200 IM,unknown,yes,,finalize+open_event,,men:200 IM,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,22,Preliminaries ... (Event 10 Men 200 Yard IM),men,200 IM,unknown,yes,,finalize+open_event,,men:200 IM,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,22,Event 10S Men 200 Yard IM Swim-off,men,200 IM,unknown,yes,,finalize+open_event,,men:200 IM,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,22,Event 11 Women 50 Yard Freestyle,women,50 Free,unknown,yes,,finalize+open_event,,women:50 Free,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,23,A - Final ... (Event 11 Women 50 Yard Freestyle),women,50 Free,A,yes,,finalize+open_event,,women:50 Free,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,24,Preliminaries ... (Event 11 Women 50 Yard Freestyle),women,50 Free,unknown,yes,,finalize+open_event,,women:50 Free,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,24,Event 11 Women 50 Yard Freestyle,women,50 Free,unknown,yes,,finalize+open_event,,women:50 Free,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,25,Preliminaries ... (Event 11 Women 50 Yard Freestyle),women,50 Free,unknown,yes,,finalize+open_event,,women:50 Free,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,26,Preliminaries ... (Event 11 Women 50 Yard Freestyle),women,50 Free,unknown,yes,,finalize+open_event,,women:50 Free,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,26,Event 12 Men 50 Yard Freestyle,men,50 Free,unknown,yes,,finalize+open_event,,men:50 Free,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,27,B - Final ... (Event 12 Men 50 Yard Freestyle),men,50 Free,B,yes,,finalize+open_event,,men:50 Free,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,28,Preliminaries ... (Event 12 Men 50 Yard Freestyle),men,50 Free,unknown,yes,,finalize+open_event,,men:50 Free,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,28,Event 12 Men 50 Yard Freestyle,men,50 Free,unknown,yes,,finalize+open_event,,men:50 Free,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,29,Preliminaries ... (Event 12 Men 50 Yard Freestyle),men,50 Free,unknown,yes,,finalize+open_event,,men:50 Free,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,30,Preliminaries ... (Event 12 Men 50 Yard Freestyle),men,50 Free,unknown,yes,,finalize+open_event,,men:50 Free,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,30,Event 12A Men 50 Yard Freestyle Swim-off,men,50 Free,unknown,yes,,finalize+open_event,,men:50 Free,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,30,Event 12S Men 50 Yard Freestyle Swim-off,men,50 Free,unknown,yes,,finalize+open_event,,men:50 Free,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,31,- Swim-off ... (Event 12S Men 50 Yard Freestyle Swim-off),men,50 Free,unknown,yes,,finalize+open_event,,men:50 Free,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,34,Event 17 Women 100 Yard Butterfly,women,100 Fly,unknown,yes,,finalize+open_event,,women:100 Fly,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,35,A - Final ... (Event 17 Women 100 Yard Butterfly),women,100 Fly,A,yes,,finalize+open_event,,women:100 Fly,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,36,Event 17 Women 100 Yard Butterfly,women,100 Fly,unknown,yes,,finalize+open_event,,women:100 Fly,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,37,Preliminaries ... (Event 17 Women 100 Yard Butterfly),women,100 Fly,unknown,yes,,finalize+open_event,,women:100 Fly,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,37,Event 18 Men 100 Yard Butterfly,men,100 Fly,unknown,yes,,finalize+open_event,,men:100 Fly,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,38,Preliminaries ... (Event 18 Men 100 Yard Butterfly),men,100 Fly,unknown,yes,,finalize+open_event,,men:100 Fly,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,38,Event 18 Men 100 Yard Butterfly,men,100 Fly,unknown,yes,,finalize+open_event,,men:100 Fly,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,39,Preliminaries ... (Event 18 Men 100 Yard Butterfly),men,100 Fly,unknown,yes,,finalize+open_event,,men:100 Fly,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,39,Event 19 Women 400 Yard IM,women,400 IM,unknown,yes,,finalize+open_event,,women:400 IM,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,40,A - Final ... (Event 19 Women 400 Yard IM),women,400 IM,A,yes,,finalize+open_event,,women:400 IM,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,41,Event 19 Women 400 Yard IM,women,400 IM,unknown,yes,,finalize+open_event,,women:400 IM,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,42,Preliminaries ... (Event 19 Women 400 Yard IM),women,400 IM,unknown,yes,,finalize+open_event,,women:400 IM,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,42,Event 20 Men 400 Yard IM,men,400 IM,unknown,yes,,finalize+open_event,,men:400 IM,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,43,B - Final ... (Event 20 Men 400 Yard IM),men,400 IM,B,yes,,finalize+open_event,,men:400 IM,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,43,Event 20 Men 400 Yard IM,men,400 IM,unknown,yes,,finalize+open_event,,men:400 IM,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,44,Preliminaries ... (Event 20 Men 400 Yard IM),men,400 IM,unknown,yes,,finalize+open_event,,men:400 IM,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,45,Preliminaries ... (Event 20 Men 400 Yard IM),men,400 IM,unknown,yes,,finalize+open_event,,men:400 IM,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,45,Event 21 Women 200 Yard Freestyle,women,200 Free,unknown,yes,,finalize+open_event,,women:200 Free,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,46,B - Final ... (Event 21 Women 200 Yard Freestyle),women,200 Free,B,yes,,finalize+open_event,,women:200 Free,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,46,Event 21 Women 200 Yard Freestyle,women,200 Free,unknown,yes,,finalize+open_event,,women:200 Free,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,47,Preliminaries ... (Event 21 Women 200 Yard Freestyle),women,200 Free,unknown,yes,,finalize+open_event,,women:200 Free,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,48,Event 22 Men 200 Yard Freestyle,men,200 Free,unknown,yes,,finalize+open_event,,men:200 Free,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,49,Preliminaries ... (Event 22 Men 200 Yard Freestyle),men,200 Free,unknown,yes,,finalize+open_event,,men:200 Free,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,49,Event 22 Men 200 Yard Freestyle,men,200 Free,unknown,yes,,finalize+open_event,,men:200 Free,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,50,Preliminaries ... (Event 22 Men 200 Yard Freestyle),men,200 Free,unknown,yes,,finalize+open_event,,men:200 Free,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,50,Event 23 Women 100 Yard Breaststroke,women,100 Breast,unknown,yes,,finalize+open_event,,women:100 Breast,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,51,A - Final ... (Event 23 Women 100 Yard Breaststroke),women,100 Breast,A,yes,,finalize+open_event,,women:100 Breast,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,51,Event 23 Women 100 Yard Breaststroke,women,100 Breast,unknown,yes,,finalize+open_event,,women:100 Breast,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,52,Preliminaries ... (Event 23 Women 100 Yard Breaststroke),women,100 Breast,unknown,yes,,finalize+open_event,,women:100 Breast,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,53,Event 24 Men 100 Yard Breaststroke,men,100 Breast,unknown,yes,,finalize+open_event,,men:100 Breast,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,54,Event 24 Men 100 Yard Breaststroke,men,100 Breast,unknown,yes,,finalize+open_event,,men:100 Breast,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,55,Preliminaries ... (Event 24 Men 100 Yard Breaststroke),men,100 Breast,unknown,yes,,finalize+open_event,,men:100 Breast,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,55,Event 25 Women 100 Yard Backstroke,women,100 Back,unknown,yes,,finalize+open_event,,women:100 Back,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,56,Preliminaries ... (Event 25 Women 100 Yard Backstroke),women,100 Back,unknown,yes,,finalize+open_event,,women:100 Back,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,56,Event 25 Women 100 Yard Backstroke,women,100 Back,unknown,yes,,finalize+open_event,,women:100 Back,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,57,Preliminaries ... (Event 25 Women 100 Yard Backstroke),women,100 Back,unknown,yes,,finalize+open_event,,women:100 Back,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,57,Event 26 Men 100 Yard Backstroke,men,100 Back,unknown,yes,,finalize+open_event,,men:100 Back,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,58,B - Final ... (Event 26 Men 100 Yard Backstroke),men,100 Back,B,yes,,finalize+open_event,,men:100 Back,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,58,Event 26 Men 100 Yard Backstroke,men,100 Back,unknown,yes,,finalize+open_event,,men:100 Back,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,59,Preliminaries ... (Event 26 Men 100 Yard Backstroke),men,100 Back,unknown,yes,,finalize+open_event,,men:100 Back,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,63,Event 31 Women 200 Yard Backstroke,women,200 Back,unknown,yes,,finalize+open_event,,women:200 Back,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,64,A - Final ... (Event 31 Women 200 Yard Backstroke),women,200 Back,A,yes,,finalize+open_event,,women:200 Back,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,65,Event 31 Women 200 Yard Backstroke,women,200 Back,unknown,yes,,finalize+open_event,,women:200 Back,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,66,Preliminaries ... (Event 31 Women 200 Yard Backstroke),women,200 Back,unknown,yes,,finalize+open_event,,women:200 Back,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,66,Event 32 Men 200 Yard Backstroke,men,200 Back,unknown,yes,,finalize+open_event,,men:200 Back,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,67,B - Final ... (Event 32 Men 200 Yard Backstroke),men,200 Back,B,yes,,finalize+open_event,,men:200 Back,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,67,Event 32 Men 200 Yard Backstroke,men,200 Back,unknown,yes,,finalize+open_event,,men:200 Back,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,68,Preliminaries ... (Event 32 Men 200 Yard Backstroke),men,200 Back,unknown,yes,,finalize+open_event,,men:200 Back,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,68,Event 33 Women 100 Yard Freestyle,women,100 Free,unknown,yes,,finalize+open_event,,women:100 Free,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,69,Preliminaries ... (Event 33 Women 100 Yard Freestyle),women,100 Free,unknown,yes,,finalize+open_event,,women:100 Free,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,69,Event 33 Women 100 Yard Freestyle,women,100 Free,unknown,yes,,finalize+open_event,,women:100 Free,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,70,Preliminaries ... (Event 33 Women 100 Yard Freestyle),women,100 Free,unknown,yes,,finalize+open_event,,women:100 Free,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,71,Preliminaries ... (Event 33 Women 100 Yard Freestyle),women,100 Free,unknown,yes,,finalize+open_event,,women:100 Free,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,71,Event 34 Men 100 Yard Freestyle,men,100 Free,unknown,yes,,finalize+open_event,,men:100 Free,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,72,B - Final ... (Event 34 Men 100 Yard Freestyle),men,100 Free,B,yes,,finalize+open_event,,men:100 Free,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,73,Event 34 Men 100 Yard Freestyle,men,100 Free,unknown,yes,,finalize+open_event,,men:100 Free,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,74,Preliminaries ... (Event 34 Men 100 Yard Freestyle),men,100 Free,unknown,yes,,finalize+open_event,,men:100 Free,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,75,Event 35 Women 200 Yard Breaststroke,women,200 Breast,unknown,yes,,finalize+open_event,,women:200 Breast,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,76,Event 35 Women 200 Yard Breaststroke,women,200 Breast,unknown,yes,,finalize+open_event,,women:200 Breast,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,77,Preliminaries ... (Event 35 Women 200 Yard Breaststroke),women,200 Breast,unknown,yes,,finalize+open_event,,women:200 Breast,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,77,Event 36 Men 200 Yard Breaststroke,men,200 Breast,unknown,yes,,finalize+open_event,,men:200 Breast,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,78,Preliminaries ... (Event 36 Men 200 Yard Breaststroke),men,200 Breast,unknown,yes,,finalize+open_event,,men:200 Breast,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,78,Event 36 Men 200 Yard Breaststroke,men,200 Breast,unknown,yes,,finalize+open_event,,men:200 Breast,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,79,Preliminaries ... (Event 36 Men 200 Yard Breaststroke),men,200 Breast,unknown,yes,,finalize+open_event,,men:200 Breast,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,79,Event 37 Women 200 Yard Butterfly,women,200 Fly,unknown,yes,,finalize+open_event,,women:200 Fly,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,80,Event 37 Women 200 Yard Butterfly,women,200 Fly,unknown,yes,,finalize+open_event,,women:200 Fly,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,80,Event 38 Men 200 Yard Butterfly,men,200 Fly,unknown,yes,,finalize+open_event,,men:200 Fly,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,81,A - Final ... (Event 38 Men 200 Yard Butterfly),men,200 Fly,A,yes,,finalize+open_event,,men:200 Fly,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,81,Event 38 Men 200 Yard Butterfly,men,200 Fly,unknown,yes,,finalize+open_event,,men:200 Fly,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,82,Preliminaries ... (Event 38 Men 200 Yard Butterfly),men,200 Fly,unknown,yes,,finalize+open_event,,men:200 Fly,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,83,Preliminaries ... (Event 38 Men 200 Yard Butterfly),men,200 Fly,unknown,yes,,finalize+open_event,,men:200 Fly,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,83,Event 39 Women 1650 Yard Freestyle,women,1650 Free,unknown,yes,,finalize+open_event,,women:1650 Free,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,84,(Event 39 Women 1650 Yard Freestyle),women,1650 Free,unknown,yes,,finalize+open_event,,women:1650 Free,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,85,(Event 39 Women 1650 Yard Freestyle),women,1650 Free,unknown,yes,,finalize+open_event,,women:1650 Free,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,86,(Event 39 Women 1650 Yard Freestyle),women,1650 Free,unknown,yes,,finalize+open_event,,women:1650 Free,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,86,Event 40 Men 1650 Yard Freestyle,men,1650 Free,unknown,yes,,finalize+open_event,,men:1650 Free,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,87,(Event 40 Men 1650 Yard Freestyle),men,1650 Free,unknown,yes,,finalize+open_event,,men:1650 Free,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,88,(Event 40 Men 1650 Yard Freestyle),men,1650 Free,unknown,yes,,finalize+open_event,,men:1650 Free,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,89,(Event 40 Men 1650 Yard Freestyle),men,1650 Free,unknown,yes,,finalize+open_event,,men:1650 Free,session=finals
+summitleague_2026,Summit League,SUMMIT LEAGUE 2026 RESULTS.pdf,90,(Event 40 Men 1650 Yard Freestyle),men,1650 Free,unknown,yes,,finalize+open_event,,men:1650 Free,session=finals
