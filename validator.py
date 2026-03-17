@@ -15,15 +15,39 @@ Profile variables
   spread = deep - sw    (always positive for valid events)
   shape  = deep / sw    (spread ratio; > 1.0 for valid events)
 
-Priority of evidence (high → low)
-----------------------------------
-  1. broken ordering (sw > deep)            — very strong
-  2. spread implausible                      — strong
-  3. shape implausible                       — strong
-  4. deep far outside profile                — medium-high
-  5. cross-event mismatch (combined signal)  — medium
-  6. sw far outside profile                  — low-medium (outlier-resistant)
-  7. sw mildly outside profile               — very low
+Signal classification — HARD vs SOFT
+--------------------------------------
+HARD signals (can push a row to likely_wrong_event independently):
+  1. anchor_order_broken   sw > deep
+  2. sw_absurdly_fast      family guardrail
+  3. sw_absurdly_slow      family guardrail or profile-derived
+  4. deep_absurdly_slow    family guardrail
+  5. deep_extreme_outlier  z > 5.0 on deep (population level)
+  6. very_strong_cross     claimed_dist / best_other_dist > 4.0
+
+SOFT signals (field-variation / depth — can produce review alone):
+  7. sw outliers (soft/hard)
+  8. deep soft/hard outliers
+  9. spread implausible (hard/extreme MAD z-score)
+  10. shape implausible (hard/extreme MAD z-score)
+  11. closer_to_other_event  (moderate cross-event ratio 2–4×)
+
+Label gating rule
+-----------------
+  likely_wrong_event normally requires at least one HARD signal.
+  If only SOFT signals are present and confidence < 50, the label is
+  capped at review, UNLESS all of these hold simultaneously:
+    - at least 3 extreme-soft tokens fired
+      (spread_implausible, shape_implausible, deep_hard_outlier, sw_hard_outlier)
+    - AND the cross-event ratio exceeds 4.0 (very_strong_cross threshold)
+  That combined exception catches severe multi-signal failures without
+  ever triggering on spread/shape alone.
+
+Sprint-event calibration
+-------------------------
+  50 Free and 100 Free use looser spread/shape z-score thresholds
+  (soft=2.5, hard=4.5 instead of 2.0/3.0) to avoid penalising conferences
+  where one elite winner creates a legitimately wide field ratio.
 """
 
 from __future__ import annotations
@@ -40,6 +64,28 @@ MIN_PROFILE_N: int = 8   # minimum samples required to build a profile
 ABSURDITY_LO:  float = 2.5   # sw < p05 / ABSURDITY_LO  → absurd
 ABSURDITY_HI:  float = 2.5   # deep > p95 * ABSURDITY_HI → absurd
 ABSURDITY_SW_HI: float = 2.0  # sw > p95 * ABSURDITY_SW_HI → absurd winner
+
+# Tokens whose presence means a HARD signal fired.
+# Very-strong cross-event mismatch (ratio > VERY_STRONG_CROSS_RATIO) is
+# added programmatically inside validate_row.
+_HARD_REASON_TOKENS: frozenset[str] = frozenset({
+    "anchor_order_broken",
+    "sw_absurdly_fast",
+    "sw_absurdly_slow",
+    "deep_absurdly_slow",
+    "deep_extreme_outlier",
+})
+
+# Threshold above which claimed_dist/best_other_dist is treated as HARD.
+VERY_STRONG_CROSS_RATIO: float = 4.0
+
+# Soft-signal tokens counted when deciding whether the gating exception fires.
+_EXTREME_SOFT_TOKENS: frozenset[str] = frozenset({
+    "spread_implausible",
+    "shape_implausible",
+    "deep_hard_outlier",
+    "sw_hard_outlier",
+})
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -62,6 +108,18 @@ def time_to_seconds(t: str) -> Optional[float]:
 
 def normalize_event(event: str) -> str:
     return event.strip().lower()
+
+
+def _is_sprint_event(event_norm: str) -> bool:
+    """
+    True for 50 Free and 100 Free.
+
+    These events are most susceptible to ratio overcalling: one elite winner in
+    a shallow conference creates a legitimately high shape ratio that the
+    cross-conference MAD treats as anomalous.  Looser thresholds are applied
+    to spread and shape scoring for these events.
+    """
+    return "50 free" in event_norm or "100 free" in event_norm
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -275,6 +333,11 @@ def validate_row(
     Validate one anchor row.  Returns a dict with:
         confidence_score, validation_label, reasons,
         closest_other_event, claimed_event_distance, closest_other_event_distance
+
+    Label gating is applied at the end:
+      - likely_wrong_event requires at least one HARD signal (or a very-strong
+        cross-event mismatch), unless an extreme multi-soft exception fires.
+      - Sprint events (50 Free, 100 Free) use looser spread/shape thresholds.
     """
     gender_norm = gender.lower().strip()
     event_norm  = normalize_event(event)
@@ -293,14 +356,16 @@ def validate_row(
         "shape":  shape,
     }
 
+    is_sprint = _is_sprint_event(event_norm)
+
     # ── A. Monotonicity (ordering) ────────────────────────────────────────
     if sw > deep:
-        confidence -= 55.0      # very strong signal — single broken ordering → likely_wrong
+        confidence -= 55.0      # HARD — single hit alone → likely_wrong_event
         reasons.append("anchor_order_broken")
 
     # ── Always: family-level absurdity guardrail ──────────────────────────
     # Run unconditionally — catches impossible values even without a rich profile.
-    # Uses -55 so a single hit alone → likely_wrong_event (<50).
+    # Uses -55 so a single hit alone → likely_wrong_event (<50).  HARD signal.
     hard_floor, sw_ceil, hard_ceil = _family_absurdity(event_norm)
     if hard_floor and sw < hard_floor / ABSURDITY_LO:
         confidence -= 55.0
@@ -312,10 +377,11 @@ def validate_row(
         confidence -= 55.0
         reasons.append("deep_absurdly_slow")
 
-    # ── B–E require a profile ─────────────────────────────────────────────
+    # ── B–G require a profile ─────────────────────────────────────────────
     claimed_dist: Optional[float] = None
     closest_other: Optional[str]  = None
     closest_other_dist: Optional[float] = None
+    cross_ratio: Optional[float] = None
 
     if profile:
         # ── B. sw plausibility (low weight) ──────────────────────────────
@@ -327,16 +393,21 @@ def validate_row(
             reasons.append(f"sw_{sev}_outlier")
 
         # ── C. deep plausibility (medium-high weight) ─────────────────────
+        # Extreme (z > 5) is a HARD signal; soft/hard remain SOFT.
         z_dp = _robust_z(deep, profile, "deep")
         pen, sev = _penalty(z_dp, soft=2.0, hard=3.0,
                             p_soft=8.0, p_hard=18.0, p_extreme=30.0)
         confidence -= pen
         if sev:
             reasons.append(f"deep_{sev}_outlier")
+            # Extreme deep outlier → tag is already in _HARD_REASON_TOKENS
 
         # ── D. spread plausibility (high weight) ──────────────────────────
+        # Sprint events use looser thresholds to reduce ratio overcalling.
+        sp_soft = 2.5 if is_sprint else 2.0
+        sp_hard = 4.5 if is_sprint else 3.0
         z_sp = _robust_z(spread, profile, "spread")
-        pen, sev = _penalty(z_sp, soft=2.0, hard=3.0,
+        pen, sev = _penalty(z_sp, soft=sp_soft, hard=sp_hard,
                             p_soft=10.0, p_hard=22.0, p_extreme=38.0)
         confidence -= pen
         if sev:
@@ -344,9 +415,12 @@ def validate_row(
                            else "spread_soft_outlier")
 
         # ── E. shape plausibility (high weight) ───────────────────────────
+        # Sprint events use looser thresholds for the same reason as spread.
+        sh_soft = 2.5 if is_sprint else 2.0
+        sh_hard = 4.5 if is_sprint else 3.0
         if shape is not None:
             z_sh = _robust_z(shape, profile, "shape")
-            pen, sev = _penalty(z_sh, soft=2.0, hard=3.0,
+            pen, sev = _penalty(z_sh, soft=sh_soft, hard=sh_hard,
                                 p_soft=10.0, p_hard=22.0, p_extreme=38.0)
             confidence -= pen
             if sev:
@@ -383,17 +457,44 @@ def validate_row(
         closest_other_dist = best_dist
 
         if claimed_dist is not None and best_dist is not None and best_dist > 0:
-            ratio = claimed_dist / best_dist
-            if ratio > 3.0:
+            cross_ratio = claimed_dist / best_dist
+            if cross_ratio > 3.0:
                 confidence -= 15.0
                 if "closer_to_other_event" not in reasons:
                     reasons.append("closer_to_other_event")
-            elif ratio > 2.0:
+            elif cross_ratio > 2.0:
                 confidence -= 10.0
                 if "closer_to_other_event" not in reasons:
                     reasons.append("closer_to_other_event")
 
+    # ── Label gating ──────────────────────────────────────────────────────
+    # A row reaches likely_wrong_event (< 50) only when at least one HARD
+    # signal is present, OR a very-strong cross-event mismatch exists, OR
+    # an extreme multi-soft exception fires.
     confidence = max(0.0, min(100.0, confidence))
+
+    if confidence < 50.0:
+        # Check whether any HARD reason fired.
+        has_hard = bool(_HARD_REASON_TOKENS.intersection(reasons))
+
+        # Very-strong cross-event ratio also counts as HARD.
+        if cross_ratio is not None and cross_ratio > VERY_STRONG_CROSS_RATIO:
+            has_hard = True
+
+        if not has_hard:
+            # Only soft signals present.  Allow likely_wrong_event only when
+            # the failure is severe enough on both the soft AND cross-event axes.
+            extreme_soft_count = sum(
+                1 for r in reasons if r in _EXTREME_SOFT_TOKENS
+            )
+            very_strong_cross = (
+                cross_ratio is not None
+                and cross_ratio > VERY_STRONG_CROSS_RATIO
+                and "closer_to_other_event" in reasons
+            )
+            if not (extreme_soft_count >= 3 and very_strong_cross):
+                # Cap at the bottom of review band.
+                confidence = 50.0
 
     if confidence >= 80.0:
         label = "valid"

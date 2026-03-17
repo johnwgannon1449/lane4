@@ -1,0 +1,211 @@
+We are keeping the current parser logic locked. Do NOT change parsing behavior.
+
+Add a post-parse plausibility validator that evaluates each captured event and assigns:
+- valid
+- review
+- likely_wrong_event
+
+Goal:
+quietly identify likely wrong-event captures and broken anchor extractions without producing a giant noisy flag list.
+
+Important design requirement:
+Do NOT over-flag because of one elite swimmer in a weak conference.
+A single national-level outlier should not cause a valid event to look suspicious.
+Therefore, the validator must rely more on robust field-shape signals than on raw winner speed alone.
+
+Core philosophy
+
+1) This is a validator, not a parser rewrite.
+2) It must be advisory only.
+3) It must be robust to outliers.
+4) It must prefer event-shape consistency over absolute speed.
+5) It should catch likely wrong-event captures, not merely unusual performances.
+
+Requirements
+
+1) Learn event-specific profiles from our own parsed data
+Create a validator layer that uses historical parsed captures grouped by:
+- gender
+- normalized_event
+
+For each group, convert times to seconds and compute robust stats for:
+- sw
+- deep
+- spread = deep - sw
+
+Also compute a shape metric that is less sensitive to one elite swimmer, such as:
+- spread_ratio = deep / sw   (or another stable normalized shape measure if better)
+Only use ratio where mathematically appropriate and safe.
+
+For each metric, store robust profile values using outlier-resistant methods:
+- n
+- median
+- MAD
+- p05
+- p25
+- p75
+- p95
+
+Before computing summary stats, use an outlier-resistant approach such as:
+- winsorization at reasonable tails, or
+- trimmed quantile-based summaries
+Do NOT let one extreme result overly influence the learned profile.
+
+Write this learned table to:
+output/event_time_profiles.csv
+
+2) Validate each parsed event
+For each captured event row, compute a confidence score and validation label using these checks:
+
+A. Anchor plausibility — low weight for sw alone
+Compare sw and deep against the learned distribution for the same gender + normalized_event.
+However:
+- do NOT strongly penalize an event just because sw is unusually fast
+- a very fast sw alone should usually be only a mild signal
+- deep and shape metrics should carry more weight than sw-alone checks
+
+Suggested behavior:
+- sw outside soft range => small penalty
+- sw far outside hard range => moderate penalty only if other checks also look bad
+- deep outside range => stronger penalty than sw
+Reason:
+one elite swimmer can distort sw, but deep and field shape are better signals of a wrong capture.
+
+B. Monotonicity
+Require:
+- sw <= deep
+Allow tiny tolerance for ties.
+Broken ordering should be a strong signal.
+
+C. Spread plausibility
+Compare spread = deep - sw against the learned spread distribution for that event/gender.
+This should carry significant weight because wrong-event captures often create impossible spreads.
+
+D. Shape plausibility
+Compare normalized field shape metrics such as:
+- spread_ratio = deep / sw
+or another robust normalized spread measure
+This should be one of the primary checks because it is more resistant to one elite outlier than raw anchor speed.
+
+E. Cross-event mismatch clue
+For each available anchor time and/or shape metric, compare fit to:
+- claimed event profile
+- all other event profiles of the same gender
+
+If the row fits another event much better than the claimed event, reduce confidence and record the closest other event.
+
+Important:
+Cross-event mismatch should be based on combined evidence where possible:
+- sw distance
+- deep distance
+- spread distance
+- shape distance
+
+Do NOT classify likely_wrong_event from sw-alone unless it is absurd.
+
+3) Weighting / scoring philosophy
+Start each event at:
+- confidence_score = 100
+
+Penalties should reflect reliability of the signal:
+
+High-weight signals:
+- broken ordering
+- impossible or highly abnormal spread
+- abnormal normalized shape
+- strong cross-event mismatch
+
+Medium-weight signals:
+- deep far outside robust range
+- multiple moderate abnormalities together
+
+Low-weight signals:
+- sw mildly outside range
+- sw unusually fast by itself
+
+Interpretation:
+A single elite winner in a weak field should not by itself push an event into likely_wrong_event.
+It should take multiple signals or a truly absurd value to do that.
+
+Suggested label mapping:
+- valid: >= 80
+- review: 50-79
+- likely_wrong_event: < 50
+
+4) Hard absurdity guardrail
+Some values are so implausible they should be flagged regardless of field shape.
+Add a very conservative absurdity layer for clearly impossible/wrong-event captures.
+
+Examples of intended behavior:
+- 22-second 1650 free => likely_wrong_event
+- 1:05 50 free => likely_wrong_event
+
+But keep this conservative and rare.
+Prefer absurdity thresholds derived from broad event-family data, not a large hand-written rules list.
+
+5) Output
+Add these columns to the event-level output if practical:
+- validation_label
+- confidence_score
+
+Also write:
+output/event_validation_report.csv
+
+This report should include ONLY rows where validation_label != valid.
+
+Columns:
+- conference
+- file
+- gender
+- normalized_event
+- sw
+- deep
+- validation_label
+- confidence_score
+- reasons
+- closest_other_event
+- claimed_event_distance
+- closest_other_event_distance
+
+Reasons should be concise and signal-based, for example:
+- sw_soft_outlier
+- deep_hard_outlier
+- anchor_order_broken
+- spread_implausible
+- shape_implausible
+- closer_to_other_event
+
+6) Guardrails
+- Do not validate against a learned profile unless sample size is sufficient (use a reasonable minimum like n >= 8 or n >= 10)
+- If profile data is insufficient, still run monotonicity and conservative absurdity checks
+- Keep logic modular and isolated from parser extraction
+- No regressions to current parse flow
+- Never remove, alter, or suppress parsed rows based on validation
+
+7) Implementation preference
+Use helper functions for:
+- time_to_seconds
+- robust profile builder
+- winsorized / trimmed stats builder
+- robust distance calculation
+- shape metric calculation
+- event validation
+- report writer
+
+8) Practical scoring guidance
+Please implement the scoring so that:
+- sw-alone anomalies are weak evidence
+- deep anomalies are stronger evidence
+- spread and shape anomalies are strong evidence
+- broken ordering is very strong evidence
+- combined moderate signals can produce review
+- only strong or multi-signal failures produce likely_wrong_event
+
+9) Final deliverable
+Return:
+- what files changed
+- what outputs were added
+- how confidence is calculated
+- what signals were weighted most heavily
+- a short sample of flagged rows
+- confirmation that parsing behavior itself was not changed
