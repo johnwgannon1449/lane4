@@ -1,2 +1,522 @@
-Conference,Year,Gender,Bundle_ID,Team,Team_Score,Source_File
-WAC,2025,women,wac_2025,"Dooling, Carter JR GCU",49.85,WAC 2025 RESULTS.pdf
+bundle_id,conference,gender_or_division,rank,team,score,source_pdf,source_page,section_heading
+acc_2026,ACC,men,1,"California, University of, Ber",1154.0,2026_acc_championship_full_meet_results.pdf,155,Men - Team Rankings - Through Event 954
+acc_2026,ACC,men,2,Stanford University,1076.0,2026_acc_championship_full_meet_results.pdf,155,Men - Team Rankings - Through Event 954
+acc_2026,ACC,men,3,North Carolina State Universit,973.0,2026_acc_championship_full_meet_results.pdf,155,Men - Team Rankings - Through Event 954
+acc_2026,ACC,men,4,"Louisville, University of",844.0,2026_acc_championship_full_meet_results.pdf,155,Men - Team Rankings - Through Event 954
+acc_2026,ACC,men,5,VA Tech,715.5,2026_acc_championship_full_meet_results.pdf,155,Men - Team Rankings - Through Event 954
+acc_2026,ACC,men,6,Florida State University,624.5,2026_acc_championship_full_meet_results.pdf,155,Men - Team Rankings - Through Event 954
+acc_2026,ACC,men,7,"Virginia, University of",577.5,2026_acc_championship_full_meet_results.pdf,155,Men - Team Rankings - Through Event 954
+acc_2026,ACC,men,8,"North Carolina, University of",572.5,2026_acc_championship_full_meet_results.pdf,155,Men - Team Rankings - Through Event 954
+acc_2026,ACC,men,9,"Notre Dame, University of",488.0,2026_acc_championship_full_meet_results.pdf,155,Men - Team Rankings - Through Event 954
+acc_2026,ACC,men,10,Southern Methodist University,407.0,2026_acc_championship_full_meet_results.pdf,155,Men - Team Rankings - Through Event 954
+acc_2026,ACC,men,11,"Pittsburgh, University of",401.0,2026_acc_championship_full_meet_results.pdf,155,Men - Team Rankings - Through Event 954
+acc_2026,ACC,men,12,Georgia Institute of Technolog,357.0,2026_acc_championship_full_meet_results.pdf,155,Men - Team Rankings - Through Event 954
+acc_2026,ACC,men,13,University of Miami (Florida),162.0,2026_acc_championship_full_meet_results.pdf,155,Men - Team Rankings - Through Event 954
+acc_2026,ACC,men,14,Duke University,138.0,2026_acc_championship_full_meet_results.pdf,155,Men - Team Rankings - Through Event 954
+acc_2026,ACC,men,15,Boston College,112.0,2026_acc_championship_full_meet_results.pdf,155,Men - Team Rankings - Through Event 954
+acc_2026,ACC,women,1,"Virginia, University of",1410.5,2026_acc_championship_full_meet_results.pdf,155,Women - Team Rankings - Through Event 954
+acc_2026,ACC,women,2,Stanford University,1039.0,2026_acc_championship_full_meet_results.pdf,155,Women - Team Rankings - Through Event 954
+acc_2026,ACC,women,3,"California, University of, Ber",1027.5,2026_acc_championship_full_meet_results.pdf,155,Women - Team Rankings - Through Event 954
+acc_2026,ACC,women,4,"Louisville, University of",925.0,2026_acc_championship_full_meet_results.pdf,155,Women - Team Rankings - Through Event 954
+acc_2026,ACC,women,5,North Carolina State Universit,851.5,2026_acc_championship_full_meet_results.pdf,155,Women - Team Rankings - Through Event 954
+acc_2026,ACC,women,6,"Pittsburgh, University of",552.0,2026_acc_championship_full_meet_results.pdf,155,Women - Team Rankings - Through Event 954
+acc_2026,ACC,women,7,"North Carolina, University of",522.5,2026_acc_championship_full_meet_results.pdf,155,Women - Team Rankings - Through Event 954
+acc_2026,ACC,women,8,Duke University,432.5,2026_acc_championship_full_meet_results.pdf,155,Women - Team Rankings - Through Event 954
+acc_2026,ACC,women,9,VA Tech,409.5,2026_acc_championship_full_meet_results.pdf,155,Women - Team Rankings - Through Event 954
+acc_2026,ACC,women,10,Florida State University,371.0,2026_acc_championship_full_meet_results.pdf,155,Women - Team Rankings - Through Event 954
+acc_2026,ACC,women,11,"Notre Dame, University of",366.0,2026_acc_championship_full_meet_results.pdf,155,Women - Team Rankings - Through Event 954
+acc_2026,ACC,women,12,University of Miami (Florida),322.0,2026_acc_championship_full_meet_results.pdf,155,Women - Team Rankings - Through Event 954
+acc_2026,ACC,women,13,Georgia Institute of Technolog,274.0,2026_acc_championship_full_meet_results.pdf,155,Women - Team Rankings - Through Event 954
+acc_2026,ACC,women,14,Southern Methodist University,261.0,2026_acc_championship_full_meet_results.pdf,155,Women - Team Rankings - Through Event 954
+acc_2026,ACC,women,15,Boston College,98.0,2026_acc_championship_full_meet_results.pdf,155,Women - Team Rankings - Through Event 954
+americaeast_2026,America East,men,1,University of Maryland Baltimo,805.5,america east 2026_meet_results.pdf,120,Men - Team Rankings - Through Event 441
+americaeast_2026,America East,men,2,Binghamton University,748.0,america east 2026_meet_results.pdf,120,Men - Team Rankings - Through Event 441
+americaeast_2026,America East,men,3,Bryant University,572.5,america east 2026_meet_results.pdf,120,Men - Team Rankings - Through Event 441
+americaeast_2026,America East,men,4,Virginia Military Institute,423.0,america east 2026_meet_results.pdf,120,Men - Team Rankings - Through Event 441
+americaeast_2026,America East,men,5,New Jersey Institute of Techno,353.0,america east 2026_meet_results.pdf,120,Men - Team Rankings - Through Event 441
+americaeast_2026,America East,men,6,"Maine, University of",347.0,america east 2026_meet_results.pdf,120,Men - Team Rankings - Through Event 441
+americaeast_2026,America East,women,1,Bryant University,775.0,america east 2026_meet_results.pdf,120,Women - Team Rankings - Through Event 441
+americaeast_2026,America East,women,2,"New Hampshire, University of",660.0,america east 2026_meet_results.pdf,120,Women - Team Rankings - Through Event 441
+americaeast_2026,America East,women,3,"Vermont, University of",613.0,america east 2026_meet_results.pdf,120,Women - Team Rankings - Through Event 441
+americaeast_2026,America East,women,4,University of Maryland Baltimo,446.0,america east 2026_meet_results.pdf,120,Women - Team Rankings - Through Event 441
+americaeast_2026,America East,women,5,Binghamton University,403.0,america east 2026_meet_results.pdf,120,Women - Team Rankings - Through Event 441
+americaeast_2026,America East,women,6,"Maine, University of",314.0,america east 2026_meet_results.pdf,120,Women - Team Rankings - Through Event 441
+americaeast_2026,America East,women,7,Virginia Military Institute,159.0,america east 2026_meet_results.pdf,120,Women - Team Rankings - Through Event 441
+asun_2026,ASUN,men,1,Queens University of Charlotte,782.5,2026 ASUN full_meet_results.pdf,102,Men - Team Rankings - Through Event 823
+asun_2026,ASUN,men,1,Florida Atlantic University,782.5,2026 ASUN full_meet_results.pdf,102,Men - Team Rankings - Through Event 823
+asun_2026,ASUN,men,3,Delaware,762.0,2026 ASUN full_meet_results.pdf,102,Men - Team Rankings - Through Event 823
+asun_2026,ASUN,men,4,Gardner-Webb University,394.0,2026 ASUN full_meet_results.pdf,102,Men - Team Rankings - Through Event 823
+asun_2026,ASUN,men,5,Old Dominion University,367.0,2026 ASUN full_meet_results.pdf,102,Men - Team Rankings - Through Event 823
+asun_2026,ASUN,men,6,Bellarmine University,219.0,2026 ASUN full_meet_results.pdf,102,Men - Team Rankings - Through Event 823
+asun_2026,ASUN,women,1,Delaware,1627.0,2026 ASUN full_meet_results.pdf,102,Women - Team Rankings - Through Event 823
+asun_2026,ASUN,women,2,Florida Gulf Coast University,1619.0,2026 ASUN full_meet_results.pdf,102,Women - Team Rankings - Through Event 823
+asun_2026,ASUN,women,3,Queens University of Charlotte,1217.5,2026 ASUN full_meet_results.pdf,102,Women - Team Rankings - Through Event 823
+asun_2026,ASUN,women,4,Georgia Southern University,795.5,2026 ASUN full_meet_results.pdf,102,Women - Team Rankings - Through Event 823
+asun_2026,ASUN,women,5,Univ North Carolina Asheville,768.0,2026 ASUN full_meet_results.pdf,102,Women - Team Rankings - Through Event 823
+asun_2026,ASUN,women,6,University of North Florida,648.5,2026 ASUN full_meet_results.pdf,102,Women - Team Rankings - Through Event 823
+asun_2026,ASUN,women,7,Old Dominion University,563.0,2026 ASUN full_meet_results.pdf,102,Women - Team Rankings - Through Event 823
+asun_2026,ASUN,women,8,Gardner-Webb University,470.5,2026 ASUN full_meet_results.pdf,102,Women - Team Rankings - Through Event 823
+asun_2026,ASUN,women,9,Bellarmine University,286.0,2026 ASUN full_meet_results.pdf,102,Women - Team Rankings - Through Event 823
+atlantic10_2026,Atlantic 10,men,1,George Washington University,784.83,2026_A_10_Swimming_Diving_Championships_Final_Results.pdf,108,Men - Team Rankings - Through Event 918
+atlantic10_2026,Atlantic 10,men,2,George Mason University,585.66,2026_A_10_Swimming_Diving_Championships_Final_Results.pdf,108,Men - Team Rankings - Through Event 918
+atlantic10_2026,Atlantic 10,men,3,St Bonaventure University,506.5,2026_A_10_Swimming_Diving_Championships_Final_Results.pdf,108,Men - Team Rankings - Through Event 918
+atlantic10_2026,Atlantic 10,men,4,La Salle University,437.0,2026_A_10_Swimming_Diving_Championships_Final_Results.pdf,108,Men - Team Rankings - Through Event 918
+atlantic10_2026,Atlantic 10,men,5,Davidson College,420.0,2026_A_10_Swimming_Diving_Championships_Final_Results.pdf,108,Men - Team Rankings - Through Event 918
+atlantic10_2026,Atlantic 10,men,6,Saint Louis University,325.0,2026_A_10_Swimming_Diving_Championships_Final_Results.pdf,108,Men - Team Rankings - Through Event 918
+atlantic10_2026,Atlantic 10,men,7,Fordham University,286.0,2026_A_10_Swimming_Diving_Championships_Final_Results.pdf,108,Men - Team Rankings - Through Event 918
+atlantic10_2026,Atlantic 10,women,1,University of Richmond,600.0,2026_A_10_Swimming_Diving_Championships_Final_Results.pdf,108,Women - Team Rankings - Through Event 918
+atlantic10_2026,Atlantic 10,women,2,George Washington University,572.5,2026_A_10_Swimming_Diving_Championships_Final_Results.pdf,108,Women - Team Rankings - Through Event 918
+atlantic10_2026,Atlantic 10,women,3,Duquesne University,516.5,2026_A_10_Swimming_Diving_Championships_Final_Results.pdf,108,Women - Team Rankings - Through Event 918
+atlantic10_2026,Atlantic 10,women,4,La Salle University,477.0,2026_A_10_Swimming_Diving_Championships_Final_Results.pdf,108,Women - Team Rankings - Through Event 918
+atlantic10_2026,Atlantic 10,women,5,Fordham University,371.0,2026_A_10_Swimming_Diving_Championships_Final_Results.pdf,108,Women - Team Rankings - Through Event 918
+atlantic10_2026,Atlantic 10,women,6,St Bonaventure University,358.0,2026_A_10_Swimming_Diving_Championships_Final_Results.pdf,108,Women - Team Rankings - Through Event 918
+atlantic10_2026,Atlantic 10,women,7,University of Rhode Island,234.0,2026_A_10_Swimming_Diving_Championships_Final_Results.pdf,108,Women - Team Rankings - Through Event 918
+atlantic10_2026,Atlantic 10,women,8,George Mason University,211.0,2026_A_10_Swimming_Diving_Championships_Final_Results.pdf,108,Women - Team Rankings - Through Event 918
+atlantic10_2026,Atlantic 10,women,9,Davidson College,169.0,2026_A_10_Swimming_Diving_Championships_Final_Results.pdf,108,Women - Team Rankings - Through Event 918
+atlantic10_2026,Atlantic 10,women,10,Saint Louis University,142.0,2026_A_10_Swimming_Diving_Championships_Final_Results.pdf,108,Women - Team Rankings - Through Event 918
+big12_unknown,Big 12,men,1,Arizona State University,1898.5,Big_12_S_D_Champ_Results_pdf.pdf,233,Men - Team Rankings - Through Event 948
+big12_unknown,Big 12,men,2,University of Arizona,1552.5,Big_12_S_D_Champ_Results_pdf.pdf,233,Men - Team Rankings - Through Event 948
+big12_unknown,Big 12,men,3,University of Utah,1305.0,Big_12_S_D_Champ_Results_pdf.pdf,233,Men - Team Rankings - Through Event 948
+big12_unknown,Big 12,men,4,Texas Christian University,934.0,Big_12_S_D_Champ_Results_pdf.pdf,233,Men - Team Rankings - Through Event 948
+big12_unknown,Big 12,men,5,Brigham Young University,843.0,Big_12_S_D_Champ_Results_pdf.pdf,233,Men - Team Rankings - Through Event 948
+big12_unknown,Big 12,men,6,University of Cincinnati,802.0,Big_12_S_D_Champ_Results_pdf.pdf,233,Men - Team Rankings - Through Event 948
+big12_unknown,Big 12,men,7,West Virginia University,641.0,Big_12_S_D_Champ_Results_pdf.pdf,233,Men - Team Rankings - Through Event 948
+big12_unknown,Big 12,women,1,Arizona State University,1660.5,Big_12_S_D_Champ_Results_pdf.pdf,233,Women - Team Rankings - Through Event 948
+big12_unknown,Big 12,women,2,University of Arizona,1442.5,Big_12_S_D_Champ_Results_pdf.pdf,233,Women - Team Rankings - Through Event 948
+big12_unknown,Big 12,women,3,University of Houston,1194.5,Big_12_S_D_Champ_Results_pdf.pdf,233,Women - Team Rankings - Through Event 948
+big12_unknown,Big 12,women,4,University of Cincinnati,770.0,Big_12_S_D_Champ_Results_pdf.pdf,233,Women - Team Rankings - Through Event 948
+big12_unknown,Big 12,women,5,University of Kansas,739.5,Big_12_S_D_Champ_Results_pdf.pdf,233,Women - Team Rankings - Through Event 948
+big12_unknown,Big 12,women,6,Texas Christian University,733.0,Big_12_S_D_Champ_Results_pdf.pdf,233,Women - Team Rankings - Through Event 948
+big12_unknown,Big 12,women,7,University of Utah,693.0,Big_12_S_D_Champ_Results_pdf.pdf,233,Women - Team Rankings - Through Event 948
+big12_unknown,Big 12,women,8,Brigham Young University,524.0,Big_12_S_D_Champ_Results_pdf.pdf,233,Women - Team Rankings - Through Event 948
+big12_unknown,Big 12,women,9,Iowa State University,520.0,Big_12_S_D_Champ_Results_pdf.pdf,233,Women - Team Rankings - Through Event 948
+big12_unknown,Big 12,women,10,West Virginia University,409.0,Big_12_S_D_Champ_Results_pdf.pdf,233,Women - Team Rankings - Through Event 948
+bigeast_2026,Big East,men,1,Georgetown University,910.5,big east 2026_full_results.pdf,77,Men - Team Rankings - Through Event 934
+bigeast_2026,Big East,men,2,Seton Hall University,742.5,big east 2026_full_results.pdf,77,Men - Team Rankings - Through Event 934
+bigeast_2026,Big East,men,3,Villanova University,610.0,big east 2026_full_results.pdf,77,Men - Team Rankings - Through Event 934
+bigeast_2026,Big East,men,4,Xavier University,582.5,big east 2026_full_results.pdf,77,Men - Team Rankings - Through Event 934
+bigeast_2026,Big East,men,5,Providence College,163.5,big east 2026_full_results.pdf,77,Men - Team Rankings - Through Event 934
+bigeast_2026,Big East,women,1,Villanova University,1754.0,big east 2026_full_results.pdf,77,Women - Team Rankings - Through Event 934
+bigeast_2026,Big East,women,2,"Connecticut, University of",1520.0,big east 2026_full_results.pdf,77,Women - Team Rankings - Through Event 934
+bigeast_2026,Big East,women,3,Georgetown University,1303.0,big east 2026_full_results.pdf,77,Women - Team Rankings - Through Event 934
+bigeast_2026,Big East,women,4,Xavier University,1003.5,big east 2026_full_results.pdf,77,Women - Team Rankings - Through Event 934
+bigeast_2026,Big East,women,5,Butler University,581.5,big east 2026_full_results.pdf,77,Women - Team Rankings - Through Event 934
+bigeast_2026,Big East,women,6,Seton Hall University,559.0,big east 2026_full_results.pdf,77,Women - Team Rankings - Through Event 934
+bigeast_2026,Big East,women,7,Providence College,521.0,big east 2026_full_results.pdf,77,Women - Team Rankings - Through Event 934
+bigten_2026,Big Ten,men,1,Indiana University,1544.5,mens 2026 Big 10 saturday_results_-_all__1_.pdf,12,Men - Team Rankings - Through Event 706
+bigten_2026,Big Ten,men,2,"Michigan, University of",1208.0,mens 2026 Big 10 saturday_results_-_all__1_.pdf,12,Men - Team Rankings - Through Event 706
+bigten_2026,Big Ten,men,3,Ohio State University,1035.5,mens 2026 Big 10 saturday_results_-_all__1_.pdf,12,Men - Team Rankings - Through Event 706
+bigten_2026,Big Ten,men,4,Northwestern University,840.0,mens 2026 Big 10 saturday_results_-_all__1_.pdf,12,Men - Team Rankings - Through Event 706
+bigten_2026,Big Ten,men,5,"Wisconsin, University of, Madi",832.5,mens 2026 Big 10 saturday_results_-_all__1_.pdf,12,Men - Team Rankings - Through Event 706
+bigten_2026,Big Ten,men,6,Purdue University,783.0,mens 2026 Big 10 saturday_results_-_all__1_.pdf,12,Men - Team Rankings - Through Event 706
+bigten_2026,Big Ten,men,7,University of Southern Califor,707.5,mens 2026 Big 10 saturday_results_-_all__1_.pdf,12,Men - Team Rankings - Through Event 706
+bigten_2026,Big Ten,men,8,University of Minnesota,644.0,mens 2026 Big 10 saturday_results_-_all__1_.pdf,12,Men - Team Rankings - Through Event 706
+bigten_2026,Big Ten,men,9,Pennsylvania State University,426.0,mens 2026 Big 10 saturday_results_-_all__1_.pdf,12,Men - Team Rankings - Through Event 706
+bigten_2026,Big Ten,women,1,"Michigan, University of",1243.0,2026_women_s_b10_swim_meet_results.pdf,74,Women - Team Rankings - Through Event 718
+bigten_2026,Big Ten,women,2,Indiana University,1084.0,2026_women_s_b10_swim_meet_results.pdf,74,Women - Team Rankings - Through Event 718
+bigten_2026,Big Ten,women,3,Ohio State University,1066.0,2026_women_s_b10_swim_meet_results.pdf,74,Women - Team Rankings - Through Event 718
+bigten_2026,Big Ten,women,4,"Wisconsin, University of, Madi",893.0,2026_women_s_b10_swim_meet_results.pdf,74,Women - Team Rankings - Through Event 718
+bigten_2026,Big Ten,women,5,University of Southern Califor,768.0,2026_women_s_b10_swim_meet_results.pdf,74,Women - Team Rankings - Through Event 718
+bigten_2026,Big Ten,women,6,University of Minnesota,701.0,2026_women_s_b10_swim_meet_results.pdf,74,Women - Team Rankings - Through Event 718
+bigten_2026,Big Ten,women,7,"University of California, Los",605.5,2026_women_s_b10_swim_meet_results.pdf,74,Women - Team Rankings - Through Event 718
+bigten_2026,Big Ten,women,8,Purdue University,497.0,2026_women_s_b10_swim_meet_results.pdf,74,Women - Team Rankings - Through Event 718
+bigten_2026,Big Ten,women,9,Northwestern University,446.0,2026_women_s_b10_swim_meet_results.pdf,74,Women - Team Rankings - Through Event 718
+bigten_2026,Big Ten,women,10,University of Nebraska-Lincoln,433.5,2026_women_s_b10_swim_meet_results.pdf,74,Women - Team Rankings - Through Event 718
+bigten_2026,Big Ten,women,11,Rutgers University,379.5,2026_women_s_b10_swim_meet_results.pdf,74,Women - Team Rankings - Through Event 718
+bigten_2026,Big Ten,women,12,"Iowa, University of",284.0,2026_women_s_b10_swim_meet_results.pdf,74,Women - Team Rankings - Through Event 718
+bigten_2026,Big Ten,women,13,Pennsylvania State University,216.0,2026_women_s_b10_swim_meet_results.pdf,74,Women - Team Rankings - Through Event 718
+bigten_2026,Big Ten,women,14,University of Illinois,195.5,2026_women_s_b10_swim_meet_results.pdf,74,Women - Team Rankings - Through Event 718
+bigwest_2026,Big West,men,1,University of Hawaii,780.0,2026_big_west_saturday_final_results.pdf,16,Men - Team Rankings - Through Event 42
+bigwest_2026,Big West,men,2,Grand Canyon University,728.0,2026_big_west_saturday_final_results.pdf,16,Men - Team Rankings - Through Event 42
+bigwest_2026,Big West,men,3,UC San Diego,571.0,2026_big_west_saturday_final_results.pdf,16,Men - Team Rankings - Through Event 42
+bigwest_2026,Big West,men,4,UC Santa Barbara,568.0,2026_big_west_saturday_final_results.pdf,16,Men - Team Rankings - Through Event 42
+bigwest_2026,Big West,men,5,Cal State Bakersfield,379.5,2026_big_west_saturday_final_results.pdf,16,Men - Team Rankings - Through Event 42
+bigwest_2026,Big West,men,6,Seattle U,273.5,2026_big_west_saturday_final_results.pdf,16,Men - Team Rankings - Through Event 42
+bigwest_2026,Big West,women,1,University of Hawaii,798.0,2026_big_west_saturday_final_results.pdf,16,Women - Team Rankings - Through Event 42
+bigwest_2026,Big West,women,2,UC Davis,692.0,2026_big_west_saturday_final_results.pdf,16,Women - Team Rankings - Through Event 42
+bigwest_2026,Big West,women,3,UC Santa Barbara,660.0,2026_big_west_saturday_final_results.pdf,16,Women - Team Rankings - Through Event 42
+bigwest_2026,Big West,women,4,UC San Diego,644.0,2026_big_west_saturday_final_results.pdf,16,Women - Team Rankings - Through Event 42
+bigwest_2026,Big West,women,5,University of San Diego,350.0,2026_big_west_saturday_final_results.pdf,16,Women - Team Rankings - Through Event 42
+bigwest_2026,Big West,women,6,Cal State Bakersfield,172.0,2026_big_west_saturday_final_results.pdf,16,Women - Team Rankings - Through Event 42
+bigwest_2026,Big West,women,7,Seattle U,157.0,2026_big_west_saturday_final_results.pdf,16,Women - Team Rankings - Through Event 42
+caa_2026,CAA,men,1,University of North Carolina W,852.0,caa 2026 saturday results.pdf,17,Men - Team Rankings - Through Event 44
+caa_2026,CAA,men,2,Towson University,789.0,caa 2026 saturday results.pdf,17,Men - Team Rankings - Through Event 44
+caa_2026,CAA,men,3,Drexel University,667.5,caa 2026 saturday results.pdf,17,Men - Team Rankings - Through Event 44
+caa_2026,CAA,men,4,William and Mary,508.5,caa 2026 saturday results.pdf,17,Men - Team Rankings - Through Event 44
+caa_2026,CAA,men,5,Monmouth University,256.0,caa 2026 saturday results.pdf,17,Men - Team Rankings - Through Event 44
+caa_2026,CAA,women,1,William and Mary,1647.0,caa 2026 saturday results.pdf,17,Women - Team Rankings - Through Event 44
+caa_2026,CAA,women,2,University of North Carolina W,1415.5,caa 2026 saturday results.pdf,17,Women - Team Rankings - Through Event 44
+caa_2026,CAA,women,3,Towson University,1117.5,caa 2026 saturday results.pdf,17,Women - Team Rankings - Through Event 44
+caa_2026,CAA,women,4,Northeastern University,980.0,caa 2026 saturday results.pdf,17,Women - Team Rankings - Through Event 44
+caa_2026,CAA,women,5,Drexel University,918.0,caa 2026 saturday results.pdf,17,Women - Team Rankings - Through Event 44
+caa_2026,CAA,women,6,Stony Brook University,536.0,caa 2026 saturday results.pdf,17,Women - Team Rankings - Through Event 44
+caa_2026,CAA,women,7,Campbell University,466.0,caa 2026 saturday results.pdf,17,Women - Team Rankings - Through Event 44
+caa_2026,CAA,women,8,Monmouth University,302.0,caa 2026 saturday results.pdf,17,Women - Team Rankings - Through Event 44
+cciw_2026,CCIW,men,1,Augustana College,1036.0,CCIW_2026_Final_Results.pdf,74,Men - Team Rankings - Through Event 40
+cciw_2026,CCIW,men,2,Wheaton College,876.0,CCIW_2026_Final_Results.pdf,74,Men - Team Rankings - Through Event 40
+cciw_2026,CCIW,men,3,Carthage College,756.0,CCIW_2026_Final_Results.pdf,74,Men - Team Rankings - Through Event 40
+cciw_2026,CCIW,men,4,Illinois Wesleyan University,213.0,CCIW_2026_Final_Results.pdf,74,Men - Team Rankings - Through Event 40
+cciw_2026,CCIW,men,5,Carroll University,199.0,CCIW_2026_Final_Results.pdf,74,Men - Team Rankings - Through Event 40
+cciw_2026,CCIW,men,6,Millikin University,160.0,CCIW_2026_Final_Results.pdf,74,Men - Team Rankings - Through Event 40
+cciw_2026,CCIW,men,7,North Central College,23.0,CCIW_2026_Final_Results.pdf,74,Men - Team Rankings - Through Event 40
+cciw_2026,CCIW,women,1,Wheaton College,818.0,CCIW_2026_Final_Results.pdf,74,Women - Team Rankings - Through Event 40
+cciw_2026,CCIW,women,2,Augustana College,817.0,CCIW_2026_Final_Results.pdf,74,Women - Team Rankings - Through Event 40
+cciw_2026,CCIW,women,3,Carthage College,736.0,CCIW_2026_Final_Results.pdf,74,Women - Team Rankings - Through Event 40
+cciw_2026,CCIW,women,4,Illinois Wesleyan University,505.0,CCIW_2026_Final_Results.pdf,74,Women - Team Rankings - Through Event 40
+cciw_2026,CCIW,women,5,Carroll University,256.0,CCIW_2026_Final_Results.pdf,74,Women - Team Rankings - Through Event 40
+cciw_2026,CCIW,women,6,Millikin University,143.0,CCIW_2026_Final_Results.pdf,74,Women - Team Rankings - Through Event 40
+cciw_2026,CCIW,women,7,North Central College,128.0,CCIW_2026_Final_Results.pdf,74,Women - Team Rankings - Through Event 40
+coloradocollege_unknown,Colorado College,men,1,Johns Hopkins University,940.5,CC_Champs_Final_Results_2_22_26.pdf,108,Men - Team Rankings - Through Event 511
+coloradocollege_unknown,Colorado College,men,2,Gettysburg College,726.0,CC_Champs_Final_Results_2_22_26.pdf,108,Men - Team Rankings - Through Event 511
+coloradocollege_unknown,Colorado College,men,3,Swarthmore College,675.0,CC_Champs_Final_Results_2_22_26.pdf,108,Men - Team Rankings - Through Event 511
+coloradocollege_unknown,Colorado College,men,4,Dickinson College,311.0,CC_Champs_Final_Results_2_22_26.pdf,108,Men - Team Rankings - Through Event 511
+coloradocollege_unknown,Colorado College,men,5,Franklin & Marshall College,277.0,CC_Champs_Final_Results_2_22_26.pdf,108,Men - Team Rankings - Through Event 511
+coloradocollege_unknown,Colorado College,men,6,Ursinus College,229.0,CC_Champs_Final_Results_2_22_26.pdf,108,Men - Team Rankings - Through Event 511
+coloradocollege_unknown,Colorado College,men,7,Washington College,219.5,CC_Champs_Final_Results_2_22_26.pdf,108,Men - Team Rankings - Through Event 511
+coloradocollege_unknown,Colorado College,men,8,McDaniel College Swim Team,135.0,CC_Champs_Final_Results_2_22_26.pdf,108,Men - Team Rankings - Through Event 511
+coloradocollege_unknown,Colorado College,women,1,Swarthmore College,819.0,CC_Champs_Final_Results_2_22_26.pdf,108,Women - Team Rankings - Through Event 511
+coloradocollege_unknown,Colorado College,women,2,Johns Hopkins University,803.5,CC_Champs_Final_Results_2_22_26.pdf,108,Women - Team Rankings - Through Event 511
+coloradocollege_unknown,Colorado College,women,3,Gettysburg College,626.0,CC_Champs_Final_Results_2_22_26.pdf,108,Women - Team Rankings - Through Event 511
+coloradocollege_unknown,Colorado College,women,4,Ursinus College,299.0,CC_Champs_Final_Results_2_22_26.pdf,108,Women - Team Rankings - Through Event 511
+coloradocollege_unknown,Colorado College,women,5,Franklin & Marshall College,259.0,CC_Champs_Final_Results_2_22_26.pdf,108,Women - Team Rankings - Through Event 511
+coloradocollege_unknown,Colorado College,women,6,Dickinson College,231.5,CC_Champs_Final_Results_2_22_26.pdf,108,Women - Team Rankings - Through Event 511
+coloradocollege_unknown,Colorado College,women,7,Washington College,189.0,CC_Champs_Final_Results_2_22_26.pdf,108,Women - Team Rankings - Through Event 511
+coloradocollege_unknown,Colorado College,women,8,Bryn Mawr College Owls,141.0,CC_Champs_Final_Results_2_22_26.pdf,108,Women - Team Rankings - Through Event 511
+coloradocollege_unknown,Colorado College,women,9,McDaniel College Swim Team,104.0,CC_Champs_Final_Results_2_22_26.pdf,108,Women - Team Rankings - Through Event 511
+gliac_2026,GLIAC,men,1,Grand Valley State University,847.5,GLIAC_2026_Final_Results.pdf,102,Men - Team Rankings - Through Event 842
+gliac_2026,GLIAC,men,2,Wayne State University,652.0,GLIAC_2026_Final_Results.pdf,102,Men - Team Rankings - Through Event 842
+gliac_2026,GLIAC,men,3,Northern Michigan University,547.0,GLIAC_2026_Final_Results.pdf,102,Men - Team Rankings - Through Event 842
+gliac_2026,GLIAC,men,4,St Cloud State University (M),479.5,GLIAC_2026_Final_Results.pdf,102,Men - Team Rankings - Through Event 842
+gliac_2026,GLIAC,men,5,Saginaw Valley State Universit,412.0,GLIAC_2026_Final_Results.pdf,102,Men - Team Rankings - Through Event 842
+gliac_2026,GLIAC,men,6,Davenport University,297.0,GLIAC_2026_Final_Results.pdf,102,Men - Team Rankings - Through Event 842
+gliac_2026,GLIAC,men,7,Augustana University,262.5,GLIAC_2026_Final_Results.pdf,102,Men - Team Rankings - Through Event 842
+gliac_2026,GLIAC,men,8,Lake Superior State University,139.5,GLIAC_2026_Final_Results.pdf,102,Men - Team Rankings - Through Event 842
+gliac_2026,GLIAC,women,1,Grand Valley State University,1095.0,GLIAC_2026_Final_Results.pdf,102,Women - Team Rankings - Through Event 842
+gliac_2026,GLIAC,women,2,Northern Michigan University,708.0,GLIAC_2026_Final_Results.pdf,102,Women - Team Rankings - Through Event 842
+gliac_2026,GLIAC,women,3,Wayne State University,591.0,GLIAC_2026_Final_Results.pdf,102,Women - Team Rankings - Through Event 842
+gliac_2026,GLIAC,women,4,Saginaw Valley State Universit,433.0,GLIAC_2026_Final_Results.pdf,102,Women - Team Rankings - Through Event 842
+gliac_2026,GLIAC,women,5,Davenport University,411.0,GLIAC_2026_Final_Results.pdf,102,Women - Team Rankings - Through Event 842
+gliac_2026,GLIAC,women,6,Lake Superior State University,3.0,GLIAC_2026_Final_Results.pdf,102,Women - Team Rankings - Through Event 842
+horizonleague_2026,Horizon League,men,1,Oakland University,904.0,full_meet_results_horizon_league_2026.pdf,49,Men - Team Rankings - Through Event 40
+horizonleague_2026,Horizon League,men,2,IU Indianapolis,785.5,full_meet_results_horizon_league_2026.pdf,49,Men - Team Rankings - Through Event 40
+horizonleague_2026,Horizon League,men,3,Youngstown State University,494.0,full_meet_results_horizon_league_2026.pdf,50,(Scores - Men)
+horizonleague_2026,Horizon League,men,4,University of Wisconsin-Milwau,438.0,full_meet_results_horizon_league_2026.pdf,50,(Scores - Men)
+horizonleague_2026,Horizon League,men,5,Cleveland State University,391.0,full_meet_results_horizon_league_2026.pdf,50,(Scores - Men)
+horizonleague_2026,Horizon League,men,6,Green Bay Phoenix,193.0,full_meet_results_horizon_league_2026.pdf,50,(Scores - Men)
+horizonleague_2026,Horizon League,men,7,Northern Kentucky University,150.5,full_meet_results_horizon_league_2026.pdf,50,(Scores - Men)
+horizonleague_2026,Horizon League,women,1,Oakland University,896.5,full_meet_results_horizon_league_2026.pdf,49,Women - Team Rankings - Through Event 40
+horizonleague_2026,Horizon League,women,2,University of Wisconsin-Milwau,641.0,full_meet_results_horizon_league_2026.pdf,49,Women - Team Rankings - Through Event 40
+horizonleague_2026,Horizon League,women,3,IU Indianapolis,530.0,full_meet_results_horizon_league_2026.pdf,49,Women - Team Rankings - Through Event 40
+horizonleague_2026,Horizon League,women,4,Cleveland State University,442.0,full_meet_results_horizon_league_2026.pdf,49,Women - Team Rankings - Through Event 40
+horizonleague_2026,Horizon League,women,5,Youngstown State University,430.0,full_meet_results_horizon_league_2026.pdf,49,Women - Team Rankings - Through Event 40
+horizonleague_2026,Horizon League,women,6,Green Bay Phoenix,273.5,full_meet_results_horizon_league_2026.pdf,49,Women - Team Rankings - Through Event 40
+horizonleague_2026,Horizon League,women,7,Northern Kentucky University,131.0,full_meet_results_horizon_league_2026.pdf,49,Women - Team Rankings - Through Event 40
+ivyleague_2026,Ivy League,women,1,Princeton University,1432.0,2026 Ivy Womens Conf.pdf,14,r:+0.69 Women - Team Rankings - Through Event 403
+ivyleague_2026,Ivy League,women,2,University of Pennsylvania,1204.0,2026 Ivy Womens Conf.pdf,14,r:+0.69 Women - Team Rankings - Through Event 403
+ivyleague_2026,Ivy League,women,3,Harvard University,1153.5,2026 Ivy Womens Conf.pdf,14,r:+0.69 Women - Team Rankings - Through Event 403
+ivyleague_2026,Ivy League,women,4,Brown University,1137.0,2026 Ivy Womens Conf.pdf,14,r:+0.69 Women - Team Rankings - Through Event 403
+ivyleague_2026,Ivy League,women,5,Yale University,840.0,2026 Ivy Womens Conf.pdf,14,r:+0.69 Women - Team Rankings - Through Event 403
+ivyleague_2026,Ivy League,women,6,Cornell University,614.5,2026 Ivy Womens Conf.pdf,14,r:+0.69 Women - Team Rankings - Through Event 403
+ivyleague_2026,Ivy League,women,7,Columbia University,550.5,2026 Ivy Womens Conf.pdf,14,r:+0.69 Women - Team Rankings - Through Event 403
+ivyleague_2026,Ivy League,women,8,Dartmouth College,523.5,2026 Ivy Womens Conf.pdf,14,r:+0.69 Women - Team Rankings - Through Event 403
+landmark_2026,Landmark,men,1,Catholic University of America,877.5,landmark_champs_2026_final_full_results.pdf,88,Men - Team Rankings - Through Event 319
+landmark_2026,Landmark,men,2,University of Scranton,770.0,landmark_champs_2026_final_full_results.pdf,88,Men - Team Rankings - Through Event 319
+landmark_2026,Landmark,men,3,Drew University,720.0,landmark_champs_2026_final_full_results.pdf,88,Men - Team Rankings - Through Event 319
+landmark_2026,Landmark,men,4,Susquehanna University,304.5,landmark_champs_2026_final_full_results.pdf,88,Men - Team Rankings - Through Event 319
+landmark_2026,Landmark,men,5,Elizabethtown College,214.0,landmark_champs_2026_final_full_results.pdf,88,Men - Team Rankings - Through Event 319
+landmark_2026,Landmark,men,6,Wilkes University,185.0,landmark_champs_2026_final_full_results.pdf,88,Men - Team Rankings - Through Event 319
+landmark_2026,Landmark,men,7,Juniata College,150.0,landmark_champs_2026_final_full_results.pdf,88,Men - Team Rankings - Through Event 319
+landmark_2026,Landmark,men,8,Lycoming College,109.0,landmark_champs_2026_final_full_results.pdf,88,Men - Team Rankings - Through Event 319
+landmark_2026,Landmark,men,9,Moravian University,99.0,landmark_champs_2026_final_full_results.pdf,88,Men - Team Rankings - Through Event 319
+landmark_2026,Landmark,men,10,Goucher College,64.0,landmark_champs_2026_final_full_results.pdf,88,Men - Team Rankings - Through Event 319
+landmark_2026,Landmark,women,1,University of Scranton,887.0,landmark_champs_2026_final_full_results.pdf,88,Women - Team Rankings - Through Event 319
+landmark_2026,Landmark,women,2,Catholic University of America,873.0,landmark_champs_2026_final_full_results.pdf,88,Women - Team Rankings - Through Event 319
+landmark_2026,Landmark,women,3,Drew University,425.0,landmark_champs_2026_final_full_results.pdf,88,Women - Team Rankings - Through Event 319
+landmark_2026,Landmark,women,4,Susquehanna University,348.5,landmark_champs_2026_final_full_results.pdf,88,Women - Team Rankings - Through Event 319
+landmark_2026,Landmark,women,5,Juniata College,299.5,landmark_champs_2026_final_full_results.pdf,88,Women - Team Rankings - Through Event 319
+landmark_2026,Landmark,women,6,Elizabethtown College,242.0,landmark_champs_2026_final_full_results.pdf,88,Women - Team Rankings - Through Event 319
+landmark_2026,Landmark,women,7,Wilkes University,211.0,landmark_champs_2026_final_full_results.pdf,88,Women - Team Rankings - Through Event 319
+landmark_2026,Landmark,women,8,Moravian University,122.0,landmark_champs_2026_final_full_results.pdf,88,Women - Team Rankings - Through Event 319
+landmark_2026,Landmark,women,9,Lycoming College,100.0,landmark_champs_2026_final_full_results.pdf,88,Women - Team Rankings - Through Event 319
+landmark_2026,Landmark,women,10,Goucher College,63.0,landmark_champs_2026_final_full_results.pdf,88,Women - Team Rankings - Through Event 319
+maac_2026,MAAC,men,1,Fairfield University,1341.83,2026_MAAC_S_D_Championships_Day_4_finals_results (1).pdf,33,Men - Team Rankings - Through Event 40
+maac_2026,MAAC,men,2,Marist University,1276.0,2026_MAAC_S_D_Championships_Day_4_finals_results (1).pdf,33,Men - Team Rankings - Through Event 40
+maac_2026,MAAC,men,3,Niagara University,1139.33,2026_MAAC_S_D_Championships_Day_4_finals_results (1).pdf,33,Men - Team Rankings - Through Event 40
+maac_2026,MAAC,men,4,Iona University,1017.83,2026_MAAC_S_D_Championships_Day_4_finals_results (1).pdf,33,Men - Team Rankings - Through Event 40
+maac_2026,MAAC,men,5,Rider University,983.5,2026_MAAC_S_D_Championships_Day_4_finals_results (1).pdf,33,Men - Team Rankings - Through Event 40
+maac_2026,MAAC,men,6,Mount Saint Mary's University,597.0,2026_MAAC_S_D_Championships_Day_4_finals_results (1).pdf,33,Men - Team Rankings - Through Event 40
+maac_2026,MAAC,men,7,Canisius University,569.5,2026_MAAC_S_D_Championships_Day_4_finals_results (1).pdf,33,Men - Team Rankings - Through Event 40
+maac_2026,MAAC,men,8,Saint Peter's University,371.0,2026_MAAC_S_D_Championships_Day_4_finals_results (1).pdf,33,Men - Team Rankings - Through Event 40
+maac_2026,MAAC,men,9,Manhattan University,218.0,2026_MAAC_S_D_Championships_Day_4_finals_results (1).pdf,33,Men - Team Rankings - Through Event 40
+maac_2026,MAAC,women,1,Fairfield University,1325.5,2026_MAAC_S_D_Championships_Day_4_finals_results (1).pdf,33,Women - Team Rankings - Through Event 40
+maac_2026,MAAC,women,2,Marist University,1315.5,2026_MAAC_S_D_Championships_Day_4_finals_results (1).pdf,33,Women - Team Rankings - Through Event 40
+maac_2026,MAAC,women,3,Niagara University,1074.0,2026_MAAC_S_D_Championships_Day_4_finals_results (1).pdf,33,Women - Team Rankings - Through Event 40
+maac_2026,MAAC,women,4,Sacred Heart University,893.5,2026_MAAC_S_D_Championships_Day_4_finals_results (1).pdf,33,Women - Team Rankings - Through Event 40
+maac_2026,MAAC,women,5,Iona University,724.0,2026_MAAC_S_D_Championships_Day_4_finals_results (1).pdf,33,Women - Team Rankings - Through Event 40
+maac_2026,MAAC,women,6,Mount Saint Mary's University,585.0,2026_MAAC_S_D_Championships_Day_4_finals_results (1).pdf,33,Women - Team Rankings - Through Event 40
+maac_2026,MAAC,women,7,Canisius University,516.0,2026_MAAC_S_D_Championships_Day_4_finals_results (1).pdf,33,Women - Team Rankings - Through Event 40
+maac_2026,MAAC,women,7,Rider University,516.0,2026_MAAC_S_D_Championships_Day_4_finals_results (1).pdf,33,Women - Team Rankings - Through Event 40
+maac_2026,MAAC,women,9,Siena University,434.5,2026_MAAC_S_D_Championships_Day_4_finals_results (1).pdf,33,Women - Team Rankings - Through Event 40
+maac_2026,MAAC,women,10,Merrimack College,340.0,2026_MAAC_S_D_Championships_Day_4_finals_results (1).pdf,33,Women - Team Rankings - Through Event 40
+maac_2026,MAAC,women,11,Saint Peter's University,259.0,2026_MAAC_S_D_Championships_Day_4_finals_results (1).pdf,33,Women - Team Rankings - Through Event 40
+maac_2026,MAAC,women,12,Manhattan University,197.0,2026_MAAC_S_D_Championships_Day_4_finals_results (1).pdf,33,Women - Team Rankings - Through Event 40
+mac_2026,MAC,men,1,Stevens Institute of Technolog,1623.0,2026 MAC MENS full_meet_results.pdf,145,Men - Team Rankings - Through Event 441
+mac_2026,MAC,men,2,York College of Pennsylvania,1424.5,2026 MAC MENS full_meet_results.pdf,145,Men - Team Rankings - Through Event 441
+mac_2026,MAC,men,3,Misericordia University,969.0,2026 MAC MENS full_meet_results.pdf,145,Men - Team Rankings - Through Event 441
+mac_2026,MAC,men,4,Arcadia University,835.0,2026 MAC MENS full_meet_results.pdf,145,Men - Team Rankings - Through Event 441
+mac_2026,MAC,men,5,Widener University,801.5,2026 MAC MENS full_meet_results.pdf,145,Men - Team Rankings - Through Event 441
+mac_2026,MAC,men,6,Stevenson University,690.0,2026 MAC MENS full_meet_results.pdf,145,Men - Team Rankings - Through Event 441
+mac_2026,MAC,men,7,Messiah University,632.0,2026 MAC MENS full_meet_results.pdf,145,Men - Team Rankings - Through Event 441
+mac_2026,MAC,men,8,King's College,343.0,2026 MAC MENS full_meet_results.pdf,145,Men - Team Rankings - Through Event 441
+mac_2026,MAC,men,9,Hood College Swimming,267.0,2026 MAC MENS full_meet_results.pdf,145,Men - Team Rankings - Through Event 441
+mac_2026,MAC,men,10,Fairleigh Dickinson University,215.0,2026 MAC MENS full_meet_results.pdf,145,Men - Team Rankings - Through Event 441
+mac_2026,MAC,men,11,Lebanon Valley College,118.0,2026 MAC MENS full_meet_results.pdf,145,Men - Team Rankings - Through Event 441
+mac_2026,MAC,women,1,Stevens Institute of Technolog,1516.0,2026 MAC MENS full_meet_results.pdf,145,Women - Team Rankings - Through Event 441
+mac_2026,MAC,women,2,Misericordia University,1227.0,2026 MAC MENS full_meet_results.pdf,145,Women - Team Rankings - Through Event 441
+mac_2026,MAC,women,3,Messiah University,1105.0,2026 MAC MENS full_meet_results.pdf,145,Women - Team Rankings - Through Event 441
+mac_2026,MAC,women,4,York College of Pennsylvania,923.0,2026 MAC MENS full_meet_results.pdf,145,Women - Team Rankings - Through Event 441
+mac_2026,MAC,women,5,Widener University,766.5,2026 MAC MENS full_meet_results.pdf,145,Women - Team Rankings - Through Event 441
+mac_2026,MAC,women,6,Arcadia University,763.0,2026 MAC MENS full_meet_results.pdf,145,Women - Team Rankings - Through Event 441
+mac_2026,MAC,women,7,Stevenson University,603.5,2026 MAC MENS full_meet_results.pdf,145,Women - Team Rankings - Through Event 441
+mac_2026,MAC,women,8,Fairleigh Dickinson University,488.0,2026 MAC MENS full_meet_results.pdf,145,Women - Team Rankings - Through Event 441
+mac_2026,MAC,women,9,Hood College Swimming,326.0,2026 MAC MENS full_meet_results.pdf,145,Women - Team Rankings - Through Event 441
+mac_2026,MAC,women,10,Lebanon Valley College,214.0,2026 MAC MENS full_meet_results.pdf,145,Women - Team Rankings - Through Event 441
+mac_2026,MAC,women,11,King's College,87.0,2026 MAC MENS full_meet_results.pdf,145,Women - Team Rankings - Through Event 441
+mpsf_2026,MPSF,men,1,US Air Force Academy,819.5,MPSF 2026 RESULTS.pdf,58,Men - Team Rankings - Through Event 142
+mpsf_2026,MPSF,men,2,University of Nevada Las Vegas,769.5,MPSF 2026 RESULTS.pdf,58,Men - Team Rankings - Through Event 142
+mpsf_2026,MPSF,men,3,University of Wyoming,726.0,MPSF 2026 RESULTS.pdf,58,Men - Team Rankings - Through Event 142
+mpsf_2026,MPSF,men,4,Cal Baptist University,510.0,MPSF 2026 RESULTS.pdf,58,Men - Team Rankings - Through Event 142
+mpsf_2026,MPSF,men,5,University of the Pacific,287.0,MPSF 2026 RESULTS.pdf,58,Men - Team Rankings - Through Event 142
+mpsf_2026,MPSF,women,1,Northern Arizona University,1350.0,MPSF 2026 RESULTS.pdf,58,Women - Team Rankings - Through Event 142
+mpsf_2026,MPSF,women,2,New Mexico State University,1227.0,MPSF 2026 RESULTS.pdf,58,Women - Team Rankings - Through Event 142
+mpsf_2026,MPSF,women,3,"Northern Colorado, University",1171.5,MPSF 2026 RESULTS.pdf,58,Women - Team Rankings - Through Event 142
+mpsf_2026,MPSF,women,4,Cal Baptist University,980.5,MPSF 2026 RESULTS.pdf,58,Women - Team Rankings - Through Event 142
+mpsf_2026,MPSF,women,5,"Idaho, University of",942.0,MPSF 2026 RESULTS.pdf,58,Women - Team Rankings - Through Event 142
+mpsf_2026,MPSF,women,6,Pepperdine University,610.0,MPSF 2026 RESULTS.pdf,58,Women - Team Rankings - Through Event 142
+mpsf_2026,MPSF,women,7,Utah Tech University,604.0,MPSF 2026 RESULTS.pdf,58,Women - Team Rankings - Through Event 142
+mpsf_2026,MPSF,women,8,University of the Pacific,431.0,MPSF 2026 RESULTS.pdf,58,Women - Team Rankings - Through Event 142
+mpsf_2026,MPSF,women,9,University of Incarnate Word,420.5,MPSF 2026 RESULTS.pdf,58,Women - Team Rankings - Through Event 142
+mpsf_2026,MPSF,women,10,Univ Texas Rio Grande Valley,271.5,MPSF 2026 RESULTS.pdf,58,Women - Team Rankings - Through Event 142
+nescac_2026,NESCAC,men,1,Williams College,1599.0,2026 NESCAC MENS RESULTS.pdf,77,Men - Team Rankings - Through Event 126
+nescac_2026,NESCAC,men,2,Tufts University,1562.0,2026 NESCAC MENS RESULTS.pdf,77,Men - Team Rankings - Through Event 126
+nescac_2026,NESCAC,men,3,Amherst College,1217.0,2026 NESCAC MENS RESULTS.pdf,77,Men - Team Rankings - Through Event 126
+nescac_2026,NESCAC,men,4,Connecticut College,1077.0,2026 NESCAC MENS RESULTS.pdf,77,Men - Team Rankings - Through Event 126
+nescac_2026,NESCAC,men,5,Bates College,1041.5,2026 NESCAC MENS RESULTS.pdf,77,Men - Team Rankings - Through Event 126
+nescac_2026,NESCAC,men,6,Hamilton College,800.5,2026 NESCAC MENS RESULTS.pdf,77,Men - Team Rankings - Through Event 126
+nescac_2026,NESCAC,men,7,Bowdoin College,768.0,2026 NESCAC MENS RESULTS.pdf,77,Men - Team Rankings - Through Event 126
+nescac_2026,NESCAC,men,8,Middlebury College,702.0,2026 NESCAC MENS RESULTS.pdf,77,Men - Team Rankings - Through Event 126
+nescac_2026,NESCAC,men,9,Colby College,697.0,2026 NESCAC MENS RESULTS.pdf,77,Men - Team Rankings - Through Event 126
+nescac_2026,NESCAC,men,10,Trinity College,373.0,2026 NESCAC MENS RESULTS.pdf,77,Men - Team Rankings - Through Event 126
+nescac_2026,NESCAC,men,11,Wesleyan University,223.0,2026 NESCAC MENS RESULTS.pdf,77,Men - Team Rankings - Through Event 126
+nescac_2026,NESCAC,women,1,Williams College,1725.5,2026 NESCAC WOMENS Final_Results.pdf,79,Women - Team Rankings - Through Event 119
+nescac_2026,NESCAC,women,2,Tufts University,1640.5,2026 NESCAC WOMENS Final_Results.pdf,79,Women - Team Rankings - Through Event 119
+nescac_2026,NESCAC,women,3,Colby College,1274.0,2026 NESCAC WOMENS Final_Results.pdf,79,Women - Team Rankings - Through Event 119
+nescac_2026,NESCAC,women,4,Amherst College,1130.0,2026 NESCAC WOMENS Final_Results.pdf,79,Women - Team Rankings - Through Event 119
+nescac_2026,NESCAC,women,5,Hamilton College,854.0,2026 NESCAC WOMENS Final_Results.pdf,79,Women - Team Rankings - Through Event 119
+nescac_2026,NESCAC,women,6,Middlebury College,817.0,2026 NESCAC WOMENS Final_Results.pdf,79,Women - Team Rankings - Through Event 119
+nescac_2026,NESCAC,women,7,Bowdoin College,706.5,2026 NESCAC WOMENS Final_Results.pdf,79,Women - Team Rankings - Through Event 119
+nescac_2026,NESCAC,women,8,Wesleyan University,596.0,2026 NESCAC WOMENS Final_Results.pdf,79,Women - Team Rankings - Through Event 119
+nescac_2026,NESCAC,women,9,Connecticut College,551.0,2026 NESCAC WOMENS Final_Results.pdf,79,Women - Team Rankings - Through Event 119
+nescac_2026,NESCAC,women,10,Bates College,543.0,2026 NESCAC WOMENS Final_Results.pdf,79,Women - Team Rankings - Through Event 119
+nescac_2026,NESCAC,women,11,Trinity College,464.5,2026 NESCAC WOMENS Final_Results.pdf,79,Women - Team Rankings - Through Event 119
+newmac_2026,NEWMAC,men,1,Massachusetts Institute of Tec,1481.5,2026_newmac_championships_full_results.pdf,91,Men - Team Rankings - Through Event 613
+newmac_2026,NEWMAC,men,2,U.S. Coast Guard Academy,1013.0,2026_newmac_championships_full_results.pdf,91,Men - Team Rankings - Through Event 613
+newmac_2026,NEWMAC,men,3,Worcester Polytechnic Institut,731.0,2026_newmac_championships_full_results.pdf,91,Men - Team Rankings - Through Event 613
+newmac_2026,NEWMAC,men,4,Babson College,692.0,2026_newmac_championships_full_results.pdf,91,Men - Team Rankings - Through Event 613
+newmac_2026,NEWMAC,men,5,Wheaton College (Ma),625.0,2026_newmac_championships_full_results.pdf,91,Men - Team Rankings - Through Event 613
+newmac_2026,NEWMAC,men,6,Springfield College,466.5,2026_newmac_championships_full_results.pdf,91,Men - Team Rankings - Through Event 613
+newmac_2026,NEWMAC,men,7,Clark University,219.0,2026_newmac_championships_full_results.pdf,91,Men - Team Rankings - Through Event 613
+newmac_2026,NEWMAC,women,1,Massachusetts Institute of Tec,1632.5,2026_newmac_championships_full_results.pdf,91,Women - Team Rankings - Through Event 613
+newmac_2026,NEWMAC,women,2,U.S. Coast Guard Academy,750.0,2026_newmac_championships_full_results.pdf,91,Women - Team Rankings - Through Event 613
+newmac_2026,NEWMAC,women,3,Wellesley College,651.5,2026_newmac_championships_full_results.pdf,91,Women - Team Rankings - Through Event 613
+newmac_2026,NEWMAC,women,4,Babson College,530.0,2026_newmac_championships_full_results.pdf,91,Women - Team Rankings - Through Event 613
+newmac_2026,NEWMAC,women,5,Worcester Polytechnic Institut,515.0,2026_newmac_championships_full_results.pdf,91,Women - Team Rankings - Through Event 613
+newmac_2026,NEWMAC,women,6,Smith College,492.0,2026_newmac_championships_full_results.pdf,91,Women - Team Rankings - Through Event 613
+newmac_2026,NEWMAC,women,7,Wheaton College (Ma),480.0,2026_newmac_championships_full_results.pdf,91,Women - Team Rankings - Through Event 613
+newmac_2026,NEWMAC,women,8,Springfield College,363.0,2026_newmac_championships_full_results.pdf,91,Women - Team Rankings - Through Event 613
+newmac_2026,NEWMAC,women,9,Clark University,223.0,2026_newmac_championships_full_results.pdf,91,Women - Team Rankings - Through Event 613
+newmac_2026,NEWMAC,women,10,Mount Holyoke College,168.0,2026_newmac_championships_full_results.pdf,91,Women - Team Rankings - Through Event 613
+odac_2026,ODAC,women,1,Washington and Lee University,840.0,odac 2026 MENS swim-full-results.pdf,38,Women - Team Rankings - Through Event 634
+odac_2026,ODAC,women,2,University of Lynchburg,604.0,odac 2026 MENS swim-full-results.pdf,38,Women - Team Rankings - Through Event 634
+odac_2026,ODAC,women,3,Randolph-Macon College,597.0,odac 2026 MENS swim-full-results.pdf,38,Women - Team Rankings - Through Event 634
+odac_2026,ODAC,women,4,Roanoke College Swimming Maroo,401.0,odac 2026 MENS swim-full-results.pdf,38,Women - Team Rankings - Through Event 634
+odac_2026,ODAC,women,5,Bridgewater College,310.0,odac 2026 MENS swim-full-results.pdf,38,Women - Team Rankings - Through Event 634
+odac_2026,ODAC,women,6,Virginia Wesleyan University,184.0,odac 2026 MENS swim-full-results.pdf,38,Women - Team Rankings - Through Event 634
+odac_2026,ODAC,women,7,Randolph College,130.0,odac 2026 MENS swim-full-results.pdf,38,Women - Team Rankings - Through Event 634
+odac_2026,ODAC,women,8,Hollins University,110.0,odac 2026 MENS swim-full-results.pdf,38,Women - Team Rankings - Through Event 634
+odac_2026,ODAC,women,9,Sweet Briar College,55.0,odac 2026 MENS swim-full-results.pdf,38,Women - Team Rankings - Through Event 634
+odac_2026,ODAC,women,10,Greensboro College,12.0,odac 2026 MENS swim-full-results.pdf,38,Women - Team Rankings - Through Event 634
+patriot_2026,Patriot,men,1,United States Navy Academy,1792.0,Patriot League 2026 results.pdf,34,Men - Team Rankings - Through Event 403
+patriot_2026,Patriot,men,2,United States Military Academy,1210.0,Patriot League 2026 results.pdf,34,Men - Team Rankings - Through Event 403
+patriot_2026,Patriot,men,3,Loyola University,1061.0,Patriot League 2026 results.pdf,34,Men - Team Rankings - Through Event 403
+patriot_2026,Patriot,men,4,Boston University,936.0,Patriot League 2026 results.pdf,34,Men - Team Rankings - Through Event 403
+patriot_2026,Patriot,men,5,Bucknell University,863.0,Patriot League 2026 results.pdf,34,Men - Team Rankings - Through Event 403
+patriot_2026,Patriot,men,6,Lehigh University,560.0,Patriot League 2026 results.pdf,34,Men - Team Rankings - Through Event 403
+patriot_2026,Patriot,men,7,College of the Holy Cross,453.0,Patriot League 2026 results.pdf,34,Men - Team Rankings - Through Event 403
+patriot_2026,Patriot,men,8,Lafayette College,360.0,Patriot League 2026 results.pdf,34,Men - Team Rankings - Through Event 403
+patriot_2026,Patriot,men,9,Colgate University,345.0,Patriot League 2026 results.pdf,34,Men - Team Rankings - Through Event 403
+patriot_2026,Patriot,men,10,American University,230.0,Patriot League 2026 results.pdf,34,Men - Team Rankings - Through Event 403
+patriot_2026,Patriot,women,1,United States Navy Academy,1427.5,Patriot League 2026 results.pdf,33,"1 Erickson, Meg N 20GATE-AD 5:14.76 46.11 A Women - Team Rankings - Through Event 403"
+patriot_2026,Patriot,women,2,United States Military Academy,1293.5,Patriot League 2026 results.pdf,33,"1 Erickson, Meg N 20GATE-AD 5:14.76 46.11 A Women - Team Rankings - Through Event 403"
+patriot_2026,Patriot,women,3,Bucknell University,1014.5,Patriot League 2026 results.pdf,33,"1 Erickson, Meg N 20GATE-AD 5:14.76 46.11 A Women - Team Rankings - Through Event 403"
+patriot_2026,Patriot,women,4,Boston University,914.0,Patriot League 2026 results.pdf,33,"1 Erickson, Meg N 20GATE-AD 5:14.76 46.11 A Women - Team Rankings - Through Event 403"
+patriot_2026,Patriot,women,5,Loyola University,797.0,Patriot League 2026 results.pdf,33,"1 Erickson, Meg N 20GATE-AD 5:14.76 46.11 A Women - Team Rankings - Through Event 403"
+patriot_2026,Patriot,women,6,Lehigh University,637.0,Patriot League 2026 results.pdf,33,"1 Erickson, Meg N 20GATE-AD 5:14.76 46.11 A Women - Team Rankings - Through Event 403"
+patriot_2026,Patriot,women,7,Colgate University,611.0,Patriot League 2026 results.pdf,33,"1 Erickson, Meg N 20GATE-AD 5:14.76 46.11 A Women - Team Rankings - Through Event 403"
+patriot_2026,Patriot,women,8,American University,523.5,Patriot League 2026 results.pdf,33,"1 Erickson, Meg N 20GATE-AD 5:14.76 46.11 A Women - Team Rankings - Through Event 403"
+patriot_2026,Patriot,women,9,College of the Holy Cross,337.0,Patriot League 2026 results.pdf,33,"1 Erickson, Meg N 20GATE-AD 5:14.76 46.11 A Women - Team Rankings - Through Event 403"
+patriot_2026,Patriot,women,10,Lafayette College,303.0,Patriot League 2026 results.pdf,33,"1 Erickson, Meg N 20GATE-AD 5:14.76 46.11 A Women - Team Rankings - Through Event 403"
+psac_2026,PSAC,men,1,West Chester University,1050.0,PSAC 2026 RESULTS.pdf,91,Men - Team Rankings - Through Event 499
+psac_2026,PSAC,men,2,Gannon University,529.0,PSAC 2026 RESULTS.pdf,91,Men - Team Rankings - Through Event 499
+psac_2026,PSAC,men,3,Bloomsburg University,477.0,PSAC 2026 RESULTS.pdf,91,Men - Team Rankings - Through Event 499
+psac_2026,PSAC,men,4,PennWest University Clarion,425.0,PSAC 2026 RESULTS.pdf,91,Men - Team Rankings - Through Event 499
+psac_2026,PSAC,men,5,Indiana University of PA,309.0,PSAC 2026 RESULTS.pdf,91,Men - Team Rankings - Through Event 499
+psac_2026,PSAC,men,6,Shippensburg University of PA,216.0,PSAC 2026 RESULTS.pdf,91,Men - Team Rankings - Through Event 499
+psac_2026,PSAC,men,7,Kutztown University,177.0,PSAC 2026 RESULTS.pdf,91,Men - Team Rankings - Through Event 499
+psac_2026,PSAC,men,8,PennWest Edinboro University,167.0,PSAC 2026 RESULTS.pdf,91,Men - Team Rankings - Through Event 499
+psac_2026,PSAC,women,1,West Chester University,1342.0,PSAC 2026 RESULTS.pdf,90,Women - Team Rankings - Through Event 499
+psac_2026,PSAC,women,2,Indiana University of PA,1106.5,PSAC 2026 RESULTS.pdf,90,Women - Team Rankings - Through Event 499
+psac_2026,PSAC,women,3,Bloomsburg University,1014.5,PSAC 2026 RESULTS.pdf,90,Women - Team Rankings - Through Event 499
+psac_2026,PSAC,women,4,PennWest University Clarion,983.0,PSAC 2026 RESULTS.pdf,90,Women - Team Rankings - Through Event 499
+psac_2026,PSAC,women,5,PennWest Edinboro University,666.0,PSAC 2026 RESULTS.pdf,90,Women - Team Rankings - Through Event 499
+psac_2026,PSAC,women,6,Kutztown University,541.0,PSAC 2026 RESULTS.pdf,90,Women - Team Rankings - Through Event 499
+psac_2026,PSAC,women,7,Gannon University,540.0,PSAC 2026 RESULTS.pdf,90,Women - Team Rankings - Through Event 499
+psac_2026,PSAC,women,8,East Stroudsburg University,504.0,PSAC 2026 RESULTS.pdf,90,Women - Team Rankings - Through Event 499
+psac_2026,PSAC,women,9,Millersville University,438.0,PSAC 2026 RESULTS.pdf,90,Women - Team Rankings - Through Event 499
+psac_2026,PSAC,women,10,Shippensburg University of PA,362.0,PSAC 2026 RESULTS.pdf,90,Women - Team Rankings - Through Event 499
+psac_2026,PSAC,women,11,"PennWest University,California",162.0,PSAC 2026 RESULTS.pdf,91,(Scores - Women)
+psac_2026,PSAC,women,12,Lock Haven University,159.0,PSAC 2026 RESULTS.pdf,91,(Scores - Women)
+sac_2026,SAC,men,1,Wingate University,1833.5,SAC 2026 sat_final_results.pdf,14,Men - Team Rankings - Through Event 36
+sac_2026,SAC,men,2,Catawba College,1645.0,SAC 2026 sat_final_results.pdf,14,Men - Team Rankings - Through Event 36
+sac_2026,SAC,men,3,Carson-Newman University,1327.5,SAC 2026 sat_final_results.pdf,15,(Scores - Men)
+sac_2026,SAC,men,4,Lenoir-Rhyne University,591.0,SAC 2026 sat_final_results.pdf,15,(Scores - Men)
+sac_2026,SAC,men,5,Mars Hill University,482.0,SAC 2026 sat_final_results.pdf,15,(Scores - Men)
+sac_2026,SAC,women,1,Wingate University,1826.5,SAC 2026 sat_final_results.pdf,14,Women - Team Rankings - Through Event 36
+sac_2026,SAC,women,2,Catawba College,1818.0,SAC 2026 sat_final_results.pdf,14,Women - Team Rankings - Through Event 36
+sac_2026,SAC,women,3,Carson-Newman University,1224.5,SAC 2026 sat_final_results.pdf,14,Women - Team Rankings - Through Event 36
+sac_2026,SAC,women,4,Lenoir-Rhyne University,591.0,SAC 2026 sat_final_results.pdf,14,Women - Team Rankings - Through Event 36
+sac_2026,SAC,women,5,Mars Hill University,504.0,SAC 2026 sat_final_results.pdf,14,Women - Team Rankings - Through Event 36
+sciac_2026,SCIAC,men,1,Pomona-Pitzer,922.0,2026_sciac_conference_results.pdf,127,Men - Team Rankings - Through Event 441
+sciac_2026,SCIAC,men,2,Claremont-Mudd-Scripps,820.5,2026_sciac_conference_results.pdf,127,Men - Team Rankings - Through Event 441
+sciac_2026,SCIAC,men,3,Chapman University,609.0,2026_sciac_conference_results.pdf,127,Men - Team Rankings - Through Event 441
+sciac_2026,SCIAC,men,4,California Institute of Techno,429.0,2026_sciac_conference_results.pdf,127,Men - Team Rankings - Through Event 441
+sciac_2026,SCIAC,men,5,Whittier College,352.5,2026_sciac_conference_results.pdf,127,Men - Team Rankings - Through Event 441
+sciac_2026,SCIAC,men,6,Cal Lutheran University,320.0,2026_sciac_conference_results.pdf,127,Men - Team Rankings - Through Event 441
+sciac_2026,SCIAC,men,7,Occidental College,214.0,2026_sciac_conference_results.pdf,127,Men - Team Rankings - Through Event 441
+sciac_2026,SCIAC,men,8,University of Redlands,187.0,2026_sciac_conference_results.pdf,127,Men - Team Rankings - Through Event 441
+sciac_2026,SCIAC,men,9,University of La Verne,75.0,2026_sciac_conference_results.pdf,127,Men - Team Rankings - Through Event 441
+sciac_2026,SCIAC,women,1,Pomona-Pitzer,1050.0,2026_sciac_conference_results.pdf,127,Women - Team Rankings - Through Event 441
+sciac_2026,SCIAC,women,2,Claremont-Mudd-Scripps,966.0,2026_sciac_conference_results.pdf,127,Women - Team Rankings - Through Event 441
+sciac_2026,SCIAC,women,3,Chapman University,409.0,2026_sciac_conference_results.pdf,127,Women - Team Rankings - Through Event 441
+sciac_2026,SCIAC,women,4,California Institute of Techno,342.0,2026_sciac_conference_results.pdf,127,Women - Team Rankings - Through Event 441
+sciac_2026,SCIAC,women,5,Cal Lutheran University,336.0,2026_sciac_conference_results.pdf,127,Women - Team Rankings - Through Event 441
+sciac_2026,SCIAC,women,6,Occidental College,246.0,2026_sciac_conference_results.pdf,127,Women - Team Rankings - Through Event 441
+sciac_2026,SCIAC,women,7,Whittier College,213.0,2026_sciac_conference_results.pdf,127,Women - Team Rankings - Through Event 441
+sciac_2026,SCIAC,women,8,University of Redlands,176.0,2026_sciac_conference_results.pdf,127,Women - Team Rankings - Through Event 441
+sciac_2026,SCIAC,women,9,University of La Verne,107.0,2026_sciac_conference_results.pdf,127,Women - Team Rankings - Through Event 441
+sec_2026,SEC,men,1,University of Texas,1449.5,2026-SEC-Complete-Results.pdf,143,Men - Team Rankings - Through Event 830
+sec_2026,SEC,men,2,University of Florida,1292.0,2026-SEC-Complete-Results.pdf,143,Men - Team Rankings - Through Event 830
+sec_2026,SEC,men,3,University of Tennessee,1061.5,2026-SEC-Complete-Results.pdf,143,Men - Team Rankings - Through Event 830
+sec_2026,SEC,men,4,"Georgia, University of",721.0,2026-SEC-Complete-Results.pdf,143,Men - Team Rankings - Through Event 830
+sec_2026,SEC,men,5,Auburn University,652.0,2026-SEC-Complete-Results.pdf,143,Men - Team Rankings - Through Event 830
+sec_2026,SEC,men,6,University of Alabama,642.5,2026-SEC-Complete-Results.pdf,143,Men - Team Rankings - Through Event 830
+sec_2026,SEC,men,7,Louisiana State University,614.0,2026-SEC-Complete-Results.pdf,143,Men - Team Rankings - Through Event 830
+sec_2026,SEC,men,8,"Kentucky, University of",582.0,2026-SEC-Complete-Results.pdf,143,Men - Team Rankings - Through Event 830
+sec_2026,SEC,men,9,Texas A&M University,503.5,2026-SEC-Complete-Results.pdf,143,Men - Team Rankings - Through Event 830
+sec_2026,SEC,men,10,Missouri,427.0,2026-SEC-Complete-Results.pdf,143,Men - Team Rankings - Through Event 830
+sec_2026,SEC,men,11,"South Carolina, University of",349.0,2026-SEC-Complete-Results.pdf,143,Men - Team Rankings - Through Event 830
+sec_2026,SEC,women,1,University of Texas,1413.5,2026-SEC-Complete-Results.pdf,142,Women - Team Rankings - Through Event 830
+sec_2026,SEC,women,2,University of Tennessee,1086.0,2026-SEC-Complete-Results.pdf,142,Women - Team Rankings - Through Event 830
+sec_2026,SEC,women,3,University of Florida,1015.5,2026-SEC-Complete-Results.pdf,142,Women - Team Rankings - Through Event 830
+sec_2026,SEC,women,4,University of Alabama,689.0,2026-SEC-Complete-Results.pdf,142,Women - Team Rankings - Through Event 830
+sec_2026,SEC,women,5,Louisiana State University,668.5,2026-SEC-Complete-Results.pdf,142,Women - Team Rankings - Through Event 830
+sec_2026,SEC,women,6,"South Carolina, University of",666.5,2026-SEC-Complete-Results.pdf,142,Women - Team Rankings - Through Event 830
+sec_2026,SEC,women,7,Auburn University,654.5,2026-SEC-Complete-Results.pdf,142,Women - Team Rankings - Through Event 830
+sec_2026,SEC,women,8,"Georgia, University of",604.0,2026-SEC-Complete-Results.pdf,142,Women - Team Rankings - Through Event 830
+sec_2026,SEC,women,9,Texas A&M University,550.0,2026-SEC-Complete-Results.pdf,143,(Scores - Women)
+sec_2026,SEC,women,10,Missouri,468.0,2026-SEC-Complete-Results.pdf,143,(Scores - Women)
+sec_2026,SEC,women,11,University of Arkansas,350.0,2026-SEC-Complete-Results.pdf,143,(Scores - Women)
+sec_2026,SEC,women,12,"Kentucky, University of",284.5,2026-SEC-Complete-Results.pdf,143,(Scores - Women)
+sec_2026,SEC,women,13,Vanderbilt University,146.0,2026-SEC-Complete-Results.pdf,143,(Scores - Women)
+summitleague_2026,Summit League,men,1,University of Denver,862.0,SUMMIT LEAGUE 2026 RESULTS.pdf,92,Men - Team Rankings - Through Event 623
+summitleague_2026,Summit League,men,2,University of South Dakota,832.0,SUMMIT LEAGUE 2026 RESULTS.pdf,92,Men - Team Rankings - Through Event 623
+summitleague_2026,Summit League,men,3,University of Nebraska Omaha,577.5,SUMMIT LEAGUE 2026 RESULTS.pdf,92,Men - Team Rankings - Through Event 623
+summitleague_2026,Summit League,men,4,South Dakota State University,458.0,SUMMIT LEAGUE 2026 RESULTS.pdf,92,Men - Team Rankings - Through Event 623
+summitleague_2026,Summit League,men,5,University of St. Thomas MN,349.5,SUMMIT LEAGUE 2026 RESULTS.pdf,92,Men - Team Rankings - Through Event 623
+summitleague_2026,Summit League,men,6,University of Southern Indiana,275.0,SUMMIT LEAGUE 2026 RESULTS.pdf,92,Men - Team Rankings - Through Event 623
+summitleague_2026,Summit League,men,7,Eastern Illinois University,169.0,SUMMIT LEAGUE 2026 RESULTS.pdf,92,Men - Team Rankings - Through Event 623
+summitleague_2026,Summit League,women,1,University of Denver,971.0,SUMMIT LEAGUE 2026 RESULTS.pdf,92,Women - Team Rankings - Through Event 623
+summitleague_2026,Summit League,women,2,University of South Dakota,799.0,SUMMIT LEAGUE 2026 RESULTS.pdf,92,Women - Team Rankings - Through Event 623
+summitleague_2026,Summit League,women,3,University of Nebraska Omaha,533.0,SUMMIT LEAGUE 2026 RESULTS.pdf,92,Women - Team Rankings - Through Event 623
+summitleague_2026,Summit League,women,4,South Dakota State University,458.0,SUMMIT LEAGUE 2026 RESULTS.pdf,92,Women - Team Rankings - Through Event 623
+summitleague_2026,Summit League,women,5,University of St. Thomas MN,410.5,SUMMIT LEAGUE 2026 RESULTS.pdf,92,Women - Team Rankings - Through Event 623
+summitleague_2026,Summit League,women,6,University of Southern Indiana,252.5,SUMMIT LEAGUE 2026 RESULTS.pdf,92,Women - Team Rankings - Through Event 623
+summitleague_2026,Summit League,women,7,Eastern Illinois University,161.0,SUMMIT LEAGUE 2026 RESULTS.pdf,92,Women - Team Rankings - Through Event 623
+uaa_2026,UAA,men,1,Emory University,1753.5,2026 UAA Championships-FullSWIMResults.pdf,102,Men - Team Rankings - Through Event 305
+uaa_2026,UAA,men,2,New York University,1626.0,2026 UAA Championships-FullSWIMResults.pdf,102,Men - Team Rankings - Through Event 305
+uaa_2026,UAA,men,3,University of Chicago,1399.0,2026 UAA Championships-FullSWIMResults.pdf,102,Men - Team Rankings - Through Event 305
+uaa_2026,UAA,men,4,Washington University St Louis,1067.0,2026 UAA Championships-FullSWIMResults.pdf,102,Men - Team Rankings - Through Event 305
+uaa_2026,UAA,men,5,Carnegie Mellon University,1048.5,2026 UAA Championships-FullSWIMResults.pdf,102,Men - Team Rankings - Through Event 305
+uaa_2026,UAA,men,6,Case Western Reserve Universit,784.0,2026 UAA Championships-FullSWIMResults.pdf,102,Men - Team Rankings - Through Event 305
+uaa_2026,UAA,men,7,University of Rochester,520.0,2026 UAA Championships-FullSWIMResults.pdf,102,Men - Team Rankings - Through Event 305
+uaa_2026,UAA,men,8,Brandeis University,345.0,2026 UAA Championships-FullSWIMResults.pdf,102,Men - Team Rankings - Through Event 305
+uaa_2026,UAA,women,1,New York University,1900.0,2026 UAA Championships-FullSWIMResults.pdf,102,Women - Team Rankings - Through Event 305
+uaa_2026,UAA,women,2,Emory University,1885.0,2026 UAA Championships-FullSWIMResults.pdf,102,Women - Team Rankings - Through Event 305
+uaa_2026,UAA,women,3,University of Chicago,1196.5,2026 UAA Championships-FullSWIMResults.pdf,102,Women - Team Rankings - Through Event 305
+uaa_2026,UAA,women,4,Washington University St Louis,1127.0,2026 UAA Championships-FullSWIMResults.pdf,102,Women - Team Rankings - Through Event 305
+uaa_2026,UAA,women,5,Carnegie Mellon University,964.5,2026 UAA Championships-FullSWIMResults.pdf,102,Women - Team Rankings - Through Event 305
+uaa_2026,UAA,women,6,Case Western Reserve Universit,673.5,2026 UAA Championships-FullSWIMResults.pdf,102,Women - Team Rankings - Through Event 305
+uaa_2026,UAA,women,7,University of Rochester,555.5,2026 UAA Championships-FullSWIMResults.pdf,102,Women - Team Rankings - Through Event 305
+uaa_2026,UAA,women,8,Brandeis University,349.0,2026 UAA Championships-FullSWIMResults.pdf,102,Women - Team Rankings - Through Event 305
+unknown_2026,Unknown,men,1,Ithaca College,1722.0,2026_ll_full_results.pdf,113,(Scores - Men)
+unknown_2026,Unknown,men,2,Rochester Institute of Technol,1625.5,2026_ll_full_results.pdf,113,(Scores - Men)
+unknown_2026,Unknown,men,3,Rensselaer Polytechnic Institu,1085.0,2026_ll_full_results.pdf,113,(Scores - Men)
+unknown_2026,Unknown,men,4,Clarkson University,1028.5,2026_ll_full_results.pdf,113,(Scores - Men)
+unknown_2026,Unknown,men,5,Union College (New York),686.5,2026_ll_full_results.pdf,113,(Scores - Men)
+unknown_2026,Unknown,men,6,Skidmore College,630.5,2026_ll_full_results.pdf,113,(Scores - Men)
+unknown_2026,Unknown,men,7,Vassar College,522.0,2026_ll_full_results.pdf,113,(Scores - Men)
+unknown_2026,Unknown,men,8,St. Lawrence University,325.0,2026_ll_full_results.pdf,113,(Scores - Men)
+unknown_2026,Unknown,men,9,Hobart and William Smith,272.0,2026_ll_full_results.pdf,113,(Scores - Men)
+unknown_2026,Unknown,men,10,Bard College,162.0,2026_ll_full_results.pdf,113,(Scores - Men)
+unknown_2026,Unknown,women,1,Ithaca College,1820.0,2026_ll_full_results.pdf,112,Women - Team Rankings - Through Event 999
+unknown_2026,Unknown,women,2,Rensselaer Polytechnic Institu,1430.5,2026_ll_full_results.pdf,112,Women - Team Rankings - Through Event 999
+unknown_2026,Unknown,women,3,Skidmore College,1032.5,2026_ll_full_results.pdf,112,Women - Team Rankings - Through Event 999
+unknown_2026,Unknown,women,4,Rochester Institute of Technol,972.5,2026_ll_full_results.pdf,112,Women - Team Rankings - Through Event 999
+unknown_2026,Unknown,women,5,Vassar College,888.5,2026_ll_full_results.pdf,112,Women - Team Rankings - Through Event 999
+unknown_2026,Unknown,women,6,Union College (New York),539.0,2026_ll_full_results.pdf,112,Women - Team Rankings - Through Event 999
+unknown_2026,Unknown,women,7,Hobart and William Smith,428.0,2026_ll_full_results.pdf,112,Women - Team Rankings - Through Event 999
+unknown_2026,Unknown,women,8,St. Lawrence University,415.0,2026_ll_full_results.pdf,112,Women - Team Rankings - Through Event 999
+unknown_2026,Unknown,women,9,Clarkson University,385.0,2026_ll_full_results.pdf,112,Women - Team Rankings - Through Event 999
+unknown_2026,Unknown,women,10,Bard College,140.0,2026_ll_full_results.pdf,112,Women - Team Rankings - Through Event 999
+unknown_unknown,Unknown,men,1,Denison University,1958.5,NCACSwimDiveChamps-FinalResults2026.pdf.pdf,127,Men - Team Rankings - Through Event 316
+unknown_unknown,Unknown,men,2,Kenyon College,1741.5,NCACSwimDiveChamps-FinalResults2026.pdf.pdf,127,Men - Team Rankings - Through Event 316
+unknown_unknown,Unknown,men,3,John Carroll University,1192.5,NCACSwimDiveChamps-FinalResults2026.pdf.pdf,127,Men - Team Rankings - Through Event 316
+unknown_unknown,Unknown,men,4,DePauw University,1095.0,NCACSwimDiveChamps-FinalResults2026.pdf.pdf,127,Men - Team Rankings - Through Event 316
+unknown_unknown,Unknown,men,5,Wabash College,1030.0,NCACSwimDiveChamps-FinalResults2026.pdf.pdf,127,Men - Team Rankings - Through Event 316
+unknown_unknown,Unknown,men,6,College of Wooster,789.5,NCACSwimDiveChamps-FinalResults2026.pdf.pdf,127,Men - Team Rankings - Through Event 316
+unknown_unknown,Unknown,men,7,Oberlin College,786.0,NCACSwimDiveChamps-FinalResults2026.pdf.pdf,127,Men - Team Rankings - Through Event 316
+unknown_unknown,Unknown,men,8,Ohio Wesleyan University,450.0,NCACSwimDiveChamps-FinalResults2026.pdf.pdf,127,Men - Team Rankings - Through Event 316
+unknown_unknown,Unknown,men,9,Wittenberg University,173.0,NCACSwimDiveChamps-FinalResults2026.pdf.pdf,127,Men - Team Rankings - Through Event 316
+unknown_unknown,Unknown,women,1,Kenyon College,1944.0,NCACSwimDiveChamps-FinalResults2026.pdf.pdf,127,Women - Team Rankings - Through Event 316
+unknown_unknown,Unknown,women,2,Denison University,1853.0,NCACSwimDiveChamps-FinalResults2026.pdf.pdf,127,Women - Team Rankings - Through Event 316
+unknown_unknown,Unknown,women,3,DePauw University,1377.5,NCACSwimDiveChamps-FinalResults2026.pdf.pdf,127,Women - Team Rankings - Through Event 316
+unknown_unknown,Unknown,women,4,John Carroll University,1037.0,NCACSwimDiveChamps-FinalResults2026.pdf.pdf,127,Women - Team Rankings - Through Event 316
+unknown_unknown,Unknown,women,5,College of Wooster,991.0,NCACSwimDiveChamps-FinalResults2026.pdf.pdf,127,Women - Team Rankings - Through Event 316
+unknown_unknown,Unknown,women,6,Oberlin College,681.0,NCACSwimDiveChamps-FinalResults2026.pdf.pdf,127,Women - Team Rankings - Through Event 316
+unknown_unknown,Unknown,women,7,Wittenberg University,579.5,NCACSwimDiveChamps-FinalResults2026.pdf.pdf,127,Women - Team Rankings - Through Event 316
+unknown_unknown,Unknown,women,8,Ohio Wesleyan University,424.0,NCACSwimDiveChamps-FinalResults2026.pdf.pdf,127,Women - Team Rankings - Through Event 316
+wac_2025,WAC,men,1,University of Nevada Las Vegas,802.0,WAC 2025 RESULTS.pdf,51,Men - Team Rankings - Through Event 770
+wac_2025,WAC,men,2,California Baptist,776.0,WAC 2025 RESULTS.pdf,51,Men - Team Rankings - Through Event 770
+wac_2025,WAC,men,3,Air Force,638.5,WAC 2025 RESULTS.pdf,51,Men - Team Rankings - Through Event 770
+wac_2025,WAC,men,4,Grand Canyon,531.0,WAC 2025 RESULTS.pdf,51,Men - Team Rankings - Through Event 770
+wac_2025,WAC,men,5,University of Wyoming,365.5,WAC 2025 RESULTS.pdf,51,Men - Team Rankings - Through Event 770
+wac_2025,WAC,men,6,Seattle,238.0,WAC 2025 RESULTS.pdf,51,Men - Team Rankings - Through Event 770
+wac_2025,WAC,women,1,Northern Arizona,694.5,WAC 2025 RESULTS.pdf,51,Women - Team Rankings - Through Event 770
+wac_2025,WAC,women,2,New Mexico State,534.0,WAC 2025 RESULTS.pdf,51,Women - Team Rankings - Through Event 770
+wac_2025,WAC,women,3,Grand Canyon,529.0,WAC 2025 RESULTS.pdf,51,Women - Team Rankings - Through Event 770
+wac_2025,WAC,women,4,California Baptist,475.0,WAC 2025 RESULTS.pdf,51,Women - Team Rankings - Through Event 770
+wac_2025,WAC,women,5,Idaho,470.0,WAC 2025 RESULTS.pdf,51,Women - Team Rankings - Through Event 770
+wac_2025,WAC,women,6,Northern Colorado,458.5,WAC 2025 RESULTS.pdf,51,Women - Team Rankings - Through Event 770
+wac_2025,WAC,women,7,Utah Tech University,248.0,WAC 2025 RESULTS.pdf,51,Women - Team Rankings - Through Event 770
+wac_2025,WAC,women,8,Seattle,191.0,WAC 2025 RESULTS.pdf,51,Women - Team Rankings - Through Event 770
+wac_2025,WAC,women,9,University of Texas Rio Grande,132.0,WAC 2025 RESULTS.pdf,51,Women - Team Rankings - Through Event 770

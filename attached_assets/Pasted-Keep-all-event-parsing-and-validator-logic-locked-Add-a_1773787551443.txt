@@ -1,0 +1,106 @@
+Keep all event parsing and validator logic locked.
+
+Add a NEW, separate team-score extraction pipeline. Do not piggyback on normal event extraction.
+
+Goal:
+reliably extract final team standings from championship PDFs so we can build conference team tiers.
+
+Important known behavior:
+- team scores are usually near the end of the PDF
+- when a bundle has multiple PDFs, team scores are usually in the final-day / full-results PDF
+- team-score sections are often TWO-COLUMN even when the rest of the PDF is not
+- treat this as a dedicated parser problem, separate from event extraction
+
+Requirements
+
+1) New isolated module
+Create a dedicated module for team-score extraction (example: team_scores.py).
+Do not modify harvester.py event extraction behavior except to call this new module at the bundle level.
+
+2) Bundle-level source selection
+For each bundle:
+- inspect all PDFs in the bundle
+- prefer the PDF most likely to contain final standings:
+  - filename hints like final, finals, championship, complete, full results, day3, day4, final day
+  - latest day if multiple day files exist
+  - largest page count can be a fallback clue
+- if the preferred file does not yield a section, fall back to scanning other PDFs in the bundle
+
+3) Search near end of document only
+Initially scan only the last 6-10 pages of candidate PDFs.
+Look for headings / anchor phrases such as:
+- Team Scores
+- Team Rankings
+- Women - Team Rankings
+- Men - Team Rankings
+- Combined Team Scores
+- Scores - Women
+- Scores - Men
+- Women Team Scores
+- Men Team Scores
+
+4) Dedicated team-score section reader
+For pages containing likely team-score sections:
+- detect whether the section is one-column or two-column
+- if two-column, read left column top-to-bottom, then right column top-to-bottom
+- do this independently of the conference/event parse mode
+- do not assume the rest of the PDF shares this layout
+
+5) Row parser
+Extract ranked team-score rows with:
+- rank
+- team
+- score
+
+Handle common patterns like:
+- 1 TeamName 523
+- 2 Team Name 412.5
+- 10 Colorado College 87
+
+Allow decimal scores and tolerate spacing fragmentation.
+
+6) Section boundaries
+Stop when rows stop matching ranked team-score patterns for several consecutive lines, or when a new major heading starts.
+
+7) Outputs
+Write:
+A) output/team_scores.csv
+Columns:
+- bundle_id
+- conference
+- gender_or_division
+- rank
+- team
+- score
+- source_pdf
+- source_page
+- section_heading
+
+B) output/team_score_coverage.csv
+One row per bundle with:
+- bundle_id
+- conference
+- selected_pdf
+- candidate_pages_scanned
+- section_found
+- rows_captured
+- genders_found
+- parse_status
+- notes
+
+8) Parse status values
+Use:
+- captured_complete
+- captured_partial
+- section_found_no_rows
+- section_not_found
+- ambiguous_source_pdf
+
+9) Final report
+Return:
+- total bundles scanned
+- total bundles with team-score sections found
+- total team-score rows captured
+- per-conference coverage summary
+- a sample of extracted team-score rows
+- confirmation that event parsing and validator logic were untouched
