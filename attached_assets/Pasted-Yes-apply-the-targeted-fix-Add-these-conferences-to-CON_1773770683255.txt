@@ -1,0 +1,84 @@
+Yes — apply the targeted fix.
+
+Add these conferences to CONFERENCE_PARSE_MODE as multi_column_2:
+- WAC
+- MPSF
+- PCSC
+
+Do not change the parser logic globally.
+Do not modify the normal path.
+Do not introduce any new layout algorithm.
+
+This should be only a targeted config extension using the already validated multi_column_2 mode that works for ODAC.
+
+==================================================
+TASK 1 — CONFIG ONLY
+==================================================
+
+Add:
+- WAC -> multi_column_2
+- MPSF -> multi_column_2
+- PCSC -> multi_column_2
+
+No global behavior changes.
+
+==================================================
+TASK 2 — RE-RUN ONLY THESE THREE
+==================================================
+
+Run only:
+- WAC
+- MPSF
+- PCSC
+
+Then report for each:
+1. anchors captured
+2. men / women breakdown
+3. missing events excluding 1000 Free
+4. whether event coverage materially improved
+5. whether fallback usage changed
+6. whether any events are still classified as missing_true_parser_miss
+7. whether any events remain likely true data ceilings
+
+==================================================
+TASK 3 — CLASSIFICATION FIX
+==================================================
+
+Also fix the missing-event classification logic:
+
+If:
+- deepest_place >= target_anchor_place
+and/or
+- swimmer_count >= target_anchor_place
+
+then the event should not be labeled missing_data_ceiling solely because consecutive_depth is broken.
+
+In those cases, if the anchor is still missing, classify as:
+- missing_true_parser_miss
+
+Use consecutive_depth as supporting evidence, not the sole determinant of data ceiling, when the field is clearly deep enough.
+
+This is important because multi-column bleed can scramble consecutive depth while the source data is still deep enough.
+
+==================================================
+TASK 4 — QUICK REGRESSION CHECK
+==================================================
+
+After the three targeted runs, do a quick sanity check on:
+- ODAC
+- one normal one-column baseline such as GLIAC
+
+Only confirm that:
+- ODAC still behaves correctly in multi_column_2
+- normal mode remains untouched
+
+==================================================
+TASK 5 — REPORT BACK
+==================================================
+
+Report:
+1. WAC before -> after
+2. MPSF before -> after
+3. PCSC before -> after
+4. whether the classification fix changed any prior false data-ceiling labels
+5. whether any remaining misses appear to require anything beyond multi_column_2

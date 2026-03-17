@@ -1,2 +1,2 @@
 Bundle_ID,Conference,Files_In_Bundle,Detected_Gender,Events_Detected,Events_Mapped,Events_Output,Men_Events_Output,Women_Events_Output,Events_Missing,Men_Missing,Women_Missing,Events_Recovered_Pass2,Missing_Event_List,Team_Scores_Found,Team_Score_Strategy,Notes
-pcsc_2026,PCSC,1,men/women,14,18,18,8,10,8,5,3,1,"men:200 Free, men:500 Free, men:1650 Free, men:200 Back, men:200 Breast, women:50 Free, women:500 Free, women:1650 Free",0,not_found,pass2 recovered 1 event(s)
+wac_2025,WAC,1,men/women,13,18,18,9,9,8,4,4,0,"men:50 Free, men:200 Breast, men:100 Fly, men:200 Fly, women:100 Back, women:200 Back, women:100 Breast, women:400 IM",1,end_pages:WAC 2025 RESULTS.pdf,

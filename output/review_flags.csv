@@ -1,73 +1,459 @@
 Source_File,Bundle_ID,Conference,Year,Gender,Event,Issue
-PCSC 2026 Results.pdf,pcsc_2026,PCSC,2026,combined,,Combined/unknown file — parsing both sections (combined)
-PCSC 2026 Results.pdf,pcsc_2026,PCSC,2026,women,50 Free,time_suffix_handled: Event 7 Women 50 Yard Freestyle
-PCSC 2026 Results.pdf,pcsc_2026,PCSC,2026,women,50 Free,time_suffix_handled: Name Y r School Prelim Time
-PCSC 2026 Results.pdf,pcsc_2026,PCSC,2026,women,50 Free,time_suffix_handled: Preliminaries
-PCSC 2026 Results.pdf,pcsc_2026,PCSC,2026,men,50 Free,time_suffix_handled: Event 8 Men 50 Yard Freestyle
-PCSC 2026 Results.pdf,pcsc_2026,PCSC,2026,men,50 Free,time_suffix_handled: Name Y r School Prelim Time
-PCSC 2026 Results.pdf,pcsc_2026,PCSC,2026,men,50 Free,time_suffix_handled: Preliminaries
-PCSC 2026 Results.pdf,pcsc_2026,PCSC,2026,men,50 Free,time_suffix_handled: Name Y r School Finals Score
-PCSC 2026 Results.pdf,pcsc_2026,PCSC,2026,women,100 Fly,time_suffix_handled: False start
-PCSC 2026 Results.pdf,pcsc_2026,PCSC,2026,men,400 IM,time_suffix_handled: Preliminaries
-PCSC 2026 Results.pdf,pcsc_2026,PCSC,2026,men,200 Free,time_suffix_handled: DQ
-PCSC 2026 Results.pdf,pcsc_2026,PCSC,2026,men,100 Breast,time_suffix_handled: Name Y r School Finals Time
-PCSC 2026 Results.pdf,pcsc_2026,PCSC,2026,women,200 Fly,time_suffix_handled: Event 32 Men 200 Yard Butterfly
-PCSC 2026 Results.pdf,pcsc_2026,PCSC,2026,women,200 Fly,time_suffix_handled: Name Y r School Finals Time
-PCSC 2026 Results.pdf,pcsc_2026,PCSC,2026,men,200 Breast,time_suffix_handled: DQ
-PCSC 2026 Results.pdf,pcsc_2026,PCSC,2026,men,50 Free,time_suffix_handled: Name Y r School Finals Time
-PCSC 2026 Results.pdf,pcsc_2026,PCSC,2026,,,"Event header variation not normalized: '65 Imamura, Hana FR SOKA 32.85 2 Reitan, Kyle N JR UCSC 20.23'"
-PCSC 2026 Results.pdf,pcsc_2026,PCSC,2026,,,Event header variation not normalized: 'Event 28 Men 100 Yard Backstroke 24.29 50.46'
-PCSC 2026 Results.pdf,pcsc_2026,PCSC,2026,,,"Event header variation not normalized: '68 Imamura, Hana FR SOKA 1:16.58'"
-PCSC 2026 Results.pdf,pcsc_2026,PCSC,2026,,,Event header variation not normalized: 'Meet: 19.99 2000 Nick Folker Event 553 Women 50 Yard Butterfly Time Trial'
-PCSC 2026 Results.pdf,pcsc_2026,PCSC,2026,,,Event header variation not normalized: 'Meet: 48.56 2003 Felix Sutanto Event 604 Men 100 Yard IM Time Trial'
-PCSC 2026 Results.pdf,pcsc_2026,PCSC,2026,men,1000 Free,Event found on second-pass loose scan (places found: 13)
-PCSC 2026 Results.pdf,pcsc_2026,PCSC,2026,men,200 Free,Event found on second-pass loose scan (places found: 13)
-PCSC 2026 Results.pdf,pcsc_2026,PCSC,2026,men,500 Free,Event found on second-pass loose scan (places found: 21)
-PCSC 2026 Results.pdf,pcsc_2026,PCSC,2026,men,100 Back,Event found on second-pass loose scan (places found: 25)
-PCSC 2026 Results.pdf,pcsc_2026,PCSC,2026,men,1650 Free,Event found on second-pass loose scan (places found: 7)
-PCSC 2026 Results.pdf,pcsc_2026,PCSC,2026,men,200 Back,Event found on second-pass loose scan (places found: 15)
-PCSC 2026 Results.pdf,pcsc_2026,PCSC,2026,men,200 Breast,Event found on second-pass loose scan (places found: 16)
-PCSC 2026 Results.pdf,pcsc_2026,PCSC,2026,women,50 Free,Event found on second-pass loose scan (places found: 22)
-PCSC 2026 Results.pdf,pcsc_2026,PCSC,2026,women,1000 Free,Event found on second-pass loose scan (places found: 7)
-PCSC 2026 Results.pdf,pcsc_2026,PCSC,2026,women,500 Free,Event found on second-pass loose scan (places found: 28)
-PCSC 2026 Results.pdf,pcsc_2026,PCSC,2026,women,1650 Free,Event found on second-pass loose scan (places found: 14)
-PCSC 2026 Results.pdf,pcsc_2026,PCSC,2026,,,Team scores not found in any bundle file
-PCSC 2026 Results.pdf,pcsc_2026,PCSC,2026,men,50 Free,Only prelim results found — no finals detected
-PCSC 2026 Results.pdf,pcsc_2026,PCSC,2026,men,100 Free,Only prelim results found — no finals detected
-PCSC 2026 Results.pdf,pcsc_2026,PCSC,2026,men,200 Free,Only prelim results found — no finals detected
-PCSC 2026 Results.pdf,pcsc_2026,PCSC,2026,men,200 Free,data_ceiling — consecutive depth: 11 of 13 distinct entries; target 16 not achievable from source data
-PCSC 2026 Results.pdf,pcsc_2026,PCSC,2026,men,500 Free,Only prelim results found — no finals detected
-PCSC 2026 Results.pdf,pcsc_2026,PCSC,2026,men,500 Free,data_ceiling — consecutive depth: 5 of 21 distinct entries; target 16 not achievable from source data
-PCSC 2026 Results.pdf,pcsc_2026,PCSC,2026,men,1000 Free,Only prelim results found — no finals detected
-PCSC 2026 Results.pdf,pcsc_2026,PCSC,2026,men,1000 Free,fewer_than_16_finalists — consecutive depth: 11; no B-Final section; event likely had fewer than 16 entrants
-PCSC 2026 Results.pdf,pcsc_2026,PCSC,2026,men,1650 Free,Only prelim results found — no finals detected
-PCSC 2026 Results.pdf,pcsc_2026,PCSC,2026,men,1650 Free,data_ceiling — consecutive depth: 7 of 7 distinct entries; target 16 not achievable from source data
-PCSC 2026 Results.pdf,pcsc_2026,PCSC,2026,men,100 Back,Only prelim results found — no finals detected
-PCSC 2026 Results.pdf,pcsc_2026,PCSC,2026,men,100 Back,Event recovered on second-pass (complete anchor now available)
-PCSC 2026 Results.pdf,pcsc_2026,PCSC,2026,men,200 Back,Only prelim results found — no finals detected
-PCSC 2026 Results.pdf,pcsc_2026,PCSC,2026,men,200 Back,data_ceiling — consecutive depth: 11 of 15 distinct entries; target 16 not achievable from source data
-PCSC 2026 Results.pdf,pcsc_2026,PCSC,2026,men,100 Breast,Only prelim results found — no finals detected
-PCSC 2026 Results.pdf,pcsc_2026,PCSC,2026,men,200 Breast,Only prelim results found — no finals detected
-PCSC 2026 Results.pdf,pcsc_2026,PCSC,2026,men,200 Breast,data_ceiling — consecutive depth: 13 of 16 distinct entries; target 16 not achievable from source data
-PCSC 2026 Results.pdf,pcsc_2026,PCSC,2026,men,100 Fly,Only prelim results found — no finals detected
-PCSC 2026 Results.pdf,pcsc_2026,PCSC,2026,men,200 Fly,Only prelim results found — no finals detected
-PCSC 2026 Results.pdf,pcsc_2026,PCSC,2026,men,200 IM,Only prelim results found — no finals detected
-PCSC 2026 Results.pdf,pcsc_2026,PCSC,2026,men,400 IM,Only prelim results found — no finals detected
-PCSC 2026 Results.pdf,pcsc_2026,PCSC,2026,women,50 Free,Only prelim results found — no finals detected
-PCSC 2026 Results.pdf,pcsc_2026,PCSC,2026,women,50 Free,data_ceiling — consecutive depth: 4 of 22 distinct entries; target 16 not achievable from source data
-PCSC 2026 Results.pdf,pcsc_2026,PCSC,2026,women,100 Free,Only prelim results found — no finals detected
-PCSC 2026 Results.pdf,pcsc_2026,PCSC,2026,women,200 Free,Only prelim results found — no finals detected
-PCSC 2026 Results.pdf,pcsc_2026,PCSC,2026,women,500 Free,Only prelim results found — no finals detected
-PCSC 2026 Results.pdf,pcsc_2026,PCSC,2026,women,500 Free,data_ceiling — consecutive depth: 2 of 28 distinct entries; target 16 not achievable from source data
-PCSC 2026 Results.pdf,pcsc_2026,PCSC,2026,women,1000 Free,Only prelim results found — no finals detected
-PCSC 2026 Results.pdf,pcsc_2026,PCSC,2026,women,1000 Free,data_ceiling — consecutive depth: 0 of 7 distinct entries; target 16 not achievable from source data
-PCSC 2026 Results.pdf,pcsc_2026,PCSC,2026,women,1650 Free,Only prelim results found — no finals detected
-PCSC 2026 Results.pdf,pcsc_2026,PCSC,2026,women,1650 Free,fewer_than_16_finalists — consecutive depth: 8; no B-Final section; event likely had fewer than 16 entrants
-PCSC 2026 Results.pdf,pcsc_2026,PCSC,2026,women,100 Back,Only prelim results found — no finals detected
-PCSC 2026 Results.pdf,pcsc_2026,PCSC,2026,women,200 Back,Only prelim results found — no finals detected
-PCSC 2026 Results.pdf,pcsc_2026,PCSC,2026,women,100 Breast,Only prelim results found — no finals detected
-PCSC 2026 Results.pdf,pcsc_2026,PCSC,2026,women,200 Breast,Only prelim results found — no finals detected
-PCSC 2026 Results.pdf,pcsc_2026,PCSC,2026,women,100 Fly,Only prelim results found — no finals detected
-PCSC 2026 Results.pdf,pcsc_2026,PCSC,2026,women,200 Fly,Only prelim results found — no finals detected
-PCSC 2026 Results.pdf,pcsc_2026,PCSC,2026,women,200 IM,Only prelim results found — no finals detected
-PCSC 2026 Results.pdf,pcsc_2026,PCSC,2026,women,400 IM,Only prelim results found — no finals detected
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,combined,,Combined/unknown file — parsing both sections (combined)
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,500 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,500 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,500 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,500 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,500 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,500 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,500 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,500 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,500 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,500 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,500 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,500 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,500 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,500 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,500 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,500 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,500 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,500 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,500 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,500 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,500 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,500 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,500 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,500 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,500 Free,time_suffix_handled: B
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,500 Free,time_suffix_handled: qB
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,500 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,500 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,500 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,500 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,500 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,500 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,500 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,500 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,500 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,500 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 IM,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 IM,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 IM,time_suffix_handled: B
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 IM,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 IM,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 IM,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 IM,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 IM,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 IM,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 IM,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 IM,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 IM,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 IM,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 IM,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 IM,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 IM,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 IM,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 IM,time_suffix_handled: qB
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 IM,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,200 IM,time_suffix_handled: B
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,200 IM,time_suffix_handled: B
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,200 IM,time_suffix_handled: B
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,200 IM,time_suffix_handled: B
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,200 IM,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,50 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,50 Free,time_suffix_handled: A Standard
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,50 Free,time_suffix_handled: q Name Y r School Finals Time
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,50 Free,time_suffix_handled: B
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,50 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,50 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,50 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,50 Free,time_suffix_handled: A Standard
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,50 Free,time_suffix_handled: B Standard
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,50 Free,time_suffix_handled: qB
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,50 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,50 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,50 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,50 Free,time_suffix_handled: A Standard
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,50 Free,time_suffix_handled: B Standard
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,50 Free,time_suffix_handled: # B
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,50 Free,time_suffix_handled: B
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,50 Free,time_suffix_handled: B
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,50 Free,time_suffix_handled: B
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,50 Free,time_suffix_handled: A Standard
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,50 Free,time_suffix_handled: B Standard
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,50 Free,time_suffix_handled: # qB
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,50 Free,time_suffix_handled: qB
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,50 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,50 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,50 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Fly,time_suffix_handled: # 20
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Fly,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Fly,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Fly,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Fly,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Fly,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Fly,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Fly,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Fly,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Fly,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Fly,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Fly,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Fly,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Fly,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Fly,time_suffix_handled: A Standard
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Fly,time_suffix_handled: B Standard
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Fly,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Fly,time_suffix_handled: B
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Fly,time_suffix_handled: A Standard
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Fly,time_suffix_handled: B Standard
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Fly,time_suffix_handled: B
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Fly,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Fly,time_suffix_handled: A Standard
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Fly,time_suffix_handled: B Standard
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Fly,time_suffix_handled: qB
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Fly,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Fly,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Fly,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Fly,time_suffix_handled: q Event 19 Women 400 Yard IM
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,400 IM,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,400 IM,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,400 IM,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,400 IM,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,400 IM,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,400 IM,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,400 IM,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,400 IM,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,400 IM,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,400 IM,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,400 IM,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,400 IM,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,400 IM,time_suffix_handled: A Standard
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,400 IM,time_suffix_handled: B Standard
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,400 IM,time_suffix_handled: Preliminaries
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,400 IM,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,400 IM,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,200 Free,time_suffix_handled: A Standard
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,200 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,200 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,200 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,200 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,200 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,200 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,200 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,200 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,200 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,200 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,200 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,200 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Breast,time_suffix_handled: A Standard
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Breast,time_suffix_handled: B Standard
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Breast,time_suffix_handled: B Preliminaries
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Breast,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Breast,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Breast,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Breast,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Breast,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Breast,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Breast,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Breast,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Breast,time_suffix_handled: A Standard
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Breast,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Breast,time_suffix_handled: B Standard
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Breast,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Breast,time_suffix_handled: # B
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Breast,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Breast,time_suffix_handled: B
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Breast,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Breast,time_suffix_handled: B
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Breast,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Breast,time_suffix_handled: B
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Breast,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Breast,time_suffix_handled: B
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Breast,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Breast,time_suffix_handled: B
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Breast,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Breast,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Breast,time_suffix_handled: A Standard
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Breast,time_suffix_handled: B Standard
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Breast,time_suffix_handled: qB
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Back,time_suffix_handled: qB
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Back,time_suffix_handled: A Standard
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Back,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Back,time_suffix_handled: B Standard
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Back,time_suffix_handled: q Name Y r School Finals Time
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Back,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Back,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Back,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Back,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Back,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Back,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Back,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Back,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Back,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Back,time_suffix_handled: A Standard
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Back,time_suffix_handled: B Standard
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Back,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Back,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Back,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Back,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Back,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Back,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Back,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Back,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Back,time_suffix_handled: A Standard
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Back,time_suffix_handled: B Standard
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Back,time_suffix_handled: Name Y r School Prelim Time
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Back,time_suffix_handled: B Preliminaries
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Back,time_suffix_handled: qB
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Back,time_suffix_handled: qB
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Back,time_suffix_handled: qB
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Back,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Back,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Back,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Back,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Back,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Back,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Back,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Back,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Back,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Back,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Back,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Back,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Back,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Back,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Back,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Back,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Back,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Back,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Back,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Back,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Back,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Back,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Back,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Back,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Back,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Back,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Back,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Back,time_suffix_handled: A Standard
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Back,time_suffix_handled: B Standard
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,1650 Free,time_suffix_handled: B
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,1650 Free,time_suffix_handled: B
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,1650 Free,time_suffix_handled: B
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,1650 Free,time_suffix_handled: B
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 Back,time_suffix_handled: B
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 Back,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 Back,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 Back,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 Back,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 Back,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 Back,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 Back,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 Back,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 Back,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 Back,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 Back,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 Back,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 Back,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 Back,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 Back,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 Back,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 Back,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 Back,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 Back,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 Back,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,200 Back,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,200 Back,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,200 Back,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,200 Back,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,200 Back,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,200 Back,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,200 Back,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,200 Back,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,200 Back,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,200 Back,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,200 Back,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,200 Back,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,200 Back,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,200 Back,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,200 Back,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Free,time_suffix_handled: A Standard
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Free,time_suffix_handled: A Standard
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Free,time_suffix_handled: B Name Y r School Prelim Time
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Free,time_suffix_handled: A Standard
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Free,time_suffix_handled: B Standard
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Free,time_suffix_handled: # B
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Free,time_suffix_handled: B
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Free,time_suffix_handled: B
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Free,time_suffix_handled: A Standard
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Free,time_suffix_handled: B Standard
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Free,time_suffix_handled: qB
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Free,time_suffix_handled: qB
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Free,time_suffix_handled: qB
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Free,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 Breast,time_suffix_handled: B
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 Breast,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 Breast,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 Breast,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 Breast,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 Breast,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 Breast,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 Breast,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 Breast,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 Breast,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,200 Breast,time_suffix_handled: # B
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,200 Breast,time_suffix_handled: B
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,200 Breast,time_suffix_handled: B Preliminaries
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 Fly,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 Fly,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 Fly,time_suffix_handled: B
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 Fly,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 Fly,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 Fly,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 Fly,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 Fly,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 Fly,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 Fly,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 Fly,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 Fly,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 Fly,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 Fly,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 Fly,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 Fly,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,200 Fly,time_suffix_handled: A Standard
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,200 Fly,time_suffix_handled: q Name Y r School Finals Time
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,200 Fly,time_suffix_handled: B
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,200 Fly,time_suffix_handled: B
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,200 Fly,time_suffix_handled: B
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,200 Fly,time_suffix_handled: B
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,200 Fly,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,200 Fly,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,200 Fly,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,200 Fly,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,200 Fly,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,200 Fly,time_suffix_handled: q Name Y r School Prelim Score
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,200 Fly,time_suffix_handled: R q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,200 Fly,time_suffix_handled: R q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,200 Fly,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,200 Fly,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,200 Fly,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,200 Fly,time_suffix_handled: q
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Breast,time_suffix_handled: Name Y r School Finals Time
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Back,time_suffix_handled: Name Y r School Finals Time
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Fly,time_suffix_handled: A Standard
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Fly,time_suffix_handled: A Standard
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Fly,time_suffix_handled: Name Y r School Finals Time
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Free,time_suffix_handled: A Standard
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Free,time_suffix_handled: B Standard
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,50 Free,time_suffix_handled: A Standard
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,50 Free,time_suffix_handled: B Standard
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Breast,time_suffix_handled: A Standard
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Breast,time_suffix_handled: A Standard
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Breast,time_suffix_handled: B Standard
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,50 Free,time_suffix_handled: A Standard
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,50 Free,time_suffix_handled: A Standard
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,50 Free,time_suffix_handled: B Standard
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,50 Free,time_suffix_handled: B Standard
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 Back,time_suffix_handled: A Standard
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Fly,time_suffix_handled: A Standard
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Fly,time_suffix_handled: A Standard
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Fly,time_suffix_handled: B Standard
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Breast,time_suffix_handled: A Standard
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Free,time_suffix_handled: A Standard
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Free,time_suffix_handled: B Standard
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Back,time_suffix_handled: A Standard
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Back,time_suffix_handled: B Standard
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 Fly,time_suffix_handled: A Standard
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 Fly,time_suffix_handled: B Standard
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,,,"Event header variation not normalized: 'r:+9.94 26.10 27.27 23.85 22.18 3) r:0.20 Lanting, Nicholas SR 4) r:0.34 Imig, Nicholas'"
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,,,"Event header variation not normalized: 'C - Final ... (Event 13 Men 200 Yard IM) 20 Campbell, Colin SO GCU 1:50.10 q'"
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,,,"Event header variation not normalized: '*6 Imig, Nicholas SU 20.00 q'"
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,,,Event header variation not normalized: 'Event 165 Women 50 Yard Breaststroke Time Trial'
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,,,Event header variation not normalized: 'Name Y r School Finals Time Event 167 Women 50 Yard Butterfly Time Trial'
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,50 Free,Event found on second-pass loose scan (places found: 24)
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Fly,Event found on second-pass loose scan (places found: 26)
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,200 Breast,Event found on second-pass loose scan (places found: 10)
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,200 Fly,Event found on second-pass loose scan (places found: 14)
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,400 IM,Event found on second-pass loose scan (places found: 15)
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Breast,Event found on second-pass loose scan (places found: 19)
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Back,Event found on second-pass loose scan (places found: 22)
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 Back,Event found on second-pass loose scan (places found: 15)
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,,Team scores found on final pages of WAC 2025 RESULTS.pdf
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,,,Team scores searched on last-day file: WAC 2025 RESULTS.pdf
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,50 Free,Only prelim results found — no finals detected
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,50 Free,Event incomplete after both passes — 16th place not found despite B-Final data present
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Free,Only prelim results found — no finals detected
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,200 Free,Only prelim results found — no finals detected
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,500 Free,Only prelim results found — no finals detected
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,1650 Free,Only prelim results found — no finals detected
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Back,Only prelim results found — no finals detected
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Back,"Implausible 1st-place time 4:02.35 — no better candidate, kept"
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,200 Back,Only prelim results found — no finals detected
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Breast,Only prelim results found — no finals detected
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,200 Breast,Only prelim results found — no finals detected
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,200 Breast,fewer_than_16_finalists — consecutive depth: 8; no B-Final section; event likely had fewer than 16 entrants
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Fly,Only prelim results found — no finals detected
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,100 Fly,Event incomplete after both passes — 8th place not found
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,200 Fly,Only prelim results found — no finals detected
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,200 Fly,Event incomplete after both passes — 1st place not found
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,200 IM,Only prelim results found — no finals detected
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,400 IM,Only prelim results found — no finals detected
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,men,400 IM,"Implausible 1st-place time 27.22 — no better candidate, kept"
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,50 Free,Only prelim results found — no finals detected
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Free,Only prelim results found — no finals detected
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 Free,Only prelim results found — no finals detected
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,500 Free,Only prelim results found — no finals detected
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,1650 Free,Only prelim results found — no finals detected
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,1650 Free,"Implausible 1st-place time 0.19 — no better candidate, kept"
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Back,Only prelim results found — no finals detected
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Back,fewer_than_16_finalists — consecutive depth: 11; no B-Final section; event likely had fewer than 16 entrants
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 Back,Only prelim results found — no finals detected
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 Back,Event incomplete after both passes — 16th place not found despite B-Final data present
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Breast,Only prelim results found — no finals detected
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Breast,Event incomplete after both passes — 16th place not found despite B-Final data present
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 Breast,Only prelim results found — no finals detected
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,100 Fly,Only prelim results found — no finals detected
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 Fly,Only prelim results found — no finals detected
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,200 IM,Only prelim results found — no finals detected
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,400 IM,Only prelim results found — no finals detected
+WAC 2025 RESULTS.pdf,wac_2025,WAC,2025,women,400 IM,Event incomplete after both passes — 8th place not found

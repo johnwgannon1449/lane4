@@ -1,111 +1,117 @@
 Bundle_ID,Conference,Source_File,Page_Number,Raw_Header_Text,Gender_Normalized,Event_Normalized,Round_Normalized,Accepted_YN,Rejection_Reason,State_Action,Intervening_Line_Type,Dedupe_Key,Notes
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,2,"(Event 3 Women 1000 Yard Freestyle) 19 O'Brien, Heather R FR UCSC 10:50.98 6",women,50 Free,unknown,yes,,finalize+open_event,,women:50 Free,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,3,"(Event 3 Women 1000 Yard Freestyle) 37 Ryken, Emily SR TMU 12:15.89",women,1000 Free,unknown,yes,,finalize+open_event,,women:1000 Free,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,3,Event 4 Men 1000 Yard Freestyle,men,1000 Free,unknown,yes,,finalize+open_event,,men:1000 Free,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,4,"(Event 4 Men 1000 Yard Freestyle) 12 Prieb, Tyler JR TMU 10:07.56 15",men,1000 Free,unknown,yes,,finalize+open_event,,men:1000 Free,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,5,"(Event 4 Men 1000 Yard Freestyle) 19 Friedley, Coco N SR BU 2:09.00 6",men,1000 Free,unknown,yes,,finalize+open_event,,men:1000 Free,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,5,Event 5 Women 200 Yard IM Name Y r School Prelim Time,women,200 IM,unknown,yes,,finalize+open_event,,women:200 IM,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,6,"Preliminaries ... (Event 5 Women 200 Yard IM) --- Mosack, Jolie M SR UCSC X2:20.77",women,200 IM,unknown,yes,,finalize+open_event,,women:200 IM,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,6,Event 6 Men 200 Yard IM,men,200 IM,unknown,yes,,finalize+open_event,,men:200 IM,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,7,Event 6 Men 200 Yard IM Event 7 Women 50 Yard Freestyle,women,50 Free,unknown,yes,,finalize+open_event,,women:50 Free,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,8,"Preliminaries ... (Event 7 Women 50 Yard Freestyle) --- Saldana, Sophia O SR UCSC X25.48",women,50 Free,unknown,yes,,finalize+open_event,,women:50 Free,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,8,Event 8 Men 50 Yard Freestyle,men,50 Free,unknown,yes,,finalize+open_event,,men:50 Free,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,8,"65 Imamura, Hana FR SOKA 32.85 2 Reitan, Kyle N JR UCSC 20.23",none,none,unknown,no,normalize_event_name_any returned None or not in TARGET_EVENTS,finalize_only,,none:none,
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,9,Preliminaries ... (Event 8 Men 50 Yard Freestyle),men,50 Free,unknown,yes,,finalize+open_event,,men:50 Free,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,12,Event 15 Women 100 Yard Butterfly,women,100 Fly,unknown,yes,,finalize+open_event,,women:100 Fly,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,13,"C - Final ... (Event 15 Women 100 Yard Butterfly) 25 Hiner, Isabella FR TMU 1:00.09",women,100 Fly,C,yes,,finalize+open_event,,women:100 Fly,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,13,Event 15 Women 100 Yard Butterfly,women,100 Fly,unknown,yes,,finalize+open_event,,women:100 Fly,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,14,"Preliminaries ... (Event 15 Women 100 Yard Butterfly) 21 Barna, Nico SR FPU 52.60 4",women,100 Fly,unknown,yes,,finalize+open_event,,women:100 Fly,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,14,Event 16 Men 100 Yard Butterfly,men,100 Fly,unknown,yes,,finalize+open_event,,men:100 Fly,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,14,Event 16 Men 100 Yard Butterfly Name Y r School Prelim Time,men,100 Fly,unknown,yes,,finalize+open_event,,men:100 Fly,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,15,Preliminaries ... (Event 16 Men 100 Yard Butterfly),men,100 Fly,unknown,yes,,finalize+open_event,,men:100 Fly,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,15,Event 17 Women 400 Yard IM,women,400 IM,unknown,yes,,finalize+open_event,,women:400 IM,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,16,"C - Final ... (Event 17 Women 400 Yard IM) 9 Ciolli, Malia A SO BU 4:35.94",women,400 IM,C,yes,,finalize+open_event,,women:400 IM,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,16,Event 17 Women 400 Yard IM,women,400 IM,unknown,yes,,finalize+open_event,,women:400 IM,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,17,"Preliminaries ... (Event 17 Women 400 Yard IM) 10 Wolfinger, Kaleb JR UCSC 4:12.12 17",women,400 IM,unknown,yes,,finalize+open_event,,women:400 IM,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,17,Event 18 Men 400 Yard IM,men,400 IM,unknown,yes,,finalize+open_event,,men:400 IM,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,17,Name Y r School Finals Time Event 18 Men 400 Yard IM,men,400 IM,unknown,yes,,finalize+open_event,,men:400 IM,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,18,"Preliminaries ... (Event 18 Men 400 Yard IM) 8 Pezone, Willow JR WEST 1:55.18 22",men,400 IM,unknown,yes,,finalize+open_event,,men:400 IM,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,18,Event 19 Women 200 Yard Freestyle,women,200 Free,unknown,yes,,finalize+open_event,,women:200 Free,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,19,"Preliminaries ... (Event 19 Women 200 Yard Freestyle) 36 Hill, Julia L FR BU 1:59.46",women,200 Free,unknown,yes,,finalize+open_event,,women:200 Free,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,20,"Preliminaries ... (Event 19 Women 200 Yard Freestyle) 12 Fusinati, Michael JR UCSC 1:43.28 15",women,200 Free,unknown,yes,,finalize+open_event,,women:200 Free,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,20,Event 20 Men 200 Yard Freestyle,men,200 Free,unknown,yes,,finalize+open_event,,men:200 Free,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,20,Event 20 Men 200 Yard Freestyle Preliminaries,men,200 Free,unknown,yes,,finalize+open_event,,men:200 Free,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,21,Preliminaries ... (Event 20 Men 200 Yard Freestyle),men,200 Free,unknown,yes,,finalize+open_event,,men:200 Free,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,23,Event 25 Women 500 Yard Freestyle,women,500 Free,unknown,yes,,finalize+open_event,,women:500 Free,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,24,"Preliminaries ... (Event 25 Women 500 Yard Freestyle) 16 McAnear, Grace JR WEST 5:12.78",women,500 Free,unknown,yes,,finalize+open_event,,women:500 Free,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,25,"Preliminaries ... (Event 25 Women 500 Yard Freestyle) --- Dufresne, Honour SO UCSC X5:12.60",women,500 Free,unknown,yes,,finalize+open_event,,women:500 Free,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,25,Event 26 Men 500 Yard Freestyle,men,500 Free,unknown,yes,,finalize+open_event,,men:500 Free,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,26,A - Final ... (Event 26 Men 500 Yard Freestyle) C - Final,men,500 Free,C,yes,,finalize+open_event,,men:500 Free,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,26,Event 26 Men 500 Yard Freestyle,men,500 Free,unknown,yes,,finalize+open_event,,men:500 Free,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,27,"Preliminaries ... (Event 26 Men 500 Yard Freestyle) 19 Rentfrow, Zek R FR ACU 5:01.84",men,500 Free,unknown,yes,,finalize+open_event,,men:500 Free,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,27,Event 27 Women 100 Yard Backstroke,women,100 Back,unknown,yes,,finalize+open_event,,women:100 Back,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,28,"B - Final ... (Event 27 Women 100 Yard Backstroke) 9 Kolsch, Taylor L JR CSEB 57.53",women,100 Back,B,yes,,finalize+open_event,,women:100 Back,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,28,Event 27 Women 100 Yard Backstroke,women,100 Back,unknown,yes,,finalize+open_event,,women:100 Back,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,29,"Preliminaries ... (Event 27 Women 100 Yard Backstroke) 11 Watts, Ronan B FR BU 51.96 16",women,100 Back,unknown,yes,,finalize+open_event,,women:100 Back,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,29,Event 28 Men 100 Yard Backstroke,men,100 Back,unknown,yes,,finalize+open_event,,men:100 Back,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,29,Event 28 Men 100 Yard Backstroke 24.29 50.46,none,none,unknown,no,normalize_event_name_any returned None or not in TARGET_EVENTS,finalize_only,,none:none,
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,30,"Preliminaries ... (Event 28 Men 100 Yard Backstroke) 14 Lambert, Jillian D SR FPU 1:07.48 13",men,100 Back,unknown,yes,,finalize+open_event,,men:100 Back,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,30,Event 29 Women 100 Yard Breaststroke,women,100 Breast,unknown,yes,,finalize+open_event,,women:100 Breast,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,30,Event 29 Women 100 Yard Breaststroke Meet: 1:01.20 2015 Kendall Swanson,women,100 Breast,unknown,yes,,finalize+open_event,,women:100 Breast,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,31,"Preliminaries ... (Event 29 Women 100 Yard Breaststroke) --- van Staden, Simei SO BU X1:09.48",women,100 Breast,unknown,yes,,finalize+open_event,,women:100 Breast,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,31,Event 30 Men 100 Yard Breaststroke,men,100 Breast,unknown,yes,,finalize+open_event,,men:100 Breast,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,32,Event 30 Men 100 Yard Breaststroke,men,100 Breast,unknown,yes,,finalize+open_event,,men:100 Breast,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,33,"C - Final ... (Event 31 Women 200 Yard Butterfly) 21 Reiger, Pierson FR APU 2:14.74",women,200 Fly,C,yes,,finalize+open_event,,women:200 Fly,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,33,Event 31 Women 200 Yard Butterfly,women,200 Fly,unknown,yes,,finalize+open_event,,women:200 Fly,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,34,B - Final ... (Event 32 Men 200 Yard Butterfly) 2 BU A 1:44.16 56,men,200 Fly,B,yes,,finalize+open_event,,men:200 Fly,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,34,Event 32 Men 200 Yard Butterfly,men,200 Fly,unknown,yes,,finalize+open_event,,men:200 Fly,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,35,Event 37 Women 1650 Yard Freestyle,women,1650 Free,unknown,yes,,finalize+open_event,,women:1650 Free,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,36,"(Event 37 Women 1650 Yard Freestyle) 11 Hill, Julia L FR BU 18:08.07 16",women,1650 Free,unknown,yes,,finalize+open_event,,women:1650 Free,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,37,"(Event 37 Women 1650 Yard Freestyle) 23 Buller, Mia JR FPU 18:55.00 2",women,1650 Free,unknown,yes,,finalize+open_event,,women:1650 Free,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,38,(Event 37 Women 1650 Yard Freestyle),women,1650 Free,unknown,yes,,finalize+open_event,,women:1650 Free,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,38,Event 38 Men 1650 Yard Freestyle,men,1650 Free,unknown,yes,,finalize+open_event,,men:1650 Free,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,39,"(Event 38 Men 1650 Yard Freestyle) --- Haiby, Ido SO UCSC X17:01.00",men,1650 Free,unknown,yes,,finalize+open_event,,men:1650 Free,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,39,Event 39 Women 100 Yard Freestyle,women,100 Free,unknown,yes,,finalize+open_event,,women:100 Free,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,40,"C - Final ... (Event 39 Women 100 Yard Freestyle) 22 Mull, Kali A SO CSEB 53.74",women,100 Free,C,yes,,finalize+open_event,,women:100 Free,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,40,Event 39 Women 100 Yard Freestyle,women,100 Free,unknown,yes,,finalize+open_event,,women:100 Free,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,41,"Preliminaries ... (Event 39 Women 100 Yard Freestyle) --- Gidley, Erin SR UCSC X55.85",women,100 Free,unknown,yes,,finalize+open_event,,women:100 Free,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,41,Event 40 Men 100 Yard Freestyle,men,100 Free,unknown,yes,,finalize+open_event,,men:100 Free,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,41,"68 Imamura, Hana FR SOKA 1:16.58",none,none,unknown,no,normalize_event_name_any returned None or not in TARGET_EVENTS,finalize_only,,none:none,
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,42,"C - Final ... (Event 40 Men 100 Yard Freestyle) 20 Smith, Ben A FR BU 47.37",men,100 Free,C,yes,,finalize+open_event,,men:100 Free,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,42,Event 40 Men 100 Yard Freestyle,men,100 Free,unknown,yes,,finalize+open_event,,men:100 Free,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,43,"Preliminaries ... (Event 40 Men 100 Yard Freestyle) 20 Edwards, Madi FR WEST 2:12.67 5",men,100 Free,unknown,yes,,finalize+open_event,,men:100 Free,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,43,Event 41 Women 200 Yard Backstroke,women,200 Back,unknown,yes,,finalize+open_event,,women:200 Back,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,43,Event 41 Women 200 Yard Backstroke Name Y r School Prelim Time,women,200 Back,unknown,yes,,finalize+open_event,,women:200 Back,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,44,"Preliminaries ... (Event 41 Women 200 Yard Backstroke) 12 Loughboro, Michael SR TMU 1:58.14 15",women,200 Back,unknown,yes,,finalize+open_event,,women:200 Back,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,44,Event 42 Men 200 Yard Backstroke 26.59 54.93 1:23.98 1:53.21,men,200 Back,unknown,yes,,finalize+open_event,,men:200 Back,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,45,Event 43 Women 200 Yard Breaststroke Event 43 Women 200 Yard Breaststroke,women,200 Breast,unknown,yes,,finalize+open_event,,women:200 Breast,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,46,"Preliminaries ... (Event 43 Women 200 Yard Breaststroke) 14 Shalhoub, Mark V SR BU 2:14.09 13",women,200 Breast,unknown,yes,,finalize+open_event,,women:200 Breast,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,46,Event 44 Men 200 Yard Breaststroke,men,200 Breast,unknown,yes,,finalize+open_event,,men:200 Breast,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,46,Event 44 Men 200 Yard Breaststroke 28.68 1:00.27 1:32.99 2:05.97,men,200 Breast,unknown,yes,,finalize+open_event,,men:200 Breast,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,47,Preliminaries ... (Event 44 Men 200 Yard Breaststroke) 10 FPU A 3:37.32 34,men,200 Breast,unknown,yes,,finalize+open_event,,men:200 Breast,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,48,Event 216 Men 100 Yard Butterfly Time Trial,men,100 Fly,unknown,yes,,finalize+open_event,,men:100 Fly,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,48,Event 229 Women 100 Yard Breaststroke Time Trial,women,100 Breast,unknown,yes,,finalize+open_event,,women:100 Breast,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,49,Event 440 Men 100 Yard Freestyle Time Trial 21.30 43.63 1:05.47 1:26.88,men,100 Free,unknown,yes,,finalize+open_event,,men:100 Free,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,49,Meet: 43.83 2000 Nick Folker Event 540 Men 100 Yard Freestyle Time Trial,men,100 Free,unknown,yes,,finalize+open_event,,men:100 Free,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,49,Event 508 Men 50 Yard Freestyle Time Trial 26.98 56.03,men,50 Free,unknown,yes,,finalize+open_event,,men:50 Free,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,49,Meet: 19.99 2000 Nick Folker Event 553 Women 50 Yard Butterfly Time Trial,none,none,unknown,no,normalize_event_name_any returned None or not in TARGET_EVENTS,finalize_only,,none:none,
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,49,Event 528 Men 100 Yard Backstroke Time Trial,men,100 Back,unknown,yes,,finalize+open_event,,men:100 Back,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,49,Meet: 48.56 2003 Felix Sutanto Event 604 Men 100 Yard IM Time Trial,none,none,unknown,no,normalize_event_name_any returned None or not in TARGET_EVENTS,finalize_only,,none:none,
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,49,Event 532 Men 200 Yard Butterfly Time Trial,men,200 Fly,unknown,yes,,finalize+open_event,,men:200 Fly,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,49,Meet: 1:47.22 2013 Dane Stassi Event 607 Women 50 Yard Freestyle Time Trial,women,50 Free,unknown,yes,,finalize+open_event,,women:50 Free,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,50,Event 608 Men 50 Yard Freestyle Time Trial,men,50 Free,unknown,yes,,finalize+open_event,,men:50 Free,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,50,Event 609 Women 50 Yard Breaststroke Time Trial,none,none,unknown,no,normalize_event_name_any returned None or not in TARGET_EVENTS,finalize_only,,none:none,
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,50,Event 610 Men 50 Yard Breaststroke Time Trial Event 630 Men 100 Yard Breaststroke Time Trial,men,100 Breast,unknown,yes,,finalize+open_event,,men:100 Breast,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,50,Event 619 Women 200 Yard Freestyle Time Trial 27.23 57.92,women,200 Free,unknown,yes,,finalize+open_event,,women:200 Free,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,50,Event 620 Men 200 Yard Freestyle Time Trial,men,200 Free,unknown,yes,,finalize+open_event,,men:200 Free,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,50,"--- Bansagi, Balazs SO ACU DQ Event 707 Women 50 Yard Freestyle Time Trial",women,50 Free,unknown,yes,,finalize+open_event,,women:50 Free,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,50,"Event 627 Women 100 Yard Backstroke Time Trial 7 Demitropoulos, Avery M OUAZ 26.54",women,100 Back,unknown,yes,,finalize+open_event,,women:100 Back,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,50,Event 708 Men 50 Yard Freestyle Time Trial,men,50 Free,unknown,yes,,finalize+open_event,,men:50 Free,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,51,Event 719 Women 200 Yard Freestyle Time Trial Event 829 Women 100 Yard Breaststroke Time Trial,women,100 Free,unknown,yes,,finalize+open_event,,women:100 Free,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,51,Event 720 Men 200 Yard Freestyle Time Trial Event 830 Men 100 Yard Breaststroke Time Trial,men,100 Free,unknown,yes,,finalize+open_event,,men:100 Free,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,51,Event 807 Women 50 Yard Freestyle Time Trial Event 848 Men 50 Yard Butterfly Time Trial,women,50 Free,unknown,yes,,finalize+open_event,,women:50 Free,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,51,Event 850 Men 50 Yard Breaststroke Time Trial,none,none,unknown,no,normalize_event_name_any returned None or not in TARGET_EVENTS,finalize_only,,none:none,
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,51,Event 808 Men 50 Yard Freestyle Time Trial Name Y r School Finals Time,men,50 Free,unknown,yes,,finalize+open_event,,men:50 Free,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,51,Event 907 Women 50 Yard Freestyle Time Trial,women,50 Free,unknown,yes,,finalize+open_event,,women:50 Free,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,51,Event 815 Women 100 Yard Butterfly Time Trial Name Y r School Finals Time,women,100 Fly,unknown,yes,,finalize+open_event,,women:100 Fly,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,51,Event 908 Men 50 Yard Freestyle Time Trial,men,50 Free,unknown,yes,,finalize+open_event,,men:50 Free,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,51,Event 816 Men 100 Yard Butterfly Time Trial Name Y r School Finals Time,men,100 Fly,unknown,yes,,finalize+open_event,,men:100 Fly,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,51,Event 819 Women 200 Yard Freestyle Time Trial Team R elay Finals Time,women,200 Free,unknown,yes,,finalize+open_event,,women:200 Free,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,51,Event 828 Men 100 Yard Backstroke Time Trial Event 940 Men 100 Yard Freestyle Time Trial,men,100 Free,unknown,yes,,finalize+open_event,,men:100 Free,session=prelims
-pcsc_2026,PCSC,PCSC 2026 Results.pdf,52,Event 947 Men 50 Yard Butterfly Time Trial,none,none,unknown,no,normalize_event_name_any returned None or not in TARGET_EVENTS,finalize_only,,none:none,
+wac_2025,WAC,WAC 2025 RESULTS.pdf,1,"r:+9.94 26.10 27.27 23.85 22.18 3) r:0.20 Lanting, Nicholas SR 4) r:0.34 Imig, Nicholas",none,none,unknown,no,normalize_event_name_any returned None or not in TARGET_EVENTS,finalize_only,,none:none,
+wac_2025,WAC,WAC 2025 RESULTS.pdf,5,Event 10 Women 500 Yard Freestyle,women,500 Free,unknown,yes,,finalize+open_event,,women:500 Free,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,6,Event 10 Women 500 Yard Freestyle,women,500 Free,unknown,yes,,finalize+open_event,,women:500 Free,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,7,Preliminaries ... (Event 10 Women 500 Yard Freestyle),women,500 Free,unknown,yes,,finalize+open_event,,women:500 Free,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,7,Event 11 Men 500 Yard Freestyle,men,500 Free,unknown,yes,,finalize+open_event,,men:500 Free,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,8,B - Final ... (Event 11 Men 500 Yard Freestyle),men,500 Free,B,yes,,finalize+open_event,,men:500 Free,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,8,Event 11 Men 500 Yard Freestyle,men,500 Free,unknown,yes,,finalize+open_event,,men:500 Free,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,9,"Preliminaries ... (Event 11 Men 500 Yard Freestyle) 25 Kennedy, Garrett SO AFA 4:38.45",men,500 Free,unknown,yes,,finalize+open_event,,men:500 Free,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,9,Event 12 Women 200 Yard IM,women,200 IM,unknown,yes,,finalize+open_event,,women:200 IM,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,10,"A - Final ... (Event 12 Women 200 Yard IM) 3 Cabrera, Silvana 5Y UI 2:02.07 q",women,200 IM,A,yes,,finalize+open_event,,women:200 IM,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,10,Event 12 Women 200 Yard IM,women,200 IM,unknown,yes,,finalize+open_event,,women:200 IM,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,11,"Preliminaries ... (Event 12 Women 200 Yard IM) --- Gonzalez, Alexia FR UTRGV DQ 2:34.40",women,200 IM,unknown,yes,,finalize+open_event,,women:200 IM,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,11,Event 13 Men 200 Yard IM,men,200 IM,unknown,yes,,finalize+open_event,,men:200 IM,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,12,"C - Final ... (Event 13 Men 200 Yard IM) 20 Campbell, Colin SO GCU 1:50.10 q",none,none,C,no,normalize_event_name_any returned None or not in TARGET_EVENTS,finalize_only,,none:none,
+wac_2025,WAC,WAC 2025 RESULTS.pdf,12,Event 13 Men 200 Yard IM,men,200 IM,unknown,yes,,finalize+open_event,,men:200 IM,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,12,Event 14 Women 50 Yard Freestyle,women,50 Free,unknown,yes,,finalize+open_event,,women:50 Free,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,13,"A - Final ... (Event 14 Women 50 Yard Freestyle) 5 Koc, Naya JR CBU 23.25 q",women,50 Free,A,yes,,finalize+open_event,,women:50 Free,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,13,Event 14 Women 50 Yard Freestyle,women,50 Free,unknown,yes,,finalize+open_event,,women:50 Free,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,14,"Preliminaries ... (Event 14 Women 50 Yard Freestyle) --- Qualman, Grace SO UI X24.09",women,50 Free,unknown,yes,,finalize+open_event,,women:50 Free,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,14,Event 15 Men 50 Yard Freestyle,men,50 Free,unknown,yes,,finalize+open_event,,men:50 Free,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,15,A - Final ... (Event 15 Men 50 Yard Freestyle),men,50 Free,A,yes,,finalize+open_event,,men:50 Free,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,15,Event 15 Men 50 Yard Freestyle,men,50 Free,unknown,yes,,finalize+open_event,,men:50 Free,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,15,"*6 Imig, Nicholas SU 20.00 q",none,none,unknown,no,normalize_event_name_any returned None or not in TARGET_EVENTS,finalize_only,,none:none,
+wac_2025,WAC,WAC 2025 RESULTS.pdf,16,"Preliminaries ... (Event 15 Men 50 Yard Freestyle) 2 Jiminez-Mestes, Gael JR CBU 412.35# 17",men,50 Free,unknown,yes,,finalize+open_event,,men:50 Free,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,16,Event 17 Women 100 Yard Butterfly,women,100 Fly,unknown,yes,,finalize+open_event,,women:100 Fly,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,17,"A - Final ... (Event 17 Women 100 Yard Butterfly) 2 Martinez, Paula JR GCU 53.90 q",women,100 Fly,A,yes,,finalize+open_event,,women:100 Fly,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,17,Event 17 Women 100 Yard Butterfly,women,100 Fly,unknown,yes,,finalize+open_event,,women:100 Fly,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,18,"Preliminaries ... (Event 17 Women 100 Yard Butterfly) 2 Potgieter, Wikus SO UNLV 46.59 B",women,100 Fly,unknown,yes,,finalize+open_event,,women:100 Fly,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,18,Event 18 Men 100 Yard Butterfly,men,100 Fly,unknown,yes,,finalize+open_event,,men:100 Fly,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,19,Event 18 Men 100 Yard Butterfly,men,100 Fly,unknown,yes,,finalize+open_event,,men:100 Fly,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,20,"B - Final ... (Event 19 Women 400 Yard IM) 2 Macsok, Fruzsina SR GCU 4:22.97 q",women,400 IM,B,yes,,finalize+open_event,,women:400 IM,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,20,Event 19 Women 400 Yard IM,women,400 IM,unknown,yes,,finalize+open_event,,women:400 IM,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,21,Preliminaries ... (Event 19 Women 400 Yard IM) B - Final,women,400 IM,B,yes,,finalize+open_event,,women:400 IM,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,21,Event 20 Men 400 Yard IM,men,400 IM,unknown,yes,,finalize+open_event,,men:400 IM,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,21,Event 20 Men 400 Yard IM,men,400 IM,unknown,yes,,finalize+open_event,,men:400 IM,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,22,"Preliminaries ... (Event 20 Men 400 Yard IM) --- Koza, Timothy JR GCU X4:01.67",men,400 IM,unknown,yes,,finalize+open_event,,men:400 IM,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,22,Event 21 Women 200 Yard Freestyle,women,200 Free,unknown,yes,,finalize+open_event,,women:200 Free,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,23,"C - Final ... (Event 21 Women 200 Yard Freestyle) 18 Easterling, Avery FR CBU 1:51.61 q",women,200 Free,C,yes,,finalize+open_event,,women:200 Free,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,23,Event 21 Women 200 Yard Freestyle,women,200 Free,unknown,yes,,finalize+open_event,,women:200 Free,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,24,Event 22 Men 200 Yard Freestyle,men,200 Free,unknown,yes,,finalize+open_event,,men:200 Free,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,25,"Preliminaries ... (Event 22 Men 200 Yard Freestyle) 16 Crawford, Courtney FR UI 1:04.55 1",men,200 Free,unknown,yes,,finalize+open_event,,men:200 Free,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,25,Event 23 Women 100 Yard Breaststroke,women,100 Breast,unknown,yes,,finalize+open_event,,women:100 Breast,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,26,Preliminaries ... (Event 23 Women 100 Yard Breaststroke),women,100 Breast,unknown,yes,,finalize+open_event,,women:100 Breast,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,26,Event 24 Men 100 Yard Breaststroke,men,100 Breast,unknown,yes,,finalize+open_event,,men:100 Breast,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,27,"C - Final ... (Event 24 Men 100 Yard Breaststroke) --- Bjornstad, Nathaniel CBU X54.83",men,100 Breast,C,yes,,finalize+open_event,,men:100 Breast,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,27,Event 24 Men 100 Yard Breaststroke,men,100 Breast,unknown,yes,,finalize+open_event,,men:100 Breast,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,27,Event 25 Women 100 Yard Backstroke,women,100 Back,unknown,yes,,finalize+open_event,,women:100 Back,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,28,"B - Final ... (Event 25 Women 100 Yard Backstroke) 12 Connors, Kathryn JR CBU 56.02 q",women,100 Back,B,yes,,finalize+open_event,,women:100 Back,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,28,Event 25 Women 100 Yard Backstroke,women,100 Back,unknown,yes,,finalize+open_event,,women:100 Back,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,29,"Preliminaries ... (Event 25 Women 100 Yard Backstroke) 16 Kennedy, Garrett SO AFA 49.08 1",women,100 Back,unknown,yes,,finalize+open_event,,women:100 Back,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,29,Event 26 Men 100 Yard Backstroke,men,100 Back,unknown,yes,,finalize+open_event,,men:100 Back,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,30,Preliminaries ... (Event 26 Men 100 Yard Backstroke),men,100 Back,unknown,yes,,finalize+open_event,,men:100 Back,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,31,Event 30 Women 1650 Yard Freestyle,women,1650 Free,unknown,yes,,finalize+open_event,,women:1650 Free,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,32,"(Event 30 Women 1650 Yard Freestyle) 10 Mason, Marie FR UI 17:13.03 7",women,1650 Free,unknown,yes,,finalize+open_event,,women:1650 Free,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,33,"(Event 30 Women 1650 Yard Freestyle) --- Rahn, Bethany JR UI X17:18.28",women,1650 Free,unknown,yes,,finalize+open_event,,women:1650 Free,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,33,Event 31 Men 1650 Yard Freestyle,men,1650 Free,unknown,yes,,finalize+open_event,,men:1650 Free,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,34,"(Event 31 Men 1650 Yard Freestyle) 9 Manning, Caleb FR UNLV 15:36.22 9",men,1650 Free,unknown,yes,,finalize+open_event,,men:1650 Free,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,35,"(Event 31 Men 1650 Yard Freestyle) 21 Johansen, Theodore JR SU 16:16.40",men,1650 Free,unknown,yes,,finalize+open_event,,men:1650 Free,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,35,Event 32 Women 200 Yard Backstroke,women,200 Back,unknown,yes,,finalize+open_event,,women:200 Back,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,36,"B - Final ... (Event 32 Women 200 Yard Backstroke) 13 Hazan, Reese SR UNC 2:02.24 q",women,200 Back,B,yes,,finalize+open_event,,women:200 Back,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,36,Event 32 Women 200 Yard Backstroke,women,200 Back,unknown,yes,,finalize+open_event,,women:200 Back,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,37,Event 33 Men 200 Yard Backstroke Event 33 Men 200 Yard Backstroke,men,200 Back,unknown,yes,,finalize+open_event,,men:200 Back,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,38,Event 34 Women 100 Yard Freestyle,women,100 Free,unknown,yes,,finalize+open_event,,women:100 Free,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,39,"Preliminaries ... (Event 34 Women 100 Yard Freestyle) --- Klatt, Katarina FR NAU X52.65",women,100 Free,unknown,yes,,finalize+open_event,,women:100 Free,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,39,r:+0.67 26.42 28.14 Event 35 Men 100 Yard Freestyle,men,100 Free,unknown,yes,,finalize+open_event,,men:100 Free,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,40,"B - Final ... (Event 35 Men 100 Yard Freestyle) 9 Wanat, Grzegorz JR GCU 44.18 q",men,100 Free,B,yes,,finalize+open_event,,men:100 Free,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,40,Event 35 Men 100 Yard Freestyle,men,100 Free,unknown,yes,,finalize+open_event,,men:100 Free,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,41,"Preliminaries ... (Event 35 Men 100 Yard Freestyle) 20 Hafer, Kaitlyn FR UI 2:20.62",men,100 Free,unknown,yes,,finalize+open_event,,men:100 Free,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,41,Event 36 Women 200 Yard Breaststroke,women,200 Breast,unknown,yes,,finalize+open_event,,women:200 Breast,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,42,Preliminaries ... (Event 36 Women 200 Yard Breaststroke) B - Final,women,200 Breast,B,yes,,finalize+open_event,,women:200 Breast,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,42,Event 37 Men 200 Yard Breaststroke,men,200 Breast,unknown,yes,,finalize+open_event,,men:200 Breast,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,42,Event 37 Men 200 Yard Breaststroke,men,200 Breast,unknown,yes,,finalize+open_event,,men:200 Breast,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,43,Preliminaries ... (Event 37 Men 200 Yard Breaststroke),men,200 Breast,unknown,yes,,finalize+open_event,,men:200 Breast,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,43,Event 38 Women 200 Yard Butterfly,women,200 Fly,unknown,yes,,finalize+open_event,,women:200 Fly,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,44,"C - Final ... (Event 38 Women 200 Yard Butterfly) 21 Easterling, Avery FR CBU 2:05.48 q",women,200 Fly,C,yes,,finalize+open_event,,women:200 Fly,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,44,Event 38 Women 200 Yard Butterfly,women,200 Fly,unknown,yes,,finalize+open_event,,women:200 Fly,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,44,Event 39 Men 200 Yard Butterfly,men,200 Fly,unknown,yes,,finalize+open_event,,men:200 Fly,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,45,"B - Final ... (Event 39 Men 200 Yard Butterfly) 14 Colombo, Lucas JR CBU 1:51.18 q",men,200 Fly,B,yes,,finalize+open_event,,men:200 Fly,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,45,Event 39 Men 200 Yard Butterfly Name Y r School Finals Score,men,200 Fly,unknown,yes,,finalize+open_event,,men:200 Fly,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,47,Event 112 Women 200 Yard IM Time Trial Event 123 Women 100 Yard Breaststroke Time Trial,women,100 Breast,unknown,yes,,finalize+open_event,,women:100 Breast,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,47,Event 114 Women 50 Yard Freestyle Time Trial,women,50 Free,unknown,yes,,finalize+open_event,,women:50 Free,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,47,WAC Champs: 22.30 R 2/24/2011 Amber Boucher Event 124 Men 100 Yard Breaststroke Time Trial,men,100 Breast,unknown,yes,,finalize+open_event,,men:100 Breast,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,47,Event 117 Women 100 Yard Butterfly Time Trial,women,100 Fly,unknown,yes,,finalize+open_event,,women:100 Fly,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,47,WAC Champs: 51.89 R 2/25/1999 Martina Moravcova Event 125 Women 100 Yard Backstroke Time Trial,women,100 Back,unknown,yes,,finalize+open_event,,women:100 Back,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,47,Event 118 Men 100 Yard Butterfly Time Trial,men,100 Fly,unknown,yes,,finalize+open_event,,men:100 Fly,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,48,Event 134 Women 100 Yard Freestyle Time Trial Event 164 Men 50 Yard Backstroke Time Trial,women,50 Free,unknown,yes,,finalize+open_event,,women:50 Free,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,48,Event 165 Women 50 Yard Breaststroke Time Trial,none,none,unknown,no,normalize_event_name_any returned None or not in TARGET_EVENTS,finalize_only,,none:none,
+wac_2025,WAC,WAC 2025 RESULTS.pdf,48,Event 135 Men 100 Yard Freestyle Time Trial r:+0.63,men,100 Free,unknown,yes,,finalize+open_event,,men:100 Free,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,48,Name Y r School Finals Time Event 167 Women 50 Yard Butterfly Time Trial,none,none,unknown,no,normalize_event_name_any returned None or not in TARGET_EVENTS,finalize_only,,none:none,
+wac_2025,WAC,WAC 2025 RESULTS.pdf,48,Event 168 Men 50 Yard Butterfly Time Trial,none,none,unknown,no,normalize_event_name_any returned None or not in TARGET_EVENTS,finalize_only,,none:none,
+wac_2025,WAC,WAC 2025 RESULTS.pdf,48,Event 138 Women 200 Yard Butterfly Time Trial,women,200 Fly,unknown,yes,,finalize+open_event,,women:200 Fly,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,48,WAC: 1:54.92 # 3/23/2002 Georgina Lee Event 169 Women 100 Yard IM Time Trial,none,none,unknown,no,normalize_event_name_any returned None or not in TARGET_EVENTS,finalize_only,,none:none,
+wac_2025,WAC,WAC 2025 RESULTS.pdf,48,"Event 163 Women 50 Yard Backstroke Time Trial 4 Hicks, Lauren SR GCU 59.93",none,none,unknown,no,normalize_event_name_any returned None or not in TARGET_EVENTS,finalize_only,,none:none,
+wac_2025,WAC,WAC 2025 RESULTS.pdf,49,Event 170 Men 100 Yard IM Time Trial Event 266 Men 50 Yard Breaststroke Time Trial,none,none,unknown,no,normalize_event_name_any returned None or not in TARGET_EVENTS,finalize_only,,none:none,
+wac_2025,WAC,WAC 2025 RESULTS.pdf,49,Event 267 Women 50 Yard Butterfly Time Trial,none,none,unknown,no,normalize_event_name_any returned None or not in TARGET_EVENTS,finalize_only,,none:none,
+wac_2025,WAC,WAC 2025 RESULTS.pdf,49,r:+0.70 23.86 27.69 Event 269 Women 100 Yard IM Time Trial,none,none,unknown,no,normalize_event_name_any returned None or not in TARGET_EVENTS,finalize_only,,none:none,
+wac_2025,WAC,WAC 2025 RESULTS.pdf,49,Event 312 Women 200 Yard IM Time Trial,women,200 IM,unknown,yes,,finalize+open_event,,women:200 IM,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,49,Event 214 Women 50 Yard Freestyle Swim-off,women,50 Free,unknown,yes,,finalize+open_event,,women:50 Free,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,49,Event 318 Men 100 Yard Butterfly Time Trial,men,100 Fly,unknown,yes,,finalize+open_event,,men:100 Fly,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,49,Event 223 Women 100 Yard Breaststroke Time Trial,women,100 Breast,unknown,yes,,finalize+open_event,,women:100 Breast,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,49,Event 234 Women 100 Yard Freestyle Time Trial,women,100 Free,unknown,yes,,finalize+open_event,,women:100 Free,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,49,Event 415 Men 50 Yard Freestyle Time Trial,men,50 Free,unknown,yes,,finalize+open_event,,men:50 Free,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,49,Event 263 Women 50 Yard Backstroke Time Trial r:+0.67,none,none,unknown,no,normalize_event_name_any returned None or not in TARGET_EVENTS,finalize_only,,none:none,
+wac_2025,WAC,WAC 2025 RESULTS.pdf,49,"Name Y r School Finals Time 2 Imig, Nicholas SU 20.24",none,none,unknown,no,normalize_event_name_any returned None or not in TARGET_EVENTS,finalize_only,,none:none,
+wac_2025,WAC,WAC 2025 RESULTS.pdf,49,"Event 265 Women 50 Yard Breaststroke Time Trial 4 Kim, Minsong FR SU 21.34",none,none,unknown,no,normalize_event_name_any returned None or not in TARGET_EVENTS,finalize_only,,none:none,
+wac_2025,WAC,WAC 2025 RESULTS.pdf,50,Event 469 Women 100 Yard IM Time Trial Event 632 Women 200 Yard Backstroke Time Trial,women,200 Back,unknown,yes,,finalize+open_event,,women:200 Back,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,50,Event 518 Men 100 Yard Butterfly Time Trial,men,100 Fly,unknown,yes,,finalize+open_event,,men:100 Fly,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,50,Event 523 Women 100 Yard Breaststroke Time Trial,women,100 Breast,unknown,yes,,finalize+open_event,,women:100 Breast,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,50,Name Y r School Finals Time Event 734 Women 100 Yard Freestyle Time Trial,women,100 Free,unknown,yes,,finalize+open_event,,women:100 Free,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,50,Event 526 Men 100 Yard Backstroke Time Trial,men,100 Back,unknown,yes,,finalize+open_event,,men:100 Back,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,50,Name Y r School Finals Time Event 737 Men 200 Yard Breaststroke Time Trial,men,200 Breast,unknown,yes,,finalize+open_event,,men:200 Breast,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,50,Event 565 Women 50 Yard Breaststroke Time Trial,none,none,unknown,no,normalize_event_name_any returned None or not in TARGET_EVENTS,finalize_only,,none:none,
+wac_2025,WAC,WAC 2025 RESULTS.pdf,50,Event 623 Men 100 Yard Breaststroke Time Trial r:+0.96 27.45 30.99 32.24 32.78,men,100 Breast,unknown,yes,,finalize+open_event,,men:100 Breast,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,50,Event 738 Women 200 Yard Butterfly Time Trial,women,200 Fly,unknown,yes,,finalize+open_event,,women:200 Fly,session=prelims
+wac_2025,WAC,WAC 2025 RESULTS.pdf,50,Event 769 Women 100 Yard IM Time Trial,none,none,unknown,no,normalize_event_name_any returned None or not in TARGET_EVENTS,finalize_only,,none:none,
+wac_2025,WAC,WAC 2025 RESULTS.pdf,51,Event 770 Men 100 Yard IM Time Trial,none,none,unknown,no,normalize_event_name_any returned None or not in TARGET_EVENTS,finalize_only,,none:none,

@@ -1262,14 +1262,21 @@ def merge_bundle(
                 pass_label   = "both passes" if event_name in targeted else "first pass"
 
                 # Classify: data ceiling vs parser miss.
-                # Use consecutive_depth (the unbroken run from place 1) as the
-                # indicator of actual field size.  Raw deepest_place can be
-                # inflated by spurious entries from adjacent events picked up by
-                # the loose pass-2 scan.  If the consecutive field from place 1
-                # never reaches the target anchor depth, the meet simply didn't
-                # have enough entrants — regardless of whether a B-Final header
-                # was seen.
-                is_data_ceiling = best.consecutive_depth < _target_anchor
+                # Primary indicator: consecutive_depth (unbroken run from place
+                # 1) is the most reliable measure of actual field size, since
+                # raw deepest_place can be inflated by spurious entries from
+                # adjacent events (multi-column bleed in pass-2 loose scan).
+                #
+                # Override: if the raw field metrics — deepest_place OR
+                # swimmer_count — clearly reach the target anchor, then the
+                # consecutive run was broken by layout, not by a thin field.
+                # In that case the miss is a parser miss, not a data ceiling.
+                consecutive_ceiling  = best.consecutive_depth < _target_anchor
+                field_clearly_deep   = (
+                    best.deepest_place  >= _target_anchor
+                    or best.swimmer_count >= _target_anchor
+                )
+                is_data_ceiling = consecutive_ceiling and not field_clearly_deep
                 if is_data_ceiling:
                     data_ceiling_keys.add(_depth_key)
 
@@ -1565,10 +1572,17 @@ def run(input_dir: Path, output_dir: Path, bundle_filter: list[str] | None = Non
                 sc    = depth.get("swimmer_count", 0)
                 dp    = depth.get("deepest_place", 0)
                 cd    = depth.get("consecutive_depth", 0)
-                # Anchor depth is achievable if the consecutive unbroken run
-                # from place 1 reaches the target.  Spurious high-place entries
-                # from loose scans do not count — they may belong to adjacent events.
-                achievable = "yes" if cd >= target_anchor else ("no" if cd > 0 else "na")
+                # Achievable: consecutive_depth is the primary indicator but
+                # if deepest_place or swimmer_count clearly reaches the target,
+                # the field is deep enough — consecutive_depth being low means
+                # layout bleed, not a thin field.
+                field_deep = dp >= target_anchor or sc >= target_anchor
+                if cd >= target_anchor or field_deep:
+                    achievable = "yes"
+                elif cd > 0 or sc > 0:
+                    achievable = "no"
+                else:
+                    achievable = "na"
 
                 if key in output_index:
                     row_out = output_index[key]

@@ -1048,6 +1048,10 @@ def extract_pages_targeted(pdf_path: str, mode: str) -> tuple[list[str], list[di
 CONFERENCE_PARSE_MODE: dict[str, str] = {
     "ODAC":    "multi_column_2",
     "Patriot": "multi_column_3",
+    "MPSF":    "multi_column_2",
+    "PCSC":    "multi_column_2",
+    # WAC: mixed single/multi-column layout — not safe for uniform multi_column_2;
+    # remains on "normal" until a per-page adaptive mode is implemented.
     # All other conferences default to "normal"
 }
 

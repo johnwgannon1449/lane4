@@ -1,29 +1,29 @@
 Bundle_ID,Conference,Year,Gender,Event_Name,Coverage_Status,Detected,Source_Type,Notes,Swimmer_Count,Deepest_Place_Recovered,Target_Anchor_Place,Anchor_Depth_Achievable_YN
-pcsc_2026,PCSC,2026,men,50 Free,captured,yes,prelim_fallback,,57,64,16,yes
-pcsc_2026,PCSC,2026,men,100 Free,captured,yes,prelim_fallback,,28,37,16,yes
-pcsc_2026,PCSC,2026,men,200 Free,missing_data_ceiling,no,missing,"data_ceiling — consecutive_depth: 11, swimmers: 13, target: 16",13,23,16,no
-pcsc_2026,PCSC,2026,men,500 Free,missing_data_ceiling,no,missing,"data_ceiling — consecutive_depth: 5, swimmers: 21, target: 16",21,42,16,no
-pcsc_2026,PCSC,2026,men,1000 Free,missing_optional_1000,no,not_required,optional_not_required,13,36,16,na
-pcsc_2026,PCSC,2026,men,1650 Free,missing_data_ceiling,no,missing,"data_ceiling — consecutive_depth: 7, swimmers: 7, target: 16",7,7,16,no
-pcsc_2026,PCSC,2026,men,100 Back,captured,yes,prelim_fallback,,25,35,16,yes
-pcsc_2026,PCSC,2026,men,200 Back,missing_data_ceiling,no,missing,"data_ceiling — consecutive_depth: 11, swimmers: 15, target: 16",15,27,16,no
-pcsc_2026,PCSC,2026,men,100 Breast,captured,yes,prelim_fallback,,38,40,16,yes
-pcsc_2026,PCSC,2026,men,200 Breast,missing_data_ceiling,no,missing,"data_ceiling — consecutive_depth: 13, swimmers: 16, target: 16",16,28,16,no
-pcsc_2026,PCSC,2026,men,100 Fly,captured,yes,prelim_fallback,,23,24,16,yes
-pcsc_2026,PCSC,2026,men,200 Fly,captured,yes,prelim_fallback,,21,29,16,yes
-pcsc_2026,PCSC,2026,men,200 IM,captured,yes,prelim_fallback,,40,47,16,yes
-pcsc_2026,PCSC,2026,men,400 IM,captured,yes,prelim_fallback,,25,27,16,yes
-pcsc_2026,PCSC,2026,women,50 Free,missing_data_ceiling,no,missing,"data_ceiling — consecutive_depth: 4, swimmers: 22, target: 16",22,26,16,no
-pcsc_2026,PCSC,2026,women,100 Free,captured,yes,prelim_fallback,,39,56,16,yes
-pcsc_2026,PCSC,2026,women,200 Free,captured,yes,prelim_fallback,,35,35,16,yes
-pcsc_2026,PCSC,2026,women,500 Free,missing_data_ceiling,no,missing,"data_ceiling — consecutive_depth: 2, swimmers: 28, target: 16",28,39,16,no
-pcsc_2026,PCSC,2026,women,1000 Free,missing_optional_1000,no,not_required,optional_not_required,7,34,16,na
-pcsc_2026,PCSC,2026,women,1650 Free,missing_data_ceiling,no,missing,"data_ceiling — consecutive_depth: 8, swimmers: 14, target: 16",14,22,16,no
-pcsc_2026,PCSC,2026,women,100 Back,captured,yes,prelim_fallback,,19,41,16,yes
-pcsc_2026,PCSC,2026,women,200 Back,captured,yes,prelim_fallback,,22,30,16,yes
-pcsc_2026,PCSC,2026,women,100 Breast,captured,yes,prelim_fallback,,19,31,16,yes
-pcsc_2026,PCSC,2026,women,200 Breast,captured,yes,prelim_fallback,,33,36,16,yes
-pcsc_2026,PCSC,2026,women,100 Fly,captured,yes,prelim_fallback,,29,29,16,yes
-pcsc_2026,PCSC,2026,women,200 Fly,captured,yes,prelim_fallback,,26,29,16,yes
-pcsc_2026,PCSC,2026,women,200 IM,captured,yes,prelim_fallback,,24,28,16,yes
-pcsc_2026,PCSC,2026,women,400 IM,captured,yes,prelim_fallback,,33,36,16,yes
+wac_2025,WAC,2025,men,50 Free,missing_true_parser_miss,no,missing,event_detected_but_incomplete,24,49,16,yes
+wac_2025,WAC,2025,men,100 Free,captured,yes,prelim_fallback,,33,43,16,yes
+wac_2025,WAC,2025,men,200 Free,captured,yes,prelim_fallback,,24,24,16,yes
+wac_2025,WAC,2025,men,500 Free,captured,yes,prelim_fallback,,27,31,16,yes
+wac_2025,WAC,2025,men,1000 Free,missing_optional_1000,no,not_required,optional_not_required,0,0,16,na
+wac_2025,WAC,2025,men,1650 Free,captured,yes,prelim_fallback,,15,28,16,yes
+wac_2025,WAC,2025,men,100 Back,captured,yes,prelim_fallback,,29,47,16,yes
+wac_2025,WAC,2025,men,200 Back,captured,yes,prelim_fallback,,24,25,16,yes
+wac_2025,WAC,2025,men,100 Breast,captured,yes,prelim_fallback,,32,53,16,yes
+wac_2025,WAC,2025,men,200 Breast,missing_true_parser_miss,no,missing,event_detected_but_incomplete,10,24,16,yes
+wac_2025,WAC,2025,men,100 Fly,missing_true_parser_miss,no,missing,event_detected_but_incomplete,26,46,16,yes
+wac_2025,WAC,2025,men,200 Fly,missing_true_parser_miss,no,missing,event_detected_but_incomplete,14,20,16,yes
+wac_2025,WAC,2025,men,200 IM,captured,yes,prelim_fallback,,35,44,16,yes
+wac_2025,WAC,2025,men,400 IM,captured,yes,prelim_fallback,,11,18,16,yes
+wac_2025,WAC,2025,women,50 Free,captured,yes,prelim_fallback,,41,51,16,yes
+wac_2025,WAC,2025,women,100 Free,captured,yes,prelim_fallback,,35,49,16,yes
+wac_2025,WAC,2025,women,200 Free,captured,yes,prelim_fallback,,23,24,16,yes
+wac_2025,WAC,2025,women,500 Free,captured,yes,prelim_fallback,,23,24,16,yes
+wac_2025,WAC,2025,women,1000 Free,missing_optional_1000,no,not_required,optional_not_required,0,0,16,na
+wac_2025,WAC,2025,women,1650 Free,captured,yes,prelim_fallback,,17,33,16,yes
+wac_2025,WAC,2025,women,100 Back,missing_true_parser_miss,no,missing,event_detected_but_incomplete,22,53,16,yes
+wac_2025,WAC,2025,women,200 Back,missing_true_parser_miss,no,missing,event_detected_but_incomplete,15,30,16,yes
+wac_2025,WAC,2025,women,100 Breast,missing_true_parser_miss,no,missing,event_detected_but_incomplete,19,58,16,yes
+wac_2025,WAC,2025,women,200 Breast,captured,yes,prelim_fallback,,26,26,16,yes
+wac_2025,WAC,2025,women,100 Fly,captured,yes,prelim_fallback,,38,53,16,yes
+wac_2025,WAC,2025,women,200 Fly,captured,yes,prelim_fallback,,29,53,16,yes
+wac_2025,WAC,2025,women,200 IM,captured,yes,prelim_fallback,,27,30,16,yes
+wac_2025,WAC,2025,women,400 IM,missing_true_parser_miss,no,missing,event_detected_but_incomplete,15,24,16,yes
