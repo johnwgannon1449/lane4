@@ -28,6 +28,7 @@ from pathlib import Path
 from parser_helpers import (
     TARGET_EVENTS,
     CONFERENCE_PARSE_MODE,
+    FILE_PARSE_MODE,
     LIKELY_NOT_CONTESTED,
     detect_conference,
     detect_final_type,
@@ -1468,22 +1469,26 @@ def run(input_dir: Path, output_dir: Path, bundle_filter: list[str] | None = Non
         file_results = []
 
         for path, meta in bundle["paths"]:
+            # FILE_PARSE_MODE overrides CONFERENCE_PARSE_MODE for this specific file
+            effective_parse_mode = FILE_PARSE_MODE.get(path.stem, parse_mode)
             session_label = (
                 "prelims" if meta["is_prelim"] else
                 "finals"  if meta["is_final"]  else "?"
             )
             print(f"    [{meta.get('gender','?'):8s}|{session_label:7s}] {path.name} ...",
                   end=" ", flush=True)
+            if effective_parse_mode != parse_mode:
+                print(f"[file_override={effective_parse_mode}] ", end="", flush=True)
             try:
                 men_evs, women_evs, tms, fls, drs, fg_type, cdr, hdr = parse_pdf_raw(
-                    path, meta, bundle, parse_mode=parse_mode
+                    path, meta, bundle, parse_mode=effective_parse_mode
                 )
                 # Tag col_debug rows with bundle/file context before storing
                 for r in cdr:
                     r["Bundle_ID"]  = bid
                     r["Conference"] = conference
                     r["Source_File"] = path.name
-                    r["Parse_Mode"] = parse_mode
+                    r["Parse_Mode"] = effective_parse_mode
                 file_results.append((men_evs, women_evs, tms, fls, drs, fg_type, cdr, hdr))
                 print(
                     f"men:{len(men_evs)} women:{len(women_evs)} events  "

@@ -64,27 +64,30 @@ ivyleague_2026,Ivy League,2026 Ivy Womens Conf.pdf,2,#3 Women 500 Yard Free,wome
 ivyleague_2026,Ivy League,2026 Ivy Womens Conf.pdf,2,r:+0.76 r:+0.61 #4 Women 200 Yard IM,women,200 IM,unknown,yes,,finalize+open_event,,women:200 IM,session=prelims
 ivyleague_2026,Ivy League,2026 Ivy Womens Conf.pdf,3,"Preliminaries ... (#4 Women 200 Yard IM) 30 Yokoyama, Aly FRCORN 2:05.81 14 Dolce, Kelly SRBROW 22.85 13.0",women,200 IM,unknown,yes,,finalize+open_event,,women:200 IM,session=prelims
 ivyleague_2026,Ivy League,2026 Ivy Womens Conf.pdf,3,#5 Women 50 Yard Free,women,50 Free,unknown,yes,,finalize+open_event,,women:50 Free,session=prelims
-ivyleague_2026,Ivy League,2026 Ivy Womens Conf.pdf,3,r:+0.75 #5 Women 50 Yard Free,women,50 Free,unknown,yes,,finalize+open_event,,women:50 Free,session=prelims
+ivyleague_2026,Ivy League,2026 Ivy Womens Conf.pdf,3,#5 Women 50 Yard Free,women,50 Free,unknown,yes,,finalize+open_event,,women:50 Free,session=prelims
 ivyleague_2026,Ivy League,2026 Ivy Womens Conf.pdf,4,"Preliminaries ... (#5 Women 50 Yard Free) 33 Li, Samantha JRDART 23.84 12 Howard, Sadie SRPENN 252.25 15.0",women,50 Free,unknown,yes,,finalize+open_event,,women:50 Free,session=prelims
-ivyleague_2026,Ivy League,2026 Ivy Womens Conf.pdf,5,#8 Women 100 Yard Fly r:+0.61,women,100 Fly,unknown,yes,,finalize+open_event,,women:100 Fly,session=prelims
+ivyleague_2026,Ivy League,2026 Ivy Womens Conf.pdf,5,#8 Women 100 Yard Fly,women,100 Fly,unknown,yes,,finalize+open_event,,women:100 Fly,session=prelims
+ivyleague_2026,Ivy League,2026 Ivy Womens Conf.pdf,5,#8 Women 100 Yard Fly,women,100 Fly,unknown,yes,,finalize+open_event,,women:100 Fly,session=prelims
 ivyleague_2026,Ivy League,2026 Ivy Womens Conf.pdf,6,"Preliminaries ... (#8 Women 100 Yard Fly) B - Final 5 Iannaccone, Stephanie JRHARV 4:15.09 q",women,100 Fly,B,yes,,finalize+open_event,,women:100 Fly,session=prelims
 ivyleague_2026,Ivy League,2026 Ivy Womens Conf.pdf,6,#9 Women 400 Yard IM,women,400 IM,unknown,yes,,finalize+open_event,,women:400 IM,session=prelims
 ivyleague_2026,Ivy League,2026 Ivy Womens Conf.pdf,6,r:+0.66 #9 Women 400 Yard IM,women,400 IM,unknown,yes,,finalize+open_event,,women:400 IM,session=prelims
 ivyleague_2026,Ivy League,2026 Ivy Womens Conf.pdf,7,"Preliminaries ... (#9 Women 400 Yard IM) 19 Henriksen, Sophie SRPENN 1:50.09 6.0 16 Mundee, Izzy SODART 1:50.13 q",none,none,unknown,no,normalize_event_name_any returned None or not in TARGET_EVENTS,finalize_only,,none:none,
 ivyleague_2026,Ivy League,2026 Ivy Womens Conf.pdf,7,#10 Women 200 Yard Free,women,200 Free,unknown,yes,,finalize+open_event,,women:200 Free,session=prelims
-ivyleague_2026,Ivy League,2026 Ivy Womens Conf.pdf,7,r:+0.74 #10 Women 200 Yard Free,women,200 Free,unknown,yes,,finalize+open_event,,women:200 Free,session=prelims
+ivyleague_2026,Ivy League,2026 Ivy Womens Conf.pdf,7,#10 Women 200 Yard Free,women,200 Free,unknown,yes,,finalize+open_event,,women:200 Free,session=prelims
 ivyleague_2026,Ivy League,2026 Ivy Womens Conf.pdf,8,#11 Women 100 Yard Breast,women,100 Breast,unknown,yes,,finalize+open_event,,women:100 Breast,session=prelims
 ivyleague_2026,Ivy League,2026 Ivy Womens Conf.pdf,9,"B - Final ... (#12 Women 100 Yard Back) 10 Thomas, Nadia SOBROW 54.27 q 3 PRIN A 3:36.32 54.0",women,100 Back,B,yes,,finalize+open_event,,women:100 Back,session=prelims
 ivyleague_2026,Ivy League,2026 Ivy Womens Conf.pdf,9,#12 Women 100 Yard Back r:+0.58,women,100 Back,unknown,yes,,finalize+open_event,,women:100 Back,session=prelims
+ivyleague_2026,Ivy League,2026 Ivy Womens Conf.pdf,9,"#14 Women 1650 Yard Free 22 Uranga, Maria SODART 56.21 q",women,1650 Free,unknown,yes,,finalize+open_event,,women:1650 Free,session=prelims
 ivyleague_2026,Ivy League,2026 Ivy Womens Conf.pdf,10,"(#14 Women 1650 Yard Free) 7 Koff, Mabel SOYALE 1:57.11 23.0 3 Koff, Mabel SOYALE 1:55.90 q",women,1650 Free,unknown,yes,,finalize+open_event,,women:1650 Free,session=prelims
 ivyleague_2026,Ivy League,2026 Ivy Womens Conf.pdf,10,#15 Women 200 Yard Back,women,200 Back,unknown,yes,,finalize+open_event,,women:200 Back,session=prelims
-ivyleague_2026,Ivy League,2026 Ivy Womens Conf.pdf,10,r:+0.62 #15 Women 200 Yard Back,women,200 Back,unknown,yes,,finalize+open_event,,women:200 Back,session=prelims
+ivyleague_2026,Ivy League,2026 Ivy Womens Conf.pdf,10,#15 Women 200 Yard Back,women,200 Back,unknown,yes,,finalize+open_event,,women:200 Back,session=prelims
 ivyleague_2026,Ivy League,2026 Ivy Womens Conf.pdf,11,"Preliminaries ... (#15 Women 200 Yard Back) 18 Chung, Audrey SOBROW 50.23 7.0 15 Klinginsmith, Lillian SRBROW 50.36 q",none,none,unknown,no,normalize_event_name_any returned None or not in TARGET_EVENTS,finalize_only,,none:none,
 ivyleague_2026,Ivy League,2026 Ivy Womens Conf.pdf,11,#16 Women 100 Yard Free,women,100 Free,unknown,yes,,finalize+open_event,,women:100 Free,session=prelims
-ivyleague_2026,Ivy League,2026 Ivy Womens Conf.pdf,11,r:+0.66 #16 Women 100 Yard Free,women,100 Free,unknown,yes,,finalize+open_event,,women:100 Free,session=prelims
+ivyleague_2026,Ivy League,2026 Ivy Womens Conf.pdf,11,#16 Women 100 Yard Free,women,100 Free,unknown,yes,,finalize+open_event,,women:100 Free,session=prelims
 ivyleague_2026,Ivy League,2026 Ivy Womens Conf.pdf,12,"Preliminaries ... (#16 Women 100 Yard Free) 16 Druhan, Abby SOPENN 2:18.25 11.0 12 Barrow, Amie SRBROW 2:16.19 q",women,100 Free,unknown,yes,,finalize+open_event,,women:100 Free,session=prelims
+ivyleague_2026,Ivy League,2026 Ivy Womens Conf.pdf,12,#17 Women 200 Yard Breast,women,200 Breast,unknown,yes,,finalize+open_event,,women:200 Breast,session=prelims
 ivyleague_2026,Ivy League,2026 Ivy Womens Conf.pdf,12,#17 Women 200 Yard Breast,women,200 Breast,unknown,yes,,finalize+open_event,,women:200 Breast,session=prelims
 ivyleague_2026,Ivy League,2026 Ivy Womens Conf.pdf,13,"A - Final ... (#18 Women 200 Yard Fly) 22 Drumm, Lindsey SRDART 2:06.26 q",women,200 Fly,A,yes,,finalize+open_event,,women:200 Fly,session=prelims
 ivyleague_2026,Ivy League,2026 Ivy Womens Conf.pdf,13,#18 Women 200 Yard Fly,women,200 Fly,unknown,yes,,finalize+open_event,,women:200 Fly,session=prelims
 ivyleague_2026,Ivy League,2026 Ivy Womens Conf.pdf,14,#208 Women 100 Yard Back Time Trial,women,100 Back,unknown,yes,,finalize+open_event,,women:100 Back,session=prelims
-ivyleague_2026,Ivy League,2026 Ivy Womens Conf.pdf,14,#403 Women 100 Yard Free Time Trial,women,100 Free,unknown,yes,,finalize+open_event,,women:100 Free,session=prelims
+ivyleague_2026,Ivy League,2026 Ivy Womens Conf.pdf,14,#403 Women 100 Yard Free Time Trial Team Re lay Finals Time,women,100 Free,unknown,yes,,finalize+open_event,,women:100 Free,session=prelims

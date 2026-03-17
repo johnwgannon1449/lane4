@@ -1081,6 +1081,16 @@ CONFERENCE_PARSE_MODE: dict[str, str] = {
     # All other conferences default to "normal"
 }
 
+# Per-file parse mode overrides (keyed by PDF filename stem, no extension).
+# Priority: FILE_PARSE_MODE > CONFERENCE_PARSE_MODE > "normal"
+# Use when individual files in a bundle have different column layouts.
+FILE_PARSE_MODE: dict[str, str] = {
+    # Ivy League: women's PDF is 2-column; men's PDF is single-column.
+    # Conference-level mode cannot be used because it would apply to both files.
+    "2026 Ivy Womens Conf": "multi_column_2",
+    "2026 Ivy Mens Conf":   "normal",
+}
+
 # Events known to not be contested by certain conferences (used in coverage report).
 LIKELY_NOT_CONTESTED: dict[str, set[str]] = {
     "ODAC":         {"1000 Free"},
