@@ -646,44 +646,158 @@ def extract_text_pymupdf(pdf_path: str) -> list[str]:
     return pages
 
 
-def extract_pages_ex(pdf_path: str) -> tuple[list[str], int]:
+def extract_pages(pdf_path: str) -> list[str]:
     """
-    Extract text from a PDF with automatic multi-column detection.
+    Simple page-by-page text extraction — the default for normal single-column PDFs.
 
-    Returns (pages, multicolumn_page_count).
-
-    For multi-column pages the columns are concatenated in left→right order
-    so that the calling state machine processes each column fully before
-    moving to the next (avoiding cross-column interleaving).
+    Uses pdfplumber's standard extract_text() with no column reordering.
+    Falls back to PyMuPDF on failure.
     """
     try:
         import pdfplumber
         pages: list[str] = []
-        mc_count = 0
         with pdfplumber.open(pdf_path) as pdf:
             for page in pdf.pages:
-                col_texts, n_cols = _extract_page_columns(page)
-                if n_cols > 1:
-                    mc_count += 1
-                # Join columns with a blank separator line so the state
-                # machine doesn't bleed one column's header into another.
-                pages.append("\n\n".join(col_texts))
+                pages.append(page.extract_text() or "")
         if sum(1 for p in pages if len(p.strip()) > 50) == 0:
             raise ValueError("pdfplumber returned mostly empty pages")
-        return pages, mc_count
+        return pages
     except Exception as e:
         try:
-            return extract_text_pymupdf(pdf_path), 0
+            return extract_text_pymupdf(pdf_path)
         except Exception as e2:
             raise RuntimeError(
                 f"Both pdfplumber ({e}) and PyMuPDF ({e2}) failed"
             )
 
 
-def extract_pages(pdf_path: str) -> list[str]:
-    """Backward-compatible wrapper — returns pages only."""
-    pages, _ = extract_pages_ex(pdf_path)
-    return pages
+def _extract_pages_2col(pdf_path: str) -> tuple[list[str], list[dict]]:
+    """
+    ODAC-targeted 2-column extraction.
+
+    Each page is split into at most 2 columns using the x0 histogram.
+    Columns are returned top-to-bottom within each column (left, then right)
+    so events stay fully within one column before the next begins.
+    """
+    import pdfplumber
+    pages: list[str] = []
+    col_debug: list[dict] = []
+    with pdfplumber.open(pdf_path) as pdf:
+        for page_num, page in enumerate(pdf.pages, start=1):
+            col_texts, n_cols = _extract_page_columns(page)
+            # Enforce 2-column cap: if only 1 detected keep as-is
+            pages.append("\n\n".join(col_texts))
+            col_debug.append({
+                "Page_Number":          page_num,
+                "Columns_Detected":     n_cols,
+                "Event_Headers_Detected": "",
+                "Notes": "2col_mode" if n_cols > 1 else "1col_fallback",
+            })
+    return pages, col_debug
+
+
+def _extract_pages_3col(pdf_path: str) -> tuple[list[str], list[dict]]:
+    """
+    Patriot-targeted 3-column extraction.
+
+    Tries to detect 2 gaps and split into 3 vertical bands.  If only 1 gap is
+    found, adds a forced split at 2/3 of page width.  If no gap found the page
+    is treated as a single column (graceful fallback).
+
+    Columns are concatenated left-to-right (top-to-bottom within each column).
+    """
+    import pdfplumber
+    pages: list[str] = []
+    col_debug: list[dict] = []
+    with pdfplumber.open(pdf_path) as pdf:
+        for page_num, page in enumerate(pdf.pages, start=1):
+            words = page.extract_words(x_tolerance=3, y_tolerance=3)
+            if not words:
+                pages.append(page.extract_text() or "")
+                col_debug.append({
+                    "Page_Number":          page_num,
+                    "Columns_Detected":     1,
+                    "Event_Headers_Detected": "",
+                    "Notes": "no_words_fallback",
+                })
+                continue
+
+            splits = _detect_column_splits(words, page.width)
+
+            # Need exactly 2 boundaries for 3 columns.
+            if len(splits) == 0:
+                # No gaps detected — treat as single column
+                pages.append(_words_to_text(words))
+                col_debug.append({
+                    "Page_Number":          page_num,
+                    "Columns_Detected":     1,
+                    "Event_Headers_Detected": "",
+                    "Notes": "no_gap_detected_1col",
+                })
+                continue
+            elif len(splits) == 1:
+                # Only 1 gap — add a forced third boundary at 2/3 of page
+                forced = page.width * 2 / 3
+                if abs(forced - splits[0]) > 30:
+                    splits.append(forced)
+                    splits.sort()
+
+            # Use the first 2 splits only (3 columns)
+            boundaries = [0.0] + splits[:2] + [page.width]
+            col_texts = []
+            for i in range(len(boundaries) - 1):
+                col_words = [w for w in words
+                             if boundaries[i] <= w["x0"] < boundaries[i + 1]]
+                col_texts.append(_words_to_text(col_words))
+
+            pages.append("\n\n".join(col_texts))
+            col_debug.append({
+                "Page_Number":          page_num,
+                "Columns_Detected":     len(boundaries) - 1,
+                "Event_Headers_Detected": "",
+                "Notes": f"3col_mode splits={[round(s,1) for s in splits[:2]]}",
+            })
+    return pages, col_debug
+
+
+def extract_pages_targeted(pdf_path: str, mode: str) -> tuple[list[str], list[dict]]:
+    """
+    Route extraction to the correct column mode.
+
+    Returns (pages, col_debug_rows) where col_debug_rows is a list of
+    per-page dicts (Page_Number, Columns_Detected, Event_Headers_Detected, Notes).
+
+    mode:
+      "normal"          — simple pdfplumber extract_text(), no column detection
+      "multi_column_2"  — ODAC 2-column detection
+      "multi_column_3"  — Patriot 3-column detection / partition
+    """
+    if mode == "multi_column_2":
+        try:
+            return _extract_pages_2col(pdf_path)
+        except Exception:
+            return extract_pages(pdf_path), []
+    elif mode == "multi_column_3":
+        try:
+            return _extract_pages_3col(pdf_path)
+        except Exception:
+            return extract_pages(pdf_path), []
+    else:
+        return extract_pages(pdf_path), []
+
+
+# ── Conference parse-mode registry ────────────────────────────────────────────
+
+CONFERENCE_PARSE_MODE: dict[str, str] = {
+    "ODAC":    "multi_column_2",
+    "Patriot": "multi_column_3",
+    # All other conferences default to "normal"
+}
+
+# Events known to not be contested by certain conferences (used in coverage report).
+LIKELY_NOT_CONTESTED: dict[str, set[str]] = {
+    "Summit League": {"1000 Free"},
+}
 
 
 # ── Session type detection ────────────────────────────────────────────────────

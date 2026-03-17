@@ -1,93 +1,9 @@
 Source_File,Bundle_ID,Conference,Year,Gender,Event,Issue
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,,,Multi-column layout detected: 119 page(s) reordered column-by-column
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,combined,,Combined/unknown file — parsing both sections (combined)
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,,,"Event header variation not normalized: 'Florida State University 18 Freeman, Sophie SR 52.89'"
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,,,"Event header variation not normalized: 'Florida State University 18 Freeman, Sophie SR 53.02'"
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,,,"Event header variation not normalized: 'Florida State University 30 Freeman, Sophie SR 1:59.44'"
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,,,"Event header variation not normalized: 'Florida State University 51 Freeman, Sophie SR 50.77'"
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,,,Event header variation not normalized: 'Event 252 Men 50 Yard Butterfly Time Trial'
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,men,500 Free,Event found on second-pass loose scan (places found: 5)
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,men,200 IM,Event found on second-pass loose scan (places found: 3)
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,men,50 Free,Event found on second-pass loose scan (places found: 9)
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,men,400 IM,Event found on second-pass loose scan (places found: 3)
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,men,100 Fly,Event found on second-pass loose scan (places found: 3)
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,men,200 Free,Event found on second-pass loose scan (places found: 3)
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,men,200 Fly,Event found on second-pass loose scan (places found: 3)
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,men,100 Back,Event found on second-pass loose scan (places found: 6)
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,men,100 Breast,Event found on second-pass loose scan (places found: 8)
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,men,1650 Free,Event found on second-pass loose scan (places found: 4)
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,men,200 Back,Event found on second-pass loose scan (places found: 4)
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,men,100 Free,Event found on second-pass loose scan (places found: 5)
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,men,200 Breast,Event found on second-pass loose scan (places found: 3)
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,women,500 Free,Event found on second-pass loose scan (places found: 4)
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,women,200 IM,Event found on second-pass loose scan (places found: 4)
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,women,50 Free,Event found on second-pass loose scan (places found: 4)
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,women,400 IM,Event found on second-pass loose scan (places found: 5)
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,women,100 Fly,Event found on second-pass loose scan (places found: 6)
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,women,200 Free,Event found on second-pass loose scan (places found: 4)
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,women,200 Fly,Event found on second-pass loose scan (places found: 4)
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,women,100 Back,Event found on second-pass loose scan (places found: 9)
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,women,100 Breast,Event found on second-pass loose scan (places found: 7)
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,women,1650 Free,Event found on second-pass loose scan (places found: 5)
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,women,200 Back,Event found on second-pass loose scan (places found: 4)
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,women,100 Free,Event found on second-pass loose scan (places found: 6)
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,women,200 Breast,Event found on second-pass loose scan (places found: 3)
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,,,Team scores not found in any bundle file
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,men,50 Free,Only prelim results found — no finals detected
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,men,50 Free,"Event incomplete after both passes — 8th, 16th place not found"
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,men,100 Free,Only prelim results found — no finals detected
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,men,100 Free,"Event incomplete after both passes — 1st, 8th, 16th place not found"
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,men,200 Free,Only prelim results found — no finals detected
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,men,200 Free,"Event incomplete after both passes — 8th, 16th place not found"
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,men,500 Free,Only prelim results found — no finals detected
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,men,500 Free,"Event incomplete after both passes — 1st, 8th, 16th place not found"
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,men,1650 Free,Only prelim results found — no finals detected
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,men,1650 Free,"Event incomplete after both passes — 1st, 8th, 16th place not found"
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,men,100 Back,Only prelim results found — no finals detected
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,men,100 Back,"Event incomplete after both passes — 1st, 8th, 16th place not found"
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,men,200 Back,Only prelim results found — no finals detected
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,men,200 Back,"Event incomplete after both passes — 8th, 16th place not found"
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,men,100 Breast,Only prelim results found — no finals detected
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,men,100 Breast,"Event incomplete after both passes — 8th, 16th place not found"
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,men,200 Breast,Only prelim results found — no finals detected
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,men,200 Breast,"Event incomplete after both passes — 8th, 16th place not found"
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,men,100 Fly,Only prelim results found — no finals detected
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,men,100 Fly,"Event incomplete after both passes — 1st, 8th, 16th place not found"
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,men,200 Fly,Only prelim results found — no finals detected
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,men,200 Fly,"Event incomplete after both passes — 8th, 16th place not found"
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,men,200 IM,Only prelim results found — no finals detected
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,men,200 IM,"Event incomplete after both passes — 8th, 16th place not found"
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,men,400 IM,Only prelim results found — no finals detected
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,men,400 IM,"Event incomplete after both passes — 1st, 8th, 16th place not found"
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,women,50 Free,Only prelim results found — no finals detected
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,women,50 Free,"Event incomplete after both passes — 1st, 8th, 16th place not found"
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,women,100 Free,Only prelim results found — no finals detected
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,women,100 Free,"Event incomplete after both passes — 8th, 16th place not found"
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,women,200 Free,Only prelim results found — no finals detected
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,women,200 Free,"Event incomplete after both passes — 8th, 16th place not found"
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,women,500 Free,Only prelim results found — no finals detected
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,women,500 Free,"Event incomplete after both passes — 1st, 8th, 16th place not found"
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,women,1650 Free,Only prelim results found — no finals detected
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,women,1650 Free,"Event incomplete after both passes — 1st, 8th place not found"
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,women,100 Back,Only prelim results found — no finals detected
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,women,100 Back,"Event incomplete after both passes — 8th, 16th place not found"
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,women,200 Back,Only prelim results found — no finals detected
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,women,200 Back,"Event incomplete after both passes — 8th, 16th place not found"
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,women,100 Breast,Only prelim results found — no finals detected
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,women,100 Breast,"Event incomplete after both passes — 8th, 16th place not found"
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,women,200 Breast,Only prelim results found — no finals detected
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,women,200 Breast,"Event incomplete after both passes — 1st, 8th, 16th place not found"
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,women,100 Fly,Only prelim results found — no finals detected
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,women,100 Fly,"Event incomplete after both passes — 1st, 8th, 16th place not found"
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,women,200 Fly,Only prelim results found — no finals detected
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,women,200 Fly,"Event incomplete after both passes — 8th, 16th place not found"
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,women,200 IM,Only prelim results found — no finals detected
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,women,200 IM,"Event incomplete after both passes — 8th, 16th place not found"
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,women,400 IM,Only prelim results found — no finals detected
-2026_acc_championship_full_meet_results.pdf,acc_2026,ACC,2026,women,400 IM,"Event incomplete after both passes — 1st, 8th, 16th place not found"
-odac 2026 MENS swim-full-results.pdf,odac_2026,ODAC,2026,,,Multi-column layout detected: 38 page(s) reordered column-by-column
+GLIAC_2026_Final_Results.pdf,gliac_2026,GLIAC,2026,combined,,Combined/unknown file — parsing both sections (combined)
+GLIAC_2026_Final_Results.pdf,gliac_2026,GLIAC,2026,,,Team scores not found in any bundle file
+odac 2026 MENS swim-full-results.pdf,odac_2026,ODAC,2026,,,Multi-column layout detected (multi_column_2): 38 page(s) reordered column-by-column
 odac 2026 MENS swim-full-results.pdf,odac_2026,ODAC,2026,,,"Event header variation not normalized: '24 Freeman, Madeleine SR HU'"
-odac 2026 WOMENS swim_results.pdf,odac_2026,ODAC,2026,,,Multi-column layout detected: 19 page(s) reordered column-by-column
+odac 2026 WOMENS swim_results.pdf,odac_2026,ODAC,2026,,,Multi-column layout detected (multi_column_2): 19 page(s) reordered column-by-column
 odac 2026 WOMENS swim_results.pdf,odac_2026,ODAC,2026,women,,Women-only file — men's anchors skipped; extracting women's events
 odac 2026 WOMENS swim_results.pdf,odac_2026,ODAC,2026,,,"Event header variation not normalized: '24 Freeman, Madeleine SR HU'"
 odac 2026 MENS swim-full-results.pdf,odac_2026,ODAC,2026,men,400 IM,Event found on second-pass loose scan (places found: 14)
@@ -127,18 +43,16 @@ odac 2026 WOMENS swim_results.pdf,odac_2026,ODAC,2026,women,200 Fly,Only prelim 
 odac 2026 WOMENS swim_results.pdf,odac_2026,ODAC,2026,women,200 IM,Only prelim results found — no finals detected
 odac 2026 WOMENS swim_results.pdf,odac_2026,ODAC,2026,women,400 IM,Only prelim results found — no finals detected
 odac 2026 WOMENS swim_results.pdf,odac_2026,ODAC,2026,women,400 IM,Event incomplete after both passes — 16th place not found despite B-Final data present
-Patriot League 2026 results.pdf,patriot_2026,Patriot,2026,,,Multi-column layout detected: 4 page(s) reordered column-by-column
+Patriot League 2026 results.pdf,patriot_2026,Patriot,2026,,,Multi-column layout detected (multi_column_3): 4 page(s) reordered column-by-column
 Patriot League 2026 results.pdf,patriot_2026,Patriot,2026,combined,,Combined/unknown file — parsing both sections (combined)
 Patriot League 2026 results.pdf,patriot_2026,Patriot,2026,,,"Event header variation not normalized: '*23 Benzija, Sam 21BUCK-MA 2:22.40 q 7 Hahn, Kalvin F 20ARMY-MR 1:57.13 q 8 Flynn, Gannon 19BU-NE 1:59.92 22.0'"
 Patriot League 2026 results.pdf,patriot_2026,Patriot,2026,,,"Event header variation not normalized: '*23 Chun, April 18ARMY-MR 2:22.40 q 8 Flynn, Gannon 19BU-NE 1:59.29 q B - Final'"
 Patriot League 2026 results.pdf,patriot_2026,Patriot,2026,men,500 Free,Event found on second-pass loose scan (places found: 20)
 Patriot League 2026 results.pdf,patriot_2026,Patriot,2026,men,200 IM,Event found on second-pass loose scan (places found: 15)
-Patriot League 2026 results.pdf,patriot_2026,Patriot,2026,men,50 Free,Event found on second-pass loose scan (places found: 26)
 Patriot League 2026 results.pdf,patriot_2026,Patriot,2026,men,100 Fly,Event found on second-pass loose scan (places found: 21)
 Patriot League 2026 results.pdf,patriot_2026,Patriot,2026,men,400 IM,Event found on second-pass loose scan (places found: 16)
 Patriot League 2026 results.pdf,patriot_2026,Patriot,2026,men,200 Free,Event found on second-pass loose scan (places found: 16)
 Patriot League 2026 results.pdf,patriot_2026,Patriot,2026,men,100 Breast,Event found on second-pass loose scan (places found: 30)
-Patriot League 2026 results.pdf,patriot_2026,Patriot,2026,men,100 Back,Event found on second-pass loose scan (places found: 29)
 Patriot League 2026 results.pdf,patriot_2026,Patriot,2026,men,1650 Free,Event found on second-pass loose scan (places found: 17)
 Patriot League 2026 results.pdf,patriot_2026,Patriot,2026,men,200 Back,Event found on second-pass loose scan (places found: 6)
 Patriot League 2026 results.pdf,patriot_2026,Patriot,2026,men,100 Free,Event found on second-pass loose scan (places found: 19)
@@ -155,7 +69,7 @@ Patriot League 2026 results.pdf,patriot_2026,Patriot,2026,women,200 Breast,Event
 Patriot League 2026 results.pdf,patriot_2026,Patriot,2026,women,200 Fly,Event found on second-pass loose scan (places found: 12)
 Patriot League 2026 results.pdf,patriot_2026,Patriot,2026,,,Team scores not found in any bundle file
 Patriot League 2026 results.pdf,patriot_2026,Patriot,2026,men,50 Free,Only prelim results found — no finals detected
-Patriot League 2026 results.pdf,patriot_2026,Patriot,2026,men,50 Free,Event incomplete after both passes — 8th place not found
+Patriot League 2026 results.pdf,patriot_2026,Patriot,2026,men,50 Free,"Implausible 1st-place time 5:00.55 — no better candidate, kept"
 Patriot League 2026 results.pdf,patriot_2026,Patriot,2026,men,100 Free,Only prelim results found — no finals detected
 Patriot League 2026 results.pdf,patriot_2026,Patriot,2026,men,100 Free,"Event incomplete after both passes — 1st, 8th place not found"
 Patriot League 2026 results.pdf,patriot_2026,Patriot,2026,men,200 Free,Only prelim results found — no finals detected
@@ -165,7 +79,7 @@ Patriot League 2026 results.pdf,patriot_2026,Patriot,2026,men,500 Free,Event inc
 Patriot League 2026 results.pdf,patriot_2026,Patriot,2026,men,1650 Free,Only prelim results found — no finals detected
 Patriot League 2026 results.pdf,patriot_2026,Patriot,2026,men,1650 Free,fewer_than_16_finalists — no B-Final section detected; event likely had fewer than 16 entrants
 Patriot League 2026 results.pdf,patriot_2026,Patriot,2026,men,100 Back,Only prelim results found — no finals detected
-Patriot League 2026 results.pdf,patriot_2026,Patriot,2026,men,100 Back,Event incomplete after both passes — 8th place not found
+Patriot League 2026 results.pdf,patriot_2026,Patriot,2026,men,100 Back,"Implausible 1st-place time 6:26.10 — no better candidate, kept"
 Patriot League 2026 results.pdf,patriot_2026,Patriot,2026,men,200 Back,Only prelim results found — no finals detected
 Patriot League 2026 results.pdf,patriot_2026,Patriot,2026,men,200 Back,"Event incomplete after both passes — 1st, 8th, 16th place not found"
 Patriot League 2026 results.pdf,patriot_2026,Patriot,2026,men,100 Breast,Only prelim results found — no finals detected
@@ -203,3 +117,6 @@ Patriot League 2026 results.pdf,patriot_2026,Patriot,2026,women,200 IM,Only prel
 Patriot League 2026 results.pdf,patriot_2026,Patriot,2026,women,200 IM,"Event incomplete after both passes — 1st, 8th place not found"
 Patriot League 2026 results.pdf,patriot_2026,Patriot,2026,women,400 IM,Only prelim results found — no finals detected
 Patriot League 2026 results.pdf,patriot_2026,Patriot,2026,women,400 IM,Event incomplete after both passes — 8th place not found
+SUMMIT LEAGUE 2026 RESULTS.pdf,summitleague_2026,Summit League,2026,combined,,Combined/unknown file — parsing both sections (combined)
+SUMMIT LEAGUE 2026 RESULTS.pdf,summitleague_2026,Summit League,2026,,,Team scores not found in any bundle file
+SUMMIT LEAGUE 2026 RESULTS.pdf,summitleague_2026,Summit League,2026,men,100 Back,"Implausible 1st-place time 5:17.90 — no better candidate, kept"

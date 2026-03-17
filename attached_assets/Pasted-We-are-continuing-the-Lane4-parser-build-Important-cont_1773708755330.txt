@@ -1,0 +1,255 @@
+We are continuing the Lane4 parser build.
+
+Important context from last run:
+
+- The latest broad multi-column patch degraded overall performance.
+- ODAC improved significantly → indicates 2-column logic works when applied correctly.
+- Patriot (3-column) is still failing badly → only ~4 events detected.
+- Summit works reasonably well, but is missing distance events.
+- Conclusion: multi-column logic must be TARGETED, not global.
+
+We are now restructuring the parser into a stable default pipeline with optional targeted modes.
+
+==================================================
+PART 0 — REVERT BASELINE
+==================================================
+
+Revert the parser to the last broadly working version:
+- the version that produced ~407 anchors
+
+This becomes the DEFAULT parsing path.
+
+All new logic must be:
+- optional
+- scoped to specific conferences or detected layouts
+- never globally applied
+
+==================================================
+PART 1 — TARGETED COLUMN MODES ONLY
+==================================================
+
+Introduce a per-bundle parsing mode system:
+
+Each bundle must explicitly resolve to one of:
+- "normal"
+- "multi_column_2"
+- "multi_column_3"
+
+Rules:
+
+Default:
+- All bundles → "normal"
+
+Overrides:
+- ODAC → "multi_column_2"
+- Patriot → "multi_column_3"
+
+Do NOT apply multi-column parsing to any other bundle.
+
+==================================================
+PART 2 — ODAC (2-COLUMN MODE)
+==================================================
+
+For ODAC only:
+
+- Preserve improved 2-column parsing logic
+- Detect two vertical columns via x-coordinate clustering
+- Read:
+  - top-to-bottom within each column
+  - then left-to-right across columns
+- Ensure:
+  - event headers remain paired with their rows
+  - no cross-column mixing
+
+Do NOT regress ODAC behavior.
+
+==================================================
+PART 3 — PATRIOT (3-COLUMN MODE)
+==================================================
+
+For Patriot only:
+
+Implement dedicated 3-column reconstruction:
+
+- Detect 3 vertical text bands using x-coordinates
+- Partition text into 3 columns
+- Process:
+  - top-to-bottom within each column
+  - then left-to-right across columns
+
+Critical rules:
+- event headers must stay with their rows within the same column
+- do NOT mix rows across columns
+- treat Patriot as a distinct parsing mode, not generic multi-column
+
+Add debug:
+- pages detected as 3-column
+- number of columns detected
+- event headers detected per page
+
+==================================================
+PART 4 — SUMMIT DISTANCE EVENT TARGETED TEST
+==================================================
+
+Apply a targeted distance-event recovery only to Summit.
+
+DO NOT disturb existing successfully parsed Summit events.
+
+Target events:
+- 500 Free
+- 1000 Free
+- 1650 Free
+
+Rules:
+
+1. Priority:
+   - finals
+   - best available results section
+   - prelims (last resort)
+
+2. Do NOT require prelim/final labels for distance events
+
+3. Handle structure:
+   - ignore split rows (50 splits, etc.)
+   - use only the main swimmer result row
+
+4. Special handling:
+   - if 1000 Free is not present → mark as "likely_not_contested"
+   - if 1650 appears as straight results → treat as finals
+
+5. If prelim fallback is used:
+   - keep the data
+   - explicitly label as prelim_fallback
+
+Goal:
+- preserve all current Summit output
+- ADD missing distance events only
+
+==================================================
+PART 5 — PRELIMS FALLBACK RULE (GLOBAL)
+==================================================
+
+Use prelims only as last resort:
+
+Priority:
+1. finals
+2. best available
+3. prelim fallback
+
+When prelim fallback is used:
+- label clearly
+- track in diagnostics
+
+==================================================
+PART 6 — DEBUG OUTPUT
+==================================================
+
+Create/update:
+output/column_mode_debug.csv
+
+Columns:
+- Bundle_ID
+- Conference
+- Source_File
+- Page_Number
+- Column_Mode_Applied
+- Columns_Detected
+- Event_Headers_Detected
+- Notes
+
+Also track Summit distance recovery:
+- event name
+- source type (finals / best_available / prelim_fallback)
+- whether 1000 Free flagged as likely_not_contested
+
+==================================================
+PART 7 — EVENT COVERAGE AUDIT (NEW — VERY IMPORTANT)
+==================================================
+
+Add a new reporting layer:
+
+output/event_coverage_report.csv
+
+For each bundle, list ALL expected NCAA championship events:
+
+Events should include (at minimum):
+- 50 Free
+- 100 Free
+- 200 Free
+- 500 Free
+- 1000 Free
+- 1650 Free
+- 100 Back
+- 200 Back
+- 100 Breast
+- 200 Breast
+- 100 Fly
+- 200 Fly
+- 200 IM
+- 400 IM
+- Relays (if detectable)
+
+For each event, report:
+- Bundle_ID
+- Conference
+- Event_Name
+- Detected (yes/no)
+- Source_Type (finals / best_available / prelim_fallback / missing)
+- Notes
+
+Additionally:
+- explicitly flag missing events (OTHER THAN 1000 FREE)
+- summarize per bundle:
+  - total events detected
+  - total events missing
+  - list of missing events
+
+Goal:
+I want to clearly understand:
+→ which events are still not being captured per conference
+→ not just that parsing ran successfully
+
+==================================================
+PART 8 — LIMITED TEST RUN ONLY
+==================================================
+
+Run ONLY these bundles:
+- ODAC
+- Patriot
+- Summit
+- one strong normal bundle (SEC or GLIAC)
+
+==================================================
+PART 9 — REPORT BACK
+==================================================
+
+After run, report:
+
+1. ODAC
+   - did it remain strong?
+   - event coverage %
+
+2. Patriot
+   - did event count improve?
+   - which events are now detected vs still missing
+
+3. Summit
+   - did existing events remain intact?
+   - which distance events were added?
+   - was prelim fallback used?
+
+4. Normal bundle (SEC or GLIAC)
+   - did behavior return to pre-regression quality?
+
+5. Event Coverage Summary (CRITICAL)
+   For EACH bundle:
+   - list missing events (excluding 1000 Free unless incorrectly missing)
+   - highlight patterns (e.g., all 200 Fly missing, etc.)
+
+Goal of this entire patch:
+
+- keep the ODAC win
+- solve Patriot as a true 3-column problem
+- carefully improve Summit distance events without regression
+- restore strong default parsing for standard PDFs
+- gain full visibility into missing events across all conferences

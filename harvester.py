@@ -27,10 +27,12 @@ from pathlib import Path
 
 from parser_helpers import (
     TARGET_EVENTS,
+    CONFERENCE_PARSE_MODE,
+    LIKELY_NOT_CONTESTED,
     detect_conference,
     detect_final_type,
     extract_pages,
-    extract_pages_ex,
+    extract_pages_targeted,
     FINAL_PLACE_OFFSETS,
     group_into_bundles,
     is_event_header_any,
@@ -87,6 +89,17 @@ DEBUG_SUMMARY_HEADER = [
     "Events_Missing", "Men_Missing", "Women_Missing",
     "Events_Recovered_Pass2", "Missing_Event_List",
     "Team_Scores_Found", "Team_Score_Strategy", "Notes",
+]
+
+COLUMN_MODE_DEBUG_HEADER = [
+    "Bundle_ID", "Conference", "Source_File", "Parse_Mode",
+    "Page_Number", "Columns_Detected",
+    "Event_Headers_Detected", "Notes",
+]
+
+EVENT_COVERAGE_HEADER = [
+    "Bundle_ID", "Conference", "Year", "Gender", "Event_Name",
+    "Detected", "Source_Type", "Notes",
 ]
 
 ANCHOR_PLACES = [1, 8, 16]
@@ -216,6 +229,7 @@ def parse_pdf_raw(
     pdf_path: Path,
     meta: dict,
     bundle: dict,
+    parse_mode: str = "normal",
 ) -> tuple[
     dict[str, EventAccumulator],   # men_events
     dict[str, EventAccumulator],   # women_events
@@ -223,6 +237,7 @@ def parse_pdf_raw(
     list[dict],                    # flag_rows
     list[dict],                    # debug_rows (per-event-header)
     str,                           # file_gender_type
+    list[dict],                    # col_debug_rows (per-page column info)
 ]:
     """
     Parse one PDF, returning separate men's and women's event accumulators.
@@ -254,8 +269,7 @@ def parse_pdf_raw(
             "Issue":       issue,
         }
 
-    # Will be set after page extraction
-    multicolumn_pages: int = 0
+    col_debug_rows: list[dict] = []
 
     def debug_row(
         file_gender_type: str,
@@ -270,12 +284,13 @@ def parse_pdf_raw(
         reason: str,
         pass_num: str = "first",
     ) -> dict:
+        mc_pages = sum(1 for r in col_debug_rows if r.get("Columns_Detected", 1) > 1)
         return {
             "Bundle_ID":           bundle_id,
             "Conference":          conference,
             "Source_File":         source,
             "File_Gender_Type":    file_gender_type,
-            "Multi_Col_Pages":     multicolumn_pages,
+            "Multi_Col_Pages":     mc_pages,
             "Men_Section_Found":   men_found,
             "Women_Section_Found": women_found,
             "Raw_Event_Header":    raw_header,
@@ -290,13 +305,14 @@ def parse_pdf_raw(
 
     # ── Extract pages ─────────────────────────────────────────────────────────
     try:
-        pages, multicolumn_pages = extract_pages_ex(str(pdf_path))
+        pages, col_debug_rows = extract_pages_targeted(str(pdf_path), parse_mode)
     except Exception as exc:
         flag_rows.append(flag("", "", f"PDF extraction failed: {exc}"))
-        return men_events, women_events, [], flag_rows, debug_rows, "error"
+        return men_events, women_events, [], flag_rows, debug_rows, "error", []
 
-    if multicolumn_pages:
-        flag_rows.append(flag("", "", f"Multi-column layout detected: {multicolumn_pages} page(s) reordered column-by-column"))
+    mc_count = sum(1 for r in col_debug_rows if r.get("Columns_Detected", 1) > 1)
+    if mc_count:
+        flag_rows.append(flag("", "", f"Multi-column layout detected ({parse_mode}): {mc_count} page(s) reordered column-by-column"))
 
     # Refine conference from PDF text if still Unknown
     if conference == "Unknown":
@@ -310,7 +326,7 @@ def parse_pdf_raw(
     # ── Psych/heat sheet check ────────────────────────────────────────────────
     if looks_like_psych_sheet(pages):
         flag_rows.append(flag("", "", "PDF looks like psych/heat sheet — skipped"))
-        return men_events, women_events, [], flag_rows, debug_rows, "psych"
+        return men_events, women_events, [], flag_rows, debug_rows, "psych", col_debug_rows
 
     # ── File gender classification ────────────────────────────────────────────
     file_gender_type = classify_file_gender(meta, pages)
@@ -512,7 +528,7 @@ def parse_pdf_raw(
     if file_gender_type != "men":
         team_rows.extend(parse_team_scores(pages, conference, source, "women"))
 
-    return men_finalized, women_finalized, team_rows, flag_rows, debug_rows, file_gender_type
+    return men_finalized, women_finalized, team_rows, flag_rows, debug_rows, file_gender_type, col_debug_rows
 
 
 # ── Bundle merge ──────────────────────────────────────────────────────────────
@@ -717,7 +733,8 @@ def _second_pass_scan_file(
 def merge_bundle(
     bundle: dict,
     file_results: list[tuple],
-) -> tuple[list[dict], list[dict], list[dict], list[dict], dict]:
+    parse_mode: str = "normal",
+) -> tuple[list[dict], list[dict], list[dict], list[dict], list[dict], list[dict], dict]:
     """
     Merge raw results from all files in a bundle.
 
@@ -725,7 +742,8 @@ def merge_bundle(
     Phase 2: for events still missing, re-scan bundle PDFs with loose matching.
     Phase 3: extract team scores, prioritising the last-day file.
 
-    Returns (event_rows, team_rows, flag_rows, debug_rows, summary_dict).
+    Returns (event_rows, team_rows, flag_rows, debug_rows, fallback_rows,
+             col_debug_rows, summary_dict).
     """
     conference = bundle["conference"]
     year       = bundle["year"]
@@ -747,13 +765,15 @@ def merge_bundle(
         "men":   {},
         "women": {},
     }
-    all_flag_rows:  list[dict] = []
-    all_debug_rows: list[dict] = []
-    file_gender_types: list[str] = []
+    all_flag_rows:      list[dict] = []
+    all_debug_rows:     list[dict] = []
+    all_col_debug_rows: list[dict] = []
+    file_gender_types:  list[str]  = []
 
-    for men_evs, women_evs, tms, fls, drs, fg_type in file_results:
+    for men_evs, women_evs, tms, fls, drs, fg_type, cdr in file_results:
         all_flag_rows.extend(fls)
         all_debug_rows.extend(drs)
+        all_col_debug_rows.extend(cdr)
         file_gender_types.append(fg_type)
         for name, acc in men_evs.items():
             gender_accs["men"].setdefault(name, []).append(acc)
@@ -793,7 +813,7 @@ def merge_bundle(
         key = str(path)
         if key not in _pages_cache:
             try:
-                _pages_cache[key] = extract_pages(key)
+                _pages_cache[key] = extract_pages_targeted(key, parse_mode)[0]
             except Exception:
                 _pages_cache[key] = []
         return _pages_cache[key] or None
@@ -1058,7 +1078,7 @@ def merge_bundle(
         "notes":               "; ".join(notes_parts) if notes_parts else "",
     }
 
-    return event_rows, unique_teams, all_flag_rows, all_debug_rows, all_fallback_rows, summary
+    return event_rows, unique_teams, all_flag_rows, all_debug_rows, all_fallback_rows, all_col_debug_rows, summary
 
 
 # ── CSV writer ────────────────────────────────────────────────────────────────
@@ -1160,11 +1180,18 @@ def run(input_dir: Path, output_dir: Path, bundle_filter: list[str] | None = Non
     all_debug_s:   list[dict] = []
     all_summaries: list[dict] = []
     all_fallbacks: list[dict] = []
+    all_col_debug: list[dict] = []
+    all_coverage:  list[dict] = []
     # Cross-bundle dedup: key = (Conference, Year, Gender, Event)
     seen_anchors: set[tuple] = set()
 
     for bid, bundle in sorted(bundles.items()):
         print(f"  Processing bundle: {bid}")
+        conference = bundle["conference"]
+        year       = bundle["year"]
+        parse_mode = CONFERENCE_PARSE_MODE.get(conference, "normal")
+        if parse_mode != "normal":
+            print(f"    [parse_mode={parse_mode}]")
         file_results = []
 
         for path, meta in bundle["paths"]:
@@ -1175,8 +1202,16 @@ def run(input_dir: Path, output_dir: Path, bundle_filter: list[str] | None = Non
             print(f"    [{meta.get('gender','?'):8s}|{session_label:7s}] {path.name} ...",
                   end=" ", flush=True)
             try:
-                men_evs, women_evs, tms, fls, drs, fg_type = parse_pdf_raw(path, meta, bundle)
-                file_results.append((men_evs, women_evs, tms, fls, drs, fg_type))
+                men_evs, women_evs, tms, fls, drs, fg_type, cdr = parse_pdf_raw(
+                    path, meta, bundle, parse_mode=parse_mode
+                )
+                # Tag col_debug rows with bundle/file context before storing
+                for r in cdr:
+                    r["Bundle_ID"]  = bid
+                    r["Conference"] = conference
+                    r["Source_File"] = path.name
+                    r["Parse_Mode"] = parse_mode
+                file_results.append((men_evs, women_evs, tms, fls, drs, fg_type, cdr))
                 print(
                     f"men:{len(men_evs)} women:{len(women_evs)} events  "
                     f"teams:{len(tms)}  flags:{len(fls)}  [{fg_type}]"
@@ -1199,7 +1234,10 @@ def run(input_dir: Path, output_dir: Path, bundle_filter: list[str] | None = Non
             print(f"    → No results to merge.\n")
             continue
 
-        ev_rows, tm_rows, fl_rows, dr_rows, fb_rows, summary = merge_bundle(bundle, file_results)
+        ev_rows, tm_rows, fl_rows, dr_rows, fb_rows, cd_rows, summary = merge_bundle(
+            bundle, file_results, parse_mode=parse_mode
+        )
+        all_col_debug.extend(cd_rows)
         for row in ev_rows:
             anchor_key = (row["Conference"], row["Year"], row["Gender"], row["Event"])
             if anchor_key in seen_anchors:
@@ -1241,15 +1279,62 @@ def run(input_dir: Path, output_dir: Path, bundle_filter: list[str] | None = Non
             "Notes":                  summary["notes"],
         })
 
+        # ── Event coverage report for this bundle ─────────────────────────────
+        # Build an index of what was successfully output for fast lookup
+        output_index: dict[tuple, dict] = {
+            (r["Gender"], r["Event"]): r
+            for r in ev_rows
+        }
+        not_contested = LIKELY_NOT_CONTESTED.get(conference, set())
+        for gender in ("men", "women"):
+            for event in TARGET_EVENTS:
+                key = (gender, event)
+                if key in output_index:
+                    row_out = output_index[key]
+                    all_coverage.append({
+                        "Bundle_ID":    bid,
+                        "Conference":   conference,
+                        "Year":         year,
+                        "Gender":       gender,
+                        "Event_Name":   event,
+                        "Detected":     "yes",
+                        "Source_Type":  row_out.get("Data_Quality", "finals"),
+                        "Notes":        "",
+                    })
+                else:
+                    if event in not_contested:
+                        notes = "likely_not_contested"
+                        src   = "not_contested"
+                    else:
+                        # check if it was detected but incomplete
+                        missing_label = f"{gender}:{event}"
+                        if missing_label in summary.get("events_missing_list", []):
+                            notes = "event_detected_but_incomplete"
+                        else:
+                            notes = "not_detected_in_pdf"
+                        src = "missing"
+                    all_coverage.append({
+                        "Bundle_ID":    bid,
+                        "Conference":   conference,
+                        "Year":         year,
+                        "Gender":       gender,
+                        "Event_Name":   event,
+                        "Detected":     "no",
+                        "Source_Type":  src,
+                        "Notes":        notes,
+                    })
+
         all_summaries.append(summary)
         print_bundle_summary(summary)
 
-    write_csv(output_dir / "event_anchors.csv",        ANCHOR_HEADER,        all_events)
-    write_csv(output_dir / "team_scores.csv",          TEAM_HEADER,          all_teams)
-    write_csv(output_dir / "review_flags.csv",         FLAG_HEADER,          all_flags)
-    write_csv(output_dir / "fallback_usage.csv",       FALLBACK_HEADER,      all_fallbacks)
-    write_csv(output_dir / "debug_bundle_report.csv",  DEBUG_REPORT_HEADER,  all_debug_r)
-    write_csv(output_dir / "debug_bundle_summary.csv", DEBUG_SUMMARY_HEADER, all_debug_s)
+    write_csv(output_dir / "event_anchors.csv",        ANCHOR_HEADER,           all_events)
+    write_csv(output_dir / "team_scores.csv",          TEAM_HEADER,             all_teams)
+    write_csv(output_dir / "review_flags.csv",         FLAG_HEADER,             all_flags)
+    write_csv(output_dir / "fallback_usage.csv",       FALLBACK_HEADER,         all_fallbacks)
+    write_csv(output_dir / "debug_bundle_report.csv",  DEBUG_REPORT_HEADER,     all_debug_r)
+    write_csv(output_dir / "debug_bundle_summary.csv", DEBUG_SUMMARY_HEADER,    all_debug_s)
+    write_csv(output_dir / "column_mode_debug.csv",    COLUMN_MODE_DEBUG_HEADER, all_col_debug)
+    write_csv(output_dir / "event_coverage_report.csv", EVENT_COVERAGE_HEADER,  all_coverage)
 
     total_anchors  = len(all_events)
     total_missing  = sum(len(s["events_missing_list"]) for s in all_summaries)
@@ -1269,10 +1354,12 @@ def run(input_dir: Path, output_dir: Path, bundle_filter: list[str] | None = Non
     if total_missing:
         print(f"  Events still missing:  {total_missing} across {len(all_summaries)} bundle(s)")
     print(f"\n  Outputs:")
-    print(f"    {output_dir}/event_anchors.csv  ({len(all_events)} rows)")
+    print(f"    {output_dir}/event_anchors.csv          ({len(all_events)} rows)")
     print(f"    {output_dir}/team_scores.csv")
     print(f"    {output_dir}/review_flags.csv")
-    print(f"    {output_dir}/fallback_usage.csv ({len(all_fallbacks)} non-final anchors)")
+    print(f"    {output_dir}/fallback_usage.csv          ({len(all_fallbacks)} non-final anchors)")
+    print(f"    {output_dir}/event_coverage_report.csv   ({len(all_coverage)} rows)")
+    print(f"    {output_dir}/column_mode_debug.csv        ({len(all_col_debug)} page rows)")
     print(f"    {output_dir}/debug_bundle_report.csv")
     print(f"    {output_dir}/debug_bundle_summary.csv")
     print(f"{'='*64}\n")
