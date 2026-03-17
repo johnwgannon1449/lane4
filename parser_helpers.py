@@ -672,11 +672,50 @@ def extract_pages(pdf_path: str) -> list[str]:
 
 
 _STANDALONE_TIME_RE = re.compile(
-    r"^(?:\d{1,2}:)?\d{1,2}:\d{2}\.\d{2}$|^\d{2,3}\.\d{2}$"
+    # Numeric time optionally followed by a short suffix annotation
+    # (e.g. "1:47.73*", "48.33@", "15:17.12 q", "1:59.02 (B)").
+    # The suffix is capped at 30 chars to prevent matching swimmer names.
+    r"^(?:(?:\d{1,2}:)?\d{1,2}:\d{2}\.\d{2}|\d{2,3}\.\d{2})"
+    r"(?:[ \t]*[*!@#A-Za-z()[\]]{1,30})?$"
 )
 _INLINE_TIME_RE = re.compile(
     r"(?:\d{1,2}:)?\d{1,2}:\d{2}\.\d{2}|\d{2,3}\.\d{2}"
 )
+
+# Captures suffix annotations that may trail a numeric time value.
+# Stops at double-whitespace, end-of-string, or the start of a new digit token.
+_TIME_SUFFIX_RE = re.compile(
+    r"[ \t]*([*!@#A-Za-z()\[\]][*!@#A-Za-z0-9 ()\[\]]{0,30}?)[ \t]*"
+    r"(?=[ \t]{2,}|\s*$)"
+)
+
+
+def extract_time_and_suffix(token: str) -> tuple[str, str]:
+    """
+    Split a raw time token into its numeric portion and any trailing annotation.
+
+    Examples
+    --------
+    "1:45.32*"       -> ("1:45.32", "*")
+    "2:01.55!"       -> ("2:01.55", "!")
+    "4:22.10A"       -> ("4:22.10", "A")
+    "15:17.12 q"     -> ("15:17.12", "q")
+    "48.33@"         -> ("48.33", "@")
+    "1:59.02 (B)"    -> ("1:59.02", "(B)")
+    "1:47.88# NCAA B"-> ("1:47.88", "# NCAA B")
+    "1:45.32"        -> ("1:45.32", "")
+    """
+    token = token.strip()
+    m = re.match(
+        r"((?:\d{1,2}:)?\d{1,2}:\d{2}\.\d{2}|\d{1,3}\.\d{2})"
+        r"([ \t]*[*!@#A-Za-z()[\]][^\n]*)?$",
+        token,
+    )
+    if m:
+        numeric = m.group(1)
+        suffix  = (m.group(2) or "").strip()
+        return numeric, suffix
+    return token, ""
 
 
 def _group_words_by_y(word_list: list[dict], y_tol: float = 4.0) -> dict:
@@ -1301,9 +1340,9 @@ def is_women_event_header(line: str) -> bool:
 
 # ── Result row parsing ────────────────────────────────────────────────────────
 
-def parse_place_and_time(line: str) -> tuple[int | None, str | None]:
+def parse_place_and_time(line: str) -> tuple[int | None, str | None, str]:
     """
-    Parse a result row into (place, time_string).
+    Parse a result row into (place, numeric_time, raw_suffix).
 
     Rules:
     - Line must start with a 1–2 digit place number (1–64).
@@ -1311,41 +1350,54 @@ def parse_place_and_time(line: str) -> tuple[int | None, str | None]:
       the place number (swimmer name or school code).  This guards against
       distance-event split lines such as "24.36 27.51 28.02 28.55" which are
       pure numbers and must not be treated as result rows.
-    - The returned time is the first time-shaped token with ≥ 10 seconds.
+    - The returned time is the numeric portion of the first time-shaped token
+      with ≥ 10 seconds; any trailing annotation (e.g. *, !, @, A, (B)) is
+      returned separately as raw_suffix.
+    - Returns (None, None, "") when no valid place is found.
+    - Returns (place, None, "") when a swimmer name is present but no time
+      (caller should watch the next line for a deferred time).
     """
     line = line.strip()
     if not line:
-        return None, None
+        return None, None, ""
     # Strip leading cut-standard marks (I=invited, @=NCAA-B, #=NCAA-A,
     # !=meet-record, *=conference-record) that ODAC prefixes to result lines.
     line = re.sub(r"^[I@#!*]\s+(?=\d)", "", line)
     m = re.match(r"^(\d{1,2})\b", line)
     if not m:
-        return None, None
+        return None, None, ""
     place = int(m.group(1))
     if place < 1 or place > 64:
-        return None, None
+        return None, None, ""
     # Split-line guard: real result rows always contain a swimmer name or school
     # abbreviation (≥ 2 consecutive letters).  Pure-number split lines don't.
     after_place = line[m.end():]
     if after_place and after_place[0] == ":":
-        return None, None
+        return None, None, ""
     if not re.search(r"[A-Za-z]{2,}", after_place):
-        return None, None
-    times = re.findall(_TIME_PAT, line)
-    if not times:
-        # No time found, but the place and swimmer name are valid.
-        # Return (place, None) so the caller can watch the next line for a
-        # time that was pushed onto its own row (e.g. "1:47.73* @" after a
-        # record-setting swim where the cut marks cause a line-break).
-        return place, None
-    for t in times:
-        sec = time_to_seconds(t)
-        if sec is not None and sec >= 10:
-            return place, t
-    if times:
-        return place, times[0]
-    return None, None
+        return None, None, ""
+
+    for tm in re.finditer(_TIME_PAT, line):
+        numeric_time = tm.group(0)
+        sec = time_to_seconds(numeric_time)
+        if sec is None or sec < 10:
+            continue
+        # Extract any annotation suffix that immediately follows this time.
+        rest = line[tm.end():]
+        sfx_m = _TIME_SUFFIX_RE.match(rest)
+        raw_suffix = sfx_m.group(1).strip() if (sfx_m and sfx_m.group(1)) else ""
+        return place, numeric_time, raw_suffix
+
+    # Try the first time found even if < 10 s (e.g. 50 Free heat in distance meet)
+    for tm in re.finditer(_TIME_PAT, line):
+        numeric_time = tm.group(0)
+        rest = line[tm.end():]
+        sfx_m = _TIME_SUFFIX_RE.match(rest)
+        raw_suffix = sfx_m.group(1).strip() if (sfx_m and sfx_m.group(1)) else ""
+        return place, numeric_time, raw_suffix
+
+    # No time found — return (place, None) so caller can watch the next line.
+    return place, None, ""
 
 
 # ── Loose event matching for second-pass recovery ─────────────────────────────

@@ -43,6 +43,7 @@ from parser_helpers import (
     normalize_event_name_any,
     parse_filename_metadata,
     parse_place_and_time,
+    extract_time_and_suffix,
     parse_team_scores,
     detect_session_type_from_text,
     classify_file_gender,
@@ -60,6 +61,7 @@ ANCHOR_HEADER = [
     "1st", "8th", "16th",
     "1st_seconds", "8th_seconds", "16th_seconds",
     "Sec_per_place", "Source_File", "Data_Quality",
+    "1st_flags", "8th_flags", "16th_flags",
 ]
 
 TEAM_HEADER = [
@@ -147,6 +149,9 @@ class EventAccumulator:
         # overall_place → seconds
         self.places: dict[int, float] = {}
 
+        # overall_place → raw annotation suffix (e.g. "*", "!", "# NCAA B")
+        self.suffixes: dict[int, str] = {}
+
         # Which final sections contributed to this accumulator
         self.final_sections_seen: set[str] = set()
 
@@ -154,14 +159,18 @@ class EventAccumulator:
     def has_b_final(self) -> bool:
         return "B" in self.final_sections_seen
 
-    def add(self, place: int, time_str: str, final_type: str = "unknown"):
+    def add(self, place: int, time_str: str, final_type: str = "unknown",
+            suffix: str = ""):
         """
         Add a result.  `place` must already be the normalized overall place
         (caller applied A/B/C offset).  `final_type` tracks heat origin.
+        `suffix` is the raw annotation that trailed the time (e.g. "*", "# NCAA B").
         """
         sec = time_to_seconds(time_str)
         if sec is not None and place not in self.places:
             self.places[place] = sec
+            if suffix:
+                self.suffixes[place] = suffix
             if final_type:
                 self.final_sections_seen.add(final_type)
 
@@ -182,6 +191,8 @@ class EventAccumulator:
             for p, t in other.places.items():
                 if p not in self.places:
                     self.places[p] = t
+                    if p in other.suffixes:
+                        self.suffixes[p] = other.suffixes[p]
             self.final_sections_seen |= other.final_sections_seen
             if other.session_score > self.session_score:
                 self.session_score = other.session_score
@@ -194,6 +205,7 @@ class EventAccumulator:
             )
             if other_is_better:
                 self.places = dict(other.places)
+                self.suffixes = dict(other.suffixes)
                 self.final_sections_seen = set(other.final_sections_seen)
                 self.session_score = other.session_score
 
@@ -249,6 +261,10 @@ class EventAccumulator:
             "8th_seconds":   round(t8, 3),
             "16th_seconds":  round(t16, 3),
             "Sec_per_place": spp,
+            # Annotation suffixes stripped from the raw time token for each anchor
+            "1st_flags":     self.suffixes.get(1,  ""),
+            "8th_flags":     self.suffixes.get(8,  ""),
+            "16th_flags":    self.suffixes.get(16, ""),
         }
 
     def missing_places(self) -> list[int]:
@@ -533,7 +549,7 @@ def parse_pdf_raw(
 
         # ── Result row ────────────────────────────────────────────────────────
         if current_event:
-            place, time_str = parse_place_and_time(line)
+            place, time_str, raw_suffix = parse_place_and_time(line)
             if place is not None:
                 # Apply section offset ONLY if the displayed place looks like a
                 # heat rank (1-8).  Some PDFs (e.g. ACC) show overall ranks
@@ -544,7 +560,12 @@ def parse_pdf_raw(
                 offset = raw_offset if (raw_offset > 0 and place <= 8) else 0
                 if time_str is not None:
                     _pending_place = None
-                    current_event.add(place + offset, time_str, current_final_type)
+                    current_event.add(place + offset, time_str, current_final_type,
+                                      suffix=raw_suffix)
+                    if raw_suffix:
+                        gender_label = current_event.gender or "unknown"
+                        flag_rows.append(flag(gender_label, current_event.name,
+                                              f"time_suffix_handled: {raw_suffix}"))
                 else:
                     # Swimmer name found but no inline time — hold effective
                     # place so the next line's time can be paired with it.
@@ -555,7 +576,13 @@ def parse_pdf_raw(
                 for t in _PENDING_TIME_RE.findall(line):
                     sec = time_to_seconds(t)
                     if sec is not None and sec >= 10:
-                        current_event.add(_pending_place, t, current_final_type)
+                        _, sfx = extract_time_and_suffix(line.strip())
+                        current_event.add(_pending_place, t, current_final_type,
+                                          suffix=sfx)
+                        if sfx:
+                            gender_label = current_event.gender or "unknown"
+                            flag_rows.append(flag(gender_label, current_event.name,
+                                                  f"time_suffix_handled: {sfx}"))
                         _pending_place = None
                         break
 
@@ -762,20 +789,23 @@ def _second_pass_scan_file(
                     finalize_current()
                     current_final_type = "unknown"
                     continue
-                place, time_str = parse_place_and_time(line)
+                place, time_str, raw_suffix = parse_place_and_time(line)
                 if place is not None:
                     raw_offset = FINAL_PLACE_OFFSETS.get(current_final_type, 0)
                     offset = raw_offset if (raw_offset > 0 and place <= 8) else 0
                     if time_str is not None:
                         _pending_place = None
-                        current_acc.add(place + offset, time_str, current_final_type)
+                        current_acc.add(place + offset, time_str, current_final_type,
+                                        suffix=raw_suffix)
                     else:
                         _pending_place = place + offset
                 elif _pending_place is not None:
                     for t in _PENDING_TIME_RE.findall(line):
                         sec = time_to_seconds(t)
                         if sec is not None and sec >= 10:
-                            current_acc.add(_pending_place, t, current_final_type)
+                            _, sfx = extract_time_and_suffix(line.strip())
+                            current_acc.add(_pending_place, t, current_final_type,
+                                            suffix=sfx)
                             _pending_place = None
                             break
 
