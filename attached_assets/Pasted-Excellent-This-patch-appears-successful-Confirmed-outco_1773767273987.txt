@@ -1,0 +1,105 @@
+Excellent. This patch appears successful.
+
+Confirmed outcomes:
+- CCIW improved from 22/28 to 25/28
+- all five baselines held with zero regressions:
+  - GLIAC 28/28
+  - ODAC 26/28
+  - Patriot 26/28
+  - Summit 26/28
+  - Big East 26/28
+- Men 200 Fly at CCIW has been verified as a true field-size ceiling case, not a parser miss
+- 1000 Free is now optional in reporting and should never be treated as a required miss
+
+We should now stop chasing CCIW-specific gains and move into parser hardening.
+
+==================================================
+PART 1 — LOCK IN THIS VERSION
+==================================================
+
+Treat the current parser as the new stable baseline.
+
+Create a clearly labeled checkpoint / branch / saved version for this state, since it:
+- fixes the CCIW fly issue generally
+- preserves ODAC / Patriot / Summit / Big East / GLIAC behavior
+- correctly treats 1000 Free as optional
+- correctly handles true field-size ceilings
+
+==================================================
+PART 2 — ADD "TRUE MISS" VS "DATA CEILING" REPORTING
+==================================================
+
+Improve reporting so missing anchors are classified more intelligently.
+
+For each event, classify as one of:
+- captured
+- missing_true_parser_miss
+- missing_optional_1000
+- missing_likely_not_contested
+- missing_data_ceiling
+
+Definitions:
+- missing_optional_1000 = 1000 not found, but not reportable as failure
+- missing_likely_not_contested = event appears absent from meet program
+- missing_data_ceiling = event exists, but field is too small to produce the target anchor depth
+- missing_true_parser_miss = event should be present and deep enough, but parser failed to recover it
+
+Add this to event coverage output so we stop treating all blanks the same.
+
+==================================================
+PART 3 — ADD EVENT-LEVEL FIELD DEPTH REPORTING
+==================================================
+
+For each event captured, report:
+- total swimmers detected
+- deepest valid place recovered
+- whether target anchor depth was achievable from source data
+
+Example fields:
+- Event_Name
+- Gender
+- Round
+- Swimmer_Count
+- Deepest_Place_Recovered
+- Target_Anchor_Place
+- Anchor_Depth_Achievable_YN
+- Coverage_Status
+
+This is especially important for events like CCIW Men 200 Fly where the parser is correct but the meet is shallow.
+
+==================================================
+PART 4 — KEEP GENERAL LOGIC, NOT CONFERENCE PATCHES
+==================================================
+
+Do a quick code cleanup pass to ensure the recent fixes remain general:
+- CID normalization should remain generic
+- continuation-header handling should remain generic
+- finals/prelims parsing should remain generic
+- no CCIW-only special case logic should remain unless strictly debug-only and disabled by default
+
+==================================================
+PART 5 — NEXT TEST PDFs
+==================================================
+
+After locking the baseline, I want to test a few never-seen conferences / PDFs.
+
+Please prepare the parser so we can drop in 2–4 new conference PDFs and run them through:
+- manifest
+- parsing
+- event coverage report
+- true miss / data ceiling classification
+- debug outputs if needed
+
+Do not run a huge batch yet.
+Just make sure the pipeline is ready for targeted unseen-PDF testing.
+
+==================================================
+PART 6 — REPORT BACK
+==================================================
+
+Report:
+1. whether the current version has been checkpointed / locked
+2. whether true miss vs data ceiling classification is implemented
+3. whether event-level field depth reporting is implemented
+4. whether any conference-specific logic remains that should be generalized or removed
+5. that the parser is ready for unseen-PDF testing

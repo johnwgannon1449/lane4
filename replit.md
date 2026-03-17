@@ -205,32 +205,49 @@ The `*_flags` columns carry raw annotation suffixes stripped from time tokens (e
 - **Small-field tolerance**: if all places 1…max are present (max ≥ 8, max < target anchor), substitute max-place time for the missing anchor
 - **Pending-place**: if a swimmer name row has no inline time, hold the place and pair it with the time on the immediately following line
 
-### Coverage Results (2026 Championships)
-| Conference | Score | Notes |
+### Output CSVs
+| File | Description |
+|---|---|
+| `event_anchors.csv` | One row per captured event (place 1/8/16 times in seconds + formatted) |
+| `event_coverage_report.csv` | One row per event per gender per bundle — includes `Coverage_Status`, field depth |
+| `review_flags.csv` | Per-event quality notes, time suffix handling, recovery log |
+| `fallback_usage.csv` | Anchors using prelim or non-finals data |
+| `event_header_debug.csv` | State-machine trace for every event header seen |
+| `column_mode_debug.csv` | Per-page column detection log (ODAC/Patriot only) |
+| `debug_bundle_report.csv` | Raw extraction rows before merge |
+| `debug_bundle_summary.csv` | Per-bundle summary counts |
+
+### Coverage_Status Classification (event_coverage_report.csv)
+| Status | Meaning |
+|---|---|
+| `captured` | Event extracted with all required anchors |
+| `missing_optional_1000` | 1000 Free — optional, never penalises score |
+| `missing_likely_not_contested` | Event absent from this conference's meet program |
+| `missing_data_ceiling` | Event exists but meet field too shallow for target anchor depth (consecutive_depth < 16) |
+| `missing_true_parser_miss` | Event should be present and deep enough but parser failed to recover |
+
+### Field Depth Columns (event_coverage_report.csv)
+- `Swimmer_Count` — distinct place entries in the best accumulator
+- `Deepest_Place_Recovered` — absolute maximum place seen
+- `Target_Anchor_Place` — always 16 (places 1, 8, 16 are required)
+- `Anchor_Depth_Achievable_YN` — yes/no/na based on `consecutive_depth >= 16`
+
+`consecutive_depth` is the unbroken consecutive run from place 1.  Spurious high-place entries from loose pass-2 scans do not inflate this metric, making it a reliable indicator of true field depth.
+
+### Coverage Results (2026 Championships — locked baseline)
+| Conference | Score | Status |
 |---|---|---|
-| GLIAC | 28/28 | Perfect |
-| PSAC | 28/28 | Perfect |
-| SAC | 28/28 | Perfect |
-| ACC | 26/28 | 1000 Free absent (DI) |
-| America East | 26/28 | 1000 Free absent |
-| Big 12 | 26/28 | 1000 Free absent |
-| Big East | 26/28 | 1000 Free absent (men recovered via Mode B fix) |
-| Big West | 26/28 | 1000 Free absent |
-| Horizon League | 26/28 | 1000 Free absent |
-| Landmark | 26/28 | 1000 Free absent |
-| ODAC | 26/28 | 1000 Free confirmed not contested |
-| Patriot | 26/28 | 1000 Free confirmed not contested |
-| SEC | 26/28 | 1000 Free absent |
-| Summit League | 26/28 | 1000 Free confirmed not contested |
-| CCIW | 22/28 | 1000 Free + 100/200 Fly absent (D3) |
-| CAA | 25/28 | 1000 Free + men's 100 Fly missing |
-| MAAC | 25/28 | 1000 Free + women's 100 Free missing |
-| Atlantic 10 | 21/28 | 100 Free, 100/200 Fly naming variants |
-| Ivy League | 18/28 | Women's PDF format differs |
-| ASUN | 17/28 | Multi-day split + event naming gaps |
-| Big Ten | 4/28 | Women's PDF format unrecognized; men multi-day |
+| GLIAC | 28/28 | Baseline — perfect |
+| ODAC | 26/28 | Baseline — 1000 Free not contested |
+| Patriot | 26/28 | Baseline — 1000 Free not contested |
+| Summit League | 26/28 | Baseline — 1000 Free not contested |
+| Big East | 26/28 | Baseline — 1000 Free not contested |
+| CCIW | 25/28 | Stable — Men 200 Fly is `missing_data_ceiling` (11 entrants; no 16th place in PDF) |
 
-### Mode B Fix (session note)
-Root cause of men:0 in Big East and CCIW: `detect_file_gender_from_content` sampled only the first 8 pages. HY-TEK combined PDFs that list ALL women's events first (pages 1-44) then ALL men's events (pages 45+) were misclassified as women-only.
+CCIW Men 200 Fly verified as a true data ceiling: only 11 swimmers entered the event. The parser correctly extracts all 11 places; target anchor depth (16) is not achievable from source data.
 
-Fix: sample both first 8 AND last 8 pages, union the gender signals. Belt-and-suspenders: state machine dynamically upgrades `file_gender_type` from `"women"` to `"combined"` when an explicit men's event header is encountered and the filename did not indicate women-only.
+### Active Fixes Applied
+- **CID ligature normalization**: `(cid:976)` → `"f"` in HY-TEK MM8 fonts; resolves "Butter(cid:976)ly" → "Butterfly" for event header detection
+- **LAST-time extraction**: `parse_place_and_time` returns the last valid time (≥10 s) per row, correctly picking the finals time in "Prelim Time | Finals Time" dual-column rows
+- **`consecutive_depth` property**: unbroken run from place 1 — immune to spurious loose-scan bleed-in
+- **Mode B gender detection**: samples both first 8 AND last 8 pages; state machine upgrades `"women"` → `"combined"` when men's event header encountered during parse

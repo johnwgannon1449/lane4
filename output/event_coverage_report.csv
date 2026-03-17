@@ -1,85 +1,169 @@
-Bundle_ID,Conference,Year,Gender,Event_Name,Detected,Source_Type,Notes
-odac_2026,ODAC,2026,men,50 Free,yes,prelim_fallback,
-odac_2026,ODAC,2026,men,100 Free,yes,prelim_fallback,
-odac_2026,ODAC,2026,men,200 Free,yes,prelim_fallback,
-odac_2026,ODAC,2026,men,500 Free,yes,prelim_fallback,
-odac_2026,ODAC,2026,men,1000 Free,no,not_required,optional_not_required
-odac_2026,ODAC,2026,men,1650 Free,yes,prelim_fallback,
-odac_2026,ODAC,2026,men,100 Back,yes,prelim_fallback,
-odac_2026,ODAC,2026,men,200 Back,yes,prelim_fallback,
-odac_2026,ODAC,2026,men,100 Breast,yes,prelim_fallback,
-odac_2026,ODAC,2026,men,200 Breast,yes,prelim_fallback,
-odac_2026,ODAC,2026,men,100 Fly,yes,prelim_fallback,
-odac_2026,ODAC,2026,men,200 Fly,yes,prelim_fallback,
-odac_2026,ODAC,2026,men,200 IM,yes,prelim_fallback,
-odac_2026,ODAC,2026,men,400 IM,yes,prelim_fallback,
-odac_2026,ODAC,2026,women,50 Free,yes,prelim_fallback,
-odac_2026,ODAC,2026,women,100 Free,yes,prelim_fallback,
-odac_2026,ODAC,2026,women,200 Free,yes,prelim_fallback,
-odac_2026,ODAC,2026,women,500 Free,yes,prelim_fallback,
-odac_2026,ODAC,2026,women,1000 Free,no,not_required,optional_not_required
-odac_2026,ODAC,2026,women,1650 Free,yes,prelim_fallback,
-odac_2026,ODAC,2026,women,100 Back,yes,prelim_fallback,
-odac_2026,ODAC,2026,women,200 Back,yes,prelim_fallback,
-odac_2026,ODAC,2026,women,100 Breast,yes,prelim_fallback,
-odac_2026,ODAC,2026,women,200 Breast,yes,prelim_fallback,
-odac_2026,ODAC,2026,women,100 Fly,yes,prelim_fallback,
-odac_2026,ODAC,2026,women,200 Fly,yes,prelim_fallback,
-odac_2026,ODAC,2026,women,200 IM,yes,prelim_fallback,
-odac_2026,ODAC,2026,women,400 IM,yes,prelim_fallback,
-patriot_2026,Patriot,2026,men,50 Free,yes,prelim_fallback,
-patriot_2026,Patriot,2026,men,100 Free,yes,prelim_fallback,
-patriot_2026,Patriot,2026,men,200 Free,yes,prelim_fallback,
-patriot_2026,Patriot,2026,men,500 Free,yes,prelim_fallback,
-patriot_2026,Patriot,2026,men,1000 Free,no,not_required,optional_not_required
-patriot_2026,Patriot,2026,men,1650 Free,yes,prelim_fallback,
-patriot_2026,Patriot,2026,men,100 Back,yes,prelim_fallback,
-patriot_2026,Patriot,2026,men,200 Back,yes,prelim_fallback,
-patriot_2026,Patriot,2026,men,100 Breast,yes,prelim_fallback,
-patriot_2026,Patriot,2026,men,200 Breast,yes,prelim_fallback,
-patriot_2026,Patriot,2026,men,100 Fly,yes,prelim_fallback,
-patriot_2026,Patriot,2026,men,200 Fly,yes,prelim_fallback,
-patriot_2026,Patriot,2026,men,200 IM,yes,prelim_fallback,
-patriot_2026,Patriot,2026,men,400 IM,yes,prelim_fallback,
-patriot_2026,Patriot,2026,women,50 Free,yes,prelim_fallback,
-patriot_2026,Patriot,2026,women,100 Free,yes,prelim_fallback,
-patriot_2026,Patriot,2026,women,200 Free,yes,prelim_fallback,
-patriot_2026,Patriot,2026,women,500 Free,yes,prelim_fallback,
-patriot_2026,Patriot,2026,women,1000 Free,no,not_required,optional_not_required
-patriot_2026,Patriot,2026,women,1650 Free,yes,prelim_fallback,
-patriot_2026,Patriot,2026,women,100 Back,yes,prelim_fallback,
-patriot_2026,Patriot,2026,women,200 Back,yes,prelim_fallback,
-patriot_2026,Patriot,2026,women,100 Breast,yes,prelim_fallback,
-patriot_2026,Patriot,2026,women,200 Breast,yes,prelim_fallback,
-patriot_2026,Patriot,2026,women,100 Fly,yes,prelim_fallback,
-patriot_2026,Patriot,2026,women,200 Fly,yes,prelim_fallback,
-patriot_2026,Patriot,2026,women,200 IM,yes,prelim_fallback,
-patriot_2026,Patriot,2026,women,400 IM,yes,prelim_fallback,
-summitleague_2026,Summit League,2026,men,50 Free,yes,finals,
-summitleague_2026,Summit League,2026,men,100 Free,yes,finals,
-summitleague_2026,Summit League,2026,men,200 Free,yes,finals,
-summitleague_2026,Summit League,2026,men,500 Free,yes,finals,
-summitleague_2026,Summit League,2026,men,1000 Free,no,not_required,optional_not_required
-summitleague_2026,Summit League,2026,men,1650 Free,yes,finals,
-summitleague_2026,Summit League,2026,men,100 Back,yes,finals,
-summitleague_2026,Summit League,2026,men,200 Back,yes,finals,
-summitleague_2026,Summit League,2026,men,100 Breast,yes,finals,
-summitleague_2026,Summit League,2026,men,200 Breast,yes,finals,
-summitleague_2026,Summit League,2026,men,100 Fly,yes,finals,
-summitleague_2026,Summit League,2026,men,200 Fly,yes,finals,
-summitleague_2026,Summit League,2026,men,200 IM,yes,finals,
-summitleague_2026,Summit League,2026,men,400 IM,yes,finals,
-summitleague_2026,Summit League,2026,women,50 Free,yes,finals,
-summitleague_2026,Summit League,2026,women,100 Free,yes,finals,
-summitleague_2026,Summit League,2026,women,200 Free,yes,finals,
-summitleague_2026,Summit League,2026,women,500 Free,yes,finals,
-summitleague_2026,Summit League,2026,women,1000 Free,no,not_required,optional_not_required
-summitleague_2026,Summit League,2026,women,1650 Free,yes,finals,
-summitleague_2026,Summit League,2026,women,100 Back,yes,finals,
-summitleague_2026,Summit League,2026,women,200 Back,yes,finals,
-summitleague_2026,Summit League,2026,women,100 Breast,yes,finals,
-summitleague_2026,Summit League,2026,women,200 Breast,yes,finals,
-summitleague_2026,Summit League,2026,women,100 Fly,yes,finals,
-summitleague_2026,Summit League,2026,women,200 Fly,yes,finals,
-summitleague_2026,Summit League,2026,women,200 IM,yes,finals,
-summitleague_2026,Summit League,2026,women,400 IM,yes,finals,
+Bundle_ID,Conference,Year,Gender,Event_Name,Coverage_Status,Detected,Source_Type,Notes,Swimmer_Count,Deepest_Place_Recovered,Target_Anchor_Place,Anchor_Depth_Achievable_YN
+bigeast_2026,Big East,2026,men,50 Free,captured,yes,prelim_fallback,,23,25,16,yes
+bigeast_2026,Big East,2026,men,100 Free,captured,yes,prelim_fallback,,15,42,16,yes
+bigeast_2026,Big East,2026,men,200 Free,captured,yes,prelim_fallback,,14,16,16,yes
+bigeast_2026,Big East,2026,men,500 Free,captured,yes,prelim_fallback,,17,20,16,yes
+bigeast_2026,Big East,2026,men,1000 Free,missing_optional_1000,no,not_required,optional_not_required,0,0,16,na
+bigeast_2026,Big East,2026,men,1650 Free,captured,yes,prelim_fallback,,12,12,16,yes
+bigeast_2026,Big East,2026,men,100 Back,captured,yes,prelim_fallback,,15,46,16,yes
+bigeast_2026,Big East,2026,men,200 Back,captured,yes,prelim_fallback,,20,20,16,yes
+bigeast_2026,Big East,2026,men,100 Breast,captured,yes,prelim_fallback,,15,52,16,yes
+bigeast_2026,Big East,2026,men,200 Breast,captured,yes,prelim_fallback,,16,16,16,yes
+bigeast_2026,Big East,2026,men,100 Fly,captured,yes,prelim_fallback,,15,46,16,yes
+bigeast_2026,Big East,2026,men,200 Fly,captured,yes,prelim_fallback,,16,16,16,yes
+bigeast_2026,Big East,2026,men,200 IM,captured,yes,prelim_fallback,,16,16,16,yes
+bigeast_2026,Big East,2026,men,400 IM,captured,yes,prelim_fallback,,14,16,16,yes
+bigeast_2026,Big East,2026,women,50 Free,captured,yes,prelim_fallback,,23,24,16,yes
+bigeast_2026,Big East,2026,women,100 Free,captured,yes,prelim_fallback,,30,48,16,yes
+bigeast_2026,Big East,2026,women,200 Free,captured,yes,prelim_fallback,,31,33,16,yes
+bigeast_2026,Big East,2026,women,500 Free,captured,yes,prelim_fallback,,24,24,16,yes
+bigeast_2026,Big East,2026,women,1000 Free,missing_optional_1000,no,not_required,optional_not_required,0,0,16,na
+bigeast_2026,Big East,2026,women,1650 Free,captured,yes,prelim_fallback,,21,21,16,yes
+bigeast_2026,Big East,2026,women,100 Back,captured,yes,prelim_fallback,,25,52,16,yes
+bigeast_2026,Big East,2026,women,200 Back,captured,yes,prelim_fallback,,22,24,16,yes
+bigeast_2026,Big East,2026,women,100 Breast,captured,yes,prelim_fallback,,20,20,16,yes
+bigeast_2026,Big East,2026,women,200 Breast,captured,yes,prelim_fallback,,21,32,16,yes
+bigeast_2026,Big East,2026,women,100 Fly,captured,yes,prelim_fallback,,25,52,16,yes
+bigeast_2026,Big East,2026,women,200 Fly,captured,yes,prelim_fallback,,24,24,16,yes
+bigeast_2026,Big East,2026,women,200 IM,captured,yes,prelim_fallback,,27,33,16,yes
+bigeast_2026,Big East,2026,women,400 IM,captured,yes,prelim_fallback,,20,20,16,yes
+cciw_2026,CCIW,2026,men,50 Free,captured,yes,finals,,16,16,16,yes
+cciw_2026,CCIW,2026,men,100 Free,captured,yes,finals,,16,16,16,yes
+cciw_2026,CCIW,2026,men,200 Free,captured,yes,finals,,16,16,16,yes
+cciw_2026,CCIW,2026,men,500 Free,captured,yes,finals,,16,16,16,yes
+cciw_2026,CCIW,2026,men,1000 Free,missing_optional_1000,no,not_required,optional_not_required,0,0,16,na
+cciw_2026,CCIW,2026,men,1650 Free,captured,yes,finals,,13,13,16,yes
+cciw_2026,CCIW,2026,men,100 Back,captured,yes,finals,,16,16,16,yes
+cciw_2026,CCIW,2026,men,200 Back,captured,yes,finals,,13,13,16,yes
+cciw_2026,CCIW,2026,men,100 Breast,captured,yes,finals,,16,16,16,yes
+cciw_2026,CCIW,2026,men,200 Breast,captured,yes,finals,,16,16,16,yes
+cciw_2026,CCIW,2026,men,100 Fly,captured,yes,finals,,16,16,16,yes
+cciw_2026,CCIW,2026,men,200 Fly,missing_data_ceiling,no,missing,"data_ceiling — consecutive_depth: 11, swimmers: 12, target: 16",12,27,16,no
+cciw_2026,CCIW,2026,men,200 IM,captured,yes,finals,,16,16,16,yes
+cciw_2026,CCIW,2026,men,400 IM,captured,yes,finals,,11,11,16,yes
+cciw_2026,CCIW,2026,women,50 Free,captured,yes,finals,,27,30,16,yes
+cciw_2026,CCIW,2026,women,100 Free,captured,yes,finals,,17,35,16,yes
+cciw_2026,CCIW,2026,women,200 Free,captured,yes,finals,,16,16,16,yes
+cciw_2026,CCIW,2026,women,500 Free,captured,yes,finals,,21,24,16,yes
+cciw_2026,CCIW,2026,women,1000 Free,missing_optional_1000,no,not_required,optional_not_required,0,0,16,na
+cciw_2026,CCIW,2026,women,1650 Free,captured,yes,finals,,20,20,16,yes
+cciw_2026,CCIW,2026,women,100 Back,captured,yes,finals,,16,16,16,yes
+cciw_2026,CCIW,2026,women,200 Back,captured,yes,finals,,16,16,16,yes
+cciw_2026,CCIW,2026,women,100 Breast,captured,yes,finals,,16,16,16,yes
+cciw_2026,CCIW,2026,women,200 Breast,captured,yes,finals,,16,16,16,yes
+cciw_2026,CCIW,2026,women,100 Fly,captured,yes,finals,,19,21,16,yes
+cciw_2026,CCIW,2026,women,200 Fly,captured,yes,finals,,16,16,16,yes
+cciw_2026,CCIW,2026,women,200 IM,captured,yes,finals,,16,16,16,yes
+cciw_2026,CCIW,2026,women,400 IM,captured,yes,finals,,16,16,16,yes
+gliac_2026,GLIAC,2026,men,50 Free,captured,yes,finals,,40,46,16,yes
+gliac_2026,GLIAC,2026,men,100 Free,captured,yes,finals,,44,50,16,yes
+gliac_2026,GLIAC,2026,men,200 Free,captured,yes,finals,,39,39,16,yes
+gliac_2026,GLIAC,2026,men,500 Free,captured,yes,finals,,22,25,16,yes
+gliac_2026,GLIAC,2026,men,1000 Free,captured,yes,finals,,25,25,16,yes
+gliac_2026,GLIAC,2026,men,1650 Free,captured,yes,finals,,21,21,16,yes
+gliac_2026,GLIAC,2026,men,100 Back,captured,yes,finals,,37,48,16,yes
+gliac_2026,GLIAC,2026,men,200 Back,captured,yes,finals,,23,23,16,yes
+gliac_2026,GLIAC,2026,men,100 Breast,captured,yes,finals,,27,55,16,yes
+gliac_2026,GLIAC,2026,men,200 Breast,captured,yes,finals,,23,23,16,yes
+gliac_2026,GLIAC,2026,men,100 Fly,captured,yes,finals,,40,48,16,yes
+gliac_2026,GLIAC,2026,men,200 Fly,captured,yes,finals,,18,18,16,yes
+gliac_2026,GLIAC,2026,men,200 IM,captured,yes,finals,,41,41,16,yes
+gliac_2026,GLIAC,2026,men,400 IM,captured,yes,finals,,26,26,16,yes
+gliac_2026,GLIAC,2026,women,50 Free,captured,yes,finals,,31,32,16,yes
+gliac_2026,GLIAC,2026,women,100 Free,captured,yes,finals,,30,51,16,yes
+gliac_2026,GLIAC,2026,women,200 Free,captured,yes,finals,,28,28,16,yes
+gliac_2026,GLIAC,2026,women,500 Free,captured,yes,finals,,18,18,16,yes
+gliac_2026,GLIAC,2026,women,1000 Free,captured,yes,finals,,19,19,16,yes
+gliac_2026,GLIAC,2026,women,1650 Free,captured,yes,finals,,14,14,16,yes
+gliac_2026,GLIAC,2026,women,100 Back,captured,yes,finals,,23,56,16,yes
+gliac_2026,GLIAC,2026,women,200 Back,captured,yes,finals,,20,20,16,yes
+gliac_2026,GLIAC,2026,women,100 Breast,captured,yes,finals,,19,19,16,yes
+gliac_2026,GLIAC,2026,women,200 Breast,captured,yes,finals,,19,19,16,yes
+gliac_2026,GLIAC,2026,women,100 Fly,captured,yes,finals,,29,56,16,yes
+gliac_2026,GLIAC,2026,women,200 Fly,captured,yes,finals,,18,18,16,yes
+gliac_2026,GLIAC,2026,women,200 IM,captured,yes,finals,,29,29,16,yes
+gliac_2026,GLIAC,2026,women,400 IM,captured,yes,finals,,19,19,16,yes
+odac_2026,ODAC,2026,men,50 Free,captured,yes,prelim_fallback,,15,20,16,yes
+odac_2026,ODAC,2026,men,100 Free,captured,yes,prelim_fallback,,41,44,16,yes
+odac_2026,ODAC,2026,men,200 Free,captured,yes,prelim_fallback,,16,16,16,yes
+odac_2026,ODAC,2026,men,500 Free,captured,yes,prelim_fallback,,16,16,16,yes
+odac_2026,ODAC,2026,men,1000 Free,missing_optional_1000,no,not_required,optional_not_required,0,0,16,na
+odac_2026,ODAC,2026,men,1650 Free,captured,yes,prelim_fallback,,18,18,16,yes
+odac_2026,ODAC,2026,men,100 Back,captured,yes,prelim_fallback,,19,49,16,yes
+odac_2026,ODAC,2026,men,200 Back,captured,yes,prelim_fallback,,16,16,16,yes
+odac_2026,ODAC,2026,men,100 Breast,captured,yes,prelim_fallback,,19,55,16,yes
+odac_2026,ODAC,2026,men,200 Breast,captured,yes,prelim_fallback,,16,16,16,yes
+odac_2026,ODAC,2026,men,100 Fly,captured,yes,prelim_fallback,,18,48,16,yes
+odac_2026,ODAC,2026,men,200 Fly,captured,yes,prelim_fallback,,16,16,16,yes
+odac_2026,ODAC,2026,men,200 IM,captured,yes,prelim_fallback,,19,29,16,yes
+odac_2026,ODAC,2026,men,400 IM,captured,yes,prelim_fallback,,15,15,16,yes
+odac_2026,ODAC,2026,women,50 Free,captured,yes,prelim_fallback,,16,23,16,yes
+odac_2026,ODAC,2026,women,100 Free,captured,yes,prelim_fallback,,18,51,16,yes
+odac_2026,ODAC,2026,women,200 Free,captured,yes,prelim_fallback,,16,16,16,yes
+odac_2026,ODAC,2026,women,500 Free,captured,yes,prelim_fallback,,16,16,16,yes
+odac_2026,ODAC,2026,women,1000 Free,missing_optional_1000,no,not_required,optional_not_required,0,0,16,na
+odac_2026,ODAC,2026,women,1650 Free,captured,yes,prelim_fallback,,22,22,16,yes
+odac_2026,ODAC,2026,women,100 Back,captured,yes,prelim_fallback,,18,56,16,yes
+odac_2026,ODAC,2026,women,200 Back,captured,yes,prelim_fallback,,16,16,16,yes
+odac_2026,ODAC,2026,women,100 Breast,captured,yes,prelim_fallback,,17,59,16,yes
+odac_2026,ODAC,2026,women,200 Breast,captured,yes,prelim_fallback,,16,16,16,yes
+odac_2026,ODAC,2026,women,100 Fly,captured,yes,prelim_fallback,,18,55,16,yes
+odac_2026,ODAC,2026,women,200 Fly,captured,yes,prelim_fallback,,16,16,16,yes
+odac_2026,ODAC,2026,women,200 IM,captured,yes,prelim_fallback,,24,29,16,yes
+odac_2026,ODAC,2026,women,400 IM,captured,yes,prelim_fallback,,13,13,16,yes
+patriot_2026,Patriot,2026,men,50 Free,captured,yes,prelim_fallback,,24,24,16,yes
+patriot_2026,Patriot,2026,men,100 Free,captured,yes,prelim_fallback,,24,24,16,yes
+patriot_2026,Patriot,2026,men,200 Free,captured,yes,prelim_fallback,,23,23,16,yes
+patriot_2026,Patriot,2026,men,500 Free,captured,yes,prelim_fallback,,24,24,16,yes
+patriot_2026,Patriot,2026,men,1000 Free,missing_optional_1000,no,not_required,optional_not_required,0,0,16,na
+patriot_2026,Patriot,2026,men,1650 Free,captured,yes,prelim_fallback,,24,24,16,yes
+patriot_2026,Patriot,2026,men,100 Back,captured,yes,prelim_fallback,,24,24,16,yes
+patriot_2026,Patriot,2026,men,200 Back,captured,yes,prelim_fallback,,24,24,16,yes
+patriot_2026,Patriot,2026,men,100 Breast,captured,yes,prelim_fallback,,30,30,16,yes
+patriot_2026,Patriot,2026,men,200 Breast,captured,yes,prelim_fallback,,24,24,16,yes
+patriot_2026,Patriot,2026,men,100 Fly,captured,yes,prelim_fallback,,24,24,16,yes
+patriot_2026,Patriot,2026,men,200 Fly,captured,yes,prelim_fallback,,24,24,16,yes
+patriot_2026,Patriot,2026,men,200 IM,captured,yes,prelim_fallback,,24,24,16,yes
+patriot_2026,Patriot,2026,men,400 IM,captured,yes,prelim_fallback,,24,24,16,yes
+patriot_2026,Patriot,2026,women,50 Free,captured,yes,prelim_fallback,,26,26,16,yes
+patriot_2026,Patriot,2026,women,100 Free,captured,yes,prelim_fallback,,36,38,16,yes
+patriot_2026,Patriot,2026,women,200 Free,captured,yes,prelim_fallback,,24,24,16,yes
+patriot_2026,Patriot,2026,women,500 Free,captured,yes,prelim_fallback,,24,24,16,yes
+patriot_2026,Patriot,2026,women,1000 Free,missing_optional_1000,no,not_required,optional_not_required,0,0,16,na
+patriot_2026,Patriot,2026,women,1650 Free,captured,yes,prelim_fallback,,27,27,16,yes
+patriot_2026,Patriot,2026,women,100 Back,captured,yes,prelim_fallback,,24,24,16,yes
+patriot_2026,Patriot,2026,women,200 Back,captured,yes,prelim_fallback,,24,24,16,yes
+patriot_2026,Patriot,2026,women,100 Breast,captured,yes,prelim_fallback,,24,24,16,yes
+patriot_2026,Patriot,2026,women,200 Breast,captured,yes,prelim_fallback,,24,32,16,yes
+patriot_2026,Patriot,2026,women,100 Fly,captured,yes,prelim_fallback,,24,24,16,yes
+patriot_2026,Patriot,2026,women,200 Fly,captured,yes,prelim_fallback,,24,24,16,yes
+patriot_2026,Patriot,2026,women,200 IM,captured,yes,prelim_fallback,,24,24,16,yes
+patriot_2026,Patriot,2026,women,400 IM,captured,yes,prelim_fallback,,24,24,16,yes
+summitleague_2026,Summit League,2026,men,50 Free,captured,yes,finals,,45,51,16,yes
+summitleague_2026,Summit League,2026,men,100 Free,captured,yes,finals,,44,44,16,yes
+summitleague_2026,Summit League,2026,men,200 Free,captured,yes,finals,,35,35,16,yes
+summitleague_2026,Summit League,2026,men,500 Free,captured,yes,finals,,32,32,16,yes
+summitleague_2026,Summit League,2026,men,1000 Free,missing_optional_1000,no,not_required,optional_not_required,0,0,16,na
+summitleague_2026,Summit League,2026,men,1650 Free,captured,yes,finals,,19,19,16,yes
+summitleague_2026,Summit League,2026,men,100 Back,captured,yes,finals,,23,24,16,yes
+summitleague_2026,Summit League,2026,men,200 Back,captured,yes,finals,,21,21,16,yes
+summitleague_2026,Summit League,2026,men,100 Breast,captured,yes,finals,,27,52,16,yes
+summitleague_2026,Summit League,2026,men,200 Breast,captured,yes,finals,,26,26,16,yes
+summitleague_2026,Summit League,2026,men,100 Fly,captured,yes,finals,,30,46,16,yes
+summitleague_2026,Summit League,2026,men,200 Fly,captured,yes,finals,,27,27,16,yes
+summitleague_2026,Summit League,2026,men,200 IM,captured,yes,finals,,39,39,16,yes
+summitleague_2026,Summit League,2026,men,400 IM,captured,yes,finals,,29,29,16,yes
+summitleague_2026,Summit League,2026,women,50 Free,captured,yes,finals,,43,43,16,yes
+summitleague_2026,Summit League,2026,women,100 Free,captured,yes,finals,,37,48,16,yes
+summitleague_2026,Summit League,2026,women,200 Free,captured,yes,finals,,31,31,16,yes
+summitleague_2026,Summit League,2026,women,500 Free,captured,yes,finals,,31,31,16,yes
+summitleague_2026,Summit League,2026,women,1000 Free,missing_optional_1000,no,not_required,optional_not_required,0,0,16,na
+summitleague_2026,Summit League,2026,women,1650 Free,captured,yes,finals,,20,20,16,yes
+summitleague_2026,Summit League,2026,women,100 Back,captured,yes,finals,,31,52,16,yes
+summitleague_2026,Summit League,2026,women,200 Back,captured,yes,finals,,29,29,16,yes
+summitleague_2026,Summit League,2026,women,100 Breast,captured,yes,finals,,22,24,16,yes
+summitleague_2026,Summit League,2026,women,200 Breast,captured,yes,finals,,24,24,16,yes
+summitleague_2026,Summit League,2026,women,100 Fly,captured,yes,finals,,25,52,16,yes
+summitleague_2026,Summit League,2026,women,200 Fly,captured,yes,finals,,16,16,16,yes
+summitleague_2026,Summit League,2026,women,200 IM,captured,yes,finals,,36,36,16,yes
+summitleague_2026,Summit League,2026,women,400 IM,captured,yes,finals,,18,18,16,yes

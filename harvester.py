@@ -103,7 +103,10 @@ COLUMN_MODE_DEBUG_HEADER = [
 
 EVENT_COVERAGE_HEADER = [
     "Bundle_ID", "Conference", "Year", "Gender", "Event_Name",
+    "Coverage_Status",
     "Detected", "Source_Type", "Notes",
+    "Swimmer_Count", "Deepest_Place_Recovered",
+    "Target_Anchor_Place", "Anchor_Depth_Achievable_YN",
 ]
 
 EVENT_HEADER_DEBUG_HEADER = [
@@ -171,6 +174,38 @@ class EventAccumulator:
     @property
     def has_b_final(self) -> bool:
         return "B" in self.final_sections_seen
+
+    @property
+    def swimmer_count(self) -> int:
+        """Number of distinct place entries recorded across all merged sections."""
+        return len(self.places)
+
+    @property
+    def deepest_place(self) -> int:
+        """Largest normalized place number seen (0 if no data)."""
+        return max(self.places.keys()) if self.places else 0
+
+    @property
+    def consecutive_depth(self) -> int:
+        """
+        Largest place in the unbroken consecutive run starting from 1.
+
+        This is the metric used to determine whether anchor depth is achievable
+        from source data.  Spurious high-place entries from loose scans (which
+        may bleed in from adjacent events) do not inflate this number because
+        they introduce a gap in the consecutive run.
+
+        Examples:
+          places={1,2,3,…,11,25,26} → consecutive_depth = 11
+          places={1,2,3,…,40}       → consecutive_depth = 40
+          places={5,6,7}            → consecutive_depth = 0  (no entry for 1)
+        """
+        if 1 not in self.places:
+            return 0
+        p = 1
+        while p + 1 in self.places:
+            p += 1
+        return p
 
     def add(self, place: int, time_str: str, final_type: str = "unknown",
             suffix: str = ""):
@@ -1135,6 +1170,11 @@ def merge_bundle(
     events_found:    list[str]  = []
     events_missing:  list[str]  = []
     events_detected: set[str]   = set()
+    # Depth info: (gender, event_name) → {swimmer_count, deepest_place}
+    # populated for every event that has at least one accumulator.
+    event_depth_info: dict[tuple[str, str], dict] = {}
+    # Keys where the field was verifiably too shallow to reach target anchor depth
+    data_ceiling_keys: set[tuple[str, str]] = set()
 
     for gender in sorted(bundle_genders):
         gender_events_found   = []
@@ -1158,6 +1198,15 @@ def merge_bundle(
                 if not is_optional:
                     gender_events_missing.append(f"{gender}:{event_name}")
                 continue
+
+            # Record field depth for every event that has accumulator data.
+            _depth_key = (gender, event_name)
+            _target_anchor = max(ANCHOR_PLACES)
+            event_depth_info[_depth_key] = {
+                "swimmer_count":   best.swimmer_count,
+                "deepest_place":   best.deepest_place,
+                "consecutive_depth": best.consecutive_depth,
+            }
 
             anchor = best.anchor()
             if anchor:
@@ -1212,13 +1261,29 @@ def merge_bundle(
                 miss_str     = ", ".join(place_labels[p] for p in missing)
                 pass_label   = "both passes" if event_name in targeted else "first pass"
 
-                # Distinguish a genuine field-size limitation from a parse gap.
-                # If ONLY 16th is missing and the event never had B-Final data,
-                # the conference likely ran fewer than 16 finalists.
+                # Classify: data ceiling vs parser miss.
+                # Use consecutive_depth (the unbroken run from place 1) as the
+                # indicator of actual field size.  Raw deepest_place can be
+                # inflated by spurious entries from adjacent events picked up by
+                # the loose pass-2 scan.  If the consecutive field from place 1
+                # never reaches the target anchor depth, the meet simply didn't
+                # have enough entrants — regardless of whether a B-Final header
+                # was seen.
+                is_data_ceiling = best.consecutive_depth < _target_anchor
+                if is_data_ceiling:
+                    data_ceiling_keys.add(_depth_key)
+
                 if missing == [16] and not best.has_b_final:
                     issue = (
-                        "fewer_than_16_finalists — no B-Final section detected; "
+                        f"fewer_than_16_finalists — consecutive depth: "
+                        f"{best.consecutive_depth}; no B-Final section; "
                         "event likely had fewer than 16 entrants"
+                    )
+                elif is_data_ceiling:
+                    issue = (
+                        f"data_ceiling — consecutive depth: {best.consecutive_depth} "
+                        f"of {best.swimmer_count} distinct entries; target {_target_anchor} "
+                        "not achievable from source data"
                     )
                 elif missing == [16] and best.has_b_final:
                     issue = (
@@ -1268,6 +1333,9 @@ def merge_bundle(
         "events_missing_list": events_missing,
         "men_missing":         men_miss,
         "women_missing":       women_miss,
+        # Field-depth tracking (keyed by (gender, event_name) tuple)
+        "event_depth_info":    event_depth_info,
+        "data_ceiling_keys":   data_ceiling_keys,
         "events_recovered_p2": len(pass2_recovered),
         "n_teams":             len(unique_teams),
         "team_score_strategy": team_score_strategy,
@@ -1484,46 +1552,83 @@ def run(input_dir: Path, output_dir: Path, bundle_filter: list[str] | None = Non
             (r["Gender"], r["Event"]): r
             for r in ev_rows
         }
-        not_contested = LIKELY_NOT_CONTESTED.get(conference, set())
+        not_contested   = LIKELY_NOT_CONTESTED.get(conference, set())
+        depth_info      = summary.get("event_depth_info", {})
+        ceiling_keys    = summary.get("data_ceiling_keys", set())
+        target_anchor   = max(ANCHOR_PLACES)
+        missing_list    = summary.get("events_missing_list", [])
+
         for gender in ("men", "women"):
             for event in TARGET_EVENTS:
                 key = (gender, event)
+                depth = depth_info.get(key, {})
+                sc    = depth.get("swimmer_count", 0)
+                dp    = depth.get("deepest_place", 0)
+                cd    = depth.get("consecutive_depth", 0)
+                # Anchor depth is achievable if the consecutive unbroken run
+                # from place 1 reaches the target.  Spurious high-place entries
+                # from loose scans do not count — they may belong to adjacent events.
+                achievable = "yes" if cd >= target_anchor else ("no" if cd > 0 else "na")
+
                 if key in output_index:
                     row_out = output_index[key]
                     all_coverage.append({
-                        "Bundle_ID":    bid,
-                        "Conference":   conference,
-                        "Year":         year,
-                        "Gender":       gender,
-                        "Event_Name":   event,
-                        "Detected":     "yes",
-                        "Source_Type":  row_out.get("Data_Quality", "finals"),
-                        "Notes":        "",
+                        "Bundle_ID":              bid,
+                        "Conference":             conference,
+                        "Year":                   year,
+                        "Gender":                 gender,
+                        "Event_Name":             event,
+                        "Coverage_Status":        "captured",
+                        "Detected":               "yes",
+                        "Source_Type":            row_out.get("Data_Quality", "finals"),
+                        "Notes":                  "",
+                        "Swimmer_Count":          sc,
+                        "Deepest_Place_Recovered": dp,
+                        "Target_Anchor_Place":    target_anchor,
+                        "Anchor_Depth_Achievable_YN": "yes",
                     })
                 else:
                     if event in _OPTIONAL_EVENTS:
-                        notes = "optional_not_required"
-                        src   = "not_required"
+                        cov_status = "missing_optional_1000"
+                        notes      = "optional_not_required"
+                        src        = "not_required"
+                        achievable = "na"
                     elif event in not_contested:
-                        notes = "likely_not_contested"
-                        src   = "not_contested"
+                        cov_status = "missing_likely_not_contested"
+                        notes      = "likely_not_contested"
+                        src        = "not_contested"
+                        achievable = "na"
+                    elif key in ceiling_keys:
+                        cov_status = "missing_data_ceiling"
+                        notes      = (
+                            f"data_ceiling — consecutive_depth: {cd}, "
+                            f"swimmers: {sc}, target: {target_anchor}"
+                        )
+                        src        = "missing"
+                        achievable = "no"
                     else:
-                        # check if it was detected but incomplete
-                        missing_label = f"{gender}:{event}"
-                        if missing_label in summary.get("events_missing_list", []):
+                        # True parser miss — event should be present and deep
+                        # enough but parser failed to recover it.
+                        if f"{gender}:{event}" in missing_list:
                             notes = "event_detected_but_incomplete"
                         else:
                             notes = "not_detected_in_pdf"
-                        src = "missing"
+                        cov_status = "missing_true_parser_miss"
+                        src        = "missing"
                     all_coverage.append({
-                        "Bundle_ID":    bid,
-                        "Conference":   conference,
-                        "Year":         year,
-                        "Gender":       gender,
-                        "Event_Name":   event,
-                        "Detected":     "no",
-                        "Source_Type":  src,
-                        "Notes":        notes,
+                        "Bundle_ID":              bid,
+                        "Conference":             conference,
+                        "Year":                   year,
+                        "Gender":                 gender,
+                        "Event_Name":             event,
+                        "Coverage_Status":        cov_status,
+                        "Detected":               "no",
+                        "Source_Type":            src,
+                        "Notes":                  notes,
+                        "Swimmer_Count":          sc,
+                        "Deepest_Place_Recovered": dp,
+                        "Target_Anchor_Place":    target_anchor,
+                        "Anchor_Depth_Achievable_YN": achievable,
                     })
 
         all_summaries.append(summary)
