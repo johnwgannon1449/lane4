@@ -199,6 +199,8 @@ _BUILTIN_CONF = [
     ("cc",            "CC"),
     ("d3swim",        "D3Swim"),
     ("sac",           "SAC"),     # Southern / Sooner Athletic Conference
+    ("mpsf",          "MPSF"),
+    ("pcsc",          "PCSC"),
 ]
 
 

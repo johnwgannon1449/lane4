@@ -1,7 +1,2 @@
 Bundle_ID,Conference,Files_In_Bundle,Detected_Gender,Events_Detected,Events_Mapped,Events_Output,Men_Events_Output,Women_Events_Output,Events_Missing,Men_Missing,Women_Missing,Events_Recovered_Pass2,Missing_Event_List,Team_Scores_Found,Team_Score_Strategy,Notes
-bigeast_2026,Big East,1,men/women,13,26,26,13,13,0,0,0,0,,0,not_found,
-cciw_2026,CCIW,1,men/women,13,25,25,12,13,1,1,0,0,men:200 Fly,0,not_found,
-gliac_2026,GLIAC,1,men/women,14,28,28,14,14,0,0,0,0,,0,not_found,
-odac_2026,ODAC,2,men/women,13,26,26,13,13,0,0,0,0,,0,not_found,
-patriot_2026,Patriot,1,men/women,13,26,26,13,13,0,0,0,0,,0,not_found,
-summitleague_2026,Summit League,1,men/women,13,26,26,13,13,0,0,0,0,,0,not_found,
+pcsc_2026,PCSC,1,men/women,14,18,18,8,10,8,5,3,1,"men:200 Free, men:500 Free, men:1650 Free, men:200 Back, men:200 Breast, women:50 Free, women:500 Free, women:1650 Free",0,not_found,pass2 recovered 1 event(s)
