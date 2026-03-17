@@ -538,13 +538,102 @@ def group_into_bundles(pdf_paths: list, conf_map: dict | None = None) -> dict:
 
 # ── PDF text extraction ───────────────────────────────────────────────────────
 
-def extract_text_pdfplumber(pdf_path: str) -> list[str]:
-    import pdfplumber
-    pages = []
-    with pdfplumber.open(pdf_path) as pdf:
-        for page in pdf.pages:
-            pages.append(page.extract_text() or "")
-    return pages
+def _words_to_text(words: list[dict], y_tolerance: float = 4.0) -> str:
+    """Reconstruct page text from a list of pdfplumber word dicts, grouping by y-position."""
+    if not words:
+        return ""
+    words = sorted(words, key=lambda w: (w["top"], w["x0"]))
+    lines: list[str] = []
+    current_line: list[str] = [words[0]["text"]]
+    current_top: float = words[0]["top"]
+    for w in words[1:]:
+        if abs(w["top"] - current_top) <= y_tolerance:
+            current_line.append(w["text"])
+        else:
+            lines.append(" ".join(current_line))
+            current_line = [w["text"]]
+            current_top = w["top"]
+    if current_line:
+        lines.append(" ".join(current_line))
+    return "\n".join(lines)
+
+
+def _detect_column_splits(words: list[dict], page_width: float) -> list[float]:
+    """
+    Return x-coordinates of column boundaries (empty list = single column).
+
+    Uses a 50-bin x0 histogram.  A run of ≥ 3 consecutive bins with fewer
+    than 5 % of the peak bin count, located in the middle 25–75 % of the
+    page, is treated as an inter-column gap.  At most 2 splits are returned
+    (= max 3 columns).
+    """
+    if not words or page_width <= 0:
+        return []
+
+    n_bins = 50
+    bin_w = page_width / n_bins
+    hist = [0] * n_bins
+    for w in words:
+        idx = min(int(w["x0"] / bin_w), n_bins - 1)
+        hist[idx] += 1
+
+    peak = max(hist) if hist else 0
+    if peak == 0:
+        return []
+    empty_thresh = max(2, int(peak * 0.05))   # < 5 % of peak → "empty"
+
+    # Middle region: 25 % – 75 % of page width
+    lo_bin = int(n_bins * 0.25)
+    hi_bin = int(n_bins * 0.75)
+
+    splits: list[float] = []
+    in_gap = False
+    gap_start: int = 0
+
+    for i in range(lo_bin, hi_bin + 1):
+        if hist[i] <= empty_thresh:
+            if not in_gap:
+                in_gap = True
+                gap_start = i
+        else:
+            if in_gap:
+                gap_len = i - gap_start
+                if gap_len >= 3:                         # gap ≥ 6 % page width
+                    gap_mid = (gap_start + i - 1) / 2 * bin_w
+                    # Merge splits that are very close (<30 px)
+                    if splits and abs(gap_mid - splits[-1]) < 30:
+                        splits[-1] = (splits[-1] + gap_mid) / 2
+                    else:
+                        splits.append(gap_mid)
+                in_gap = False
+
+    # Cap at 2 boundaries (3 columns max); too many gaps = noise
+    return splits[:2]
+
+
+def _extract_page_columns(page) -> tuple[list[str], int]:
+    """
+    Extract text from a pdfplumber page, separating multi-column layouts.
+
+    Returns (column_texts, n_columns).
+    If no column split is detected, returns ([extract_text()], 1).
+    If columns are detected, returns text for each column in left→right order.
+    """
+    words = page.extract_words(x_tolerance=3, y_tolerance=3)
+    if not words:
+        return [page.extract_text() or ""], 1
+
+    splits = _detect_column_splits(words, page.width)
+    if not splits:
+        return [_words_to_text(words)], 1
+
+    boundaries = [0.0] + splits + [page.width]
+    n_cols = len(boundaries) - 1
+    col_texts: list[str] = []
+    for i in range(n_cols):
+        col_words = [w for w in words if boundaries[i] <= w["x0"] < boundaries[i + 1]]
+        col_texts.append(_words_to_text(col_words))
+    return col_texts, n_cols
 
 
 def extract_text_pymupdf(pdf_path: str) -> list[str]:
@@ -557,19 +646,44 @@ def extract_text_pymupdf(pdf_path: str) -> list[str]:
     return pages
 
 
-def extract_pages(pdf_path: str) -> list[str]:
+def extract_pages_ex(pdf_path: str) -> tuple[list[str], int]:
+    """
+    Extract text from a PDF with automatic multi-column detection.
+
+    Returns (pages, multicolumn_page_count).
+
+    For multi-column pages the columns are concatenated in left→right order
+    so that the calling state machine processes each column fully before
+    moving to the next (avoiding cross-column interleaving).
+    """
     try:
-        pages = extract_text_pdfplumber(pdf_path)
+        import pdfplumber
+        pages: list[str] = []
+        mc_count = 0
+        with pdfplumber.open(pdf_path) as pdf:
+            for page in pdf.pages:
+                col_texts, n_cols = _extract_page_columns(page)
+                if n_cols > 1:
+                    mc_count += 1
+                # Join columns with a blank separator line so the state
+                # machine doesn't bleed one column's header into another.
+                pages.append("\n\n".join(col_texts))
         if sum(1 for p in pages if len(p.strip()) > 50) == 0:
             raise ValueError("pdfplumber returned mostly empty pages")
-        return pages
+        return pages, mc_count
     except Exception as e:
         try:
-            return extract_text_pymupdf(pdf_path)
+            return extract_text_pymupdf(pdf_path), 0
         except Exception as e2:
             raise RuntimeError(
                 f"Both pdfplumber ({e}) and PyMuPDF ({e2}) failed"
             )
+
+
+def extract_pages(pdf_path: str) -> list[str]:
+    """Backward-compatible wrapper — returns pages only."""
+    pages, _ = extract_pages_ex(pdf_path)
+    return pages
 
 
 # ── Session type detection ────────────────────────────────────────────────────
@@ -798,6 +912,17 @@ def is_women_event_header(line: str) -> bool:
 # ── Result row parsing ────────────────────────────────────────────────────────
 
 def parse_place_and_time(line: str) -> tuple[int | None, str | None]:
+    """
+    Parse a result row into (place, time_string).
+
+    Rules:
+    - Line must start with a 1–2 digit place number (1–64).
+    - Line must contain at least one alphabetic word of ≥ 2 characters after
+      the place number (swimmer name or school code).  This guards against
+      distance-event split lines such as "24.36 27.51 28.02 28.55" which are
+      pure numbers and must not be treated as result rows.
+    - The returned time is the first time-shaped token with ≥ 10 seconds.
+    """
     line = line.strip()
     if not line:
         return None, None
@@ -806,6 +931,11 @@ def parse_place_and_time(line: str) -> tuple[int | None, str | None]:
         return None, None
     place = int(m.group(1))
     if place < 1 or place > 64:
+        return None, None
+    # Split-line guard: real result rows always contain a swimmer name or school
+    # abbreviation (≥ 2 consecutive letters).  Pure-number split lines don't.
+    after_place = line[m.end():]
+    if not re.search(r"[A-Za-z]{2,}", after_place):
         return None, None
     times = re.findall(_TIME_PAT, line)
     if not times:

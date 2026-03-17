@@ -1,0 +1,311 @@
+I want to patch the Lane4 Data Harvester to handle real-world swim championship PDFs more robustly, based on the results of previous runs.
+
+CONTEXT
+
+The harvester now processes:
+- men-only PDFs
+- women-only PDFs
+- combined PDFs
+- multi-day bundles
+- multi-file bundles split by day and gender
+
+Recent results:
+- PDFs processed: 41
+- Bundles processed: 22
+- Event anchors output: 407 (men: 180, women: 227)
+- Team rows output: 6
+- Flags generated: 449
+- Many events still missing, especially distance events and multi-column PDFs
+
+GOAL
+
+Improve extraction quality with targeted fixes:
+1. Proper gender-aware parsing
+2. Correct A-final / B-final place handling
+3. Multi-column PDF parsing
+4. Distance-event robustness
+5. Prelims as last-resort fallback
+6. Better team-score extraction
+7. Clear reporting of all fallback behavior
+
+Do NOT redesign the system. Patch the current logic carefully.
+
+==================================================
+PART 1 — GENDER-AWARE PARSING (FOUNDATIONAL)
+==================================================
+
+Treat each row identity as:
+Conference + Year + Gender + Event
+
+Requirements:
+- Detect file type: men-only, women-only, combined, unknown
+- Parse BOTH genders when present
+- Never discard women's data during parsing
+- Keep men and women completely separate in output
+
+Update outputs to include:
+- Gender column (Men / Women)
+
+Ensure:
+- Combined PDFs → parse both genders
+- Gender-split bundles → merge correctly into one bundle but keep rows separated
+- Deduplication must include Gender
+
+==================================================
+PART 2 — A / B / C FINAL NORMALIZATION
+==================================================
+
+Handle final sections correctly:
+
+- A Final → places 1–8 → overall places 1–8
+- B Final → places 1–8 → overall places 9–16
+- C Final → places 1–8 → overall places 17–24
+
+Store both:
+- displayed place
+- normalized overall place
+
+Deduplicate using normalized place.
+
+Anchors:
+- 1st = place 1
+- 8th = place 8
+- 16th = place 16
+
+If only A final exists:
+- still output 1st and 8th
+- flag 16th as unavailable
+
+If fewer than 16 swimmers:
+- flag: fewer_than_16_finalists
+
+==================================================
+PART 3 — MULTI-COLUMN PDF PARSING
+==================================================
+
+Some PDFs use 2 or 3 vertical columns (e.g., ODAC, Patriot).
+
+Implement:
+
+1. Detect multi-column layout using:
+   - x-position clustering
+   - repeated headers across page width
+   - discontinuous reading order
+
+2. Parse in correct reading order:
+   - top → bottom within each column
+   - left → right across columns
+
+3. Support:
+   - single column
+   - 2 columns
+   - 3 columns
+
+4. Use PDF geometry (pdfplumber / PyMuPDF word coordinates)
+
+5. Apply to:
+   - event header detection
+   - result row extraction
+
+6. Add flags:
+   - multi_column_detected_2
+   - multi_column_detected_3
+   - multi_column_layout_applied
+
+==================================================
+PART 4 — DISTANCE EVENT HANDLING (CRITICAL)
+==================================================
+
+Events:
+- 500 Free
+- 1000 Free
+- 1650 Free
+
+Rules:
+
+1. Do NOT require explicit "finals" labeling if no better version exists
+
+2. 1000 Free:
+   - often NOT contested
+   - if missing → flag:
+     - likely_not_contested
+
+3. 1650 Free:
+   - often no prelim/final structure
+   - if plausible results exist → treat as finals
+
+4. 500 Free:
+   - may appear without finals labeling
+   - use best available results if needed
+
+5. SPLIT HANDLING:
+   - distance pages include many 50 splits
+   - DO NOT treat splits as final times
+   - use ONLY the swimmer’s main row time (next to name / seed time)
+
+6. LOW PARTICIPATION:
+   - if <16 swimmers → flag:
+     - fewer_than_16_finalists
+
+==================================================
+PART 5 — EVENT RECOVERY (SECOND PASS)
+==================================================
+
+Target event list (fixed):
+
+- 50 Free
+- 100 Free
+- 200 Free
+- 500 Free
+- 1000 Free
+- 1650 Free
+- 100 Back
+- 200 Back
+- 100 Breast
+- 200 Breast
+- 100 Fly
+- 200 Fly
+- 200 IM
+- 400 IM
+
+Process:
+
+1. First pass → extract events
+2. Compare to expected list
+3. For missing events → run second-pass targeted search
+4. Use looser matching for headers
+
+Mark:
+- first_pass
+- second_pass_recovered
+- still_missing
+
+==================================================
+PART 6 — PRELIMS AS LAST-RESORT FALLBACK
+==================================================
+
+Search priority:
+
+1. Finals
+2. Best available results
+3. Prelims (LAST RESORT)
+
+If prelims used:
+- accept as anchor data
+- clearly label it
+
+Reason:
+Prelims are better than missing data for modeling depth.
+
+==================================================
+PART 7 — TEAM SCORE EXTRACTION
+==================================================
+
+Strategy:
+
+1. Prioritize:
+   - last day file in bundle
+   - final pages of that file
+
+2. Look for sections:
+   - Team Scores
+   - Team Rankings
+   - Final Standings
+
+3. Extract MEN’S scores correctly
+4. Do not let women’s scores override men’s
+
+Flags:
+- end_pages_used
+- full_scan_used
+- team_scores_not_found
+
+==================================================
+PART 8 — OUTPUT ENHANCEMENTS
+==================================================
+
+event_anchors.csv columns:
+
+- Conference
+- Year
+- Gender
+- Event
+- 1st
+- 8th
+- 16th
+- 1st_seconds
+- 8th_seconds
+- 16th_seconds
+- Sec_per_place
+- Source_File
+- Bundle_ID
+- Data_Quality
+
+Data_Quality values:
+- finals
+- best_available
+- prelim_fallback
+
+==================================================
+PART 9 — FALLBACK REPORTING
+==================================================
+
+Create:
+output/fallback_usage.csv
+
+Columns:
+- Bundle_ID
+- Conference
+- Year
+- Gender
+- Event
+- Fallback_Type
+- Source_File
+- Notes
+
+Fallback_Type:
+- prelims_used_last_resort
+- best_available_nonfinal_used
+- distance_event_best_available_used
+
+==================================================
+PART 10 — DEBUG OUTPUT
+==================================================
+
+Keep:
+- debug_bundle_report.csv
+- debug_bundle_summary.csv
+
+Add:
+- gender detection results
+- multi-column usage
+- fallback usage counts
+- events missing vs recovered
+
+==================================================
+PART 11 — TEST RUN (NOT FULL BATCH)
+==================================================
+
+After patching:
+
+DO NOT run full dataset.
+
+Run only 3–5 bundles:
+
+- ODAC (multi-column)
+- Patriot (multi-column)
+- ACC or Big 12 (finals structure)
+- one distance-heavy conference (Summit / SEC / GLIAC)
+
+Report:
+
+- events recovered vs before
+- multi-column detection triggered?
+- prelim fallback used?
+- distance events improved?
+- team scores found?
+
+Also explain:
+- what improved
+- what still fails
+- whether full run is recommended

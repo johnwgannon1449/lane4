@@ -30,6 +30,7 @@ from parser_helpers import (
     detect_conference,
     detect_final_type,
     extract_pages,
+    extract_pages_ex,
     FINAL_PLACE_OFFSETS,
     group_into_bundles,
     is_event_header_any,
@@ -55,7 +56,7 @@ ANCHOR_HEADER = [
     "Conference", "Year", "Gender", "Bundle_ID", "Event",
     "1st", "8th", "16th",
     "1st_seconds", "8th_seconds", "16th_seconds",
-    "Sec_per_place", "Source_File",
+    "Sec_per_place", "Source_File", "Data_Quality",
 ]
 
 TEAM_HEADER = [
@@ -67,9 +68,14 @@ FLAG_HEADER = [
     "Source_File", "Bundle_ID", "Conference", "Year", "Gender", "Event", "Issue",
 ]
 
+FALLBACK_HEADER = [
+    "Bundle_ID", "Conference", "Year", "Gender", "Event",
+    "Fallback_Type", "Source_File", "Notes",
+]
+
 DEBUG_REPORT_HEADER = [
     "Bundle_ID", "Conference", "Source_File", "File_Gender_Type",
-    "Men_Section_Found", "Women_Section_Found",
+    "Multi_Col_Pages", "Men_Section_Found", "Women_Section_Found",
     "Raw_Event_Header", "Canonical_Event", "Section_Type",
     "Final_Section", "Places_Found", "Status", "Reason", "Pass",
 ]
@@ -248,6 +254,9 @@ def parse_pdf_raw(
             "Issue":       issue,
         }
 
+    # Will be set after page extraction
+    multicolumn_pages: int = 0
+
     def debug_row(
         file_gender_type: str,
         men_found: bool,
@@ -266,6 +275,7 @@ def parse_pdf_raw(
             "Conference":          conference,
             "Source_File":         source,
             "File_Gender_Type":    file_gender_type,
+            "Multi_Col_Pages":     multicolumn_pages,
             "Men_Section_Found":   men_found,
             "Women_Section_Found": women_found,
             "Raw_Event_Header":    raw_header,
@@ -280,10 +290,13 @@ def parse_pdf_raw(
 
     # ── Extract pages ─────────────────────────────────────────────────────────
     try:
-        pages = extract_pages(str(pdf_path))
+        pages, multicolumn_pages = extract_pages_ex(str(pdf_path))
     except Exception as exc:
         flag_rows.append(flag("", "", f"PDF extraction failed: {exc}"))
         return men_events, women_events, [], flag_rows, debug_rows, "error"
+
+    if multicolumn_pages:
+        flag_rows.append(flag("", "", f"Multi-column layout detected: {multicolumn_pages} page(s) reordered column-by-column"))
 
     # Refine conference from PDF text if still Unknown
     if conference == "Unknown":
@@ -908,6 +921,7 @@ def merge_bundle(
     }
 
     event_rows:      list[dict] = []
+    all_fallback_rows: list[dict] = []
     events_found:    list[str]  = []
     events_missing:  list[str]  = []
     events_detected: set[str]   = set()
@@ -939,6 +953,27 @@ def merge_bundle(
                         gender, event_name, best.source,
                         f"Event recovered on second-pass (complete anchor now available)",
                     ))
+                # Derive data quality from session score
+                if best.session_score >= 2:
+                    dq = "finals"
+                elif best.session_score == 1:
+                    dq = "best_available"
+                else:
+                    dq = "prelim_fallback"
+                if dq != "finals":
+                    all_fallback_rows.append({
+                        "Bundle_ID":    bundle_id,
+                        "Conference":   conference,
+                        "Year":         year,
+                        "Gender":       gender,
+                        "Event":        event_name,
+                        "Fallback_Type": (
+                            "prelims_used_last_resort" if dq == "prelim_fallback"
+                            else "best_available_nonfinal_used"
+                        ),
+                        "Source_File":  best.source,
+                        "Notes":        f"session_score={best.session_score}",
+                    })
                 event_rows.append({
                     "Conference":    conference,
                     "Year":          year,
@@ -953,6 +988,7 @@ def merge_bundle(
                     "16th_seconds":  anchor["16th_seconds"],
                     "Sec_per_place": anchor["Sec_per_place"],
                     "Source_File":   best.source,
+                    "Data_Quality":  dq,
                 })
             else:
                 missing      = best.missing_places()
@@ -1022,7 +1058,7 @@ def merge_bundle(
         "notes":               "; ".join(notes_parts) if notes_parts else "",
     }
 
-    return event_rows, unique_teams, all_flag_rows, all_debug_rows, summary
+    return event_rows, unique_teams, all_flag_rows, all_debug_rows, all_fallback_rows, summary
 
 
 # ── CSV writer ────────────────────────────────────────────────────────────────
@@ -1118,11 +1154,12 @@ def run(input_dir: Path, output_dir: Path, bundle_filter: list[str] | None = Non
     print()
 
     all_events:   list[dict] = []
-    all_teams:    list[dict] = []
-    all_flags:    list[dict] = []
-    all_debug_r:  list[dict] = []
-    all_debug_s:  list[dict] = []
+    all_teams:     list[dict] = []
+    all_flags:     list[dict] = []
+    all_debug_r:   list[dict] = []
+    all_debug_s:   list[dict] = []
     all_summaries: list[dict] = []
+    all_fallbacks: list[dict] = []
     # Cross-bundle dedup: key = (Conference, Year, Gender, Event)
     seen_anchors: set[tuple] = set()
 
@@ -1162,7 +1199,7 @@ def run(input_dir: Path, output_dir: Path, bundle_filter: list[str] | None = Non
             print(f"    → No results to merge.\n")
             continue
 
-        ev_rows, tm_rows, fl_rows, dr_rows, summary = merge_bundle(bundle, file_results)
+        ev_rows, tm_rows, fl_rows, dr_rows, fb_rows, summary = merge_bundle(bundle, file_results)
         for row in ev_rows:
             anchor_key = (row["Conference"], row["Year"], row["Gender"], row["Event"])
             if anchor_key in seen_anchors:
@@ -1181,6 +1218,7 @@ def run(input_dir: Path, output_dir: Path, bundle_filter: list[str] | None = Non
         all_teams.extend(tm_rows)
         all_flags.extend(fl_rows)
         all_debug_r.extend(dr_rows)
+        all_fallbacks.extend(fb_rows)
 
         # Build debug summary row
         all_debug_s.append({
@@ -1206,10 +1244,11 @@ def run(input_dir: Path, output_dir: Path, bundle_filter: list[str] | None = Non
         all_summaries.append(summary)
         print_bundle_summary(summary)
 
-    write_csv(output_dir / "event_anchors.csv",        ANCHOR_HEADER,       all_events)
-    write_csv(output_dir / "team_scores.csv",          TEAM_HEADER,         all_teams)
-    write_csv(output_dir / "review_flags.csv",         FLAG_HEADER,         all_flags)
-    write_csv(output_dir / "debug_bundle_report.csv",  DEBUG_REPORT_HEADER, all_debug_r)
+    write_csv(output_dir / "event_anchors.csv",        ANCHOR_HEADER,        all_events)
+    write_csv(output_dir / "team_scores.csv",          TEAM_HEADER,          all_teams)
+    write_csv(output_dir / "review_flags.csv",         FLAG_HEADER,          all_flags)
+    write_csv(output_dir / "fallback_usage.csv",       FALLBACK_HEADER,      all_fallbacks)
+    write_csv(output_dir / "debug_bundle_report.csv",  DEBUG_REPORT_HEADER,  all_debug_r)
     write_csv(output_dir / "debug_bundle_summary.csv", DEBUG_SUMMARY_HEADER, all_debug_s)
 
     total_anchors  = len(all_events)
@@ -1230,9 +1269,10 @@ def run(input_dir: Path, output_dir: Path, bundle_filter: list[str] | None = Non
     if total_missing:
         print(f"  Events still missing:  {total_missing} across {len(all_summaries)} bundle(s)")
     print(f"\n  Outputs:")
-    print(f"    {output_dir}/event_anchors.csv")
+    print(f"    {output_dir}/event_anchors.csv  ({len(all_events)} rows)")
     print(f"    {output_dir}/team_scores.csv")
     print(f"    {output_dir}/review_flags.csv")
+    print(f"    {output_dir}/fallback_usage.csv ({len(all_fallbacks)} non-final anchors)")
     print(f"    {output_dir}/debug_bundle_report.csv")
     print(f"    {output_dir}/debug_bundle_summary.csv")
     print(f"{'='*64}\n")
