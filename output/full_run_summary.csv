@@ -1,0 +1,32 @@
+Conference,Anchors_Captured,Total_Possible,Men_Anchors,Women_Anchors,Missing_Events_Count,Missing_Events_List,Conference_Status
+ACC,26,26,13,13,0,,Perfect
+ASUN,17,52,8,9,35,men 100 Free (missing_true_parser_miss); men 1650 Free (missing_true_parser_miss); men 200 Back (missing_true_parser_miss); men 100 Breast (missing_true_parser_miss); men 200 Breast (missing_true_parser_miss); women 100 Free (missing_true_parser_miss); women 1650 Free (missing_true_parser_miss); women 200 Back (missing_true_parser_miss); women 200 Breast (missing_true_parser_miss); men 50 Free (missing_true_parser_miss); men 100 Free (missing_true_parser_miss); men 200 Free (missing_true_parser_miss); men 500 Free (missing_true_parser_miss); men 1650 Free (missing_true_parser_miss); men 100 Back (missing_true_parser_miss); men 200 Back (missing_true_parser_miss); men 100 Breast (missing_true_parser_miss); men 200 Breast (missing_true_parser_miss); men 100 Fly (missing_true_parser_miss); men 200 Fly (missing_true_parser_miss); men 200 IM (missing_true_parser_miss); men 400 IM (missing_true_parser_miss); women 50 Free (missing_true_parser_miss); women 100 Free (missing_true_parser_miss); women 200 Free (missing_true_parser_miss); women 500 Free (missing_true_parser_miss); women 1650 Free (missing_true_parser_miss); women 100 Back (missing_true_parser_miss); women 200 Back (missing_true_parser_miss); women 100 Breast (missing_true_parser_miss); women 200 Breast (missing_true_parser_miss); women 100 Fly (missing_true_parser_miss); women 200 Fly (missing_true_parser_miss); women 200 IM (missing_true_parser_miss); women 400 IM (missing_true_parser_miss),Gaps
+America East,26,26,13,13,0,,Perfect
+Atlantic 10,24,26,11,13,2,men 100 Free (missing_true_parser_miss); men 100 Fly (missing_true_parser_miss),Strong
+Big 12,26,26,13,13,0,,Perfect
+Big East,26,26,13,13,0,,Perfect
+Big Ten,4,26,4,0,22,men 50 Free (missing_true_parser_miss); men 100 Free (missing_true_parser_miss); men 500 Free (missing_true_parser_miss); men 1650 Free (missing_true_parser_miss); men 100 Back (missing_true_parser_miss); men 200 Back (missing_true_parser_miss); men 200 Breast (missing_true_parser_miss); men 200 Fly (missing_true_parser_miss); men 200 IM (missing_true_parser_miss); women 50 Free (missing_true_parser_miss); women 100 Free (missing_true_parser_miss); women 200 Free (missing_true_parser_miss); women 500 Free (missing_true_parser_miss); women 1650 Free (missing_true_parser_miss); women 100 Back (missing_true_parser_miss); women 200 Back (missing_true_parser_miss); women 100 Breast (missing_true_parser_miss); women 200 Breast (missing_true_parser_miss); women 100 Fly (missing_true_parser_miss); women 200 Fly (missing_true_parser_miss); women 200 IM (missing_true_parser_miss); women 400 IM (missing_true_parser_miss),Gaps
+Big West,26,26,13,13,0,,Perfect
+CAA,25,26,12,13,1,men 100 Fly (missing_true_parser_miss),Strong
+CCIW,25,26,12,13,1,men 200 Fly (missing_true_parser_miss),Strong
+Colorado College,26,26,13,13,0,,Perfect
+GLIAC,26,26,14,14,0,,Perfect
+Horizon League,26,26,13,13,0,,Perfect
+Ivy League,19,26,14,6,7,women 500 Free (missing_true_parser_miss); women 1650 Free (missing_true_parser_miss); women 200 Back (missing_true_parser_miss); women 200 Breast (missing_true_parser_miss); women 100 Fly (missing_true_parser_miss); women 200 IM (missing_true_parser_miss); women 400 IM (missing_true_parser_miss),Strong
+Landmark,26,26,13,13,0,,Perfect
+MAAC,25,26,13,12,1,women 100 Free (missing_true_parser_miss),Strong
+MAC,8,26,4,4,18,men 50 Free (missing_true_parser_miss); men 200 Free (missing_true_parser_miss); men 500 Free (missing_true_parser_miss); men 100 Back (missing_true_parser_miss); men 100 Breast (missing_true_parser_miss); men 100 Fly (missing_true_parser_miss); men 200 Fly (missing_true_parser_miss); men 200 IM (missing_true_parser_miss); men 400 IM (missing_true_parser_miss); women 50 Free (missing_true_parser_miss); women 200 Free (missing_true_parser_miss); women 500 Free (missing_true_parser_miss); women 100 Back (missing_true_parser_miss); women 100 Breast (missing_true_parser_miss); women 100 Fly (missing_true_parser_miss); women 200 Fly (missing_true_parser_miss); women 200 IM (missing_true_parser_miss); women 400 IM (missing_true_parser_miss),Gaps
+MIAC,26,26,13,13,0,,Perfect
+MPSF,26,26,13,13,0,,Perfect
+NESCAC,13,26,14,0,13,women 50 Free (missing_true_parser_miss); women 100 Free (missing_true_parser_miss); women 200 Free (missing_true_parser_miss); women 500 Free (missing_true_parser_miss); women 1650 Free (missing_true_parser_miss); women 100 Back (missing_true_parser_miss); women 200 Back (missing_true_parser_miss); women 100 Breast (missing_true_parser_miss); women 200 Breast (missing_true_parser_miss); women 100 Fly (missing_true_parser_miss); women 200 Fly (missing_true_parser_miss); women 200 IM (missing_true_parser_miss); women 400 IM (missing_true_parser_miss),Gaps
+NEWMAC,50,52,24,26,2,men 100 Free (missing_true_parser_miss); men 100 Free (missing_true_parser_miss),Strong
+ODAC,26,26,13,13,0,,Perfect
+PCSC,26,26,14,14,0,,Perfect
+PSAC,52,52,28,28,0,,Perfect
+Patriot,26,26,13,13,0,,Perfect
+SAC,26,26,14,14,0,,Perfect
+SCIAC,26,26,13,13,0,,Perfect
+SEC,26,26,13,13,0,,Perfect
+Summit League,26,26,13,13,0,,Perfect
+UAA,26,26,13,13,0,,Perfect
+WAC,18,26,9,9,8,men 50 Free (missing_true_parser_miss); men 200 Breast (missing_true_parser_miss); men 100 Fly (missing_true_parser_miss); men 200 Fly (missing_true_parser_miss); women 100 Back (missing_true_parser_miss); women 200 Back (missing_true_parser_miss); women 100 Breast (missing_true_parser_miss); women 400 IM (missing_true_parser_miss),Strong

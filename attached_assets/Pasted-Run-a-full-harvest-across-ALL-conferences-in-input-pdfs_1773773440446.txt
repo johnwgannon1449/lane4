@@ -1,0 +1,89 @@
+Run a full harvest across ALL conferences in input_pdfs/.
+
+Do not change parser logic. This is a validation run, not a development pass.
+
+==================================================
+RUN MODE
+==================================================
+
+- Use existing parser exactly as-is
+- Respect CONFERENCE_PARSE_MODE settings
+- Do not introduce new fixes during this run
+- Ensure progress is saved per bundle so partial results survive any timeout
+
+==================================================
+OUTPUTS (REQUIRED)
+==================================================
+
+1. Full event coverage report
+Update:
+output/event_coverage_report.csv
+
+2. Per-conference summary
+Create:
+output/full_run_summary.csv
+
+Columns:
+- Conference
+- Anchors_Captured
+- Total_Possible (exclude 1000 Free from required total)
+- Men_Anchors
+- Women_Anchors
+- Missing_Events_Count (exclude 1000 Free)
+- Missing_Events_List (exclude 1000 Free)
+- Conference_Status
+
+Definitions:
+- Perfect = max anchors achieved (or only missing due to data ceiling / not contested)
+- Strong = ≥ 18 anchors
+- Gaps = < 18 anchors
+
+3. Detailed missing-event reporting (ALL conferences)
+For EVERY conference (not just weak ones), list:
+
+- Event_Name
+- Gender
+- Classification:
+  - missing_true_parser_miss
+  - missing_data_ceiling
+  - missing_likely_not_contested
+
+Exclude 1000 Free from required-miss reporting, but still capture it in raw data if present.
+
+4. Overall summary (print at end)
+
+- total conferences processed
+- number and % Perfect
+- number and % Strong
+- number and % Gaps (<18 anchors)
+
+Also include:
+- total number of missing events (excluding 1000 Free)
+- breakdown by classification:
+  - # missing_true_parser_miss
+  - # missing_data_ceiling
+  - # missing_likely_not_contested
+
+==================================================
+IMPORTANT RULES
+==================================================
+
+- Do NOT count 1000 Free as a required missing event
+- Use existing classification logic only (no changes during this run)
+- Do NOT attempt to fix or patch anything mid-run
+- Preserve all intermediate outputs
+
+==================================================
+GOAL
+==================================================
+
+This run is to answer:
+
+1. What % of conferences fall below 18 anchors?
+2. Across ALL conferences, what events are being missed?
+3. Are misses mostly:
+   - true parser issues
+   - or legitimate (data ceiling / not contested)?
+
+Do NOT implement fixes yet.
+This is a pure validation and evaluation run.
