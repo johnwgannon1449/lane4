@@ -1,0 +1,133 @@
+Keep event parsing, validator logic, and team-score extraction locked.
+
+Current state to preserve:
+- event parser is locked
+- validator is locked
+- team-score extraction is complete across all 33 bundles
+- do not reopen old parser debugging
+- do not change harvester.py, parser_helpers.py, or validator.py
+- do not redesign team_scores.py unless a tiny bug fix is absolutely necessary
+
+Current task:
+build and harden team tier generation from output/team_scores.csv.
+
+Tier framework to use (locked)
+
+1) Compute within each conference + gender table:
+- champion_score
+- total_meet_points
+- champion_ratio = score / champion_score
+- meet_share = score / total_meet_points
+
+2) Base tiers come from champion_ratio:
+- Tier 1: champion_ratio >= 0.85
+- Tier 2: 0.60 <= champion_ratio < 0.85
+- Tier 3: 0.35 <= champion_ratio < 0.60
+- Tier 4: champion_ratio < 0.35
+
+3) Split Tier 1 using meet_share:
+- if meet_share >= 0.24 => Tier 1A (Super Powerhouse)
+- else => Tier 1B (Powerhouse)
+
+4) Do NOT combine champion_ratio and meet_share into one blended score.
+ChampionRatio determines base tier.
+MeetShare only distinguishes Tier 1A vs Tier 1B.
+
+Hardening requirements
+
+A) Input validation
+Before tiering, validate each conference + gender table:
+- ranks should be unique if present
+- scores should parse as numeric
+- scores should be non-negative
+- duplicate team rows should be detected
+- empty or malformed tables should be reported, not silently accepted
+
+B) Team name normalization
+Use stable normalized team names for grouping/deduping, while preserving original display name in output.
+Be conservative: do not aggressively rewrite names beyond whitespace cleanup and obvious OCR spacing cleanup.
+
+C) Duplicate protection
+If duplicate team rows exist in a conference + gender table:
+- detect them
+- resolve only if clearly identical duplicates
+- otherwise write a warning row to a QA output and keep the safest single row
+- do not silently double-count points
+
+D) Deterministic outputs
+Make the tiering run deterministic:
+- same input should produce same outputs every run
+- stable sorting by conference, gender, rank, score desc, team
+
+E) Graceful failure
+If a conference + gender table is malformed:
+- skip tier assignment for that table
+- record the reason in a QA file
+- continue processing the rest
+
+F) QA outputs
+Write a QA file summarizing any tier-input issues.
+
+Required outputs
+
+1) output/team_tiers.csv
+Columns:
+- bundle_id
+- conference
+- gender
+- rank
+- team
+- score
+- champion_score
+- total_meet_points
+- champion_ratio
+- meet_share
+- base_tier
+- power_class
+- final_tier
+
+Use:
+- Tier 1A = Super Powerhouse
+- Tier 1B = Powerhouse
+- Tier 2
+- Tier 3
+- Tier 4
+
+Suggested field behavior:
+- base_tier = Tier 1 / Tier 2 / Tier 3 / Tier 4
+- power_class = Super Powerhouse / Powerhouse / blank
+- final_tier = Tier 1A / Tier 1B / Tier 2 / Tier 3 / Tier 4
+
+2) output/team_tier_summary.csv
+One row per conference + gender with:
+- conference
+- gender
+- number_of_teams
+- winner
+- champion_score
+- total_meet_points
+- tier_1a_count
+- tier_1b_count
+- tier_2_count
+- tier_3_count
+- tier_4_count
+
+3) output/team_tier_qa.csv
+Include any issues such as:
+- duplicate_team_row
+- malformed_score
+- missing_rank
+- invalid_table
+- skipped_table
+
+4) Return:
+- total teams tiered
+- total conference+gender tables tiered
+- all Tier 1A teams with meet_share values
+- a few sample conference tables
+- whether any tables were skipped
+- confirmation of which files changed
+
+Important:
+This is a hardening pass, not a redesign pass.
+Keep the logic simple, inspectable, and stable.
