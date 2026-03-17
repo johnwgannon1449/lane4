@@ -579,10 +579,18 @@ def _detect_column_splits(words: list[dict], page_width: float) -> list[float]:
     """
     Return x-coordinates of column boundaries (empty list = single column).
 
-    Uses a 50-bin x0 histogram.  A run of ≥ 3 consecutive bins with fewer
-    than 5 % of the peak bin count, located in the middle 25–75 % of the
-    page, is treated as an inter-column gap.  At most 2 splits are returned
+    Primary pass: 50-bin x0 histogram; a run of ≥ 3 consecutive bins with
+    fewer than 5 % of the peak bin count, in the middle 25–75 % of the page,
+    is treated as an inter-column gap.  At most 2 splits are returned
     (= max 3 columns).
+
+    Fallback pass (activates only when the primary pass finds nothing):
+    Restricts the search to the central 40–60 % of the page and requires
+    only ≥ 2 consecutive empty bins.  Nearby gap clusters are merged with a
+    50 px tolerance before checking that both resulting columns contain at
+    least 15 words.  This catches distance-event pages where split-row times
+    from the adjacent column partially fill what would otherwise be a clean
+    3-bin gap, reducing the observable gap to just 2 consecutive empty bins.
     """
     if not words or page_width <= 0:
         return []
@@ -599,33 +607,46 @@ def _detect_column_splits(words: list[dict], page_width: float) -> list[float]:
         return []
     empty_thresh = max(2, int(peak * 0.05))   # < 5 % of peak → "empty"
 
-    # Middle region: 25 % – 75 % of page width
+    def _find_splits(lo: int, hi: int, min_gap: int, merge_px: float) -> list[float]:
+        result: list[float] = []
+        in_gap = False
+        gap_start = 0
+        for i in range(lo, hi + 1):
+            if hist[i] <= empty_thresh:
+                if not in_gap:
+                    in_gap = True
+                    gap_start = i
+            else:
+                if in_gap:
+                    gap_len = i - gap_start
+                    if gap_len >= min_gap:
+                        gap_mid = (gap_start + i - 1) / 2 * bin_w
+                        if result and abs(gap_mid - result[-1]) < merge_px:
+                            result[-1] = (result[-1] + gap_mid) / 2
+                        else:
+                            result.append(gap_mid)
+                    in_gap = False
+        return result[:2]
+
+    # Primary pass: 25–75 % zone, ≥ 3 consecutive empty bins, 30 px merge
     lo_bin = int(n_bins * 0.25)
     hi_bin = int(n_bins * 0.75)
+    splits = _find_splits(lo_bin, hi_bin, min_gap=3, merge_px=30)
 
-    splits: list[float] = []
-    in_gap = False
-    gap_start: int = 0
+    if not splits:
+        # Fallback: 40–60 % central zone only, ≥ 2 consecutive empty bins,
+        # 50 px merge (wide enough to fuse two adjacent 2-bin clusters).
+        lo_center = int(n_bins * 0.40)
+        hi_center = int(n_bins * 0.60)
+        candidates = _find_splits(lo_center, hi_center, min_gap=2, merge_px=50)
+        for split_x in candidates:
+            left_n  = sum(1 for w in words if w["x0"] <  split_x)
+            right_n = sum(1 for w in words if w["x0"] >= split_x)
+            if left_n >= 15 and right_n >= 15:
+                splits.append(split_x)
+        splits = splits[:2]
 
-    for i in range(lo_bin, hi_bin + 1):
-        if hist[i] <= empty_thresh:
-            if not in_gap:
-                in_gap = True
-                gap_start = i
-        else:
-            if in_gap:
-                gap_len = i - gap_start
-                if gap_len >= 3:                         # gap ≥ 6 % page width
-                    gap_mid = (gap_start + i - 1) / 2 * bin_w
-                    # Merge splits that are very close (<30 px)
-                    if splits and abs(gap_mid - splits[-1]) < 30:
-                        splits[-1] = (splits[-1] + gap_mid) / 2
-                    else:
-                        splits.append(gap_mid)
-                in_gap = False
-
-    # Cap at 2 boundaries (3 columns max); too many gaps = noise
-    return splits[:2]
+    return splits
 
 
 def _extract_page_columns(page) -> tuple[list[str], int]:

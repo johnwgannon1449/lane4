@@ -1,0 +1,176 @@
+We have identified a general remaining failure mode affecting distance events, especially in multi-column PDFs.
+
+Concrete example:
+PCSC Men 1650 Free is clearly present.
+It starts top-right of page 37 and continues top-right of page 38.
+The structure is:
+
+- event header
+- record line(s)
+- table header
+- swimmer primary row
+- many split-only lines for that swimmer
+- next swimmer primary row
+- many split-only lines
+- etc.
+
+This is a GENERAL parser issue, not a PCSC-only issue.
+
+The parser must correctly treat distance events as long event blocks where each swimmer has one primary row plus many subordinate split rows.
+
+==================================================
+GOAL
+==================================================
+
+Implement a general distance-event handling improvement that:
+
+- preserves existing good behavior
+- improves parsing of 500 / 1000 / 1650 style events
+- works in both normal mode and multi_column_2 mode
+- does not introduce global regressions
+
+Do NOT make a PCSC-specific fix.
+
+==================================================
+TASK 1 — PRIMARY ROW VS SPLIT ROW CLASSIFICATION
+==================================================
+
+Strengthen row classification so the parser clearly distinguishes:
+
+A. Primary swimmer rows
+These usually contain:
+- place number at start
+- swimmer name
+- class year
+- school
+- official final time (or prelim/finals times)
+
+B. Split rows
+These usually contain:
+- only time sequences
+- no new place number
+- no swimmer name
+- no school
+- no new event header
+
+Rules:
+- split rows belong to the previous swimmer row
+- split rows must NOT be counted as separate swimmers
+- split rows must NOT break event state
+- split rows must NOT affect anchor depth calculations directly
+
+==================================================
+TASK 2 — DISTANCE-EVENT BLOCK PERSISTENCE
+==================================================
+
+Once a valid event header is detected for a distance event, keep the event block open across:
+
+- record / standard lines
+- table header lines
+- many split rows
+- page boundaries
+- continuation pages
+
+Do not prematurely finalize the event just because there are many non-primary lines between swimmer rows.
+
+This is especially important for:
+- 500 Free
+- 1000 Free
+- 1650 Free
+
+But the logic should be general enough to help any split-heavy event structure.
+
+==================================================
+TASK 3 — EVENT VALIDATION / DEPTH LOGIC
+==================================================
+
+Adjust event validation so distance events are not rejected just because:
+
+- consecutive place numbers are interrupted by split rows
+- swimmer rows are sparsely separated by many lines
+- the event spans multiple pages
+
+For distance events:
+- base depth only on detected PRIMARY swimmer rows
+- ignore split rows entirely for depth counting
+- do not require tight line-to-line continuity
+
+==================================================
+TASK 4 — ANCHOR EXTRACTION RULE
+==================================================
+
+For anchor extraction:
+- use only primary swimmer rows
+- ignore subordinate split rows
+- continue to prefer:
+  1. Finals
+  2. Best available results section
+  3. Prelims fallback
+
+Do not let split rows interfere with selecting the correct anchor section.
+
+==================================================
+TASK 5 — DEBUG OUTPUT
+==================================================
+
+Extend debug output so we can inspect how the parser is handling distance events.
+
+Create or extend a debug file such as:
+output/distance_event_debug.csv
+
+Suggested columns:
+- Bundle_ID
+- Conference
+- Source_File
+- Page_Number
+- Event_Name
+- Gender
+- Round
+- Line_Text
+- Line_Type (event_header / primary_row / split_row / table_header / record_line / other)
+- Event_State_Action
+- Notes
+
+I want to be able to see whether the parser is:
+- correctly opening the distance event
+- preserving state across many split rows
+- correctly identifying primary rows
+- not mistaking split rows for swimmers
+
+==================================================
+TASK 6 — LIMITED VALIDATION RUN
+==================================================
+
+After patching, run only:
+- PCSC
+- MPSF
+- one stable baseline normal-mode conference (GLIAC or Big East)
+- one stable multi_column_2 conference (ODAC)
+
+Do NOT run the full batch yet.
+
+==================================================
+TASK 7 — REPORT BACK
+==================================================
+
+Report:
+
+1. PCSC
+- whether Men 1650 Free is now captured
+- whether Men 500 Free is now captured
+- whether Men 200 Back / Men 200 Breast / Women 500 Free improve
+- whether any 1000 Free captures changed
+
+2. MPSF
+- whether Men/Women 100 Free improve
+- whether any distance-event handling improved other events
+
+3. Regression check
+- whether GLIAC (or Big East) stayed stable
+- whether ODAC stayed stable
+
+4. Remaining misses
+- which remaining misses still appear to be true parser misses after this change
+
+Goal:
+Fix the general distance-event / split-row parsing weakness without destabilizing the parser.

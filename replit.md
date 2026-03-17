@@ -234,20 +234,25 @@ The `*_flags` columns carry raw annotation suffixes stripped from time tokens (e
 
 `consecutive_depth` is the unbroken consecutive run from place 1.  Spurious high-place entries from loose pass-2 scans do not inflate this metric, making it a reliable indicator of true field depth.
 
-### Coverage Results (2026 Championships — locked baseline)
-| Conference | Score | Status |
-|---|---|---|
-| GLIAC | 28/28 | Baseline — perfect |
-| ODAC | 26/28 | Baseline — 1000 Free not contested |
-| Patriot | 26/28 | Baseline — 1000 Free not contested |
-| Summit League | 26/28 | Baseline — 1000 Free not contested |
-| Big East | 26/28 | Baseline — 1000 Free not contested |
-| CCIW | 25/28 | Stable — Men 200 Fly is `missing_data_ceiling` (11 entrants; no 16th place in PDF) |
+### Coverage Results (2026 Championships — current state)
+| Conference | Score | Mode | Notes |
+|---|---|---|---|
+| GLIAC | 28/28 | normal | Baseline — perfect |
+| ODAC | 26/28 | multi_column_2 | 1000 Free not contested |
+| Patriot | 26/28 | multi_column_3 | 1000 Free not contested |
+| Summit League | 26/28 | normal | 1000 Free not contested |
+| Big East | 26/28 | normal | 1000 Free not contested |
+| CCIW | 25/28 | normal | Men 200 Fly: true data ceiling (11 entrants only) |
+| MPSF | 26/28 | multi_column_2 | 1000 Free not contested; was 24/28 before fallback gap fix |
+| PCSC | 28/28 | multi_column_2 | Perfect score after fallback gap fix |
+| WAC | 18/28 | normal | Mixed single/multi-column layout; needs per-page adaptive mode |
 
-CCIW Men 200 Fly verified as a true data ceiling: only 11 swimmers entered the event. The parser correctly extracts all 11 places; target anchor depth (16) is not achievable from source data.
+CCIW Men 200 Fly: true data ceiling — only 11 swimmers entered; target anchor depth (16) is not achievable from source data.
+MPSF and PCSC improvements: `_detect_column_splits` fallback pass fixed distance-event pages where split-row times partially fill the column gap, reducing the observable gap from the required 3 bins to 2 consecutive empty bins.
 
 ### Active Fixes Applied
 - **CID ligature normalization**: `(cid:976)` → `"f"` in HY-TEK MM8 fonts; resolves "Butter(cid:976)ly" → "Butterfly" for event header detection
 - **LAST-time extraction**: `parse_place_and_time` returns the last valid time (≥10 s) per row, correctly picking the finals time in "Prelim Time | Finals Time" dual-column rows
 - **`consecutive_depth` property**: unbroken run from place 1 — immune to spurious loose-scan bleed-in
 - **Mode B gender detection**: samples both first 8 AND last 8 pages; state machine upgrades `"women"` → `"combined"` when men's event header encountered during parse
+- **`_detect_column_splits` fallback pass**: when primary 3-bin gap detection finds nothing, a secondary pass searches the central 40–60% zone with gap_len ≥ 2 and 50 px merge tolerance. Requires ≥ 15 words on each side. Fixes distance-event transition pages where adjacent-column split-row times partially fill the gap (MPSF Men/Women 100 Free; PCSC Men 500/1650/200 Back/200 Breast, Women 500 Free — all now captured).
