@@ -1,0 +1,136 @@
+We need to do a targeted refresh-and-rerun pass because the input files in Replit have changed.
+
+Important context:
+Some earlier weak results were likely caused by stale or incomplete source files, not true parser failures.
+
+Please do NOT assume the previous file inventory is still correct.
+First re-scan the input folder and rebuild the manifest from the CURRENT PDFs actually present.
+
+==================================================
+PART 1 — REFRESH INPUT INVENTORY
+==================================================
+
+Re-scan the current input_pdfs/ folder from scratch.
+
+Rebuild / refresh:
+- manifest
+- bundle assignments
+- conference detection
+- gender detection
+- source-file lists per bundle
+
+Do not rely on previous cached assumptions about which files existed.
+
+I want an updated inventory showing, for each relevant conference:
+- source filenames currently present
+- detected conference
+- detected gender
+- assigned bundle_id
+- parse mode
+
+==================================================
+PART 2 — IMPORTANT FILE CORRECTIONS TO ACCOUNT FOR
+==================================================
+
+These source corrections have been made and must be reflected in the new scan:
+
+1. NESCAC
+- Previously only men’s results were included
+- Women’s results have now been added properly and titled appropriately
+
+2. MAC
+- Previously only one day of the meet was included
+- It now has full PDFs, one for each gender, properly titled
+
+3. ASUN
+- Earlier source setup was strange / split oddly
+- It now has one full men’s PDF and one full women’s PDF, properly titled
+
+4. Big Ten
+- Women’s results are in one large PDF
+- Men’s results are split across 4 PDFs, one for each day
+- The parser must recognize that this is still one men’s conference bundle
+- Big Ten PDFs may use “B1G” instead of “Big Ten”
+
+==================================================
+PART 3 — BIG TEN DIAGNOSIS
+==================================================
+
+For Big Ten specifically, check BOTH of these hypotheses:
+
+A. B1G naming issue
+- Does raw PDF text use “B1G” instead of “Big Ten”?
+- If yes, is that currently mapped as a Big Ten alias?
+- Could this be breaking conference detection or event recognition?
+
+B. Multi-file mens bundle issue
+- Are all 4 men’s day PDFs being assigned to the SAME Big Ten men’s bundle?
+- Is merge logic combining them correctly into one logical meet?
+- Is women’s full PDF being bundled correctly?
+
+For Big Ten, report:
+- current files seen
+- conference detected
+- bundle_id(s)
+- whether “B1G” appears
+- whether all men’s day files are grouped together
+- whether women’s file is grouped correctly
+
+==================================================
+PART 4 — TARGETED RE-RUN ONLY
+==================================================
+
+After refreshing the input inventory, rerun ONLY these conferences:
+
+- Big Ten
+- NESCAC
+- MAC
+- ASUN
+- Ivy League
+
+Why Ivy:
+- it was previously suspicious and worth confirming after input refresh
+
+Do NOT run the full batch yet.
+
+==================================================
+PART 5 — REPORTING
+==================================================
+
+For each of the 5 conferences above, report:
+
+1. files currently detected
+2. bundle structure
+3. parse mode used
+4. anchors captured
+5. missing events (excluding 1000 Free)
+6. whether misses still show sw=0 / deep=0
+7. whether the problem was:
+   - stale/wrong/missing source PDFs
+   - B1G alias issue
+   - mens multi-file bundle issue
+   - real parser failure
+   - something else
+
+Also clearly state:
+- which earlier “gap” results were invalid because the wrong PDFs had been used
+
+==================================================
+PART 6 — IMPORTANT RULES
+==================================================
+
+- Do NOT make broad parser changes yet
+- Do NOT assume old manifest/bundle results are still valid
+- First refresh inventory, then rerun targeted conferences, then diagnose any remaining true parser failures
+- Exclude 1000 Free from required-miss reporting as usual
+
+==================================================
+GOAL
+==================================================
+
+We need to separate:
+1. bad earlier results caused by incomplete / wrong / stale input files
+from
+2. true remaining parser issues
+
+This pass is about re-establishing the correct ground truth before any new fixes are attempted.

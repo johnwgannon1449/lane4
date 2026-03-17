@@ -135,6 +135,7 @@ _META_STRIP_TOKENS = (
         "full", "complete", "final", "finals",
         "pdf",   # e.g. "Big_12_S_D_Champ_Results_pdf.pdf"
         "w",     # "w" alone is ambiguous — strip it; gender detected separately
+        "all",   # e.g. "results_-_all__1_.pdf" version/scope word, not a conference signal
     ])
 )
 
@@ -161,6 +162,8 @@ _BUILTIN_CONF = [
     ("ivy",           "Ivy League"),
     ("pac12",         "Pac-12"),
     ("pac10",         "Pac-10"),
+    ("b1g",           "Big Ten"),
+    ("b10",           "Big Ten"),
     ("bigten",        "Big Ten"),
     ("big10",         "Big Ten"),
     ("bigeight",      "Big Eight"),
@@ -415,6 +418,8 @@ def parse_filename_metadata(filename: str) -> dict:
         if re.fullmatch(r"20\d\d", t):
             continue
         if re.fullmatch(r"day[1-9]", t) or re.fullmatch(r"d[1-9]", t):
+            continue
+        if re.fullmatch(r"\d", t):
             continue
         conf_tokens.append(t)
 

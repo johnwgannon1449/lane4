@@ -1,125 +1,218 @@
 Bundle_ID,Conference,Source_File,File_Gender_Type,Multi_Col_Pages,Men_Section_Found,Women_Section_Found,Raw_Event_Header,Canonical_Event,Section_Type,Final_Section,Places_Found,Status,Reason,Pass
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,False,False,"r:+9.94 26.10 27.27 23.85 22.18 3) r:0.20 Lanting, Nicholas SR 4) r:0.34 Imig, Nicholas",,unknown,unknown,0,unrecognized,normalize_event_name_any returned None,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,False,True,Event 10 Women 500 Yard Freestyle,500 Free,women,unknown,23,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,False,True,Event 10 Women 500 Yard Freestyle,500 Free,women,unknown,23,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,False,True,Preliminaries ... (Event 10 Women 500 Yard Freestyle),500 Free,women,unknown,23,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,Event 11 Men 500 Yard Freestyle,500 Free,men,unknown,27,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,B - Final ... (Event 11 Men 500 Yard Freestyle),500 Free,men,B,27,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,Event 11 Men 500 Yard Freestyle,500 Free,men,unknown,27,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,"Preliminaries ... (Event 11 Men 500 Yard Freestyle) 25 Kennedy, Garrett SO AFA 4:38.45",500 Free,men,unknown,27,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,Event 12 Women 200 Yard IM,200 IM,women,unknown,27,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,"A - Final ... (Event 12 Women 200 Yard IM) 3 Cabrera, Silvana 5Y UI 2:02.07 q",200 IM,women,A,27,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,Event 12 Women 200 Yard IM,200 IM,women,unknown,27,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,"Preliminaries ... (Event 12 Women 200 Yard IM) --- Gonzalez, Alexia FR UTRGV DQ 2:34.40",200 IM,women,unknown,27,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,Event 13 Men 200 Yard IM,200 IM,men,unknown,35,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,"C - Final ... (Event 13 Men 200 Yard IM) 20 Campbell, Colin SO GCU 1:50.10 q",,men,C,0,unrecognized,normalize_event_name_any returned None,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,Event 13 Men 200 Yard IM,200 IM,men,unknown,35,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,Event 14 Women 50 Yard Freestyle,50 Free,women,unknown,41,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,"A - Final ... (Event 14 Women 50 Yard Freestyle) 5 Koc, Naya JR CBU 23.25 q",50 Free,women,A,41,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,Event 14 Women 50 Yard Freestyle,50 Free,women,unknown,41,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,"Preliminaries ... (Event 14 Women 50 Yard Freestyle) --- Qualman, Grace SO UI X24.09",50 Free,women,unknown,41,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,Event 15 Men 50 Yard Freestyle,50 Free,men,unknown,24,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,A - Final ... (Event 15 Men 50 Yard Freestyle),50 Free,men,A,24,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,Event 15 Men 50 Yard Freestyle,50 Free,men,unknown,24,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,"*6 Imig, Nicholas SU 20.00 q",,men,unknown,0,unrecognized,normalize_event_name_any returned None,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,"Preliminaries ... (Event 15 Men 50 Yard Freestyle) 2 Jiminez-Mestes, Gael JR CBU 412.35# 17",50 Free,men,unknown,24,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,Event 17 Women 100 Yard Butterfly,100 Fly,women,unknown,38,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,"A - Final ... (Event 17 Women 100 Yard Butterfly) 2 Martinez, Paula JR GCU 53.90 q",100 Fly,women,A,38,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,Event 17 Women 100 Yard Butterfly,100 Fly,women,unknown,38,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,"Preliminaries ... (Event 17 Women 100 Yard Butterfly) 2 Potgieter, Wikus SO UNLV 46.59 B",100 Fly,women,unknown,38,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,Event 18 Men 100 Yard Butterfly,100 Fly,men,unknown,26,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,Event 18 Men 100 Yard Butterfly,100 Fly,men,unknown,26,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,"B - Final ... (Event 19 Women 400 Yard IM) 2 Macsok, Fruzsina SR GCU 4:22.97 q",400 IM,women,B,15,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,Event 19 Women 400 Yard IM,400 IM,women,unknown,15,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,Preliminaries ... (Event 19 Women 400 Yard IM) B - Final,400 IM,women,B,15,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,Event 20 Men 400 Yard IM,400 IM,men,unknown,11,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,Event 20 Men 400 Yard IM,400 IM,men,unknown,11,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,"Preliminaries ... (Event 20 Men 400 Yard IM) --- Koza, Timothy JR GCU X4:01.67",400 IM,men,unknown,11,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,Event 21 Women 200 Yard Freestyle,200 Free,women,unknown,23,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,"C - Final ... (Event 21 Women 200 Yard Freestyle) 18 Easterling, Avery FR CBU 1:51.61 q",200 Free,women,C,23,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,Event 21 Women 200 Yard Freestyle,200 Free,women,unknown,23,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,Event 22 Men 200 Yard Freestyle,200 Free,men,unknown,24,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,"Preliminaries ... (Event 22 Men 200 Yard Freestyle) 16 Crawford, Courtney FR UI 1:04.55 1",200 Free,men,unknown,24,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,Event 23 Women 100 Yard Breaststroke,100 Breast,women,unknown,19,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,Preliminaries ... (Event 23 Women 100 Yard Breaststroke),100 Breast,women,unknown,19,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,Event 24 Men 100 Yard Breaststroke,100 Breast,men,unknown,32,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,"C - Final ... (Event 24 Men 100 Yard Breaststroke) --- Bjornstad, Nathaniel CBU X54.83",100 Breast,men,C,32,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,Event 24 Men 100 Yard Breaststroke,100 Breast,men,unknown,32,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,Event 25 Women 100 Yard Backstroke,100 Back,women,unknown,20,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,"B - Final ... (Event 25 Women 100 Yard Backstroke) 12 Connors, Kathryn JR CBU 56.02 q",100 Back,women,B,20,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,Event 25 Women 100 Yard Backstroke,100 Back,women,unknown,20,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,"Preliminaries ... (Event 25 Women 100 Yard Backstroke) 16 Kennedy, Garrett SO AFA 49.08 1",100 Back,women,unknown,20,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,Event 26 Men 100 Yard Backstroke,100 Back,men,unknown,29,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,Preliminaries ... (Event 26 Men 100 Yard Backstroke),100 Back,men,unknown,29,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,Event 30 Women 1650 Yard Freestyle,1650 Free,women,unknown,17,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,"(Event 30 Women 1650 Yard Freestyle) 10 Mason, Marie FR UI 17:13.03 7",1650 Free,women,unknown,17,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,"(Event 30 Women 1650 Yard Freestyle) --- Rahn, Bethany JR UI X17:18.28",1650 Free,women,unknown,17,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,Event 31 Men 1650 Yard Freestyle,1650 Free,men,unknown,15,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,"(Event 31 Men 1650 Yard Freestyle) 9 Manning, Caleb FR UNLV 15:36.22 9",1650 Free,men,unknown,15,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,"(Event 31 Men 1650 Yard Freestyle) 21 Johansen, Theodore JR SU 16:16.40",1650 Free,men,unknown,15,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,Event 32 Women 200 Yard Backstroke,200 Back,women,unknown,15,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,"B - Final ... (Event 32 Women 200 Yard Backstroke) 13 Hazan, Reese SR UNC 2:02.24 q",200 Back,women,B,15,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,Event 32 Women 200 Yard Backstroke,200 Back,women,unknown,15,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,Event 33 Men 200 Yard Backstroke Event 33 Men 200 Yard Backstroke,200 Back,men,unknown,24,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,Event 34 Women 100 Yard Freestyle,100 Free,women,unknown,35,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,"Preliminaries ... (Event 34 Women 100 Yard Freestyle) --- Klatt, Katarina FR NAU X52.65",100 Free,women,unknown,35,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,r:+0.67 26.42 28.14 Event 35 Men 100 Yard Freestyle,100 Free,men,unknown,33,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,"B - Final ... (Event 35 Men 100 Yard Freestyle) 9 Wanat, Grzegorz JR GCU 44.18 q",100 Free,men,B,33,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,Event 35 Men 100 Yard Freestyle,100 Free,men,unknown,33,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,"Preliminaries ... (Event 35 Men 100 Yard Freestyle) 20 Hafer, Kaitlyn FR UI 2:20.62",100 Free,men,unknown,33,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,Event 36 Women 200 Yard Breaststroke,200 Breast,women,unknown,26,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,Preliminaries ... (Event 36 Women 200 Yard Breaststroke) B - Final,200 Breast,women,B,26,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,Event 37 Men 200 Yard Breaststroke,200 Breast,men,unknown,10,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,Event 37 Men 200 Yard Breaststroke,200 Breast,men,unknown,10,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,Preliminaries ... (Event 37 Men 200 Yard Breaststroke),200 Breast,men,unknown,10,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,Event 38 Women 200 Yard Butterfly,200 Fly,women,unknown,29,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,"C - Final ... (Event 38 Women 200 Yard Butterfly) 21 Easterling, Avery FR CBU 2:05.48 q",200 Fly,women,C,29,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,Event 38 Women 200 Yard Butterfly,200 Fly,women,unknown,29,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,Event 39 Men 200 Yard Butterfly,200 Fly,men,unknown,14,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,"B - Final ... (Event 39 Men 200 Yard Butterfly) 14 Colombo, Lucas JR CBU 1:51.18 q",200 Fly,men,B,14,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,Event 39 Men 200 Yard Butterfly Name Y r School Finals Score,200 Fly,men,unknown,14,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,Event 112 Women 200 Yard IM Time Trial Event 123 Women 100 Yard Breaststroke Time Trial,100 Breast,women,unknown,19,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,Event 114 Women 50 Yard Freestyle Time Trial,50 Free,women,unknown,41,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,WAC Champs: 22.30 R 2/24/2011 Amber Boucher Event 124 Men 100 Yard Breaststroke Time Trial,100 Breast,men,unknown,32,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,Event 117 Women 100 Yard Butterfly Time Trial,100 Fly,women,unknown,38,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,WAC Champs: 51.89 R 2/25/1999 Martina Moravcova Event 125 Women 100 Yard Backstroke Time Trial,100 Back,women,unknown,20,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,Event 118 Men 100 Yard Butterfly Time Trial,100 Fly,men,unknown,26,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,Event 134 Women 100 Yard Freestyle Time Trial Event 164 Men 50 Yard Backstroke Time Trial,50 Free,women,unknown,41,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,Event 165 Women 50 Yard Breaststroke Time Trial,,women,unknown,0,unrecognized,normalize_event_name_any returned None,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,Event 135 Men 100 Yard Freestyle Time Trial r:+0.63,100 Free,men,unknown,33,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,Name Y r School Finals Time Event 167 Women 50 Yard Butterfly Time Trial,,men,unknown,0,unrecognized,normalize_event_name_any returned None,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,Event 168 Men 50 Yard Butterfly Time Trial,,men,unknown,0,unrecognized,normalize_event_name_any returned None,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,Event 138 Women 200 Yard Butterfly Time Trial,200 Fly,women,unknown,29,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,WAC: 1:54.92 # 3/23/2002 Georgina Lee Event 169 Women 100 Yard IM Time Trial,,women,unknown,0,unrecognized,normalize_event_name_any returned None,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,"Event 163 Women 50 Yard Backstroke Time Trial 4 Hicks, Lauren SR GCU 59.93",,women,unknown,0,unrecognized,normalize_event_name_any returned None,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,Event 170 Men 100 Yard IM Time Trial Event 266 Men 50 Yard Breaststroke Time Trial,,women,unknown,0,unrecognized,normalize_event_name_any returned None,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,Event 267 Women 50 Yard Butterfly Time Trial,,women,unknown,0,unrecognized,normalize_event_name_any returned None,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,r:+0.70 23.86 27.69 Event 269 Women 100 Yard IM Time Trial,,women,unknown,0,unrecognized,normalize_event_name_any returned None,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,Event 312 Women 200 Yard IM Time Trial,200 IM,women,unknown,27,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,Event 214 Women 50 Yard Freestyle Swim-off,50 Free,women,unknown,41,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,Event 318 Men 100 Yard Butterfly Time Trial,100 Fly,men,unknown,26,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,Event 223 Women 100 Yard Breaststroke Time Trial,100 Breast,women,unknown,19,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,Event 234 Women 100 Yard Freestyle Time Trial,100 Free,women,unknown,35,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,Event 415 Men 50 Yard Freestyle Time Trial,50 Free,men,unknown,24,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,Event 263 Women 50 Yard Backstroke Time Trial r:+0.67,,men,unknown,0,unrecognized,normalize_event_name_any returned None,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,"Name Y r School Finals Time 2 Imig, Nicholas SU 20.24",,men,unknown,0,unrecognized,normalize_event_name_any returned None,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,"Event 265 Women 50 Yard Breaststroke Time Trial 4 Kim, Minsong FR SU 21.34",,men,unknown,0,unrecognized,normalize_event_name_any returned None,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,Event 469 Women 100 Yard IM Time Trial Event 632 Women 200 Yard Backstroke Time Trial,200 Back,women,unknown,15,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,Event 518 Men 100 Yard Butterfly Time Trial,100 Fly,men,unknown,26,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,Event 523 Women 100 Yard Breaststroke Time Trial,100 Breast,women,unknown,19,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,Name Y r School Finals Time Event 734 Women 100 Yard Freestyle Time Trial,100 Free,women,unknown,35,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,Event 526 Men 100 Yard Backstroke Time Trial,100 Back,men,unknown,29,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,Name Y r School Finals Time Event 737 Men 200 Yard Breaststroke Time Trial,200 Breast,men,unknown,10,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,Event 565 Women 50 Yard Breaststroke Time Trial,,men,unknown,0,unrecognized,normalize_event_name_any returned None,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,Event 623 Men 100 Yard Breaststroke Time Trial r:+0.96 27.45 30.99 32.24 32.78,100 Breast,men,unknown,32,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,Event 738 Women 200 Yard Butterfly Time Trial,200 Fly,women,unknown,29,recognized,session=prelims,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,Event 769 Women 100 Yard IM Time Trial,,women,unknown,0,unrecognized,normalize_event_name_any returned None,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,combined,0,True,True,Event 770 Men 100 Yard IM Time Trial,,women,unknown,0,unrecognized,normalize_event_name_any returned None,first
-wac_2025,WAC,WAC 2025 RESULTS.pdf,second_pass,,True,False,Event 415 Men 50 Yard Freestyle Time Trial,50 Free,men,B/unknown,24,recovered,loose_event_match pass2 session=prelims,second
-wac_2025,WAC,WAC 2025 RESULTS.pdf,second_pass,,True,False,Event 518 Men 100 Yard Butterfly Time Trial,100 Fly,men,A/B/unknown,26,recovered,loose_event_match pass2 session=prelims,second
-wac_2025,WAC,WAC 2025 RESULTS.pdf,second_pass,,True,False,Name Y r School Finals Time Event 737 Men 200 Yard Breaststroke Time Trial,200 Breast,men,A/unknown,10,recovered,loose_event_match pass2 session=prelims,second
-wac_2025,WAC,WAC 2025 RESULTS.pdf,second_pass,,True,False,Event 39 Men 200 Yard Butterfly Name Y r School Finals Score,200 Fly,men,A/B/unknown,14,recovered,loose_event_match pass2 session=prelims,second
-wac_2025,WAC,WAC 2025 RESULTS.pdf,second_pass,,False,True,Preliminaries ... (Event 19 Women 400 Yard IM) B - Final,400 IM,women,B/C/unknown,15,recovered,loose_event_match pass2 session=prelims,second
-wac_2025,WAC,WAC 2025 RESULTS.pdf,second_pass,,False,True,Event 523 Women 100 Yard Breaststroke Time Trial,100 Breast,women,A/B/unknown,19,recovered,loose_event_match pass2 session=prelims,second
-wac_2025,WAC,WAC 2025 RESULTS.pdf,second_pass,,False,True,Event 469 Women 100 Yard IM Time Trial Event 632 Women 200 Yard Backstroke Time Trial,100 Back,women,C/unknown,22,recovered,loose_event_match pass2 session=prelims,second
-wac_2025,WAC,WAC 2025 RESULTS.pdf,second_pass,,False,True,Event 32 Women 200 Yard Backstroke,200 Back,women,A/B/unknown,15,recovered,loose_event_match pass2 session=prelims,second
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,False,False,Event 3 Men 50 Yard Breaststroke,,men,unknown,0,unrecognized,normalize_event_name_any returned None,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,False,False,Preliminaries ... (Event 3 Men 50 Yard Breaststroke),,men,unknown,0,unrecognized,normalize_event_name_any returned None,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,False,False,Event 3 Men 50 Yard Breaststroke,,men,unknown,0,unrecognized,normalize_event_name_any returned None,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,False,False,Preliminaries ... (Event 3 Men 50 Yard Breaststroke),,men,unknown,0,unrecognized,normalize_event_name_any returned None,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,False,False,Event 4 Men 50 Yard Butterfly,,men,unknown,0,unrecognized,normalize_event_name_any returned None,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,False,False,Preliminaries ... (Event 4 Men 50 Yard Butterfly),,men,unknown,0,unrecognized,normalize_event_name_any returned None,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,False,False,Event 4 Men 50 Yard Butterfly,,men,unknown,0,unrecognized,normalize_event_name_any returned None,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,False,False,Preliminaries ... (Event 4 Men 50 Yard Butterfly),,men,unknown,0,unrecognized,normalize_event_name_any returned None,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Event 5 Men 500 Yard Freestyle,500 Free,men,unknown,50,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Championship Final ... (Event 5 Men 500 Yard Freestyle),500 Free,men,A,50,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,PreConsolation Final ... (Event 5 Men 500 Yard Freestyle),500 Free,men,unknown,50,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Preliminaries ... (Event 5 Men 500 Yard Freestyle),500 Free,men,unknown,50,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Event 5 Men 500 Yard Freestyle,500 Free,men,unknown,50,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Preliminaries ... (Event 5 Men 500 Yard Freestyle),500 Free,men,unknown,50,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Preliminaries ... (Event 5 Men 500 Yard Freestyle),500 Free,men,unknown,50,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Preliminaries ... (Event 5 Men 500 Yard Freestyle),500 Free,men,unknown,50,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Preliminaries ... (Event 5 Men 500 Yard Freestyle),500 Free,men,unknown,50,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Event 6 Men 50 Yard Backstroke,,men,unknown,0,unrecognized,normalize_event_name_any returned None,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,PreConsolation Final ... (Event 6 Men 50 Yard Backstroke),,men,unknown,0,unrecognized,normalize_event_name_any returned None,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Event 6 Men 50 Yard Backstroke,,men,unknown,0,unrecognized,normalize_event_name_any returned None,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Preliminaries ... (Event 6 Men 50 Yard Backstroke),,men,unknown,0,unrecognized,normalize_event_name_any returned None,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Event 7 Men 200 Yard IM,200 IM,men,unknown,37,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,PreConsolation Final ... (Event 7 Men 200 Yard IM),200 IM,men,unknown,37,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Event 7 Men 200 Yard IM,200 IM,men,unknown,37,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Preliminaries ... (Event 7 Men 200 Yard IM),200 IM,men,unknown,37,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Preliminaries ... (Event 7 Men 200 Yard IM),200 IM,men,unknown,37,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Event 8 Men 50 Yard Freestyle,50 Free,men,unknown,51,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,PreConsolation Final ... (Event 8 Men 50 Yard Freestyle),50 Free,men,unknown,51,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Preliminaries ... (Event 8 Men 50 Yard Freestyle),50 Free,men,unknown,51,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Event 8 Men 50 Yard Freestyle,50 Free,men,unknown,51,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Preliminaries ... (Event 8 Men 50 Yard Freestyle),50 Free,men,unknown,51,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Preliminaries ... (Event 8 Men 50 Yard Freestyle),50 Free,men,unknown,51,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Event 12 Men 1000 Yard Freestyle,1000 Free,men,unknown,30,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,(Event 12 Men 1000 Yard Freestyle),1000 Free,men,unknown,30,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,(Event 12 Men 1000 Yard Freestyle),1000 Free,men,unknown,30,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,(Event 12 Men 1000 Yard Freestyle),1000 Free,men,unknown,30,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Event 13 Men 100 Yard Butterfly,100 Fly,men,unknown,42,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,PreConsolation Final ... (Event 13 Men 100 Yard Butterfly),100 Fly,men,unknown,42,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Event 13 Men 100 Yard Butterfly,100 Fly,men,unknown,42,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Preliminaries ... (Event 13 Men 100 Yard Butterfly),100 Fly,men,unknown,42,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Preliminaries ... (Event 13 Men 100 Yard Butterfly),100 Fly,men,unknown,42,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Event 14 Men 400 Yard IM,400 IM,men,unknown,27,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Consolation Final ... (Event 14 Men 400 Yard IM),400 IM,men,B,27,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Event 14 Men 400 Yard IM,400 IM,men,unknown,27,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Preliminaries ... (Event 14 Men 400 Yard IM),400 IM,men,unknown,27,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Preliminaries ... (Event 14 Men 400 Yard IM),400 IM,men,unknown,27,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Event 15 Men 200 Yard Freestyle,200 Free,men,unknown,45,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Championship Final ... (Event 15 Men 200 Yard Freestyle),200 Free,men,A,45,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Preliminaries ... (Event 15 Men 200 Yard Freestyle),200 Free,men,unknown,45,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Event 15 Men 200 Yard Freestyle,200 Free,men,unknown,45,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Preliminaries ... (Event 15 Men 200 Yard Freestyle),200 Free,men,unknown,45,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Preliminaries ... (Event 15 Men 200 Yard Freestyle),200 Free,men,unknown,45,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Event 16 Men 100 Yard Breaststroke,100 Breast,men,unknown,39,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Consolation Final ... (Event 16 Men 100 Yard Breaststroke),100 Breast,men,B,39,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Event 16 Men 100 Yard Breaststroke,100 Breast,men,unknown,39,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Preliminaries ... (Event 16 Men 100 Yard Breaststroke),100 Breast,men,unknown,39,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Event 17 Men 100 Yard Backstroke,100 Back,men,unknown,33,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Championship Final ... (Event 17 Men 100 Yard Backstroke),100 Back,men,A,33,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Preliminaries ... (Event 17 Men 100 Yard Backstroke),100 Back,men,unknown,33,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Event 17 Men 100 Yard Backstroke,100 Back,men,unknown,33,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Preliminaries ... (Event 17 Men 100 Yard Backstroke),100 Back,men,unknown,33,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Event 19 Men 1650 Yard Freestyle,1650 Free,men,unknown,33,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,(Event 19 Men 1650 Yard Freestyle),1650 Free,men,unknown,33,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,(Event 19 Men 1650 Yard Freestyle),1650 Free,men,unknown,33,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,(Event 19 Men 1650 Yard Freestyle),1650 Free,men,unknown,33,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,(Event 19 Men 1650 Yard Freestyle),1650 Free,men,unknown,33,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,(Event 19 Men 1650 Yard Freestyle),1650 Free,men,unknown,33,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,(Event 19 Men 1650 Yard Freestyle),1650 Free,men,unknown,33,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Event 20 Men 200 Yard Backstroke,200 Back,men,unknown,33,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Consolation Final ... (Event 20 Men 200 Yard Backstroke),200 Back,men,B,33,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Event 20 Men 200 Yard Backstroke,200 Back,men,unknown,33,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Preliminaries ... (Event 20 Men 200 Yard Backstroke),200 Back,men,unknown,33,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Preliminaries ... (Event 20 Men 200 Yard Backstroke),200 Back,men,unknown,33,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Event 21 Men 100 Yard Freestyle,100 Free,men,unknown,55,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Consolation Final ... (Event 21 Men 100 Yard Freestyle),100 Free,men,B,55,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Preliminaries ... (Event 21 Men 100 Yard Freestyle),100 Free,men,unknown,55,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Event 21 Men 100 Yard Freestyle,100 Free,men,unknown,55,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Preliminaries ... (Event 21 Men 100 Yard Freestyle),100 Free,men,unknown,55,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Preliminaries ... (Event 21 Men 100 Yard Freestyle),100 Free,men,unknown,55,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Preliminaries ... (Event 21 Men 100 Yard Freestyle),100 Free,men,unknown,55,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Event 22 Men 200 Yard Breaststroke,200 Breast,men,unknown,35,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Championship Final ... (Event 22 Men 200 Yard Breaststroke),200 Breast,men,A,35,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Event 22 Men 200 Yard Breaststroke,200 Breast,men,unknown,35,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Preliminaries ... (Event 22 Men 200 Yard Breaststroke),200 Breast,men,unknown,35,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Event 23 Men 200 Yard Butterfly,200 Fly,men,unknown,37,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Consolation Final ... (Event 23 Men 200 Yard Butterfly),200 Fly,men,B,37,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Event 23 Men 200 Yard Butterfly,200 Fly,men,unknown,37,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Preliminaries ... (Event 23 Men 200 Yard Butterfly),200 Fly,men,unknown,37,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Event 100 Men 50 Yard Freestyle Time Trial,50 Free,men,unknown,51,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Event 101 Men 100 Yard Breaststroke Time Trial,100 Breast,men,unknown,39,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Event 102 Men 100 Yard Breaststroke Time Trial,100 Breast,men,unknown,39,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Event 103 Men 100 Yard Butterfly Time Trial,100 Fly,men,unknown,42,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Event 104 Men 50 Yard Butterfly Swim-off,,men,unknown,0,unrecognized,normalize_event_name_any returned None,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Event 105 Men 50 Yard Backstroke Swim-off,,men,unknown,0,unrecognized,normalize_event_name_any returned None,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Event 106 Men 100 Yard Freestyle Time Trial,100 Free,men,unknown,55,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Event 107 Men 200 Yard Breaststroke Time Trial,200 Breast,men,unknown,35,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Event 108 Men 50 Yard Freestyle Time Trial,50 Free,men,unknown,51,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Event 109 Men 50 Yard Freestyle Time Trial,50 Free,men,unknown,51,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Event 110 Men 100 Yard Backstroke Time Trial,100 Back,men,unknown,33,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Event 111 Men 50 Yard Freestyle Time Trial,50 Free,men,unknown,51,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Event 112 Men 50 Yard Butterfly Time Trial,,men,unknown,0,unrecognized,normalize_event_name_any returned None,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Event 113 Men 100 Yard Freestyle Time Trial,100 Free,men,unknown,55,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Event 115 Men 50 Yard Freestyle Time Trial,50 Free,men,unknown,51,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Event 116 Men 100 Yard Breaststroke Time Trial,100 Breast,men,unknown,39,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Event 117 Men 200 Yard Freestyle Time Trial,200 Free,men,unknown,45,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Event 118 Men 100 Yard Breaststroke Time Trial,100 Breast,men,unknown,39,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Event 119 Men 100 Yard Freestyle Time Trial,100 Free,men,unknown,55,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Event 120 Men 50 Yard Breaststroke Time Trial,,men,unknown,0,unrecognized,normalize_event_name_any returned None,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Event 121 Men 100 Yard Freestyle Swim-off,100 Free,men,unknown,55,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Event 123 Men 100 Yard Freestyle Time Trial,100 Free,men,unknown,55,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Event 124 Men 50 Yard Butterfly Time Trial,,men,unknown,0,unrecognized,normalize_event_name_any returned None,first
+nescac_2026,NESCAC,2026 NESCAC MENS RESULTS.pdf,men,0,True,False,Event 125 Men 50 Yard Freestyle Time Trial,50 Free,men,unknown,51,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,False,Event 3 Women 50 Yard Breaststroke,,women,unknown,0,unrecognized,normalize_event_name_any returned None,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,False,Preliminaries ... (Event 3 Women 50 Yard Breaststroke),,women,unknown,0,unrecognized,normalize_event_name_any returned None,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,False,Event 3 Women 50 Yard Breaststroke,,women,unknown,0,unrecognized,normalize_event_name_any returned None,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,False,Event 4 Women 50 Yard Butterfly,,women,unknown,0,unrecognized,normalize_event_name_any returned None,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,False,Preliminaries ... (Event 4 Women 50 Yard Butterfly),,women,unknown,0,unrecognized,normalize_event_name_any returned None,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,False,Event 4 Women 50 Yard Butterfly,,women,unknown,0,unrecognized,normalize_event_name_any returned None,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,False,Preliminaries ... (Event 4 Women 50 Yard Butterfly),,women,unknown,0,unrecognized,normalize_event_name_any returned None,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Event 5 Women 500 Yard Freestyle,500 Free,women,unknown,50,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Championship Final ... (Event 5 Women 500 Yard Freestyle),500 Free,women,A,50,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,PreConsolation Final ... (Event 5 Women 500 Yard Freestyle),500 Free,women,unknown,50,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Preliminaries ... (Event 5 Women 500 Yard Freestyle),500 Free,women,unknown,50,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Event 5 Women 500 Yard Freestyle,500 Free,women,unknown,50,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Preliminaries ... (Event 5 Women 500 Yard Freestyle),500 Free,women,unknown,50,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Preliminaries ... (Event 5 Women 500 Yard Freestyle),500 Free,women,unknown,50,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Preliminaries ... (Event 5 Women 500 Yard Freestyle),500 Free,women,unknown,50,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Preliminaries ... (Event 5 Women 500 Yard Freestyle),500 Free,women,unknown,50,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Event 6 Women 50 Yard Backstroke,,women,unknown,0,unrecognized,normalize_event_name_any returned None,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Preliminaries ... (Event 6 Women 50 Yard Backstroke),,women,unknown,0,unrecognized,normalize_event_name_any returned None,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Event 6 Women 50 Yard Backstroke,,women,unknown,0,unrecognized,normalize_event_name_any returned None,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Event 7 Women 200 Yard IM,200 IM,women,unknown,43,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,PreConsolation Final ... (Event 7 Women 200 Yard IM),200 IM,women,unknown,43,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Event 7 Women 200 Yard IM,200 IM,women,unknown,43,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Preliminaries ... (Event 7 Women 200 Yard IM),200 IM,women,unknown,43,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Preliminaries ... (Event 7 Women 200 Yard IM),200 IM,women,unknown,43,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Event 8 Women 50 Yard Freestyle,50 Free,women,unknown,46,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Championship Final ... (Event 8 Women 50 Yard Freestyle),50 Free,women,A,46,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Preliminaries ... (Event 8 Women 50 Yard Freestyle),50 Free,women,unknown,46,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Event 8 Women 50 Yard Freestyle,50 Free,women,unknown,46,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Preliminaries ... (Event 8 Women 50 Yard Freestyle),50 Free,women,unknown,46,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Preliminaries ... (Event 8 Women 50 Yard Freestyle),50 Free,women,unknown,46,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Event 12 Women 1000 Yard Freestyle,1000 Free,women,unknown,36,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,(Event 12 Women 1000 Yard Freestyle),1000 Free,women,unknown,36,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,(Event 12 Women 1000 Yard Freestyle),1000 Free,women,unknown,36,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,(Event 12 Women 1000 Yard Freestyle),1000 Free,women,unknown,36,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,(Event 12 Women 1000 Yard Freestyle),1000 Free,women,unknown,36,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Event 13 Women 100 Yard Butterfly,100 Fly,women,unknown,49,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,PreConsolation Final ... (Event 13 Women 100 Yard Butterfly),100 Fly,women,unknown,49,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Event 13 Women 100 Yard Butterfly,100 Fly,women,unknown,49,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Preliminaries ... (Event 13 Women 100 Yard Butterfly),100 Fly,women,unknown,49,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Preliminaries ... (Event 13 Women 100 Yard Butterfly),100 Fly,women,unknown,49,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Event 14 Women 400 Yard IM,400 IM,women,unknown,28,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Consolation Final ... (Event 14 Women 400 Yard IM),400 IM,women,B,28,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,PreConsolation Final ... (Event 14 Women 400 Yard IM),400 IM,women,unknown,28,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Event 14 Women 400 Yard IM,400 IM,women,unknown,28,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Preliminaries ... (Event 14 Women 400 Yard IM),400 IM,women,unknown,28,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Event 15 Women 200 Yard Freestyle,200 Free,women,unknown,40,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,PreConsolation Final ... (Event 15 Women 200 Yard Freestyle),200 Free,women,unknown,40,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Event 15 Women 200 Yard Freestyle,200 Free,women,unknown,40,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Preliminaries ... (Event 15 Women 200 Yard Freestyle),200 Free,women,unknown,40,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Preliminaries ... (Event 15 Women 200 Yard Freestyle),200 Free,women,unknown,40,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Event 16 Women 100 Yard Breaststroke,100 Breast,women,unknown,42,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Championship Final ... (Event 16 Women 100 Yard Breaststroke),100 Breast,women,A,42,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Preliminaries ... (Event 16 Women 100 Yard Breaststroke),100 Breast,women,unknown,42,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Event 16 Women 100 Yard Breaststroke,100 Breast,women,unknown,42,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Preliminaries ... (Event 16 Women 100 Yard Breaststroke),100 Breast,women,unknown,42,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Preliminaries ... (Event 16 Women 100 Yard Breaststroke),100 Breast,women,unknown,42,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Event 17 Women 100 Yard Backstroke,100 Back,women,unknown,37,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Consolation Final ... (Event 17 Women 100 Yard Backstroke),100 Back,women,B,37,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Event 17 Women 100 Yard Backstroke,100 Back,women,unknown,37,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Preliminaries ... (Event 17 Women 100 Yard Backstroke),100 Back,women,unknown,37,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Preliminaries ... (Event 17 Women 100 Yard Backstroke),100 Back,women,unknown,37,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Event 19 Women 1650 Yard Freestyle,1650 Free,women,unknown,28,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,(Event 19 Women 1650 Yard Freestyle),1650 Free,women,unknown,28,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,(Event 19 Women 1650 Yard Freestyle),1650 Free,women,unknown,28,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,(Event 19 Women 1650 Yard Freestyle),1650 Free,women,unknown,28,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,(Event 19 Women 1650 Yard Freestyle),1650 Free,women,unknown,28,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Event 20 Women 200 Yard Backstroke,200 Back,women,unknown,36,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,PreConsolation Final ... (Event 20 Women 200 Yard Backstroke),200 Back,women,unknown,36,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Event 20 Women 200 Yard Backstroke,200 Back,women,unknown,36,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Preliminaries ... (Event 20 Women 200 Yard Backstroke),200 Back,women,unknown,36,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Preliminaries ... (Event 20 Women 200 Yard Backstroke),200 Back,women,unknown,36,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Event 21 Women 100 Yard Freestyle,100 Free,women,unknown,53,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Consolation Final ... (Event 21 Women 100 Yard Freestyle),100 Free,women,B,53,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Preliminaries ... (Event 21 Women 100 Yard Freestyle),100 Free,women,unknown,53,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Event 21 Women 100 Yard Freestyle,100 Free,women,unknown,53,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Preliminaries ... (Event 21 Women 100 Yard Freestyle),100 Free,women,unknown,53,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Preliminaries ... (Event 21 Women 100 Yard Freestyle),100 Free,women,unknown,53,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Preliminaries ... (Event 21 Women 100 Yard Freestyle),100 Free,women,unknown,53,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Event 22 Women 200 Yard Breaststroke,200 Breast,women,unknown,42,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Championship Final ... (Event 22 Women 200 Yard Breaststroke),200 Breast,women,A,42,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Preliminaries ... (Event 22 Women 200 Yard Breaststroke),200 Breast,women,unknown,42,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Event 22 Women 200 Yard Breaststroke,200 Breast,women,unknown,42,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Preliminaries ... (Event 22 Women 200 Yard Breaststroke),200 Breast,women,unknown,42,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Preliminaries ... (Event 22 Women 200 Yard Breaststroke),200 Breast,women,unknown,42,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Event 23 Women 200 Yard Butterfly,200 Fly,women,unknown,40,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Consolation Final ... (Event 23 Women 200 Yard Butterfly),200 Fly,women,B,40,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Event 23 Women 200 Yard Butterfly,200 Fly,women,unknown,40,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Preliminaries ... (Event 23 Women 200 Yard Butterfly),200 Fly,women,unknown,40,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Event 100 Women 200 Yard IM Time Trial,200 IM,women,unknown,43,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Event 101 Women 200 Yard IM Time Trial,200 IM,women,unknown,43,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Event 102 Women 50 Yard Freestyle Time Trial,50 Free,women,unknown,46,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Event 103 Women 50 Yard Breaststroke Swim-off,,women,unknown,0,unrecognized,normalize_event_name_any returned None,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Event 104 Women 50 Yard Butterfly Swim-off,,women,unknown,0,unrecognized,normalize_event_name_any returned None,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Event 105 Women 100 Yard Backstroke Time Trial,100 Back,women,unknown,37,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Event 106 Women 50 Yard Breaststroke Time Trial,,women,unknown,0,unrecognized,normalize_event_name_any returned None,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Event 108 Women 50 Yard Freestyle Swim-off,50 Free,women,unknown,46,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Event 109 Women 50 Yard Freestyle Time Trial,50 Free,women,unknown,46,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Event 110 Women 100 Yard Butterfly Time Trial,100 Fly,women,unknown,49,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Event 111 Women 50 Yard Butterfly Time Trial,,women,unknown,0,unrecognized,normalize_event_name_any returned None,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Event 112 Women 100 Yard IM Time Trial,,women,unknown,0,unrecognized,normalize_event_name_any returned None,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Event 113 Women 50 Yard Freestyle Time Trial,50 Free,women,unknown,46,recognized,session=finals,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Event 114 Women 50 Yard Butterfly Time Trial,,women,unknown,0,unrecognized,normalize_event_name_any returned None,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Event 115 Women 100 Yard IM Time Trial,,women,unknown,0,unrecognized,normalize_event_name_any returned None,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Event 116 Women 50 Yard Backstroke Time Trial,,women,unknown,0,unrecognized,normalize_event_name_any returned None,first
+nescac_2026,NESCAC,2026 NESCAC WOMENS Final_Results.pdf,women,0,False,True,Event 117 Women 200 Yard Butterfly Time Trial,200 Fly,women,unknown,40,recognized,session=finals,first

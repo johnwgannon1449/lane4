@@ -1,2 +1,2 @@
 Bundle_ID,Conference,Files_In_Bundle,Detected_Gender,Events_Detected,Events_Mapped,Events_Output,Men_Events_Output,Women_Events_Output,Events_Missing,Men_Missing,Women_Missing,Events_Recovered_Pass2,Missing_Event_List,Team_Scores_Found,Team_Score_Strategy,Notes
-wac_2025,WAC,1,men/women,13,18,18,9,9,8,4,4,0,"men:50 Free, men:200 Breast, men:100 Fly, men:200 Fly, women:100 Back, women:200 Back, women:100 Breast, women:400 IM",1,end_pages:WAC 2025 RESULTS.pdf,
+nescac_2026,NESCAC,2,men/women,14,28,28,14,14,0,0,0,0,,0,not_found,
