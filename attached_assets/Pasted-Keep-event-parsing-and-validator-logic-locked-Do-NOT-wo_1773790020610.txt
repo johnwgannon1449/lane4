@@ -1,0 +1,94 @@
+Keep event parsing and validator logic locked.
+Do NOT work on Patriot, ODAC event coverage, regexes, or any event parser code.
+
+Current task is ONLY:
+finish the isolated team-score extraction pipeline and close out the remaining incomplete bundles.
+
+Current known status
+- Ivy League: women's team scores were already captured; men's team scores are now available in Replit as a separate PDF
+- ODAC: combined-gender PDF; men's team-score section exists mid-document on page 19 under heading "(Scores - Men)"
+- MIAC: team scores exist in Replit as a separate one-page PDF
+- PCSC: team scores exist in Replit as a separate one-page PDF
+
+Goal
+Resolve the final incomplete bundles using minimal, targeted fixes inside the team-score pipeline only.
+
+Rules
+- Keep all changes inside team_scores.py unless a minimal team-score call-path change is absolutely required
+- Do not modify harvester.py event parsing behavior
+- Do not modify parser_helpers.py
+- Do not modify validator.py
+- Do not redesign the extractor broadly; use small, targeted improvements only
+
+Required fixes
+
+1) Ivy League
+Support auxiliary team-score PDFs at the bundle level.
+If a bundle contains a PDF whose filename suggests:
+- team scores
+- team standings
+- team rankings
+- scores
+- standings
+prefer that file first for team-score extraction.
+
+Use the new Ivy men's PDF to recover the men's standings.
+Preserve the already-captured Ivy women's standings.
+If successful, move Ivy from captured_partial to captured_complete.
+
+2) ODAC
+Support missing-gender recovery within a combined-gender PDF:
+- keep the current end-of-document scan as the default
+- if only one gender is found in a likely combined/full-meet PDF, run a second targeted full-document scan for the missing gender only
+
+Recognize heading variants including:
+- (Scores - Men)
+- (Scores - Women)
+- Scores - Men
+- Scores - Women
+- Men - Team Rankings
+- Women - Team Rankings
+- Men Team Scores
+- Women Team Scores
+
+Recover the men's standings from the ODAC PDF and move ODAC from captured_partial to captured_complete if successful.
+
+3) MIAC
+Use the same auxiliary one-page team-score PDF logic.
+Use the new MIAC one-page PDF and move MIAC to captured_complete if possible.
+
+4) PCSC
+Use the same auxiliary one-page team-score PDF logic.
+Use the new PCSC one-page PDF and move PCSC to captured_complete if possible.
+
+Implementation notes
+- Bundle-level auxiliary team-score PDFs should be preferred first for team-score extraction when present
+- If no auxiliary score PDF exists, fall back to the current full-results PDF logic
+- For combined-gender PDFs, only do the full-document missing-gender fallback when exactly one gender was found in the initial end-scan
+- Keep this isolated to the team-score pipeline
+
+Output requirements
+Rerun the team-score extraction after these fixes and return:
+
+1) Updated coverage counts
+- total bundles scanned
+- captured_complete
+- captured_partial
+- section_not_found
+- section_not_present_in_source
+
+2) One-line result for each of these bundles
+- ivyleague_2026
+- odac_2026
+- miac_2026
+- pcsc_2026
+
+3) Sample extracted rows for:
+- Ivy men's standings
+- ODAC men's standings
+- MIAC standings
+- PCSC standings
+
+4) Confirmation of which files changed
+
+5) Confirmation that event parsing and validator logic were untouched

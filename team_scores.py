@@ -2,39 +2,45 @@
 team_scores.py — dedicated team-score extraction pipeline for Lane4 Data Harvester.
 
 Completely isolated from event parsing (harvester.py / parser_helpers.py) and
-from the validator.  Call run_team_scores(bundles, output_dir) after the
-normal harvester run; it writes two new CSVs and returns their rows.
+from the validator.  Call run_team_scores(bundles, output_dir) after the normal
+harvester run; it writes two new CSVs and returns their rows.
 
-Design
-------
-  1. Source selection — for each bundle, rank its PDFs by how likely they are
-     to contain FINAL standings (day-order keywords, "final"/"complete" hints,
-     page count).  Try sources in ranked order; fall back to others if a source
-     yields nothing.
+Supported source formats
+------------------------
+1. Standard two-column compressed rows (most conferences):
+       "1. Team A 500 2. Team B 450"
+2. Single-column rows (ODAC, WAC):
+       "1. Team A 500"
+3. Mixed-content rows (MPSF, Patriot, Ivy multi-col):
+       "other content 3. Team C 320"
+4. Place-School-Points table (auxiliary score PDFs, MIAC, PCSC):
+       "Place  School  Points" header
+       "1 Team Name Team Name 1,474"  (school name sometimes doubled)
 
-  2. Section detection — scan the last MAX_TAIL_PAGES of each candidate PDF for
-     known team-score headings.  If nothing found there, widen to the full PDF.
+Source-selection priority
+-------------------------
+  Auxiliary score PDFs (filename contains "team score / team result /
+  team ranking / score sheet / standings") are tried first.
+  Within that tier: day-order keywords (saturday > day4 …) break ties.
+  Final fallback: largest page count.
 
-  3. Section extraction — split pages at gender-heading boundaries; collect all
-     lines belonging to each gender section.
-
-  4. Entry extraction — apply a regex to every line in the section, handling:
-       • two-column compact rows  ("1. Team A 500 2. Team B 450")
-       • single-column rows       ("1. Team A\n500" or "1. Team A 500")
-       • mixed content rows       ("other stuff 3. Team C 320")
-     Uses a look-ahead on the "N." marker pattern so team names that contain
-     numbers (e.g. "A-10", "Texas A&M") are not prematurely split.
+Fallback passes per PDF
+-----------------------
+  Pass 1 — last MAX_TAIL_PAGES pages (fast, covers most conferences).
+  Pass 2 — full document, triggered when pass 1 found EXACTLY ONE gender
+            (handles mid-document men's/women's sections like ODAC).
+  Neither pass is triggered for auxiliary score PDFs scored above a
+  threshold (they get a full scan regardless because they may be 1-page).
 
 Outputs
 -------
   output/team_scores.csv         — one row per (bundle, gender, team)
-  output/team_score_coverage.csv — one row per bundle summarising extraction
+  output/team_score_coverage.csv — one row per bundle
 """
 
 from __future__ import annotations
 
 import csv
-import math
 import re
 from pathlib import Path
 from typing import Optional
@@ -42,55 +48,16 @@ from typing import Optional
 import pdfplumber
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Constants
+# Tuning constants
 # ─────────────────────────────────────────────────────────────────────────────
 
-MAX_TAIL_PAGES:  int   = 10   # scan this many pages from end first
-MAX_CONSEC_MISS: int   = 5    # stop collecting after this many blank entry lines
-MIN_SCORE:       float = 1.0  # discard entries with score below this
-MAX_RANK:        int   = 60   # discard entries with rank above this
-
-# Headings that signal a team-score section
-HEADING_RE = re.compile(
-    r'(?:'
-    r'scores\s*[-–]\s*(women|men)'        # "Scores - Women" / "Scores - Men"
-    r'|(?:women|men)\s*[-–]\s*team\s+rank'# "Women - Team Rankings"
-    r'|(?:women|men)\s+team\s+(?:score|stand)'  # "Women Team Scores"
-    r'|combined\s+team\s+(?:score|rank|stand)'   # "Combined Team Scores"
-    r'|team\s+(?:score|rank|standing)'           # "Team Scores" / "Team Rankings"
-    r')',
-    re.I,
-)
-
-# A scored team entry: "N. Team Name Score"
-# Look-ahead ensures the score ends at either another "N. [A-Z]" marker or line end.
-_ENTRY_RE = re.compile(
-    r'(?<!\d)([1-9]\d{0,1})\.\s+'              # rank 1-99 (not preceded by digit)
-    r'([A-Z][A-Za-z0-9 ,&()\'\-./]*?)'         # team name starts with capital
-    r'\s+([\d,]+(?:\.\d+)?)'                   # score (integer or decimal)
-    r'(?=\s+[1-9]\d{0,1}\.\s+[A-Z]|[\s\n]*$)',# lookahead: next entry or end
-    re.MULTILINE,
-)
-
-# Through-event extractor for coverage notes
-_THROUGH_RE = re.compile(r'through\s+event\s+(\d+)', re.I)
-
-# Day keywords mapped to priority boost (higher = more final)
-_DAY_PRIORITY: dict[str, int] = {
-    'sunday': 9, 'saturday': 8, 'sat_': 8,
-    'day5': 7, 'day_5': 7, 'day4': 6, 'day_4': 6,
-    'day3': 5, 'day_3': 5, 'day2': 3, 'day_2': 3,
-    'day1': 1, 'day_1': 1,
-}
-
-# Filename hints for "most complete" PDFs
-_FINAL_HINTS = {
-    'final': 6, 'complete': 6, 'full': 5,
-    'championship': 4, 'results': 3,
-}
+MAX_TAIL_PAGES:  int   = 10
+MAX_CONSEC_MISS: int   = 5
+MIN_SCORE:       float = 1.0
+MAX_RANK:        int   = 60
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Output headers
+# Output schema
 # ─────────────────────────────────────────────────────────────────────────────
 
 TEAM_SCORES_HEADER = [
@@ -106,19 +73,90 @@ COVERAGE_HEADER = [
     "genders_found", "parse_status", "notes",
 ]
 
+# ─────────────────────────────────────────────────────────────────────────────
+# Regexes — headings
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Detects any line that signals the start of a team-score section.
+# Covers standard HY-TEK ("Scores - Women"), ranking sub-headings
+# ("Women - Team Rankings"), and the Place-School-Points table header
+# style used in auxiliary score PDFs ("Men - Team Scores").
+HEADING_RE = re.compile(
+    r'(?:'
+    r'scores\s*[-–]\s*(women|men)'               # "Scores - Women/Men"
+    r'|(?:women|men)\s*[-–]\s*team\s+rank'        # "Women/Men - Team Rankings"
+    r'|(?:women|men)\s*[-–]?\s*team\s+(?:score|stand)'   # "Men - Team Scores" / "Women Team Scores"
+    r'|combined\s+team\s+(?:score|rank|stand)'    # "Combined Team Scores"
+    r'|team\s+(?:score|rank|standing)'            # "Team Scores" / "Team Rankings"
+    r')',
+    re.I,
+)
+
+# Detects the column header of Place-School-Points tables (skip it)
+_TABLE_HDR_RE = re.compile(r'^\s*place\s+school\s+points?\s*$', re.I)
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Source selection
+# Regexes — entry formats
 # ─────────────────────────────────────────────────────────────────────────────
+
+# Format 1: "N. TeamName Score"  (standard HY-TEK footer, 1- or 2-col)
+# Lookahead: entry ends at next "N. [A-Z]" or end-of-line/string.
+_ENTRY_RE = re.compile(
+    r'(?<!\d)([1-9]\d{0,1})\.\s+'
+    r'([A-Z][A-Za-z0-9 ,&()\'\-./]*?)'
+    r'\s+([\d,]+(?:\s*\.\s*\d+)?)'
+    r'(?=\s+[1-9]\d{0,1}\.\s+[A-Z]|[\s\n]*$)',
+    re.MULTILINE,
+)
+
+# Format 2: "N TeamName [TeamName] Score"  (Place-School-Points table)
+# Line-anchored; rank has NO period.  School name may be doubled.
+_TABLE_ENTRY_RE = re.compile(
+    r'^(\d{1,3})\s+'
+    r'([A-Z][A-Za-z0-9 ,&()\'\-./\']*?)\s+'
+    r'([\d,]+(?:\s*\.\s*\d+)?)\s*$',
+    re.MULTILINE,
+)
+
+# Auxiliary score PDF filename keywords
+_SCORE_AUX_RE = re.compile(
+    r'(?:team\s*score|team\s*result|team\s*rank|team\s*standing'
+    r'|score\s*sheet|score\s*summary|standings)',
+    re.I,
+)
+
+# Day-order keywords for source priority
+_DAY_PRIORITY: dict[str, int] = {
+    'sunday': 9, 'saturday': 8, 'sat_': 8,
+    'day5': 7, 'day_5': 7, 'day4': 6, 'day_4': 6,
+    'day3': 5, 'day_3': 5, 'day2': 3, 'day_2': 3,
+    'day1': 1, 'day_1': 1,
+}
+
+_FINAL_HINTS: dict[str, int] = {
+    'final': 6, 'complete': 6, 'full': 5,
+    'championship': 4, 'results': 3,
+}
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Helpers
+# ─────────────────────────────────────────────────────────────────────────────
+
+def _is_score_aux_pdf(path: Path) -> bool:
+    """Return True if this PDF is a dedicated team-score auxiliary file."""
+    return bool(_SCORE_AUX_RE.search(path.stem))
+
 
 def _source_priority(path: Path) -> int:
-    """Score a PDF by how likely it is to contain FINAL team standings."""
-    fname = path.name.lower()
+    """Score a PDF by likelihood of containing FINAL team standings."""
     score = 0
+    if _is_score_aux_pdf(path):
+        score += 200          # always preferred over regular result PDFs
+    fname = path.name.lower()
     for kw, pts in _DAY_PRIORITY.items():
         if kw in fname:
             score += pts
-            break   # take the highest matching day hint only
+            break
     for kw, pts in _FINAL_HINTS.items():
         if kw in fname:
             score += pts
@@ -127,13 +165,8 @@ def _source_priority(path: Path) -> int:
 
 def rank_sources(paths: list[Path]) -> list[Path]:
     """Return PDF paths sorted highest-priority first."""
-    ranked = sorted(paths, key=lambda p: (_source_priority(p), p.stat().st_size), reverse=True)
-    return ranked
+    return sorted(paths, key=lambda p: (_source_priority(p), p.stat().st_size), reverse=True)
 
-
-# ─────────────────────────────────────────────────────────────────────────────
-# Gender detection
-# ─────────────────────────────────────────────────────────────────────────────
 
 def _detect_gender(heading: str) -> str:
     h = heading.lower()
@@ -146,54 +179,98 @@ def _detect_gender(heading: str) -> str:
     return 'unknown'
 
 
+def _normalize_score(raw: str) -> Optional[float]:
+    """Parse scores like '1,474', '631. 50', '1,353. 50' → float."""
+    s = raw.replace(',', '').replace(' ', '')
+    try:
+        return float(s)
+    except ValueError:
+        return None
+
+
+def _dedup_name(name: str) -> str:
+    """
+    Remove doubled school name.  Auxiliary score PDFs repeat the school name
+    in the same cell: 'Princeton University Princeton University' → 'Princeton
+    University'.  We try splitting the word list into two equal halves; if the
+    halves match, keep only the first.
+    """
+    parts = name.split()
+    n = len(parts)
+    if n < 2:
+        return name
+    for half in range(1, n // 2 + 1):
+        if n % half == 0 and parts[:half] == parts[n - half:]:
+            return ' '.join(parts[:n - half])
+    # Also try: longest prefix that appears twice consecutively
+    for half in range(n // 2, 0, -1):
+        if parts[:half] == parts[half:half * 2]:
+            return ' '.join(parts[:half])
+    return name
+
+
 # ─────────────────────────────────────────────────────────────────────────────
-# Entry extraction
+# Entry extraction — both formats
 # ─────────────────────────────────────────────────────────────────────────────
 
 def _extract_entries(text: str) -> list[tuple[int, str, float]]:
     """
-    Return list of (rank, team_name, score) from arbitrary text.
-
-    Works on packed two-column rows, single-column rows, and rows where
-    score entries are embedded alongside other content (mixed-layout pages).
+    Extract (rank, team, score) from arbitrary text using Format 1
+    ("N. TeamName Score").  Handles 1-col, 2-col, and mixed-content rows.
     """
     results = []
-    seen_ranks: set[int] = set()   # guard against duplicate captures on same page
-
     for m in _ENTRY_RE.finditer(text):
-        rank_str, team_raw, score_str = m.group(1), m.group(2), m.group(3)
+        rank_str, team_raw, score_raw = m.group(1), m.group(2), m.group(3)
         try:
             rank = int(rank_str)
-            score = float(score_str.replace(',', ''))
+        except ValueError:
+            continue
+        score = _normalize_score(score_raw)
+        if score is None or score < MIN_SCORE or rank < 1 or rank > MAX_RANK:
+            continue
+        team = re.sub(r'\s+', ' ', team_raw).strip().rstrip('.,')
+        if len(team) < 2:
+            continue
+        results.append((rank, team, score))
+    return results
+
+
+def _extract_table_entries(text: str) -> list[tuple[int, str, float]]:
+    """
+    Extract (rank, team, score) from Place-School-Points table lines.
+    Format 2: "N TeamName [TeamName] Score" — rank has NO period.
+    Skips header rows and footer "Total" rows.
+    """
+    results = []
+    for m in _TABLE_ENTRY_RE.finditer(text):
+        rank_str, team_raw, score_raw = m.group(1), m.group(2), m.group(3)
+        try:
+            rank = int(rank_str)
         except ValueError:
             continue
         if rank < 1 or rank > MAX_RANK:
             continue
-        if score < MIN_SCORE:
+        score = _normalize_score(score_raw)
+        if score is None or score < MIN_SCORE:
             continue
         team = re.sub(r'\s+', ' ', team_raw).strip().rstrip('.,')
-        if not team or len(team) < 2:
+        team = _dedup_name(team)
+        if len(team) < 2:
             continue
-        key = rank
-        if key in seen_ranks:
-            # Allow tied ranks (two teams with same rank, e.g. both 7th)
-            # but track as a pair so we don't infinitely duplicate
-            pass
         results.append((rank, team, score))
-
     return results
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Page-level section extraction
+# Page-level extraction
 # ─────────────────────────────────────────────────────────────────────────────
 
 def _parse_page(page, page_num: int) -> list[dict]:
     """
     Extract all team-score rows from one PDF page.
 
-    Returns list of dicts with keys: gender_or_division, rank, team, score,
-    source_page, section_heading.
+    Detects both standard ("N. TeamName Score") and Place-School-Points table
+    ("N TeamName Score") formats automatically per section.
     """
     raw_text = page.extract_text() or ""
     if not raw_text.strip():
@@ -202,18 +279,20 @@ def _parse_page(page, page_num: int) -> list[dict]:
     lines = raw_text.splitlines()
     results: list[dict] = []
 
-    # Walk lines; track current gender section.
-    current_gender: Optional[str] = None
-    current_heading: str = ""
-    section_lines: list[str] = []
-    consec_miss = 0
+    current_gender:   Optional[str]  = None
+    current_heading:  str            = ""
+    section_lines:    list[str]      = []
+    table_mode:       bool           = False   # True → Place-School-Points format
+    consec_miss:      int            = 0
 
-    def _flush(gender, heading, body_lines):
-        nonlocal results
+    def _flush(gender, heading, body_lines, is_table):
         if not gender or not body_lines:
             return
         block = "\n".join(body_lines)
-        entries = _extract_entries(block)
+        if is_table:
+            entries = _extract_table_entries(block)
+        else:
+            entries = _extract_entries(block)
         for rank, team, score in entries:
             results.append({
                 "gender_or_division": gender,
@@ -225,33 +304,48 @@ def _parse_page(page, page_num: int) -> list[dict]:
             })
 
     for line in lines:
-        if HEADING_RE.search(line):
-            # Flush previous section
-            _flush(current_gender, current_heading, section_lines)
-            current_gender = _detect_gender(line)
-            current_heading = line.strip()
-            section_lines = []
-            consec_miss = 0
-        elif current_gender is not None:
-            # Check if this line adds any entries
-            entries = _extract_entries(line)
-            if entries:
-                section_lines.append(line)
-                consec_miss = 0
-            else:
-                # Allow a few blank-entry lines (continuation / interleaved content)
-                consec_miss += 1
-                if consec_miss < MAX_CONSEC_MISS:
-                    section_lines.append(line)
-                # If too many consecutive misses, don't cut the section — some
-                # mixed-layout PDFs have long gaps between score entries.
-                # We only hard-stop if we see a new major event heading.
-                if re.search(r'^Event\s+\d+|^NAME\s+YR\b', line, re.I):
-                    _flush(current_gender, current_heading, section_lines)
-                    current_gender = None
-                    section_lines = []
+        stripped = line.strip()
 
-    _flush(current_gender, current_heading, section_lines)
+        if HEADING_RE.search(stripped):
+            _flush(current_gender, current_heading, section_lines, table_mode)
+            current_gender  = _detect_gender(stripped)
+            current_heading = stripped
+            section_lines   = []
+            table_mode      = False
+            consec_miss     = 0
+            continue
+
+        if current_gender is None:
+            continue
+
+        # Detect Place-School-Points table header — skip the line itself
+        if _TABLE_HDR_RE.match(stripped):
+            table_mode = True
+            continue
+
+        # Skip "Total" footer lines
+        if re.match(r'^\s*total\b', stripped, re.I):
+            continue
+
+        # Track progress
+        if table_mode:
+            has_entry = bool(_TABLE_ENTRY_RE.search(stripped))
+        else:
+            has_entry = bool(_ENTRY_RE.search(line))
+
+        if has_entry:
+            section_lines.append(line)
+            consec_miss = 0
+        else:
+            consec_miss += 1
+            if consec_miss < MAX_CONSEC_MISS:
+                section_lines.append(line)
+            if re.search(r'^Event\s+\d+|^NAME\s+YR\b', stripped, re.I):
+                _flush(current_gender, current_heading, section_lines, table_mode)
+                current_gender = None
+                section_lines  = []
+
+    _flush(current_gender, current_heading, section_lines, table_mode)
     return results
 
 
@@ -266,12 +360,19 @@ def _extract_from_pdf(
     """
     Extract team-score rows from a single PDF.
 
-    Returns:
-        (rows, pages_scanned, section_found)
+    Pass 1: last ``tail_pages`` pages (fast, covers most conferences).
+    Pass 2: full document — triggered when pass 1 found exactly one gender
+            OR when the PDF is an auxiliary score file (may have scores on
+            page 1).  This handles mid-document sections (e.g. ODAC men's
+            scores) and auxiliary PDFs whose scores are at the top.
+
+    Returns (rows, pages_scanned, section_found).
     """
-    rows: list[dict] = []
-    pages_scanned = 0
-    section_found = False
+    rows:          list[dict] = []
+    pages_scanned: int        = 0
+    section_found: bool       = False
+
+    is_aux = _is_score_aux_pdf(pdf_path)
 
     try:
         with pdfplumber.open(pdf_path) as pdf:
@@ -279,8 +380,8 @@ def _extract_from_pdf(
             if n == 0:
                 return rows, 0, False
 
-            # First pass: last tail_pages pages
-            start_idx = max(0, n - tail_pages)
+            # Pass 1 ─────────────────────────────────────────────────────────
+            start_idx = 0 if is_aux else max(0, n - tail_pages)
             for pg_idx in range(start_idx, n):
                 pg = pdf.pages[pg_idx]
                 page_rows = _parse_page(pg, pg.page_number)
@@ -289,8 +390,16 @@ def _extract_from_pdf(
                     rows.extend(page_rows)
                     section_found = True
 
-            # If nothing found, widen to full document
-            if not section_found and start_idx > 0:
+            # Pass 2 ─────────────────────────────────────────────────────────
+            # Trigger when:
+            #   • Nothing found yet (widening fallback), OR
+            #   • Exactly one gender found (might have missed the other in tail)
+            genders_pass1 = {r["gender_or_division"] for r in rows}
+            need_pass2 = (
+                start_idx > 0
+                and (not section_found or len(genders_pass1) == 1)
+            )
+            if need_pass2:
                 for pg_idx in range(0, start_idx):
                     pg = pdf.pages[pg_idx]
                     page_rows = _parse_page(pg, pg.page_number)
@@ -306,22 +415,18 @@ def _extract_from_pdf(
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# De-duplication / merge
+# De-duplication / merge across multiple PDFs in a bundle
 # ─────────────────────────────────────────────────────────────────────────────
 
 def _keep_final_standings(rows: list[dict]) -> list[dict]:
     """
-    When multiple PDFs in a bundle each report standings (e.g. multi-day
-    championships), keep only the most-complete standing for each
-    (gender, rank) pair.  "Most complete" = highest score for rank 1 (proxy
-    for most events counted).
-
-    Ties in rank are preserved (two teams legitimately sharing a rank).
+    When multiple PDFs each report standings, keep the most-complete set per
+    gender (proxy: highest rank-1 score → most events counted).
+    Preserves legitimately tied ranks (two teams sharing a rank).
     """
     if not rows:
         return rows
 
-    # Group by gender
     from collections import defaultdict
     by_gender: dict[str, list[dict]] = defaultdict(list)
     for r in rows:
@@ -329,8 +434,7 @@ def _keep_final_standings(rows: list[dict]) -> list[dict]:
 
     final: list[dict] = []
     for gender, grp in by_gender.items():
-        # Find the "most complete" source: prefer the source_pdf that has the
-        # highest rank-1 score (more events = more points accumulated).
+        # Best source = highest rank-1 score
         r1_by_source: dict[str, float] = {}
         for r in grp:
             if r["rank"] == 1:
@@ -342,7 +446,7 @@ def _keep_final_standings(rows: list[dict]) -> list[dict]:
             best_src = max(r1_by_source, key=lambda s: r1_by_source[s])
             grp = [r for r in grp if r["source_pdf"] == best_src]
 
-        # De-duplicate exact (rank, team) pairs keeping the higher score entry
+        # De-duplicate exact (rank, team) pairs
         seen: dict[tuple, dict] = {}
         for r in grp:
             key = (r["rank"], r["team"])
@@ -362,26 +466,20 @@ def extract_bundle_team_scores(
     conference: str,
     paths: list[Path],
 ) -> tuple[list[dict], dict]:
-    """
-    Extract team scores for one bundle.
-
-    Returns:
-        (score_rows, coverage_info)
-    """
+    """Extract team scores for one bundle. Returns (score_rows, coverage_info)."""
     coverage: dict = {
-        "bundle_id":            bundle_id,
-        "conference":           conference,
-        "selected_pdf":         "",
+        "bundle_id":               bundle_id,
+        "conference":              conference,
+        "selected_pdf":            "",
         "candidate_pages_scanned": 0,
-        "section_found":        False,
-        "rows_captured":        0,
-        "genders_found":        "",
-        "parse_status":         "section_not_found",
-        "notes":                "",
+        "section_found":           False,
+        "rows_captured":           0,
+        "genders_found":           "",
+        "parse_status":            "section_not_found",
+        "notes":                   "",
     }
 
     if not paths:
-        coverage["parse_status"] = "section_not_found"
         coverage["notes"] = "no_pdfs_in_bundle"
         return [], coverage
 
@@ -406,9 +504,7 @@ def extract_bundle_team_scores(
 
         all_rows.extend(rows)
 
-    # Merge and de-duplicate across sources
     merged = _keep_final_standings(all_rows)
-
     genders = sorted({r["gender_or_division"] for r in merged})
     selected_pdf_name = merged[0]["source_pdf"] if merged else ""
 
@@ -419,14 +515,12 @@ def extract_bundle_team_scores(
     coverage["genders_found"]           = "|".join(genders)
 
     if merged:
-        if len(genders) >= 2 or (len(genders) == 1 and genders[0] not in ("men", "women")):
+        both_genders = {"men", "women"}.issubset(set(genders))
+        if both_genders or ("combined" in genders):
             coverage["parse_status"] = "captured_complete"
-        elif len(genders) == 1:
-            # Only one gender found — could be a single-gender conference PDF
-            coverage["parse_status"] = "captured_partial"
-            notes.append(f"only_{genders[0]}_found")
         else:
             coverage["parse_status"] = "captured_partial"
+            notes.append(f"only_{genders[0]}_found")
     elif any("heading_found_no_rows" in n for n in notes):
         coverage["parse_status"] = "section_found_no_rows"
     else:
@@ -474,19 +568,16 @@ def run_team_scores(
         all_score_rows.extend(score_rows)
         coverage_rows.append(cov)
 
-    # ── Write team_scores.csv ─────────────────────────────────────────────
     with open(output_dir / "team_scores.csv", "w", newline="") as f:
         w = csv.DictWriter(f, fieldnames=TEAM_SCORES_HEADER, extrasaction="ignore")
         w.writeheader()
         w.writerows(all_score_rows)
 
-    # ── Write team_score_coverage.csv ──────────────────────────────────────
     with open(output_dir / "team_score_coverage.csv", "w", newline="") as f:
         w = csv.DictWriter(f, fieldnames=COVERAGE_HEADER, extrasaction="ignore")
         w.writeheader()
         w.writerows(coverage_rows)
 
-    # ── Console summary ───────────────────────────────────────────────────
     n_found   = sum(1 for c in coverage_rows if c["section_found"])
     n_rows    = len(all_score_rows)
     n_bundles = len(bundles)
