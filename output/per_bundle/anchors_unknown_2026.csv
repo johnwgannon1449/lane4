@@ -1,0 +1,13 @@
+Conference,Year,Gender,Bundle_ID,Event,1st,8th,16th,1st_seconds,8th_seconds,16th_seconds,Sec_per_place,Source_File,Data_Quality,1st_flags,8th_flags,16th_flags
+Liberty League,2026,men,unknown_2026,50 Free,20.17,21.31,21.58,20.17,21.31,21.58,0.094,NEC 2026 Complete_Results.pdf,finals,,,
+Liberty League,2026,men,unknown_2026,200 Free,1:37.87,1:41.26,1:47.50,97.87,101.26,107.5,0.642,NEC 2026 Complete_Results.pdf,finals,,,
+Liberty League,2026,men,unknown_2026,500 Free,4:28.26,4:46.39,5:09.40,268.26,286.39,309.4,2.7427,NEC 2026 Complete_Results.pdf,finals,,,
+Liberty League,2026,men,unknown_2026,1650 Free,15:35.80,16:43.33,17:09.13,935.8,1003.33,1029.13,6.222,NEC 2026 Complete_Results.pdf,finals,,,
+Liberty League,2026,men,unknown_2026,100 Back,49.83,52.59,58.22,49.83,52.59,58.22,0.5593,NEC 2026 Complete_Results.pdf,finals,,,
+Liberty League,2026,men,unknown_2026,200 Back,1:47.10,1:56.82,2:03.23,107.1,116.82,123.23,1.0753,NEC 2026 Complete_Results.pdf,finals,,,
+Liberty League,2026,men,unknown_2026,200 Breast,1:57.34,2:05.00,2:19.26,117.34,125.0,139.26,1.4613,NEC 2026 Complete_Results.pdf,finals,,,
+Liberty League,2026,men,unknown_2026,200 Fly,1:48.50,1:56.66,2:06.55,108.5,116.66,126.55,1.2033,NEC 2026 Complete_Results.pdf,finals,,,
+Liberty League,2026,men,unknown_2026,200 IM,1:48.75,1:52.45,1:59.54,108.75,112.45,119.54,0.7193,NEC 2026 Complete_Results.pdf,finals,,,
+Liberty League,2026,men,unknown_2026,400 IM,3:58.02,4:23.78,4:39.36,238.02,263.78,279.36,2.756,NEC 2026 Complete_Results.pdf,finals,,,
+Liberty League,2026,women,unknown_2026,200 Free,1:49.64,1:57.29,1:57.32,109.64,117.29,117.32,0.512,NEC 2026 Complete_Results.pdf,finals,,,
+Liberty League,2026,women,unknown_2026,200 Back,1:59.14,2:06.68,2:08.39,119.14,126.68,128.39,0.6167,NEC 2026 Complete_Results.pdf,finals,,,

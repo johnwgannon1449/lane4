@@ -25,8 +25,21 @@ OPTIONAL_EVENTS = {"1000 Free"}
 def already_done(bid: str) -> bool:
     return (STAGING / f"{bid}.csv").exists()
 
+def anchor_done(bid: str) -> bool:
+    return (STAGING / f"anchors_{bid}.csv").exists()
+
 def save_bundle_csv(bid: str, rows: list[dict]) -> None:
     path = STAGING / f"{bid}.csv"
+    if not rows:
+        path.write_text("")
+        return
+    with open(path, "w", newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=list(rows[0].keys()))
+        writer.writeheader()
+        writer.writerows(rows)
+
+def save_anchor_csv(bid: str, rows: list[dict]) -> None:
+    path = STAGING / f"anchors_{bid}.csv"
     if not rows:
         path.write_text("")
         return
@@ -40,6 +53,21 @@ def load_bundle_csv(bid: str) -> list[dict]:
     if path.stat().st_size == 0:
         return []
     with open(path) as f:
+        return list(csv.DictReader(f))
+
+def load_anchor_csv(bid: str) -> list[dict]:
+    path = STAGING / f"anchors_{bid}.csv"
+    if not path.exists() or path.stat().st_size == 0:
+        return []
+    with open(path) as f:
+        return list(csv.DictReader(f))
+
+def _capture_anchors_after_run() -> list[dict]:
+    """Read event_anchors.csv that harvester just wrote."""
+    anchor_path = OUTPUT_DIR / "event_anchors.csv"
+    if not anchor_path.exists():
+        return []
+    with open(anchor_path) as f:
         return list(csv.DictReader(f))
 
 # ── Discover all bundles ────────────────────────────────────────────────────
@@ -68,14 +96,38 @@ for bid in ordered_bids:
         with open(OUTPUT_DIR / "event_coverage_report.csv") as f:
             rows = list(csv.DictReader(f))
         save_bundle_csv(bid, rows)
+        # Also capture anchors produced by this run
+        anchor_rows = _capture_anchors_after_run()
+        save_anchor_csv(bid, anchor_rows)
         elapsed = time.time() - t0
         captured = sum(1 for r in rows if r.get("Detected") == "yes")
-        print(f"  [DONE  ] {bid}  {captured}/{len(rows)} captured  ({elapsed:.1f}s)")
+        print(f"  [DONE  ] {bid}  {captured}/{len(rows)} captured  "
+              f"({elapsed:.1f}s)  anchors:{len(anchor_rows)}")
     except Exception as e:
         print(f"  [ERROR ] {bid}: {e}")
         save_bundle_csv(bid, [])   # write empty so we skip on retry
 
 print(f"\n  All bundles processed in {time.time()-t_total:.0f}s\n")
+
+# ── Anchor collection pass (for bundles skipped above) ──────────────────────
+# Any bundle that was already staged for coverage may still be missing its
+# per-bundle anchor CSV.  Run a targeted anchor-only pass for those.
+missing_anchors = [bid for bid in ordered_bids if not anchor_done(bid)]
+if missing_anchors:
+    print(f"  Anchor collection pass: {len(missing_anchors)} bundles need anchors …")
+    t_anc = time.time()
+    for bid in missing_anchors:
+        print(f"    [ANCHORS] {bid} ...", end=" ", flush=True)
+        t0 = time.time()
+        try:
+            run(INPUT_DIR, OUTPUT_DIR, bundle_filter=[bid])
+            anchor_rows = _capture_anchors_after_run()
+            save_anchor_csv(bid, anchor_rows)
+            print(f"{len(anchor_rows)} anchors  ({time.time()-t0:.1f}s)")
+        except Exception as e:
+            print(f"ERROR — {e}")
+            save_anchor_csv(bid, [])
+    print(f"  Anchor pass complete in {time.time()-t_anc:.0f}s\n")
 
 # ── Combine all coverage rows ───────────────────────────────────────────────
 all_coverage: list[dict] = []
@@ -93,6 +145,24 @@ if all_coverage:
         w.writeheader()
         w.writerows(all_coverage)
     print(f"  Wrote event_coverage_report.csv  ({len(all_coverage)} rows)")
+
+# ── Combine all anchor rows ─────────────────────────────────────────────────
+all_anchors: list[dict] = []
+for bid in ordered_bids:
+    all_anchors.extend(load_anchor_csv(bid))
+
+if all_anchors:
+    with open(OUTPUT_DIR / "all_event_anchors.csv", "w", newline="") as f:
+        w = csv.DictWriter(f, fieldnames=list(all_anchors[0].keys()))
+        w.writeheader()
+        w.writerows(all_anchors)
+    print(f"  Wrote all_event_anchors.csv  ({len(all_anchors)} rows across all bundles)")
+
+# ── Run post-parse plausibility validator ───────────────────────────────────
+if all_anchors:
+    from validator import validate
+    print(f"\n  Running post-parse validator on {len(all_anchors)} anchor rows …")
+    validate(all_anchors, output_dir=OUTPUT_DIR)
 
 # ── Build per-conference summary ────────────────────────────────────────────
 from collections import defaultdict
