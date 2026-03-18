@@ -297,7 +297,7 @@
     .time-pill-del:hover { color: #EF4444; }
 
     /* ── MY LIST TAB ─────────────────────────────────────────── */
-    .list-school-card { background: var(--white); border: 1.5px solid var(--border); border-radius: 12px; margin-bottom: 0.75rem; overflow: hidden; }
+    .list-school-card { background: var(--white); border: 1.5px solid var(--border); border-radius: 12px; margin-bottom: 0.75rem; overflow: hidden; border-left-width: 4px; }
     .list-school-header { display: flex; flex-direction: column; padding: 0.9rem 1.1rem; cursor: pointer; }
     .list-school-header:hover { background: var(--bg); }
     .list-school-name { font-family: 'Fraunces', serif; font-weight: 700; font-size: 1rem; color: var(--navy); }
@@ -1624,8 +1624,10 @@ function renderMyList() {
       </div>`;
     }).join('');
 
+    const adjTier  = result?.adjTier  || '';
+    const division = result?.division || '';
     return `
-    <div class="list-school-card">
+    <div class="list-school-card" style="border-left-color:${cfg.color};">
       <div class="list-school-header" onclick='toggleCRM(${JSON.stringify(school)})'>
         <div style="display:flex;justify-content:space-between;align-items:flex-start;">
           <div style="min-width:0;">
@@ -1636,6 +1638,10 @@ function renderMyList() {
         </div>
         <div class="list-school-badges">
           ${adm.label ? `<span class="list-badge" style="background:${safeAdmColor(adm)};color:#fff;">${esc(adm.label)}</span>` : ''}
+          ${adjTier ? `<span class="list-badge" style="background:var(--blue-l);color:var(--blue);">${esc(adjTier)}</span>` : ''}
+          ${division ? `<span class="list-badge" style="background:var(--bg);color:var(--slate);border:1px solid var(--border);">${esc(division)}</span>` : ''}
+          ${meta.hiddenIvy ? `<span class="list-badge" style="background:var(--violet-l);color:var(--violet);">Hidden Ivy</span>` : ''}
+          ${meta.stem ? `<span class="list-badge" style="background:var(--blue-l);color:var(--blue);">STEM</span>` : ''}
           <div class="status-dd-wrap">
             <button class="list-badge" style="background:${cfg.color};color:#fff;border:none;cursor:pointer;"
               onclick='toggleStatusDD(${JSON.stringify(school)}, event)'>${esc(cfg.label)} <span style="font-size:0.6rem;opacity:0.85;">▾</span></button>
