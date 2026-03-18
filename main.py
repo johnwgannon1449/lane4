@@ -818,9 +818,9 @@ def _load_conf_tier_lookup():
 def _build_explore_schools():
     """
     Build EXPLORE_SCHOOLS — one record per unique school across the full
-    2026 championship snapshot (324 schools).  Modeled schools (76) get their
-    richer PSF / meta data merged in and are marked row_type='modeled_school'.
-    All others are marked row_type='snapshot_only'.
+    2026 championship snapshot (~324 schools).  Every school gets the SAME
+    object shape.  SCHOOL_META is an enrichment source; its absence never
+    changes the code path — only the richness of the values.
     """
     import csv as _csv
     from collections import defaultdict
@@ -843,13 +843,19 @@ def _build_explore_schools():
         if school and gender:
             by_school[school][gender] = row
 
-    # Modeled lookup by norm of canonical name AND raw name
+    # Modeled lookup by norm of canonical name AND raw name.
+    # Also add _UAA_SHORT reverse mapping so snapshot full-names (e.g. "Emory University")
+    # correctly resolve to their abbreviated TEAMS_LIST entries (e.g. "Emory").
     modeled_by = {}
     for tr in TEAMS_LIST:
         modeled_by[_norm_key(tr['school'])] = tr
         raw = tr.get('raw_name', '')
         if raw:
             modeled_by[_norm_key(raw)] = tr
+    # Reverse UAA_SHORT: short_norm → full_name; add full_name → team_rec
+    for short_norm, full_name in _UAA_SHORT.items():
+        if short_norm in modeled_by:
+            modeled_by[_norm_key(full_name)] = modeled_by[short_norm]
 
     def _si(v):
         try:   return int(v)
@@ -889,21 +895,32 @@ def _build_explore_schools():
             'gender_coverage':   sorted(gmap.keys()),
         }
 
+        # Unified meta merge — SCHOOL_META is an enrichment source, not a gate.
+        # Try direct school name first, then canonical team name.
+        meta_raw = SCHOOL_META.get(school) or (SCHOOL_META.get(tr['school']) if tr else None) or {}
+        entry['meta'] = {
+            'accept':    meta_raw.get('accept'),
+            'satMedian': meta_raw.get('satMedian'),
+            'location':  meta_raw.get('location', ''),
+            'hiddenIvy': meta_raw.get('hiddenIvy', False),
+            'ivyLeague': meta_raw.get('ivyLeague', False),
+            'stem':      meta_raw.get('stem', False),
+            'merit':     meta_raw.get('merit', ''),
+            'vibe':      meta_raw.get('vibe', ''),
+        }
+        if meta_raw.get('moonshot'):
+            entry['meta']['moonshot'] = True
+
         if tr:
-            entry['row_type'] = 'modeled_school'
-            entry['psf']      = tr.get('psf', 1.0)
-            entry['tier']     = tr.get('tier', '')
-            meta_raw          = SCHOOL_META.get(tr['school'], {})
-            entry['meta'] = {
-                'location':  meta_raw.get('location', ''),
-                'hiddenIvy': meta_raw.get('hiddenIvy', False),
-                'stem':      meta_raw.get('stem', False),
-                'merit':     meta_raw.get('merit', ''),
-                'vibe':      meta_raw.get('vibe', ''),
-            }
+            entry['row_type']    = 'modeled_school'
+            entry['psf']         = tr.get('psf', 1.0)
+            entry['tier']        = tr.get('tier', '')
+            entry['hasSwimData'] = True
+            entry['_team_rec']   = tr   # stored so build_school_universe() re-uses the match
         else:
-            entry['row_type'] = 'snapshot_only'
-            entry['meta']     = {}
+            entry['row_type']    = 'snapshot_only'
+            entry['hasSwimData'] = False
+            entry['_team_rec']   = None
 
         EXPLORE_SCHOOLS.append(entry)
 
@@ -1415,6 +1432,110 @@ def score_all_schools(times, sat, gpa):
     results.sort(key=lambda r: r['adjPts'], reverse=True)
     return results
 
+
+def build_school_universe(times, sat, gpa):
+    """
+    ONE unified school pipeline for ALL ~324 schools in EXPLORE_SCHOOLS.
+
+    Every school goes through the SAME builder regardless of data richness.
+    SCHOOL_META is an enrichment source.  Its absence changes VALUES, not CODE.
+
+    Every result shares this schema:
+      school, conference, division
+      adjTier, adjPts, rawPts, psf
+      top3, allEvents
+      admission  { label, color, total, acadScore, swimScore }
+      meta       { accept, satMedian, hiddenIvy, ivyLeague, stem, merit,
+                   location, vibe, moonshot? }
+      confTierShort, confTier, confFinish2026, confScore2026, confPowerClass
+      hasSwimData   bool — True if this school has benchmark data in TEAMS_LIST
+
+    Schools with swim data get full scoring.
+    Schools without swim data get adjPts=0, adjTier='', empty events.
+    Admission computed for all — 'Unknown' normalised to '' (value diff, not path diff).
+    """
+    results = []
+
+    for es in EXPLORE_SCHOOLS:
+        school_name = es['school']
+        conference  = es.get('conference', '')
+
+        # Re-use the team_rec match already resolved by _build_explore_schools()
+        # (which already applies UAA short-name expansion and raw_name fallbacks).
+        team_rec = es.get('_team_rec')
+        has_swim = team_rec is not None
+
+        # Unified meta — SCHOOL_META enriches, never gates
+        meta_raw = (SCHOOL_META.get(school_name)
+                    or (SCHOOL_META.get(team_rec['school']) if team_rec else None)
+                    or {})
+        meta = {
+            'accept':    meta_raw.get('accept'),
+            'satMedian': meta_raw.get('satMedian'),
+            'hiddenIvy': meta_raw.get('hiddenIvy', False),
+            'ivyLeague': meta_raw.get('ivyLeague', False),
+            'stem':      meta_raw.get('stem', False),
+            'merit':     meta_raw.get('merit', ''),
+            'location':  meta_raw.get('location', ''),
+            'vibe':      meta_raw.get('vibe', ''),
+        }
+        if meta_raw.get('moonshot'):
+            meta['moonshot'] = True
+
+        # Swim scoring — same call for all schools, values differ
+        if has_swim:
+            swim = _score_school_swim(team_rec, times)
+            if swim:
+                adj_tier   = swim['adjTier']
+                adj_pts    = swim['adjPts']
+                raw_pts    = swim['rawPts']
+                top3       = swim['top3']
+                all_events = swim['allEvents']
+                psf        = swim['psf']
+            else:
+                # Team data exists but swimmer has zero scorable events here
+                adj_tier = ''
+                adj_pts = raw_pts = 0.0
+                top3 = all_events = []
+                psf = team_rec.get('psf', 1.0)
+        else:
+            adj_tier = ''
+            adj_pts = raw_pts = 0.0
+            top3 = all_events = []
+            psf = 1.0
+
+        # Admission — same function for all schools
+        adm = admission_chance(school_name, sat, gpa, adj_tier, psf)
+        # 'Unknown' means no SCHOOL_META entry — normalise to empty (value diff, not path diff)
+        if adm.get('label') == 'Unknown':
+            adm = {'label': '', 'color': '#94A3B8',
+                   'total': None, 'acadScore': None, 'swimScore': None}
+
+        results.append({
+            'school':         school_name,
+            'conference':     conference,
+            'division':       'D3',
+            'adjTier':        adj_tier,
+            'adjPts':         float(adj_pts),
+            'rawPts':         float(raw_pts),
+            'psf':            float(psf),
+            'top3':           top3,
+            'allEvents':      all_events,
+            'admission':      adm,
+            'meta':           meta,
+            'confTierShort':  es.get('conf_tier_short', ''),
+            'confTier':       es.get('conf_tier', ''),
+            'confFinish2026': es.get('men_finish_2026') or es.get('women_finish_2026'),
+            'confScore2026':  es.get('men_score_2026') or es.get('women_score_2026'),
+            'confPowerClass': es.get('conf_power_class', ''),
+            'hasSwimData':    has_swim,
+        })
+
+    # Sort: swim-fit score descending, then alphabetical
+    results.sort(key=lambda r: (-r['adjPts'], r['school']))
+    return results
+
+
 def score_one_school(times, conference, school):
     """
     Score arbitrary times at one specific school — for the manual calculator.
@@ -1616,18 +1737,20 @@ def meta():
 @login_required
 def api_schools():
     """Return the unified 324-school explore dataset (modeled + snapshot_only)."""
-    modeled  = sum(1 for s in EXPLORE_SCHOOLS if s.get('row_type') == 'modeled_school')
-    snap_only = sum(1 for s in EXPLORE_SCHOOLS if s.get('row_type') == 'snapshot_only')
+    modeled   = sum(1 for s in EXPLORE_SCHOOLS if s.get('hasSwimData'))
+    no_swim   = sum(1 for s in EXPLORE_SCHOOLS if not s.get('hasSwimData'))
+    # Strip internal Python-only field before serialising
+    schools_out = [{k: v for k, v in s.items() if k != '_team_rec'} for s in EXPLORE_SCHOOLS]
     return jsonify({
-        'schools':       EXPLORE_SCHOOLS,
-        'total':         len(EXPLORE_SCHOOLS),
-        'modeled':       modeled,
-        'snapshot_only': snap_only,
+        'schools':       schools_out,
+        'total':         len(schools_out),
+        'withSwimData':  modeled,
+        'conferenceOnly': no_swim,
     })
 
 @app.route('/api/score-all', methods=['GET', 'POST'])
 def score_all():
-    """Score against all 76 programs. POST body may include profile overrides."""
+    """Score against all ~324 programs. POST body may include profile overrides."""
     if request.method == 'POST':
         body    = request.json or {}
         times   = body.get('times', JAMES['times'])
@@ -1637,12 +1760,12 @@ def score_all():
     else:
         times, sat, gpa = JAMES['times'], JAMES['sat'], JAMES['gpa']
         profile = JAMES
-    results = score_all_schools(times, sat, gpa)
+    results = build_school_universe(times, sat, gpa)
     return jsonify({
-        'profile':      profile,
-        'totalSchools': len(TEAMS_LIST),
-        'scoredSchools': len(results),
-        'results':      results,
+        'profile':       profile,
+        'totalSchools':  len(EXPLORE_SCHOOLS),
+        'scoredSchools': sum(1 for r in results if r['adjPts'] > 0),
+        'results':       results,
     })
 
 @app.route('/api/search', methods=['POST'])
@@ -1673,50 +1796,26 @@ def search():
     act_score     = prof_ovr.get('actScore', JAMES.get('actScore', 0)) or 0
     ap_count      = prof_ovr.get('apCount',  JAMES.get('apCount',  0)) or 0
     swimmer_name  = prof_ovr.get('name') or JAMES['name']
-    all_results   = score_all_schools(times, sat, gpa)
+    # ONE unified pool — all ~324 schools through the same builder
+    all_results = build_school_universe(times, sat, gpa)
 
-    # ── Direct school-name match ──────────────────────────────────────────
+    # ── Direct school-name match (single pass over unified 324-school universe) ──
     q_lower      = query.lower()
     direct_match = None
-    # First pass: exact name match in the 76 scored schools
+
+    # Exact match first, then prefix/partial match — both from unified universe
     for r in all_results:
         if r['school'].lower() == q_lower:
             direct_match = r
             break
-    # Second pass: partial name match in scored schools
     if not direct_match:
         for r in all_results:
             if q_lower in r['school'].lower():
                 direct_match = r
                 break
-    # Third pass: fall back to full 324-school universe (snapshot_only schools
-    # won't have swim scoring but we still surface them by name).
-    # Use exact matching only — partial matching risks picking the wrong school
-    # (e.g. "Harvard" partially matching a different D3 school).
-    if not direct_match:
-        for s in EXPLORE_SCHOOLS:
-            if s['school'].lower() == q_lower:
-                direct_match = {
-                    'school':         s['school'],
-                    'conference':     s.get('conference', ''),
-                    'division':       'D3',
-                    'adjTier':        '',
-                    'psf':            1.0,
-                    'admission':      {'label': 'No data', 'score': 0},
-                    'top3':           [],
-                    'meta':           s.get('meta', {}),
-                    'confTierShort':  s.get('conf_tier_short', ''),
-                    'confTier':       s.get('conf_tier', ''),
-                    'confFinish2026': s.get('men_finish_2026') or s.get('women_finish_2026'),
-                    'confScore2026':  None,
-                    'confPowerClass': s.get('conf_power_class', ''),
-                    'snapshotOnly':   True,
-                }
-                break
 
-    # Fourth pass: query looks like a specific school name but we have no record
-    # of it at all. Build a stub so the user always gets back the school they
-    # typed rather than a pile of unrelated D3 schools.
+    # Out-of-universe stub — ONLY for school names truly not in the 324.
+    # This handles schools like Harvard, Stanford that are outside D3 swimming.
     if not direct_match:
         _desc_words = {
             'find','show','good','best','near','with','help','looking','want',
@@ -1731,7 +1830,6 @@ def search():
             not q_lower.endswith('?')
         )
         if _looks_like_name:
-            # Title-case each word, but preserve known all-caps tokens (e.g. "MIT")
             display_name = ' '.join(
                 w.upper() if w == w.upper() and len(w) > 1 else w.title()
                 for w in query.split()
@@ -1747,13 +1845,14 @@ def search():
                 'psf':            1.0,
                 'admission':      oou_adm,
                 'top3':           [],
+                'allEvents':      [],
                 'meta':           oou_meta,
                 'confTierShort':  '',
                 'confTier':       '',
                 'confFinish2026': None,
                 'confScore2026':  None,
                 'confPowerClass': '',
-                'snapshotOnly':   True,
+                'hasSwimData':    False,
                 'outOfUniverse':  True,
             }
 
@@ -1875,11 +1974,13 @@ def deep_dive():
     act_score        = prof_ovr.get('actScore',         JAMES.get('actScore', 0)) or 0
     ap_count         = prof_ovr.get('apCount',          JAMES.get('apCount',  0)) or 0
     grad_year        = prof_ovr.get('gradYear',         '2026')
-    all_results = score_all_schools(times, sat, gpa)
+    # ONE unified pool — all ~324 schools through the same builder
+    all_results = build_school_universe(times, sat, gpa)
     result = next((r for r in all_results if r['school'] == school), None)
     is_oou = False
 
     if result is None:
+        # School not in the D3 universe — check out-of-universe well-known schools
         oou_meta_found = _oou_lookup(school)
         if oou_meta_found:
             oou_adm = _oou_admission(oou_meta_found, sat, gpa)
@@ -1898,7 +1999,7 @@ def deep_dive():
                 'confFinish2026': None,
                 'confScore2026':  None,
                 'confPowerClass': '',
-                'snapshotOnly':   True,
+                'hasSwimData':    False,
                 'outOfUniverse':  True,
             }
             is_oou = True
@@ -2088,11 +2189,11 @@ def coach_email():
     swimmer_name  = prof_ovr.get('name') or JAMES['name']
     grad_year     = prof_ovr.get('gradYear',     '2026')
 
-    all_results = score_all_schools(times, sat, gpa)
+    all_results = build_school_universe(times, sat, gpa)
     result = next((r for r in all_results if r['school'] == school), None)
 
     if result is None:
-        return jsonify({'error': f'School "{school}" not found in scored results'}), 404
+        return jsonify({'error': f'School "{school}" not found'}), 404
 
     meta  = result['meta']
     top3  = result['top3']

@@ -1380,7 +1380,7 @@ function renderResultCards(schools, container, isDirect, answer) {
     const meta     = r.meta || {};
     const adm      = r.admission || { label: 'No data', score: 0 };
     const admColor = safeAdmColor(adm);
-    const isSnap   = r.snapshotOnly;
+    const isNoSwim = r.hasSwimData === false;
     const isOOU    = r.outOfUniverse;
     const confLine = [r.conference, meta.location].filter(Boolean).join(' · ');
     return `
@@ -1402,7 +1402,7 @@ function renderResultCards(schools, container, isDirect, answer) {
         ${meta.hiddenIvy ? '<span class="badge badge-ivy">Hidden Ivy</span>' : ''}
         ${meta.stem      ? '<span class="badge badge-stem">STEM</span>' : ''}
         ${meta.merit === 'high' ? '<span class="badge" style="background:#D1FAE5;color:#065F46;">High Merit Aid</span>' : ''}
-        ${isSnap && !isOOU ? '<span class="badge" style="background:#FEF9C3;color:#854D0E;">Conference data only</span>' : ''}
+        ${isNoSwim && !isOOU ? '<span class="badge" style="background:#FEF9C3;color:#854D0E;">Conference data only</span>' : ''}
       </div>
       ${meta.vibe ? `<div class="result-vibe">"${esc(meta.vibe)}"</div>` : ''}
       <div class="result-events">
@@ -1410,7 +1410,7 @@ function renderResultCards(schools, container, isDirect, answer) {
         ${top2 ? `<span class="badge ${placeClass(top2.place)}">${esc(top2.event)}: ${esc(place_label(top2.place))}</span>` : ''}
       </div>
       <div class="result-actions">
-        ${(!isSnap || Object.keys(meta).length > 0) ? `<button class="btn btn-primary" onclick='openDeepDive(${JSON.stringify(r.school)})'>Deep Dive →</button>` : ''}
+        ${!isOOU ? `<button class="btn btn-primary" onclick='openDeepDive(${JSON.stringify(r.school)})'>Deep Dive →</button>` : ''}
         ${inList
           ? `<button class="btn btn-added" disabled>✓ On My List</button>`
           : `<button class="btn btn-secondary" onclick='addToList(${JSON.stringify(r.school)}, ${i})'>+ Add to List</button>`}
