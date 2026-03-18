@@ -687,6 +687,15 @@ let VIBE_STATE    = {};   // { campus, friday, academic, compete, location, care
 let OPEN_CRM      = null; // currently expanded CRM card
 let OTHER_PREFS   = '';   // free-form additional preferences from Profile tab
 
+function costEstimate(merit) {
+  if (merit === 'high')     return 38000;
+  if (merit === 'moderate') return 52000;
+  return 68000;
+}
+function formatCost(n) {
+  return '$' + Number(n).toLocaleString();
+}
+
 const STATUS_CONFIG = {
   researching: { label: 'Researching',       color: '#64748B' },
   emailed:     { label: 'Emailed Coach',      color: '#2563EB' },
@@ -1624,8 +1633,15 @@ function renderMyList() {
       </div>`;
     }).join('');
 
-    const adjTier  = result?.adjTier  || '';
-    const division = result?.division || '';
+    const adjTier   = result?.adjTier  || '';
+    const division  = result?.division || '';
+    const offerVal  = crm.cost?.offer != null ? crm.cost.offer : null;
+    const costFrozen = offerVal !== null;
+    const costNum   = costFrozen ? offerVal : costEstimate(meta.merit);
+    const costLabel = costFrozen ? `Offer: ${formatCost(costNum)}/yr` : `Est. ${formatCost(costNum)}/yr`;
+    const costBg    = costFrozen ? 'var(--green-m)' : 'var(--bg)';
+    const costClr   = costFrozen ? '#065F46'        : 'var(--muted)';
+    const costBorder = costFrozen ? 'none' : '1px solid var(--border)';
     return `
     <div class="list-school-card" style="border-left-color:${cfg.color};">
       <div class="list-school-header" onclick='toggleCRM(${JSON.stringify(school)})'>
@@ -1639,6 +1655,7 @@ function renderMyList() {
         <div class="list-school-badges">
           ${adm.label ? `<span class="list-badge" style="background:${safeAdmColor(adm)};color:#fff;">${esc(adm.label)}</span>` : ''}
           ${adjTier ? `<span class="list-badge" style="background:var(--blue-l);color:var(--blue);">${esc(adjTier)}</span>` : ''}
+          <span class="list-badge" style="background:${costBg};color:${costClr};border:${costBorder};">${costFrozen ? '🔒 ' : ''}${esc(costLabel)}</span>
           ${division ? `<span class="list-badge" style="background:var(--bg);color:var(--slate);border:1px solid var(--border);">${esc(division)}</span>` : ''}
           ${meta.hiddenIvy ? `<span class="list-badge" style="background:var(--violet-l);color:var(--violet);">Hidden Ivy</span>` : ''}
           ${meta.stem ? `<span class="list-badge" style="background:var(--blue-l);color:var(--blue);">STEM</span>` : ''}
@@ -1683,6 +1700,20 @@ function renderMyList() {
           </div>
         </div>
 
+        <div class="crm-section">
+          <div class="crm-section-title">Cost / Offer</div>
+          ${costFrozen ? `
+          <div style="display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap;">
+            <span style="font-size:0.9rem;font-weight:700;color:#065F46;">🔒 ${formatCost(offerVal)}/yr — offer locked</span>
+            <button class="btn btn-ghost" style="font-size:0.75rem;padding:2px 8px;" onclick='resetCost(${JSON.stringify(school)})'>Reset to estimate</button>
+          </div>` : `
+          <div style="font-size:0.8rem;color:var(--muted);margin-bottom:0.5rem;">Estimate based on merit aid profile: <strong>${formatCost(costNum)}/yr</strong>. Enter your actual offer to lock it in.</div>
+          <div class="crm-add-row">
+            <input class="crm-input" type="number" id="cost-input-${si}" placeholder="Annual cost (e.g. 42000)" min="1000" max="100000" style="max-width:200px;" onclick="event.stopPropagation()" />
+            <button class="btn btn-secondary" onclick='setCost(${JSON.stringify(school)}, "cost-input-${si}")'>Lock Offer</button>
+          </div>`}
+        </div>
+
         <div style="display:flex;justify-content:space-between;margin-top:0.25rem;">
           <button class="btn btn-secondary" onclick='showTab("explore");openDeepDive(${JSON.stringify(school)})'>Deep Dive →</button>
           <button class="btn btn-ghost" style="color:var(--red);" onclick='removeFromList(${JSON.stringify(school)})'>Remove from list</button>
@@ -1694,6 +1725,22 @@ function renderMyList() {
 
 function toggleCRM(school) {
   OPEN_CRM = OPEN_CRM === school ? null : school;
+  renderMyList();
+}
+
+function setCost(school, inputId) {
+  const raw = parseInt(document.getElementById(inputId)?.value, 10);
+  if (!raw || raw < 1000) return;
+  if (!CRM_DATA[school]) CRM_DATA[school] = { status: 'researching', notes: [], reminders: [] };
+  CRM_DATA[school].cost = { offer: raw };
+  saveToStorage();
+  renderMyList();
+}
+
+function resetCost(school) {
+  if (!CRM_DATA[school]) return;
+  CRM_DATA[school].cost = { offer: null };
+  saveToStorage();
   renderMyList();
 }
 
