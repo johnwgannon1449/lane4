@@ -81,6 +81,23 @@
     .badge-t3   { background: #F1F5F9; color: var(--slate); }
     .badge-t4   { background: #F8FAFC; color: #94A3B8; border: 1px solid var(--border); }
 
+    /* ── ALL-SCHOOLS BROWSE ──────────────────────────────────── */
+    .browse-header { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:0.5rem; margin:1.5rem 0 0.75rem; }
+    .browse-filter-input { flex:1; min-width:180px; max-width:320px; padding:7px 12px; border:1.5px solid var(--border); border-radius:9px; font-family:'Figtree',sans-serif; font-size:0.85rem; color:var(--navy); background:var(--white); }
+    .browse-filter-input:focus { outline:none; border-color:var(--blue); }
+    .browse-conf-block  { margin-bottom:0.9rem; }
+    .browse-conf-header { font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); padding:0.35rem 0; border-bottom:1px solid var(--border); margin-bottom:0.2rem; }
+    .browse-row { display:flex; align-items:center; gap:0.5rem; padding:0.4rem 0; border-bottom:1px solid #F8FAFC; }
+    .browse-row:last-child { border-bottom:none; }
+    .browse-school-name { flex:1; font-size:0.85rem; font-weight:600; color:var(--navy); min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .browse-badges { display:flex; gap:0.28rem; flex-wrap:nowrap; align-items:center; flex-shrink:0; }
+    .browse-actions { flex-shrink:0; }
+    .btn-browse-add { width:24px; height:24px; border-radius:6px; border:1.5px solid var(--border); background:var(--white); color:var(--blue); font-size:0.9rem; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0; }
+    .btn-browse-add:hover { background:var(--blue-l); border-color:var(--blue); }
+    .browse-added { font-size:0.78rem; color:var(--green); font-weight:700; width:24px; text-align:center; }
+    .badge-bm { background:#EFF6FF; color:#2563EB; }
+    .badge-bw { background:#FDF4FF; color:#9333EA; }
+
     /* ── BUTTONS ─────────────────────────────────────────────── */
     .btn {
       display: inline-flex; align-items: center; gap: 5px;
@@ -543,7 +560,7 @@
   <!-- Search view -->
   <div id="explore-search" class="wrap">
     <div class="page-title">Find your schools</div>
-    <div class="page-sub">Ask anything about fit, cost, academics, or swim — Lane4 knows all 76 programs.</div>
+    <div class="page-sub">Ask anything about fit, cost, academics, or swim — all <span id="explore-school-count">324</span> programs from the 2026 championship season.</div>
 
     <div class="search-wrap">
       <input class="search-input" id="q-input" type="text"
@@ -559,6 +576,15 @@
     <div id="elim-bar"></div>
     <div id="search-state"></div>
     <div id="search-results"></div>
+
+    <!-- ALL-SCHOOLS BROWSE — always visible, filter in place -->
+    <div id="browse-all">
+      <div class="browse-header">
+        <div class="section-label" style="margin:0;">All Schools — 2026 Season <span id="browse-count" style="font-weight:400;text-transform:none;letter-spacing:0;font-size:0.78rem;color:var(--muted);margin-left:5px;"></span></div>
+        <input id="browse-filter" class="browse-filter-input" type="search" placeholder="Filter by name or conference…" oninput="renderAllSchools()">
+      </div>
+      <div id="browse-list"><div style="color:var(--muted);font-size:0.85rem;padding:1rem 0;">Loading schools…</div></div>
+    </div>
   </div>
 
   <!-- Deep dive view (hidden until triggered) -->
@@ -650,7 +676,8 @@
 // ════════════════════════════════════════════════════════════════
 // STATE
 // ════════════════════════════════════════════════════════════════
-let ALL_RESULTS   = [];   // full ranked list from /api/score-all
+let ALL_RESULTS   = [];   // full ranked list from /api/score-all (76 modeled schools)
+let ALL_SCHOOLS   = [];   // unified 324-school browse list from /api/schools
 let JAMES         = {};   // swimmer profile
 let CRM_DATA      = {};   // { schoolName: { status, notes, reminders } }
 let MY_LIST       = [];   // array of school name strings (ordered)
@@ -882,18 +909,22 @@ async function submitOnboarding() {
 
   saveToStorage();
 
-  try {
-    const res  = await fetch('/api/score-all', {
+  const [ob_schoolsRes, ob_scoreRes] = await Promise.allSettled([
+    fetch('/api/schools'),
+    fetch('/api/score-all', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ times: JAMES.times, sat: JAMES.sat, gpa: JAMES.gpa }),
-    });
-    const data = await res.json();
-    ALL_RESULTS = data.results;
-  } catch(e) {
-    console.error('Score failed:', e);
+    }),
+  ]);
+  if (ob_schoolsRes.status === 'fulfilled' && ob_schoolsRes.value.ok) {
+    try { const sd = await ob_schoolsRes.value.json(); ALL_SCHOOLS = sd.schools || []; } catch(_) {}
+  }
+  if (ob_scoreRes.status === 'fulfilled' && ob_scoreRes.value.ok) {
+    try { const sd = await ob_scoreRes.value.json(); ALL_RESULTS = sd.results || []; } catch(e) { console.error('Score failed:', e); }
   }
 
+  renderAllSchools();
   hideOnboarding();
   renderProfile();
   renderElimBar();
@@ -1136,16 +1167,33 @@ async function afterAuthBoot() {
     return;
   }
 
-  // 4. Score all schools with the swimmer's profile
-  try {
-    const res  = await fetch('/api/score-all', {
+  // 4. Load unified school universe and score modeled schools — in parallel
+  const [schoolsRes, scoreRes] = await Promise.allSettled([
+    fetch('/api/schools'),
+    fetch('/api/score-all', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ times: JAMES.times, sat: JAMES.sat, gpa: JAMES.gpa }),
-    });
-    const data = await res.json();
-    ALL_RESULTS = data.results;
-  } catch(e) { console.error('Boot score failed:', e); }
+    }),
+  ]);
+
+  if (schoolsRes.status === 'fulfilled' && schoolsRes.value.ok) {
+    try {
+      const sd = await schoolsRes.value.json();
+      ALL_SCHOOLS = sd.schools || [];
+      const cnt = document.getElementById('explore-school-count');
+      if (cnt) cnt.textContent = ALL_SCHOOLS.length;
+    } catch(_) {}
+  }
+
+  if (scoreRes.status === 'fulfilled' && scoreRes.value.ok) {
+    try {
+      const sd = await scoreRes.value.json();
+      ALL_RESULTS = sd.results || [];
+    } catch(e) { console.error('Boot score failed:', e); }
+  }
+
+  renderAllSchools();
 
   const otherPrefsInput = document.getElementById('other-prefs-input');
   if (otherPrefsInput && OTHER_PREFS) otherPrefsInput.value = OTHER_PREFS;
@@ -1270,7 +1318,7 @@ async function runSearch() {
 
   const state   = document.getElementById('search-state');
   const results = document.getElementById('search-results');
-  state.innerHTML   = `<div class="loading-state"><span class="spinner"></span> Searching across 76 programs…</div>`;
+  state.innerHTML   = `<div class="loading-state"><span class="spinner"></span> Searching across ${ALL_SCHOOLS.length || ALL_RESULTS.length || 76} programs…</div>`;
   results.innerHTML = '';
 
   try {
@@ -1874,6 +1922,7 @@ async function refreshScores() {
     });
     const data = await res.json();
     ALL_RESULTS = data.results;
+    renderAllSchools();
   } catch (e) { console.error('Rescore failed:', e); }
 }
 
@@ -2218,6 +2267,87 @@ function remLabel(date) {
   if (date === t) return '⚡ Today';
   const d = new Date(date + 'T00:00:00');
   return '📅 ' + d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+
+// ════════════════════════════════════════════════════════════════
+// ALL-SCHOOLS BROWSE
+// ════════════════════════════════════════════════════════════════
+
+function renderAllSchools() {
+  const el = document.getElementById('browse-list');
+  if (!el) return;
+  if (!ALL_SCHOOLS.length) {
+    el.innerHTML = '<div style="color:var(--muted);font-size:0.85rem;padding:1rem 0;">Loading schools…</div>';
+    return;
+  }
+
+  const q = (document.getElementById('browse-filter')?.value || '').toLowerCase().trim();
+
+  let schools = ALL_SCHOOLS;
+  if (q) {
+    schools = schools.filter(s =>
+      s.school.toLowerCase().includes(q) ||
+      (s.conference || '').toLowerCase().includes(q)
+    );
+  }
+
+  // Group by conference (sorted)
+  const byConf = {};
+  schools.forEach(s => {
+    const c = s.conference || 'Other';
+    if (!byConf[c]) byConf[c] = [];
+    byConf[c].push(s);
+  });
+  const confs = Object.keys(byConf).sort();
+
+  el.innerHTML = confs.length
+    ? confs.map(conf => {
+        const rows = byConf[conf];
+        return `<div class="browse-conf-block">
+          <div class="browse-conf-header">${esc(conf)} <span style="font-weight:400;">(${rows.length})</span></div>
+          ${rows.map(s => browseRowHtml(s)).join('')}
+        </div>`;
+      }).join('')
+    : '<div style="color:var(--muted);font-size:0.88rem;padding:1rem 0;">No schools match that filter.</div>';
+
+  const cnt = document.getElementById('browse-count');
+  if (cnt) cnt.textContent = q ? `${schools.length} of ${ALL_SCHOOLS.length}` : `${ALL_SCHOOLS.length} schools`;
+}
+
+function browseRowHtml(s) {
+  const inList = MY_LIST.includes(s.school);
+  const scored = ALL_RESULTS.find(r => r.school === s.school);
+
+  const tierBadge = s.conf_tier_short
+    ? `<span class="badge badge-t${s.conf_tier_short.toLowerCase()}" title="${esc(s.conf_tier || '')} · ${esc(s.conf_power_class || '')}">${esc(s.conf_tier_short)}</span>`
+    : '';
+
+  const menTag = (s.men_finish_2026 != null)
+    ? `<span class="badge badge-bm" style="font-size:0.7rem;">M #${s.men_finish_2026}</span>` : '';
+  const womenTag = (s.women_finish_2026 != null)
+    ? `<span class="badge badge-bw" style="font-size:0.7rem;">W #${s.women_finish_2026}</span>` : '';
+  const fitBadge = scored
+    ? `<span class="badge badge-tier" title="Your projected tier at this program">${esc(scored.adjTier)}</span>` : '';
+
+  const addBtn = inList
+    ? `<span class="browse-added">✓</span>`
+    : `<button class="btn-browse-add" onclick='addToBrowseList(${JSON.stringify(s.school)})' title="Add to list">+</button>`;
+
+  return `<div class="browse-row">
+    <div class="browse-school-name" title="${esc(s.school)}">${esc(s.school)}</div>
+    <div class="browse-badges">${tierBadge}${menTag}${womenTag}${fitBadge}</div>
+    <div class="browse-actions">${addBtn}</div>
+  </div>`;
+}
+
+function addToBrowseList(school) {
+  if (!MY_LIST.includes(school)) {
+    MY_LIST.push(school);
+    CRM_DATA[school] = CRM_DATA[school] || { status: 'researching', notes: [], reminders: [] };
+    saveToStorage();
+    updateBadges();
+  }
+  renderAllSchools();
 }
 
 // ════════════════════════════════════════════════════════════════

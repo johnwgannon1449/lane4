@@ -1,0 +1,68 @@
+Stop. The current result is not the intended outcome.
+
+I do NOT want Explore limited to the old 76 modeled schools.
+I want ALL schools visible in Explore tonight.
+
+Current problem:
+- Explore still only shows 76 schools
+- the new championship/tier data is only being used to enrich those old rows
+- that is not enough
+
+New requirement:
+Rebuild the Explore data source so it includes the full school universe from the latest dataset.
+
+Goal:
+Explore should show all schools represented in the latest championship snapshot, not just the old 76.
+
+Rules:
+1) Do NOT create a separate tab
+2) Do NOT revert to the old 76-school-only universe
+3) Keep parser, validator, team-score extraction, and tier logic locked
+4) Use the latest snapshot/tier outputs as the source of truth for school coverage tonight
+
+Implementation requirements
+
+1) Build a unified Explore dataset from the full latest data
+Start from the current latest output files:
+- output/team_tiers.csv
+- output/lane4_snapshot.csv
+or the best current compatible derivative
+
+2) Deduplicate into unique schools
+A school may appear in both men and women rows.
+Create one Explore school record per school, with sensible merged fields.
+
+3) Preserve richer modeled data where available
+If one of the old 76 modeled schools is present, keep its richer data.
+But do NOT exclude schools that only exist in the new dataset.
+
+4) Add a row-type marker
+Each Explore row should indicate:
+- modeled_school
+- snapshot_only
+
+5) Minimum fields for every Explore row
+Every school visible in Explore should have at least:
+- school/team name
+- conference
+- final_tier or best available tier
+- tier_short
+- 2026 finish if available
+- 2026 score if available
+- row_type
+
+6) For schools with richer old modeled data, also keep those existing fields.
+
+7) Update Explore itself
+The existing Explore tab must now load from this expanded unified dataset.
+No new nav tabs.
+No separate Tiers view.
+
+8) Return:
+- total unique schools now visible in Explore
+- count of modeled_school rows
+- count of snapshot_only rows
+- what file or endpoint Explore now uses
+- files changed
+- 10 sample Explore rows
+- confirmation that all schools from the latest dataset are represented in Explore tonight

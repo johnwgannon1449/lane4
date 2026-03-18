@@ -588,6 +588,7 @@ TEAMS = {}         # "Conference|School" -> {conference, school, psf, tier, fini
 TEAMS_LIST = []    # ordered list of all team dicts
 CONFERENCES = {}   # conference name -> sorted list of canonical school names
 NORMALIZATION_LOG = []  # records every name that was normalized
+EXPLORE_SCHOOLS = []   # unified 324-school list for /api/schools
 
 # ── 2026 snapshot tier enrichment ────────────────────────────────────────────
 # Abbreviated Excel names → full snapshot names (UAA uses short names in the Excel)
@@ -757,6 +758,108 @@ def _load_conf_tier_lookup():
             team_rec['conf_finish_2026'] = None
             team_rec['conf_score_2026']  = ''
             team_rec['conf_power_class'] = ''
+
+    _build_explore_schools()
+
+
+def _build_explore_schools():
+    """
+    Build EXPLORE_SCHOOLS — one record per unique school across the full
+    2026 championship snapshot (324 schools).  Modeled schools (76) get their
+    richer PSF / meta data merged in and are marked row_type='modeled_school'.
+    All others are marked row_type='snapshot_only'.
+    """
+    import csv as _csv
+    from collections import defaultdict
+
+    EXPLORE_SCHOOLS.clear()
+
+    snap_path = os.path.join(os.path.dirname(__file__), 'output', 'lane4_snapshot_compatible.csv')
+    if not os.path.exists(snap_path):
+        return
+
+    snap_rows = []
+    with open(snap_path, newline='', encoding='utf-8') as f:
+        snap_rows = list(_csv.DictReader(f))
+
+    # Build per-school, per-gender rows
+    by_school = defaultdict(dict)   # school_name → {'men': row, 'women': row}
+    for row in snap_rows:
+        gender = row.get('gender', '').lower()
+        school = row.get('Team', '').strip()
+        if school and gender:
+            by_school[school][gender] = row
+
+    # Modeled lookup by norm of canonical name AND raw name
+    modeled_by = {}
+    for tr in TEAMS_LIST:
+        modeled_by[_norm_key(tr['school'])] = tr
+        raw = tr.get('raw_name', '')
+        if raw:
+            modeled_by[_norm_key(raw)] = tr
+
+    def _si(v):
+        try:   return int(v)
+        except: return None
+
+    def _sf(v):
+        try:   return float(v)
+        except: return None
+
+    tier_order = {'1A': 0, '1B': 1, '2': 2, '3': 3, '4': 4, '': 5}
+
+    for school, gmap in by_school.items():
+        men_row   = gmap.get('men')
+        women_row = gmap.get('women')
+        primary   = men_row or women_row
+        if not primary:
+            continue
+
+        tr = modeled_by.get(_norm_key(school))
+
+        men_ts   = men_row.get('tier_short', '')   if men_row   else ''
+        women_ts = women_row.get('tier_short', '') if women_row else ''
+        ts       = men_ts or women_ts
+
+        entry = {
+            'school':            school,
+            'conference':        primary.get('Conference', ''),
+            'conf_tier_short':   ts,
+            'conf_tier':         (men_row or women_row).get('final_tier', ''),
+            'conf_power_class':  (men_row or women_row).get('PowerClass', ''),
+            'men_finish_2026':   _si(men_row['Finish'])          if men_row   else None,
+            'women_finish_2026': _si(women_row['Finish'])        if women_row else None,
+            'men_score_2026':    _sf(men_row.get('MenPoints',''))   if men_row   else None,
+            'women_score_2026':  _sf(women_row.get('MenPoints','')) if women_row else None,
+            'men_tier_short':    men_ts,
+            'women_tier_short':  women_ts,
+            'gender_coverage':   sorted(gmap.keys()),
+        }
+
+        if tr:
+            entry['row_type'] = 'modeled_school'
+            entry['psf']      = tr.get('psf', 1.0)
+            entry['tier']     = tr.get('tier', '')
+            meta_raw          = SCHOOL_META.get(tr['school'], {})
+            entry['meta'] = {
+                'location':  meta_raw.get('location', ''),
+                'hiddenIvy': meta_raw.get('hiddenIvy', False),
+                'stem':      meta_raw.get('stem', False),
+                'merit':     meta_raw.get('merit', ''),
+                'vibe':      meta_raw.get('vibe', ''),
+            }
+        else:
+            entry['row_type'] = 'snapshot_only'
+            entry['meta']     = {}
+
+        EXPLORE_SCHOOLS.append(entry)
+
+    # Sort: tier (1A first), then men's finish, then school name
+    EXPLORE_SCHOOLS.sort(key=lambda s: (
+        tier_order.get(s.get('conf_tier_short', ''), 5),
+        s.get('men_finish_2026') or s.get('women_finish_2026') or 99,
+        s['school'],
+    ))
 
 
 def _float(v):
@@ -1411,6 +1514,19 @@ def meta():
         'teams':             CONFERENCES,
         'events':            ALL_EVENTS,
         'normalizationLog':  NORMALIZATION_LOG,
+    })
+
+@app.route('/api/schools', methods=['GET'])
+@login_required
+def api_schools():
+    """Return the unified 324-school explore dataset (modeled + snapshot_only)."""
+    modeled  = sum(1 for s in EXPLORE_SCHOOLS if s.get('row_type') == 'modeled_school')
+    snap_only = sum(1 for s in EXPLORE_SCHOOLS if s.get('row_type') == 'snapshot_only')
+    return jsonify({
+        'schools':       EXPLORE_SCHOOLS,
+        'total':         len(EXPLORE_SCHOOLS),
+        'modeled':       modeled,
+        'snapshot_only': snap_only,
     })
 
 @app.route('/api/score-all', methods=['GET', 'POST'])
