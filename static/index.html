@@ -336,7 +336,8 @@
     .note-item-body { flex: 1; white-space: pre-wrap; }
     .note-meta { font-size: 0.7rem; color: var(--muted); margin-top: 2px; }
     .reminder-item { display: flex; align-items: center; gap: 0.6rem; background: var(--bg); border-radius: 8px; padding: 0.55rem 0.75rem; margin-bottom: 0.4rem; font-size: 0.83rem; }
-    .reminder-label { font-size: 0.7rem; font-weight: 700; padding: 2px 7px; border-radius: 4px; white-space: nowrap; }
+    .reminder-label { font-size: 0.7rem; font-weight: 700; padding: 2px 7px; border-radius: 4px; white-space: nowrap; cursor: pointer; border: none; font-family: 'Figtree', sans-serif; }
+    .reminder-label:hover { opacity: 0.8; }
     .rem-overdue { background: var(--red-l); color: var(--red); }
     .rem-today   { background: var(--amber-l); color: var(--amber); }
     .rem-upcoming { background: var(--green-l); color: var(--green); }
@@ -680,6 +681,7 @@ let ALL_SCHOOLS   = [];   // unified 324-school browse list from /api/schools
 let JAMES         = {};   // swimmer profile
 let CRM_DATA      = {};   // { schoolName: { status, notes, reminders } }
 let OPEN_STATUS_DD = null; // school name whose status dropdown is open
+let EDIT_REM       = null; // { school, id } of the reminder date being edited
 let MY_LIST       = [];   // array of school name strings (ordered)
 let ELIMINATED    = [];   // eliminated in current session
 let LAST_RESULTS  = null; // last search result { answer, schools }
@@ -1610,8 +1612,15 @@ function renderMyList() {
     const remItems = (crm.reminders || []).filter(r => !r.completed).map(r => {
       const cls = remClass(r.date);
       const lbl = r.date < todayISO() ? 'Overdue' : r.date === todayISO() ? 'Due Today' : remLabel(r.date);
+      const isEditing = EDIT_REM && EDIT_REM.school === school && EDIT_REM.id === r.id;
+      const datePart = isEditing
+        ? `<input type="date" class="crm-input" style="width:130px;padding:2px 6px;flex-shrink:0;" value="${r.date}"
+            onchange='saveRemDate(${JSON.stringify(school)}, ${r.id}, this.value)'
+            onblur='cancelEditRem()'
+            onclick='event.stopPropagation()' autofocus>`
+        : `<button class="reminder-label ${cls}" onclick='editRemDate(${JSON.stringify(school)}, ${r.id}, event)' title="Click to change date">${lbl}</button>`;
       return `<div class="reminder-item">
-        <span class="reminder-label ${cls}">${lbl}</span>
+        ${datePart}
         <span style="flex:1;">${esc(r.text)}</span>
         <button class="btn btn-ghost" style="padding:2px 6px;color:#059669;" title="Mark complete" onclick='completeReminder(${JSON.stringify(school)}, ${r.id})'>✓</button>
         <button class="btn btn-ghost" style="padding:2px 6px;" onclick='deleteReminder(${JSON.stringify(school)}, ${r.id})'>✕</button>
@@ -1759,6 +1768,31 @@ function completeReminder(school, id) {
   saveToStorage();
 }
 
+function editRemDate(school, id, event) {
+  event.stopPropagation();
+  EDIT_REM = { school, id };
+  renderMyList();
+  renderReminders();
+}
+
+function saveRemDate(school, id, newDate) {
+  if (!newDate || !CRM_DATA[school]) { EDIT_REM = null; renderMyList(); renderReminders(); return; }
+  const r = CRM_DATA[school].reminders.find(r => r.id === id);
+  if (r) r.date = newDate;
+  EDIT_REM = null;
+  saveToStorage();
+  updateBadges();
+  renderMyList();
+  renderReminders();
+}
+
+function cancelEditRem() {
+  if (!EDIT_REM) return;
+  EDIT_REM = null;
+  renderMyList();
+  renderReminders();
+}
+
 function uncompleteReminder(school, id) {
   if (!CRM_DATA[school]) return;
   const r = CRM_DATA[school].reminders.find(r => r.id === id);
@@ -1831,9 +1865,16 @@ function renderReminders() {
       const isToday   = r.date === today;
       const cls = isOverdue ? 'rem-overdue' : isToday ? 'rem-today' : 'rem-upcoming';
       const lbl = isOverdue ? 'Overdue' : isToday ? 'Due Today' : remLabel(r.date);
+      const isEditing = EDIT_REM && EDIT_REM.school === r.school && EDIT_REM.id === r.id;
+      const datePart = isEditing
+        ? `<input type="date" class="crm-input" style="width:130px;padding:2px 6px;flex-shrink:0;" value="${r.date}"
+            onchange='saveRemDate(${JSON.stringify(r.school)}, ${r.id}, this.value)'
+            onblur='cancelEditRem()'
+            onclick='event.stopPropagation()' autofocus>`
+        : `<button class="reminder-label ${cls}" onclick='editRemDate(${JSON.stringify(r.school)}, ${r.id}, event)' title="Click to change date">${lbl}</button>`;
       return `
         <div class="global-reminder-item">
-          <span class="reminder-label ${cls}">${lbl}</span>
+          ${datePart}
           <div style="flex:1;min-width:0;">
             <div class="rem-text">${esc(r.text)}</div>
             <div style="font-size:0.75rem;color:var(--muted);">
