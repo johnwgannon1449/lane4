@@ -1606,9 +1606,11 @@ def search():
                 break
     # Third pass: fall back to full 324-school universe (snapshot_only schools
     # won't have swim scoring but we still surface them by name).
+    # Use exact matching only — partial matching risks picking the wrong school
+    # (e.g. "Harvard" partially matching a different D3 school).
     if not direct_match:
         for s in EXPLORE_SCHOOLS:
-            if s['school'].lower() == q_lower or q_lower in s['school'].lower():
+            if s['school'].lower() == q_lower:
                 direct_match = {
                     'school':         s['school'],
                     'conference':     s.get('conference', ''),
