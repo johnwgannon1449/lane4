@@ -2687,6 +2687,23 @@ def _selectivity_tier(accept_pct, sat_median):
     return 'broader_admit'
 
 
+def _estimate_mean_gpa(sat_median: int | None) -> float:
+    """
+    Estimate the average admitted-student GPA for a school from its SAT median.
+    Used to contextualise the swimmer's GPA relative to the school's typical student.
+    Thresholds derived from published Common Data Sets across the selectivity spectrum.
+    """
+    if sat_median is None:
+        return 3.40
+    if sat_median >= 1550: return 3.90
+    if sat_median >= 1480: return 3.80
+    if sat_median >= 1420: return 3.72
+    if sat_median >= 1350: return 3.60
+    if sat_median >= 1280: return 3.50
+    if sat_median >= 1200: return 3.40
+    return 3.30
+
+
 def admission_chance(school, sat, gpa, adj_tier, psf):
     """
     Matrix-based admission model.  Same call signature as the old function.
@@ -2759,8 +2776,18 @@ def admission_chance(school, sat, gpa, adj_tier, psf):
             elif not sat_below_floor:  sat_sub =  0
             else:                      sat_sub = -2
 
-        # GPA sub-score — neutral (0) since no percentile data
-        gpa_sub = 0
+        # GPA sub-score — compare swimmer GPA to school's estimated mean GPA.
+        # mean_gpa is derived from satMedian via _estimate_mean_gpa().
+        # +1: GPA clearly above mean (>+0.15)  0: near mean  -1: clearly below (>-0.15)
+        mean_gpa = _estimate_mean_gpa(sat_median)
+        if g is None:
+            gpa_sub = 0
+        elif g > mean_gpa + 0.15:
+            gpa_sub = 1
+        elif g < mean_gpa - 0.15:
+            gpa_sub = -1
+        else:
+            gpa_sub = 0
 
         raw = sat_sub + gpa_sub
         if   raw == 4:         acad_band = 4
@@ -2789,6 +2816,10 @@ def admission_chance(school, sat, gpa, adj_tier, psf):
     # G3: SAT below floor AND band 0 → cap at Major Reach
     elif sat_below_floor and acad_band == 0:
         label = _cap_label(label, 'Major Reach')
+
+    # G4-GPA: Highly/ultra-selective + GPA < 3.5 → Moonshot regardless of SAT or swim
+    if sel_tier in ('highly_selective', 'ultra_selective') and g is not None and g < 3.5:
+        label = 'Moonshot'
 
     # G4: No swim support → cap at Possible
     if swim_band == 0:
