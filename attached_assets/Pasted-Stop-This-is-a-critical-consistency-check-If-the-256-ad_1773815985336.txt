@@ -1,0 +1,76 @@
+Stop. This is a critical consistency check.
+
+If the 256 added schools do not have event-level swim comparisons available, then one of two things is true:
+
+A. The parser/harvester work today did NOT actually produce event-level results for those added conferences
+OR
+B. The parser/harvester DID produce those results, but the app is not loading/using them
+
+I need you to determine which one it is, with proof.
+
+Do NOT explain this as a generic “data coverage issue” until you verify the actual outputs.
+
+==================================================
+TASK
+==================================================
+
+Trace the event-level data path end to end for the newly added conferences.
+
+I want a concrete proof report answering these questions:
+
+1. Which output file contains the event-level parsed results used for recruiting/swim comparison?
+2. How many total event rows are in that file right now?
+3. Which conferences are represented in that file right now?
+4. For each conference, how many distinct events were parsed?
+5. For each conference, how many distinct schools are represented in the event-level file?
+6. Are the newly added conferences actually present in the event-level output?
+7. If yes, where does the app fail to ingest or connect them?
+8. If no, then today’s parser run did not achieve what we thought it did.
+
+==================================================
+REQUIRED PROOF
+==================================================
+
+I want an explicit table like:
+
+conference | event_rows | distinct_events | distinct_schools | used_by_app? | notes
+
+And I want it for ALL conferences currently in the parsed event output.
+
+==================================================
+NEXT CHECK
+==================================================
+
+Then trace the app wiring:
+
+- Which function loads the event-level results?
+- Which function maps them to schools/conferences?
+- Which function powers the recruiting badge / swim comparison?
+- Where exactly does that path stop working for the newly added conferences?
+
+==================================================
+VERY IMPORTANT
+==================================================
+
+Do NOT give me a theory.
+Do NOT say “likely.”
+Do NOT say “coverage issue” without proving it from the files.
+
+I want a factual trace from:
+PDF parse output
+→ event-level CSV/file
+→ backend loader
+→ school/conference mapping
+→ recruiting/swim badge logic
+
+==================================================
+GOAL
+==================================================
+
+Tell me which is true:
+
+1. The parser produced no useful event-level data for the new conferences
+OR
+2. The parser produced it, but the app is ignoring/dropping it
+
+That is the only question I want answered right now.
