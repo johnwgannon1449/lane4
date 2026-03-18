@@ -682,6 +682,13 @@ let VIBE_STATE    = {};   // { campus, friday, academic, compete, location, care
 let OPEN_CRM      = null; // currently expanded CRM card
 let OTHER_PREFS   = '';   // free-form additional preferences from Profile tab
 
+// Maps adjTier string → recruiting label (same band logic as buildCard)
+function toRecruitLabel(adjTier) {
+  const BAND = {'High-Point Contender':4,'Conference Star':4,'Priority Recruit':3,'Top Recruit':3,'Recruitable':2,'Reach':1,'Moonshot':0};
+  const LABEL = {4:'Impact Recruit',3:'Serious Recruit',2:'Roster-Level',1:'Below Roster Level',0:'Not Competitive'};
+  return adjTier ? (LABEL[BAND[adjTier] ?? 0] || null) : null;
+}
+
 function costEstimate(merit) {
   if (merit === 'high')     return 38000;
   if (merit === 'moderate') return 52000;
@@ -1379,7 +1386,7 @@ function renderResultCards(schools, container, isDirect, answer) {
     const isOOU    = r.outOfUniverse;
     const confLine = [r.conference, meta.location].filter(Boolean).join(' · ');
     const TIER_LABELS = {'1A':'Super Powerhouse','1B':'Powerhouse','2':'Strong Program','3':'Mid-pack','4':'Developing'};
-    const progStrength = r.adjTier || (['1A','1B'].includes(r.confTierShort) ? TIER_LABELS[r.confTierShort] : '') || '';
+    const progStrength = (['1A','1B'].includes(r.confTierShort) ? TIER_LABELS[r.confTierShort] : '') || '';
     const _RECRUIT_LABEL = {4:'Impact Recruit', 3:'Serious Recruit', 2:'Roster-Level', 1:'Below Roster Level'};
     const _RECRUIT_STYLE = {
       4: 'background:#D1FAE5;color:#065F46;font-weight:700;',
@@ -1419,9 +1426,7 @@ function renderResultCards(schools, container, isDirect, answer) {
     const divParts = [];
     if (r.division && !isOOU) divParts.push(`<span style="font-size:0.7rem;font-weight:700;color:#64748B;">${esc(r.division)}</span>`);
     if (progStrength) {
-      const psBg  = r.adjTier ? '#EFF6FF' : '#E0E7FF';
-      const psClr = r.adjTier ? '#1D4ED8' : '#3730A3';
-      divParts.push(`<span class="badge" style="background:${psBg};color:${psClr};font-size:0.68rem;">${esc(progStrength)}</span>`);
+      divParts.push(`<span class="badge" style="background:#E0E7FF;color:#3730A3;font-size:0.68rem;">${esc(progStrength)}</span>`);
     }
     const metaLine = divParts.length ? `<div style="display:flex;align-items:center;gap:5px;margin-top:3px;">${divParts.join('')}</div>` : '';
 
@@ -1534,7 +1539,7 @@ async function openDeepDive(school) {
           <span>${esc(result.conference || '')}</span>
           ${meta.location ? `<span>· ${esc(meta.location)}</span>` : ''}
           <span class="badge badge-adm" style="background:${adm.color || '#64748B'};">${esc(adm.label || '')}</span>
-          ${result.adjTier ? `<span class="badge badge-tier">${esc(result.adjTier)}</span>` : ''}
+          ${toRecruitLabel(result.adjTier) ? `<span class="badge badge-tier">${esc(toRecruitLabel(result.adjTier))}</span>` : ''}
           ${result.division ? `<span class="badge" style="background:#F1F5F9;color:#475569;font-size:0.68rem;">${esc(result.division)}</span>` : ''}
           ${meta.hiddenIvy ? '<span class="badge badge-ivy">Hidden Ivy</span>' : ''}
           ${meta.stem      ? '<span class="badge badge-stem">STEM</span>' : ''}
@@ -1701,7 +1706,7 @@ function renderMyList() {
         </div>
         <div class="list-school-badges">
           ${adm.label ? `<span class="list-badge" style="background:${safeAdmColor(adm)};color:#fff;">${esc(adm.label)}</span>` : ''}
-          ${adjTier ? `<span class="list-badge" style="background:var(--blue-l);color:var(--blue);">${esc(adjTier)}</span>` : ''}
+          ${toRecruitLabel(adjTier) ? `<span class="list-badge" style="background:var(--blue-l);color:var(--blue);">${esc(toRecruitLabel(adjTier))}</span>` : ''}
           <span class="list-badge" style="background:${costBg};color:${costClr};border:${costBorder};${costStyle}"><span style="opacity:0.75;font-style:normal;">${costPrefix} </span>${esc(costLabel)}</span>
           ${division ? `<span class="list-badge" style="background:var(--bg);color:var(--slate);border:1px solid var(--border);">${esc(division)}</span>` : ''}
           ${meta.ivyLeague ? `<span class="list-badge" style="background:#1E3A5F;color:#fff;">Ivy League</span>` : ''}
@@ -2479,8 +2484,8 @@ function browseRowHtml(s) {
     ? `<span class="badge badge-bm" style="font-size:0.7rem;">M #${s.men_finish_2026}</span>` : '';
   const womenTag = (s.women_finish_2026 != null)
     ? `<span class="badge badge-bw" style="font-size:0.7rem;">W #${s.women_finish_2026}</span>` : '';
-  const fitBadge = scored
-    ? `<span class="badge badge-tier" title="Your projected tier at this program">${esc(scored.adjTier)}</span>` : '';
+  const fitBadge = scored && toRecruitLabel(scored.adjTier)
+    ? `<span class="badge badge-tier">${esc(toRecruitLabel(scored.adjTier))}</span>` : '';
 
   const addBtn = inList
     ? `<span class="browse-added">✓</span>`
