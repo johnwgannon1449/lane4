@@ -1392,8 +1392,8 @@ function renderResultCards(schools, container, isDirect, answer) {
           ${confLine ? `<div class="result-conference">${esc(confLine)}</div>` : ''}
         </div>
         <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;">
-          ${!isSnap ? `<span class="badge badge-adm" style="background:${admColor};">${esc(adm.label)}</span>` : ''}
-          ${r.adjTier && !isSnap ? `<span class="badge badge-tier">${esc(r.adjTier)}</span>` : ''}
+          ${adm.label && adm.label !== 'Unknown' && adm.label !== 'No data' ? `<span class="badge badge-adm" style="background:${admColor};">${esc(adm.label)}</span>` : ''}
+          ${r.adjTier ? `<span class="badge badge-tier">${esc(r.adjTier)}</span>` : ''}
           ${r.division && !isOOU ? `<span class="badge" style="background:#F1F5F9;color:#475569;font-size:0.68rem;">${esc(r.division)}</span>` : ''}
         </div>
       </div>
@@ -1410,7 +1410,7 @@ function renderResultCards(schools, container, isDirect, answer) {
         ${top2 ? `<span class="badge ${placeClass(top2.place)}">${esc(top2.event)}: ${esc(place_label(top2.place))}</span>` : ''}
       </div>
       <div class="result-actions">
-        ${!isSnap ? `<button class="btn btn-primary" onclick='openDeepDive(${JSON.stringify(r.school)})'>Deep Dive →</button>` : ''}
+        ${(!isSnap || Object.keys(meta).length > 0) ? `<button class="btn btn-primary" onclick='openDeepDive(${JSON.stringify(r.school)})'>Deep Dive →</button>` : ''}
         ${inList
           ? `<button class="btn btn-added" disabled>✓ On My List</button>`
           : `<button class="btn btn-secondary" onclick='addToList(${JSON.stringify(r.school)}, ${i})'>+ Add to List</button>`}

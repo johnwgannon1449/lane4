@@ -1877,9 +1877,33 @@ def deep_dive():
     grad_year        = prof_ovr.get('gradYear',         '2026')
     all_results = score_all_schools(times, sat, gpa)
     result = next((r for r in all_results if r['school'] == school), None)
+    is_oou = False
 
     if result is None:
-        return jsonify({'error': f'School "{school}" not found in scored results'}), 404
+        oou_meta_found = _oou_lookup(school)
+        if oou_meta_found:
+            oou_adm = _oou_admission(oou_meta_found, sat, gpa)
+            result = {
+                'school':         school,
+                'conference':     '',
+                'division':       '',
+                'adjTier':        '',
+                'psf':            1.0,
+                'admission':      oou_adm,
+                'top3':           [],
+                'allEvents':      [],
+                'meta':           oou_meta_found,
+                'confTierShort':  '',
+                'confTier':       '',
+                'confFinish2026': None,
+                'confScore2026':  None,
+                'confPowerClass': '',
+                'snapshotOnly':   True,
+                'outOfUniverse':  True,
+            }
+            is_oou = True
+        else:
+            return jsonify({'error': f'School "{school}" not found'}), 404
 
     client = _get_anthropic()
     if not client:
@@ -1936,38 +1960,73 @@ def deep_dive():
         "— is powerful when honest."
     )
 
-    user_prompt = (
-        f"Write a deep dive for {swimmer_name} considering {result['school']}.\n\n"
-        f"SWIMMER: {swimmer_name}, Class of {grad_year}, GPA {gpa} unweighted, "
-        f"{sat_detail}{ap_detail}."
-        f"{vibe_block}\n"
-        f"SWIM RESULTS AT {result['school'].upper()} ({result['conference']}):\n"
-        f"Top events: {top3_text}\n"
-        f"Program strength: {prog_strength} (PSF {result['psf']})\n"
-        f"Admission outlook: {result['admission']['label']}"
-        f"{hidden_ivy_note}{stem_note}\n"
-        f"{super_powerhouse_note}"
-        f"School vibe: {meta.get('vibe', '')}\n"
-        f"Location: {meta.get('location', '')}\n"
-        f"Acceptance rate: ~{meta.get('accept', '?')}%\n"
-        f"SAT median: ~{meta.get('satMedian', '?')}\n"
-        f"Merit aid: {merit_label}\n\n"
-        "Write exactly these sections. Warm, direct, honest. Talk to a 17-year-old and their family. "
-        "Never clinical. Weave in what you know about their personality — don't just list "
-        "preferences, speak to them naturally. Use 'Hidden Ivy' naturally if applicable. "
-        "Never use the word 'tier'. Max 2-3 sentences per section.\n\n"
-        "## Your Honest Shot\n"
-        "## What This School Is Actually Like\n"
-        f"## How {swimmer_name} Fits on the Swim Team\n"
-        "## Why a Coach Would Want to Call\n"
-        "## Getting In — The Real Picture\n"
-        "## The Money Conversation\n"
-        "Include: Estimated COA, Estimated Merit Aid for this profile, Estimated Net Cost\n"
-        "## Your Next Three Moves\n"
-        "Three specific actions this week.\n"
-        "## The Bottom Line\n"
-        "One sentence. Make it land."
-    )
+    ivy_note = '\nThis is an Ivy League school — need-based aid only, no merit scholarships.' if meta.get('ivyLeague') else ''
+
+    if is_oou:
+        user_prompt = (
+            f"Write a deep dive for {swimmer_name} considering {result['school']}.\n\n"
+            f"SWIMMER: {swimmer_name}, Class of {grad_year}, GPA {gpa} unweighted, "
+            f"{sat_detail}{ap_detail}."
+            f"{vibe_block}\n"
+            f"SCHOOL: {result['school']}\n"
+            f"Admission outlook for this swimmer: {result['admission']['label']}\n"
+            f"Acceptance rate: ~{meta.get('accept', '?')}%\n"
+            f"SAT median: ~{meta.get('satMedian', '?')}\n"
+            f"School vibe: {meta.get('vibe', '')}\n"
+            f"Location: {meta.get('location', '')}\n"
+            f"Merit aid: {merit_label}"
+            f"{hidden_ivy_note}{ivy_note}{stem_note}\n\n"
+            "NOTE: This school is not in our swim recruiting database. Focus on academic and "
+            "personal fit, not swim recruitment. The swimmer is using Lane4 to compare this school "
+            "against their D3 options — be honest about how it stacks up.\n\n"
+            "Write exactly these sections. Warm, direct, honest. Talk to a 17-year-old and their family. "
+            "Max 2-3 sentences per section.\n\n"
+            "## Your Honest Shot\n"
+            "## What This School Is Actually Like\n"
+            "## Academics & Campus Life\n"
+            "## Getting In — The Real Picture\n"
+            "## The Money Conversation\n"
+            "Include: Estimated COA, financial aid philosophy (need-based vs merit), realistic net cost.\n"
+            "## How It Compares to Your D3 Options\n"
+            "Be honest — what does choosing this school mean for continuing to swim competitively?\n"
+            "## Your Next Three Moves\n"
+            "Three specific actions this week.\n"
+            "## The Bottom Line\n"
+            "One sentence. Make it land."
+        )
+    else:
+        user_prompt = (
+            f"Write a deep dive for {swimmer_name} considering {result['school']}.\n\n"
+            f"SWIMMER: {swimmer_name}, Class of {grad_year}, GPA {gpa} unweighted, "
+            f"{sat_detail}{ap_detail}."
+            f"{vibe_block}\n"
+            f"SWIM RESULTS AT {result['school'].upper()} ({result['conference']}):\n"
+            f"Top events: {top3_text}\n"
+            f"Program strength: {prog_strength} (PSF {result['psf']})\n"
+            f"Admission outlook: {result['admission']['label']}"
+            f"{hidden_ivy_note}{ivy_note}{stem_note}\n"
+            f"{super_powerhouse_note}"
+            f"School vibe: {meta.get('vibe', '')}\n"
+            f"Location: {meta.get('location', '')}\n"
+            f"Acceptance rate: ~{meta.get('accept', '?')}%\n"
+            f"SAT median: ~{meta.get('satMedian', '?')}\n"
+            f"Merit aid: {merit_label}\n\n"
+            "Write exactly these sections. Warm, direct, honest. Talk to a 17-year-old and their family. "
+            "Never clinical. Weave in what you know about their personality — don't just list "
+            "preferences, speak to them naturally. Use 'Hidden Ivy' naturally if applicable. "
+            "Never use the word 'tier'. Max 2-3 sentences per section.\n\n"
+            "## Your Honest Shot\n"
+            "## What This School Is Actually Like\n"
+            f"## How {swimmer_name} Fits on the Swim Team\n"
+            "## Why a Coach Would Want to Call\n"
+            "## Getting In — The Real Picture\n"
+            "## The Money Conversation\n"
+            "Include: Estimated COA, Estimated Merit Aid for this profile, Estimated Net Cost\n"
+            "## Your Next Three Moves\n"
+            "Three specific actions this week.\n"
+            "## The Bottom Line\n"
+            "One sentence. Make it land."
+        )
 
     try:
         resp = client.messages.create(
