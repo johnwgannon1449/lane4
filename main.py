@@ -2996,6 +2996,50 @@ def _get_anthropic():
     except Exception:
         return None
 
+def _similarity_sort(candidates, target):
+    """
+    Sort candidates by institutional similarity to a target school.
+    Used when the user searches by school name — produces the pool that
+    Claude picks the 5 'similar schools' from.
+
+    Purely institutional dimensions — the swimmer's adjPts / swim score
+    plays NO role here.  The recruiting badge still appears on each card
+    from the normal scoring pipeline; it just doesn't shape which schools
+    are considered 'similar'.
+
+    Dimensions and weights:
+      1. Division match         (0 if same, +4 penalty if different)
+      2. Academic selectivity   (|tier distance| × 3, 4-bucket scale)
+      3. Conference tier        (|tier distance| × 1, only when target has one)
+    """
+    SEL_ORDER  = {'ultra_selective': 0, 'highly_selective': 1,
+                  'selective': 2, 'broader_admit': 3}
+    TIER_ORDER = {'1A': 0, '1B': 1, '2': 2, '3': 3, '4': 4, '': 99}
+
+    t_meta   = target.get('meta') or {}
+    t_div    = target.get('division', '')
+    t_sel    = _selectivity_tier(t_meta.get('accept'), t_meta.get('satMedian'))
+    t_sel_n  = SEL_ORDER.get(t_sel, 3)
+    t_tier   = target.get('confTierShort', '')
+    t_tier_n = TIER_ORDER.get(t_tier, 99)
+    has_tier = t_tier_n != 99  # skip tier distance when target has no conf-tier data
+
+    def _score(r):
+        r_meta   = r.get('meta') or {}
+        r_div    = r.get('division', '')
+        r_sel    = _selectivity_tier(r_meta.get('accept'), r_meta.get('satMedian'))
+        r_sel_n  = SEL_ORDER.get(r_sel, 3)
+        r_tier   = r.get('confTierShort', '')
+        r_tier_n = TIER_ORDER.get(r_tier, 99)
+
+        div_penalty = 0 if r_div == t_div else 4
+        sel_dist    = abs(r_sel_n - t_sel_n) * 3
+        tier_dist   = abs(r_tier_n - t_tier_n) if (has_tier and r_tier_n != 99) else 0
+        return div_penalty + sel_dist + tier_dist
+
+    return sorted(candidates, key=_score)
+
+
 def _pre_sort(results, query, eliminated, my_list):
     """
     Re-sort top-35 slice based on query intent.
@@ -3301,10 +3345,10 @@ def search():
 
     candidates = [r for r in all_results if r['school'] not in excl_names]
     if direct_match:
-        dm_div   = direct_match.get('division', '')
-        same_div = [r for r in candidates if r.get('division') == dm_div]
-        other    = [r for r in candidates if r.get('division') != dm_div]
-        pool     = (same_div + other)[:35]
+        # Sort by institutional similarity (division + selectivity + conf tier),
+        # NOT by swimmer adjPts — so "similar schools" reflects what the school
+        # is like, independently of how well this swimmer happens to score there.
+        pool = _similarity_sort(candidates, direct_match)[:35]
     else:
         pool = candidates[:35]
 
@@ -3328,14 +3372,18 @@ def search():
 
     if direct_match:
         user_prompt = (
-            f'The user searched by school name for "{direct_match["school"]}" '
-            f'({direct_match["conference"]}, program strength: {_program_strength_desc(direct_match)}).\n\n'
+            f'The user searched for "{direct_match["school"]}" '
+            f'({direct_match["conference"] or "independent"}, {direct_match.get("division","")}, '
+            f'program strength: {_program_strength_desc(direct_match)}).\n\n'
             f"{swimmer_name}: GPA {gpa}, SAT {sat}" + (f", ACT {act_score}" if act_score else "") + ".\n\n"
-            "Pick 5 schools from this numbered list that are most similar to "
-            f"{direct_match['school']} in program strength, academic selectivity, and overall vibe. "
+            f"This list is already sorted by institutional similarity to {direct_match['school']} "
+            f"(same division, selectivity, and conference tier). "
+            "Pick the 5 schools that are most genuinely similar — consider academic culture, "
+            "school size, mission, and athletic program level. Ignore the swimmer's times when judging similarity. "
             "Return ONLY JSON.\n\n"
             f"{school_lines}\n\n"
-            'JSON format:\n{"answer":"1-2 sentences why these are similar","schools":[{"number":1,"why":"under 15 words"}]}'
+            'JSON format:\n{"answer":"1-2 sentences why these schools are similar to '
+            f'{direct_match["school"]}' + '","schools":[{"number":1,"why":"under 15 words"}]}'
         )
     else:
         sorted_35 = _pre_sort(all_results, query, eliminated, my_list)
