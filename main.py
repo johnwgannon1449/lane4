@@ -1582,14 +1582,37 @@ def search():
     # ── Direct school-name match ──────────────────────────────────────────
     q_lower      = query.lower()
     direct_match = None
+    # First pass: exact name match in the 76 scored schools
     for r in all_results:
         if r['school'].lower() == q_lower:
             direct_match = r
             break
+    # Second pass: partial name match in scored schools
     if not direct_match:
         for r in all_results:
             if q_lower in r['school'].lower():
                 direct_match = r
+                break
+    # Third pass: fall back to full 324-school universe (snapshot_only schools
+    # won't have swim scoring but we still surface them by name).
+    if not direct_match:
+        for s in EXPLORE_SCHOOLS:
+            if s['school'].lower() == q_lower or q_lower in s['school'].lower():
+                direct_match = {
+                    'school':         s['school'],
+                    'conference':     s.get('conference', ''),
+                    'adjTier':        '',
+                    'psf':            1.0,
+                    'admission':      {'label': 'No data', 'score': 0},
+                    'top3':           [],
+                    'meta':           s.get('meta', {}),
+                    'confTierShort':  s.get('conf_tier_short', ''),
+                    'confTier':       s.get('conf_tier', ''),
+                    'confFinish2026': s.get('men_finish_2026') or s.get('women_finish_2026'),
+                    'confScore2026':  None,
+                    'confPowerClass': s.get('conf_power_class', ''),
+                    'snapshotOnly':   True,
+                }
                 break
 
     excl_names = set(eliminated) | set(my_list)

@@ -1357,10 +1357,14 @@ function renderResultCards(schools, container, isDirect, answer) {
   }
 
   function cardHtml(r, i) {
-    const inList = MY_LIST.includes(r.school);
-    const top1   = r.top3[0];
-    const top2   = r.top3[1];
-    const admColor = safeAdmColor(r.admission);
+    const inList   = MY_LIST.includes(r.school);
+    const top3     = r.top3 || [];
+    const top1     = top3[0];
+    const top2     = top3[1];
+    const meta     = r.meta || {};
+    const adm      = r.admission || { label: 'No data', score: 0 };
+    const admColor = safeAdmColor(adm);
+    const isSnap   = r.snapshotOnly;
     return `
     <div class="result-card" id="rcard-${i}">
       ${r.directMatch ? '<div class="direct-match-banner">Exact Match</div>' : ''}
@@ -1368,26 +1372,27 @@ function renderResultCards(schools, container, isDirect, answer) {
       <div class="result-card-top">
         <div>
           <div class="result-school-name">${esc(r.school)}</div>
-          <div class="result-conference">${esc(r.conference)} · ${esc(r.meta.location || '')}</div>
+          <div class="result-conference">${esc(r.conference)} · ${esc(meta.location || '')}</div>
         </div>
         <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;">
-          <span class="badge badge-adm" style="background:${admColor};">${esc(r.admission.label)}</span>
-          <span class="badge badge-tier">${esc(r.adjTier)}</span>
+          ${!isSnap ? `<span class="badge badge-adm" style="background:${admColor};">${esc(adm.label)}</span>` : ''}
+          ${r.adjTier ? `<span class="badge badge-tier">${esc(r.adjTier)}</span>` : ''}
           ${r.confTierShort ? `<span class="badge badge-t${r.confTierShort.toLowerCase()}" title="${esc(r.confTier)} · 2026 conf finish #${r.confFinish2026}">${esc(r.confTierShort)}</span>` : ''}
         </div>
       </div>
       <div class="result-badges">
-        ${r.meta.hiddenIvy ? '<span class="badge badge-ivy">Hidden Ivy</span>' : ''}
-        ${r.meta.stem      ? '<span class="badge badge-stem">STEM</span>' : ''}
-        ${r.meta.merit === 'high' ? '<span class="badge" style="background:#D1FAE5;color:#065F46;">High Merit Aid</span>' : ''}
+        ${meta.hiddenIvy ? '<span class="badge badge-ivy">Hidden Ivy</span>' : ''}
+        ${meta.stem      ? '<span class="badge badge-stem">STEM</span>' : ''}
+        ${meta.merit === 'high' ? '<span class="badge" style="background:#D1FAE5;color:#065F46;">High Merit Aid</span>' : ''}
+        ${isSnap ? '<span class="badge" style="background:#FEF9C3;color:#854D0E;">Conference data only</span>' : ''}
       </div>
-      ${r.meta.vibe ? `<div class="result-vibe">"${esc(r.meta.vibe)}"</div>` : ''}
+      ${meta.vibe ? `<div class="result-vibe">"${esc(meta.vibe)}"</div>` : ''}
       <div class="result-events">
         ${top1 ? `<span class="badge ${placeClass(top1.place)}">${esc(top1.event)}: ${esc(place_label(top1.place))}</span>` : ''}
         ${top2 ? `<span class="badge ${placeClass(top2.place)}">${esc(top2.event)}: ${esc(place_label(top2.place))}</span>` : ''}
       </div>
       <div class="result-actions">
-        <button class="btn btn-primary" onclick='openDeepDive(${JSON.stringify(r.school)})'>Deep Dive →</button>
+        ${!isSnap ? `<button class="btn btn-primary" onclick='openDeepDive(${JSON.stringify(r.school)})'>Deep Dive →</button>` : ''}
         ${inList
           ? `<button class="btn btn-added" disabled>✓ On My List</button>`
           : `<button class="btn btn-secondary" onclick='addToList(${JSON.stringify(r.school)}, ${i})'>+ Add to List</button>`}
@@ -1400,7 +1405,7 @@ function renderResultCards(schools, container, isDirect, answer) {
     const relatedAnswer = answer ? `<div class="info-box" style="background:var(--blue-l);border-left-color:var(--blue);margin-bottom:0.75rem;"><strong>Lane4:</strong> ${esc(answer)}</div>` : '';
     container.innerHTML =
       cardHtml(schools[0], 0) +
-      `<div class="related-divider">You might also like…</div>` +
+      `<div class="related-divider">Colleges similar to ${esc(schools[0].school)}</div>` +
       relatedAnswer +
       schools.slice(1).map((r, i) => cardHtml(r, i + 1)).join('');
   } else {
