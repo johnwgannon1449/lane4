@@ -39,11 +39,6 @@
     }
     .nav-tab:hover { color: var(--navy); }
     .nav-tab.active { color: var(--blue); border-bottom-color: var(--blue); }
-    .nav-tab .badge {
-      display: inline-flex; align-items: center; justify-content: center;
-      background: var(--red); color: white; font-size: 0.55rem;
-      width: 14px; height: 14px; border-radius: 50%; margin-left: 4px; font-weight: 700;
-    }
 
     /* ── LAYOUT ──────────────────────────────────────────────── */
     .tab-panel { display: none; }
@@ -334,7 +329,7 @@
     .reminder-item { display: flex; align-items: center; gap: 0.6rem; background: var(--bg); border-radius: 8px; padding: 0.55rem 0.75rem; margin-bottom: 0.4rem; font-size: 0.83rem; }
     .reminder-label { font-size: 0.7rem; font-weight: 700; padding: 2px 7px; border-radius: 4px; white-space: nowrap; cursor: pointer; border: none; font-family: 'Figtree', sans-serif; }
     .reminder-label:hover { opacity: 0.8; }
-    .rem-overdue { background: var(--red-l); color: var(--red); }
+    .rem-overdue { background: var(--amber-l); color: var(--amber); }
     .rem-today   { background: var(--amber-l); color: var(--amber); }
     .rem-upcoming { background: var(--green-l); color: var(--green); }
     .crm-add-row { display: flex; gap: 0.5rem; margin-top: 0.5rem; flex-wrap: wrap; }
@@ -358,7 +353,7 @@
     .rem-filter-row { display: flex; gap: 0; background: var(--bg); border: 1.5px solid var(--border); border-radius: 8px; overflow: hidden; margin-bottom: 1.25rem; width: fit-content; }
     .rem-filter-btn { border: none; background: none; padding: 7px 20px; font-size: 0.82rem; font-weight: 600; cursor: pointer; color: var(--muted); }
     .rem-filter-btn.active { background: var(--blue); color: white; }
-    .rem-overdue  { background: #FEE2E2 !important; color: #DC2626 !important; }
+    .rem-overdue  { background: #FEF3C7 !important; color: #B45309 !important; }
     .rem-today    { background: #FEF3C7 !important; color: #D97706 !important; }
     .rem-upcoming { background: #DBEAFE !important; color: #1D4ED8 !important; }
     .rem-done     { background: #D1FAE5 !important; color: #059669 !important; }
@@ -553,8 +548,8 @@
   <span class="logo">Lane<span class="logo-dot">4</span></span>
   <div class="nav-tabs">
     <div class="nav-tab active" id="tab-explore"   onclick="showTab('explore')">Explore</div>
-    <div class="nav-tab"        id="tab-mylist"    onclick="showTab('mylist')">My List <span id="list-count-badge" style="display:none;" class="badge">0</span></div>
-    <div class="nav-tab"        id="tab-reminders" onclick="showTab('reminders')">Reminders <span id="rem-urgent-badge" style="display:none;" class="badge">!</span></div>
+    <div class="nav-tab"        id="tab-mylist"    onclick="showTab('mylist')">My List</div>
+    <div class="nav-tab"        id="tab-reminders" onclick="showTab('reminders')">Reminders</div>
     <div class="nav-tab"        id="tab-profile"   onclick="showTab('profile')">Profile</div>
   </div>
 </nav>
@@ -1667,7 +1662,7 @@ function renderMyList() {
 
     const remItems = (crm.reminders || []).filter(r => !r.completed).map(r => {
       const cls = remClass(r.date);
-      const lbl = r.date < todayISO() ? 'Overdue' : r.date === todayISO() ? 'Due Today' : remLabel(r.date);
+      const lbl = r.date < todayISO() ? 'Past Due' : r.date === todayISO() ? 'Due Today' : remLabel(r.date);
       const isEditing = EDIT_REM && EDIT_REM.school === school && EDIT_REM.id === r.id;
       const datePart = isEditing
         ? `<input type="date" class="crm-input" style="width:130px;padding:2px 6px;flex-shrink:0;" value="${r.date}"
@@ -1972,7 +1967,7 @@ function renderReminders() {
       const isOverdue = r.date < today;
       const isToday   = r.date === today;
       const cls = isOverdue ? 'rem-overdue' : isToday ? 'rem-today' : 'rem-upcoming';
-      const lbl = isOverdue ? 'Overdue' : isToday ? 'Due Today' : remLabel(r.date);
+      const lbl = isOverdue ? 'Past Due' : isToday ? 'Due Today' : remLabel(r.date);
       const isEditing = EDIT_REM && EDIT_REM.school === r.school && EDIT_REM.id === r.id;
       const datePart = isEditing
         ? `<input type="date" class="crm-input" style="width:130px;padding:2px 6px;flex-shrink:0;" value="${r.date}"
@@ -2005,9 +2000,9 @@ function renderReminders() {
     }
 
     el.innerHTML = filterHtml +
-      groupHtml('⚠ Overdue',   overdue)  +
-      groupHtml('⚡ Due Today', todayRem) +
-      groupHtml('📅 Upcoming',  upcoming);
+      groupHtml('Past Due',  overdue)  +
+      groupHtml('Due Today', todayRem) +
+      groupHtml('Upcoming',  upcoming);
     return;
   }
 
@@ -2373,23 +2368,7 @@ function setVibe(id, value) {
 // BADGES
 // ════════════════════════════════════════════════════════════════
 function updateBadges() {
-  const listBadge = document.getElementById('list-count-badge');
-  if (MY_LIST.length > 0) {
-    listBadge.textContent = MY_LIST.length;
-    listBadge.style.display = 'inline-flex';
-  } else {
-    listBadge.style.display = 'none';
-  }
-
-  const today = todayISO();
-  const urgent = MY_LIST.flatMap(s => (CRM_DATA[s]?.reminders || []))
-    .filter(r => !r.completed && r.date <= today).length;
-  const remBadge = document.getElementById('rem-urgent-badge');
-  if (urgent > 0) {
-    remBadge.style.display = 'inline-flex';
-  } else {
-    remBadge.style.display = 'none';
-  }
+  // nav dots removed — nothing to update
 }
 
 // ════════════════════════════════════════════════════════════════
@@ -2437,10 +2416,10 @@ function remClass(date) {
 
 function remLabel(date) {
   const t = todayISO();
-  if (date < t)  return '⚠ Overdue';
-  if (date === t) return '⚡ Today';
+  if (date < t)  return 'Past Due';
+  if (date === t) return 'Due Today';
   const d = new Date(date + 'T00:00:00');
-  return '📅 ' + d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 }
 
 // ════════════════════════════════════════════════════════════════
