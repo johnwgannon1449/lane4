@@ -1428,12 +1428,22 @@ def _pre_sort(results, query, eliminated, my_list):
 
     return pool[:35]
 
+def _program_strength_desc(r):
+    """Plain-language program strength label — never uses the word 'tier'."""
+    ts = r.get('confTierShort', '')
+    if ts == '1A': return 'Super Powerhouse'
+    if ts == '1B': return 'Powerhouse'
+    if ts == '2':  return 'Strong'
+    if ts == '3':  return 'Mid-pack'
+    if ts == '4':  return 'Developing'
+    return r.get('adjTier', '')  # fallback to internal score label
+
 def _build_school_line(i, r):
     """Format one numbered line for the Claude search prompt."""
     vibe = (r['meta'].get('vibe') or '')[:60]
     return (
         f"{i+1}. {r['school']} ({r['conference']}): "
-        f"swimTier={r['adjTier']}, admission={r['admission']['label']}, "
+        f"programStrength={_program_strength_desc(r)}, admission={r['admission']['label']}, "
         f"hiddenIvy={str(r['meta'].get('hiddenIvy', False)).lower()}, "
         f"stem={str(r['meta'].get('stem', False)).lower()}, "
         f"merit={r['meta'].get('merit', '')}, "
@@ -1644,10 +1654,10 @@ def search():
     if direct_match:
         user_prompt = (
             f'The user searched by school name for "{direct_match["school"]}" '
-            f'({direct_match["conference"]}, swim tier: {direct_match["adjTier"]}).\n\n'
+            f'({direct_match["conference"]}, program strength: {_program_strength_desc(direct_match)}).\n\n'
             f"{swimmer_name}: GPA {gpa}, SAT {sat}" + (f", ACT {act_score}" if act_score else "") + ".\n\n"
             "Pick 5 schools from this numbered list that are most similar to "
-            f"{direct_match['school']} in swim tier, academic selectivity, and overall vibe. "
+            f"{direct_match['school']} in program strength, academic selectivity, and overall vibe. "
             "Return ONLY JSON.\n\n"
             f"{school_lines}\n\n"
             'JSON format:\n{"answer":"1-2 sentences why these are similar","schools":[{"number":1,"why":"under 15 words"}]}'
@@ -1777,10 +1787,21 @@ def deep_dive():
         sat_detail += (", " if sat_detail else "") + f"ACT {act_score}"
     ap_detail = f", {ap_count} projected APs" if ap_count else ""
 
+    prog_strength = _program_strength_desc(result)
+    conf_tier_short = result.get('confTierShort', '')
+    super_powerhouse_note = (
+        f"\nIMPORTANT: {result['school']} is a Super Powerhouse — they dominate their conference "
+        f"and recruit well above what most peer schools in {result['conference']} can attract. "
+        "In the swim team section, call this out directly and tell the swimmer to look closely "
+        "at the current roster and committed recruits before assuming a spot."
+    ) if conf_tier_short == '1A' else ''
+
     system_prompt = (
         "You are Lane4, a college swim recruiting advisor. "
         "Warm, honest, direct. Talk to a 17-year-old and their family. "
-        "Never use jargon. 'Hidden Ivy' means academically elite and employer-respected "
+        "Never use jargon. Never use the word 'tier' — describe programs as "
+        "'Super Powerhouse', 'Powerhouse', 'dominant in conference', 'competitive', etc. "
+        "'Hidden Ivy' means academically elite and employer-respected "
         "without the Stanford rejection rate. The comp anchor — comparing to a dream school "
         "— is powerful when honest."
     )
@@ -1792,10 +1813,10 @@ def deep_dive():
         f"{vibe_block}\n"
         f"SWIM RESULTS AT {result['school'].upper()} ({result['conference']}):\n"
         f"Top events: {top3_text}\n"
-        f"Conference tier (raw): {tier_label(result['rawPts'])}\n"
-        f"Program adjusted tier (PSF {result['psf']}): {result['adjTier']}\n"
+        f"Program strength: {prog_strength} (PSF {result['psf']})\n"
         f"Admission outlook: {result['admission']['label']}"
         f"{hidden_ivy_note}{stem_note}\n"
+        f"{super_powerhouse_note}"
         f"School vibe: {meta.get('vibe', '')}\n"
         f"Location: {meta.get('location', '')}\n"
         f"Acceptance rate: ~{meta.get('accept', '?')}%\n"
@@ -1804,7 +1825,7 @@ def deep_dive():
         "Write exactly these sections. Warm, direct, honest. Talk to a 17-year-old and their family. "
         "Never clinical. Weave in what you know about their personality — don't just list "
         "preferences, speak to them naturally. Use 'Hidden Ivy' naturally if applicable. "
-        "Max 2-3 sentences per section.\n\n"
+        "Never use the word 'tier'. Max 2-3 sentences per section.\n\n"
         "## Your Honest Shot\n"
         "## What This School Is Actually Like\n"
         f"## How {swimmer_name} Fits on the Swim Team\n"

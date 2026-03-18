@@ -1375,7 +1375,6 @@ function renderResultCards(schools, container, isDirect, answer) {
         </div>
         <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;">
           ${!isSnap ? `<span class="badge badge-adm" style="background:${admColor};">${esc(adm.label)}</span>` : ''}
-          ${r.adjTier ? `<span class="badge badge-tier">${esc(r.adjTier)}</span>` : ''}
           ${r.confTierShort ? `<span class="badge badge-t${r.confTierShort.toLowerCase()}" title="${esc(r.confTier)} · 2026 conf finish #${r.confFinish2026}">${esc(r.confTierShort)}</span>` : ''}
           ${r.division ? `<span class="badge" style="background:#F1F5F9;color:#475569;font-size:0.68rem;">${esc(r.division)}</span>` : ''}
         </div>
@@ -1473,7 +1472,6 @@ async function openDeepDive(school) {
           <span>${esc(result.conference || '')}</span>
           ${meta.location ? `<span>· ${esc(meta.location)}</span>` : ''}
           <span class="badge badge-adm" style="background:${adm.color || '#64748B'};">${esc(adm.label || '')}</span>
-          <span class="badge badge-tier">${esc(result.adjTier || '')}</span>
           ${result.division ? `<span class="badge" style="background:#F1F5F9;color:#475569;font-size:0.68rem;">${esc(result.division)}</span>` : ''}
           ${meta.hiddenIvy ? '<span class="badge badge-ivy">Hidden Ivy</span>' : ''}
           ${meta.stem      ? '<span class="badge badge-stem">STEM</span>' : ''}
