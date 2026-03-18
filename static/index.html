@@ -1411,11 +1411,9 @@ function renderResultCards(schools, container, isDirect, answer) {
   }
 
   if (isDirect && schools.length > 1) {
-    const relatedAnswer = answer ? `<div class="info-box" style="background:var(--blue-l);border-left-color:var(--blue);margin-bottom:0.75rem;"><strong>Lane4:</strong> ${esc(answer)}</div>` : '';
     container.innerHTML =
       cardHtml(schools[0], 0) +
       `<div class="related-divider">Colleges similar to ${esc(schools[0].school)}</div>` +
-      relatedAnswer +
       schools.slice(1).map((r, i) => cardHtml(r, i + 1)).join('');
   } else {
     container.innerHTML = schools.map((r, i) => cardHtml(r, i)).join('');
