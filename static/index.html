@@ -1393,9 +1393,12 @@ function renderResultCards(schools, container, isDirect, answer) {
       1: 'background:#FEF3C7;color:#92400E;font-weight:600;'
     };
     const ss = adm.swimScore;
-    const recruitBadge = (!isOOU && ss >= 1)
-      ? `<span class="badge" style="${_RECRUIT_STYLE[ss]}">${_RECRUIT_LABEL[ss]}</span>`
-      : '';
+    const recruitBadge = isOOU ? '' :
+      (ss >= 1
+        ? `<span class="badge" style="${_RECRUIT_STYLE[ss]}">${_RECRUIT_LABEL[ss]}</span>`
+        : (r.hasSwimData
+            ? `<span class="badge" style="background:#FEE2E2;color:#991B1B;font-weight:600;">Reach</span>`
+            : ''));
     return `
     <div class="result-card" id="rcard-${i}">
       ${r.aiWhy ? `<div class="ai-why">✦ ${esc(r.aiWhy)}</div>` : ''}
