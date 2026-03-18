@@ -1638,10 +1638,12 @@ function renderMyList() {
     const offerVal  = crm.cost?.offer != null ? crm.cost.offer : null;
     const costFrozen = offerVal !== null;
     const costNum   = costFrozen ? offerVal : costEstimate(meta.merit);
-    const costLabel = costFrozen ? `Offer: ${formatCost(costNum)}/yr` : `Est. ${formatCost(costNum)}/yr`;
-    const costBg    = costFrozen ? 'var(--green-m)' : 'var(--bg)';
-    const costClr   = costFrozen ? '#065F46'        : 'var(--muted)';
-    const costBorder = costFrozen ? 'none' : '1px solid var(--border)';
+    const costLabel  = costFrozen ? `${formatCost(costNum)}/yr` : `~${formatCost(costNum)}/yr`;
+    const costPrefix = costFrozen ? '🔒 Offer' : 'Est.';
+    const costBg     = costFrozen ? '#059669'        : 'transparent';
+    const costClr    = costFrozen ? '#fff'           : 'var(--muted)';
+    const costBorder = costFrozen ? 'none'           : '1.5px dashed #CBD5E1';
+    const costStyle  = costFrozen ? '' : 'font-style:italic;';
     return `
     <div class="list-school-card" style="border-left-color:${cfg.color};">
       <div class="list-school-header" onclick='toggleCRM(${JSON.stringify(school)})'>
@@ -1655,7 +1657,7 @@ function renderMyList() {
         <div class="list-school-badges">
           ${adm.label ? `<span class="list-badge" style="background:${safeAdmColor(adm)};color:#fff;">${esc(adm.label)}</span>` : ''}
           ${adjTier ? `<span class="list-badge" style="background:var(--blue-l);color:var(--blue);">${esc(adjTier)}</span>` : ''}
-          <span class="list-badge" style="background:${costBg};color:${costClr};border:${costBorder};">${costFrozen ? '🔒 ' : ''}${esc(costLabel)}</span>
+          <span class="list-badge" style="background:${costBg};color:${costClr};border:${costBorder};${costStyle}"><span style="opacity:0.75;font-style:normal;">${costPrefix} </span>${esc(costLabel)}</span>
           ${division ? `<span class="list-badge" style="background:var(--bg);color:var(--slate);border:1px solid var(--border);">${esc(division)}</span>` : ''}
           ${meta.hiddenIvy ? `<span class="list-badge" style="background:var(--violet-l);color:var(--violet);">Hidden Ivy</span>` : ''}
           ${meta.stem ? `<span class="list-badge" style="background:var(--blue-l);color:var(--blue);">STEM</span>` : ''}
@@ -1704,13 +1706,16 @@ function renderMyList() {
           <div class="crm-section-title">Cost / Offer</div>
           ${costFrozen ? `
           <div style="display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap;">
-            <span style="font-size:0.9rem;font-weight:700;color:#065F46;">🔒 ${formatCost(offerVal)}/yr — offer locked</span>
-            <button class="btn btn-ghost" style="font-size:0.75rem;padding:2px 8px;" onclick='resetCost(${JSON.stringify(school)})'>Reset to estimate</button>
+            <span style="font-size:0.88rem;font-weight:700;color:#059669;">🔒 Your offer: ${formatCost(offerVal)}/yr</span>
+            <button class="btn btn-ghost" style="font-size:0.75rem;padding:2px 8px;color:var(--muted);" onclick='resetCost(${JSON.stringify(school)})'>Clear &amp; revert to estimate</button>
           </div>` : `
-          <div style="font-size:0.8rem;color:var(--muted);margin-bottom:0.5rem;">Estimate based on merit aid profile: <strong>${formatCost(costNum)}/yr</strong>. Enter your actual offer to lock it in.</div>
+          <div style="font-size:0.8rem;color:var(--muted);margin-bottom:0.5rem;">
+            <span style="font-style:italic;">Lane4 estimate</span> based on merit aid profile: <strong>${formatCost(costNum)}/yr</strong>. 
+            Once you receive an offer, enter it below to replace our guess with the real number.
+          </div>
           <div class="crm-add-row">
-            <input class="crm-input" type="number" id="cost-input-${si}" placeholder="Annual cost (e.g. 42000)" min="1000" max="100000" style="max-width:200px;" onclick="event.stopPropagation()" />
-            <button class="btn btn-secondary" onclick='setCost(${JSON.stringify(school)}, "cost-input-${si}")'>Lock Offer</button>
+            <input class="crm-input" type="number" id="cost-input-${si}" placeholder="Your actual offer (e.g. 42000)" min="1000" max="100000" style="max-width:220px;" onclick="event.stopPropagation()" />
+            <button class="btn btn-secondary" onclick='setCost(${JSON.stringify(school)}, "cost-input-${si}")'>Lock My Offer</button>
           </div>`}
         </div>
 
