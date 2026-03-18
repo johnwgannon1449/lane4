@@ -81,36 +81,6 @@
     .badge-t3   { background: #F1F5F9; color: var(--slate); }
     .badge-t4   { background: #F8FAFC; color: #94A3B8; border: 1px solid var(--border); }
 
-    /* ── TIERS TAB ───────────────────────────────────────────────── */
-    .tier-filters { display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap; margin-bottom:1.1rem; }
-    .tier-gender-btn {
-      padding:6px 14px; border-radius:20px; border:1.5px solid var(--border);
-      font-size:0.8rem; font-weight:600; color:var(--slate); cursor:pointer;
-      background:var(--white); transition:all 0.15s;
-    }
-    .tier-gender-btn.active { border-color:var(--blue); color:var(--blue); background:var(--blue-l); }
-    .tier-search {
-      flex:1; min-width:140px; padding:7px 12px; border:1.5px solid var(--border);
-      border-radius:9px; font-family:'Figtree',sans-serif; font-size:0.85rem;
-      color:var(--navy); background:var(--white);
-    }
-    .tier-search:focus { outline:none; border-color:var(--blue); }
-    .tier-conf-block { margin-bottom:1.1rem; }
-    .tier-conf-header {
-      font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em;
-      color:var(--muted); padding:0.35rem 0 0.35rem; border-bottom:1px solid var(--border);
-      margin-bottom:0.35rem; display:flex; align-items:center; gap:0.5rem;
-    }
-    .tier-row {
-      display:flex; align-items:center; gap:0.6rem; padding:0.45rem 0;
-      border-bottom:1px solid #F1F5F9; font-size:0.85rem;
-    }
-    .tier-row:last-child { border-bottom:none; }
-    .tier-rank { width:22px; text-align:right; color:var(--muted); font-size:0.75rem; font-weight:600; flex-shrink:0; }
-    .tier-team { flex:1; color:var(--navy); font-weight:500; }
-    .tier-score { color:var(--muted); font-size:0.75rem; font-family:var(--mono); width:54px; text-align:right; flex-shrink:0; }
-    .tier-gender-label { font-size:0.62rem; font-weight:700; padding:1px 6px; border-radius:4px; background:#F1F5F9; color:var(--slate); flex-shrink:0; }
-
     /* ── BUTTONS ─────────────────────────────────────────────── */
     .btn {
       display: inline-flex; align-items: center; gap: 5px;
@@ -563,7 +533,6 @@
     <div class="nav-tab"        id="tab-mylist"    onclick="showTab('mylist')">My List <span id="list-count-badge" style="display:none;" class="badge">0</span></div>
     <div class="nav-tab"        id="tab-reminders" onclick="showTab('reminders')">Reminders <span id="rem-urgent-badge" style="display:none;" class="badge">!</span></div>
     <div class="nav-tab"        id="tab-profile"   onclick="showTab('profile')">Profile</div>
-    <div class="nav-tab"        id="tab-tiers"     onclick="showTab('tiers')">Tiers</div>
   </div>
 </nav>
 
@@ -674,26 +643,6 @@
       <p style="font-size:0.83rem;color:var(--muted);margin-bottom:0.85rem;line-height:1.5;">Start fresh with a new swimmer profile. Your current list, reminders, and notes will be replaced on this account.</p>
       <button class="btn btn-danger" onclick="confirmStartNewSwimmer()">Start New Swimmer</button>
     </div>
-  </div>
-</div>
-
-<!-- ═══════════════════════════════════════════════════════════════
-     TIERS TAB
-════════════════════════════════════════════════════════════════ -->
-<div class="tab-panel" id="panel-tiers">
-  <div class="wrap-wide">
-    <div class="page-title">Conference Tiers</div>
-    <div class="page-sub">Final team standings across all 33 conferences — 2026 championship season.</div>
-
-    <div class="tier-filters">
-      <div class="tier-gender-btn active" id="tgb-all"   onclick="setTierGender('all')">All</div>
-      <div class="tier-gender-btn"        id="tgb-women" onclick="setTierGender('women')">Women</div>
-      <div class="tier-gender-btn"        id="tgb-men"   onclick="setTierGender('men')">Men</div>
-      <input class="tier-search" id="tier-search" type="search" placeholder="Search conference or team…" oninput="renderTiers()">
-    </div>
-
-    <div id="tier-list"></div>
-    <div id="tier-loading" style="text-align:center;color:var(--muted);padding:2.5rem 0;font-size:0.88rem;">Loading…</div>
   </div>
 </div>
 
@@ -1222,7 +1171,6 @@ function showTab(name) {
 
   if (name === 'mylist')    renderMyList();
   if (name === 'reminders') renderReminders();
-  if (name === 'tiers')     loadTiers();
 }
 
 function safeAdmColor(adm) {
@@ -1386,6 +1334,7 @@ function renderResultCards(schools, container, isDirect, answer) {
         <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;">
           <span class="badge badge-adm" style="background:${admColor};">${esc(r.admission.label)}</span>
           <span class="badge badge-tier">${esc(r.adjTier)}</span>
+          ${r.confTierShort ? `<span class="badge badge-t${r.confTierShort.toLowerCase()}" title="${esc(r.confTier)} · 2026 conf finish #${r.confFinish2026}">${esc(r.confTierShort)}</span>` : ''}
         </div>
       </div>
       <div class="result-badges">
@@ -2269,101 +2218,6 @@ function remLabel(date) {
   if (date === t) return '⚡ Today';
   const d = new Date(date + 'T00:00:00');
   return '📅 ' + d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-}
-
-// ════════════════════════════════════════════════════════════════
-// CONFERENCE TIERS
-// ════════════════════════════════════════════════════════════════
-let TIER_DATA   = null;   // parsed rows from lane4_snapshot.csv
-let TIER_GENDER = 'all';  // 'all' | 'men' | 'women'
-
-function parseCSV(text) {
-  const lines = text.trim().split('\n');
-  const headers = lines[0].split(',');
-  return lines.slice(1).map(line => {
-    const cols = [];
-    let cur = '', inQ = false;
-    for (let i = 0; i < line.length; i++) {
-      const ch = line[i];
-      if (ch === '"') { inQ = !inQ; }
-      else if (ch === ',' && !inQ) { cols.push(cur); cur = ''; }
-      else { cur += ch; }
-    }
-    cols.push(cur);
-    const row = {};
-    headers.forEach((h, i) => { row[h.trim()] = (cols[i] || '').trim(); });
-    return row;
-  });
-}
-
-function tierBadgeClass(short) {
-  return { '1A':'badge-t1a','1B':'badge-t1b','2':'badge-t2','3':'badge-t3','4':'badge-t4' }[short] || 'badge-t4';
-}
-
-function setTierGender(g) {
-  TIER_GENDER = g;
-  document.querySelectorAll('.tier-gender-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('tgb-' + g).classList.add('active');
-  renderTiers();
-}
-
-function renderTiers() {
-  if (!TIER_DATA) return;
-  const q   = (document.getElementById('tier-search').value || '').toLowerCase();
-  const el  = document.getElementById('tier-list');
-
-  let rows = TIER_DATA;
-  if (TIER_GENDER !== 'all') rows = rows.filter(r => r.gender === TIER_GENDER);
-  if (q) rows = rows.filter(r =>
-    r.conference.toLowerCase().includes(q) || r.team.toLowerCase().includes(q)
-  );
-
-  if (!rows.length) { el.innerHTML = '<div style="color:var(--muted);padding:2rem 0;font-size:0.88rem;">No results.</div>'; return; }
-
-  const grouped = {};
-  rows.forEach(r => {
-    const key = r.conference + '||' + r.gender;
-    if (!grouped[key]) grouped[key] = { conf: r.conference, gender: r.gender, rows: [] };
-    grouped[key].rows.push(r);
-  });
-
-  const sortedKeys = Object.keys(grouped).sort((a, b) => {
-    const [ca, ga] = a.split('||');
-    const [cb, gb] = b.split('||');
-    return ca.localeCompare(cb) || ga.localeCompare(gb);
-  });
-
-  el.innerHTML = sortedKeys.map(key => {
-    const g = grouped[key];
-    const gLabel = g.gender === 'men' ? 'Men' : 'Women';
-    const teams = g.rows.sort((a, b) => parseInt(a.rank) - parseInt(b.rank));
-    return `<div class="card tier-conf-block">
-      <div class="tier-conf-header">
-        <span>${esc(g.conf)}</span>
-        <span class="tier-gender-label">${gLabel}</span>
-      </div>
-      ${teams.map(r => `
-        <div class="tier-row">
-          <span class="tier-rank">${esc(r.rank)}</span>
-          <span class="tier-team">${esc(r.team)}</span>
-          <span class="tier-score">${parseFloat(r.score).toLocaleString()}</span>
-          <span class="badge ${tierBadgeClass(r.tier_short)}">${esc(r.tier_short)}</span>
-        </div>`).join('')}
-    </div>`;
-  }).join('');
-}
-
-async function loadTiers() {
-  if (TIER_DATA) { renderTiers(); return; }
-  try {
-    const res  = await fetch('/data/lane4_snapshot.csv');
-    const text = await res.text();
-    TIER_DATA  = parseCSV(text);
-    document.getElementById('tier-loading').style.display = 'none';
-    renderTiers();
-  } catch(e) {
-    document.getElementById('tier-loading').textContent = 'Failed to load tier data.';
-  }
 }
 
 // ════════════════════════════════════════════════════════════════

@@ -589,6 +589,19 @@ TEAMS_LIST = []    # ordered list of all team dicts
 CONFERENCES = {}   # conference name -> sorted list of canonical school names
 NORMALIZATION_LOG = []  # records every name that was normalized
 
+# ── 2026 snapshot tier enrichment ────────────────────────────────────────────
+# Abbreviated Excel names → full snapshot names (UAA uses short names in the Excel)
+_UAA_SHORT = {
+    'emory':          'emory university',
+    'nyu':            'new york university',
+    'chicago':        'university of chicago',
+    'washingtonmo':   'washington university st louis',
+    'carnegiemellon': 'carnegie mellon university',
+    'casewestern':    'case western reserve universit',
+    'rochester':      'university of rochester',
+    'brandeis':       'brandeis university',
+}
+
 def load_data():
     wb = openpyxl.load_workbook(EXCEL_PATH, data_only=True)
 
@@ -662,6 +675,89 @@ def load_data():
         CONFERENCES[conf].sort(
             key=lambda s: TEAMS.get(f"{conf}|{s}", {}).get('finish') or 99
         )
+
+    _load_conf_tier_lookup()
+
+
+def _norm_key(s):
+    """Lowercase, strip all non-alphanumeric for fuzzy matching."""
+    import re
+    return re.sub(r'[^a-z0-9]', '', s.lower().strip()) if s else ''
+
+
+def _load_conf_tier_lookup():
+    """
+    Reads output/lane4_snapshot_compatible.csv and enriches each team_rec in
+    TEAMS_LIST with 2026 conference championship data:
+      conf_tier_short  — '1A' / '1B' / '2' / '3' / '4'  (empty if not in snapshot)
+      conf_tier        — 'Tier 1A' … 'Tier 4'
+      conf_finish_2026 — integer conference finish rank
+      conf_score_2026  — team score at the 2026 championship
+      conf_power_class — 'Super Powerhouse' / 'Powerhouse' / ''
+    """
+    import csv as _csv
+    snap_path = os.path.join(os.path.dirname(__file__), 'output', 'lane4_snapshot_compatible.csv')
+    if not os.path.exists(snap_path):
+        return
+
+    # Build lookup: norm_conf|norm_team → row  (men's rows preferred)
+    snap_rows = []
+    with open(snap_path, newline='', encoding='utf-8') as f:
+        snap_rows = list(_csv.DictReader(f))
+
+    exact = {}   # norm(conf)|norm(team) → row
+    by_team = {} # norm(team) → list of rows
+    for row in snap_rows:
+        if row.get('gender', '').lower() != 'men':
+            continue
+        ck = _norm_key(row['Conference']) + '|' + _norm_key(row['Team'])
+        exact[ck] = row
+        by_team.setdefault(_norm_key(row['Team']), []).append(row)
+
+    def _find(conf, school):
+        # 1. exact conf|team match
+        ck = _norm_key(conf) + '|' + _norm_key(school)
+        if ck in exact:
+            return exact[ck]
+        # 2. UAA abbreviation table
+        norm_school = _norm_key(school)
+        full_name = _UAA_SHORT.get(norm_school)
+        if full_name:
+            rows = by_team.get(_norm_key(full_name), [])
+            if rows:
+                return rows[0]
+        # 3. team-name match, same conference
+        candidates = by_team.get(norm_school, [])
+        same_conf = [r for r in candidates if _norm_key(r['Conference']) == _norm_key(conf)]
+        if same_conf:
+            return same_conf[0]
+        # 4. team-name match, any conference (only if unique)
+        if len(candidates) == 1:
+            return candidates[0]
+        return None
+
+    for team_rec in TEAMS_LIST:
+        hit = _find(team_rec['conference'], team_rec['school'])
+        # Fallback: try the original raw Excel name (before TEAM_NAME_MAP normalization)
+        if not hit and team_rec.get('raw_name') and team_rec['raw_name'] != team_rec['school']:
+            hit = _find(team_rec['conference'], team_rec['raw_name'])
+        if hit:
+            try:
+                finish_2026 = int(hit['Finish'])
+            except (ValueError, TypeError):
+                finish_2026 = None
+            team_rec['conf_tier_short']  = hit.get('tier_short', '')
+            team_rec['conf_tier']        = hit.get('final_tier', '')
+            team_rec['conf_finish_2026'] = finish_2026
+            team_rec['conf_score_2026']  = hit.get('MenPoints', '')
+            team_rec['conf_power_class'] = hit.get('PowerClass', '')
+        else:
+            team_rec['conf_tier_short']  = ''
+            team_rec['conf_tier']        = ''
+            team_rec['conf_finish_2026'] = None
+            team_rec['conf_score_2026']  = ''
+            team_rec['conf_power_class'] = ''
+
 
 def _float(v):
     try:
@@ -857,18 +953,23 @@ def _score_school_swim(team_rec, times):
     adj_tier = tier_label(adj_pts)
 
     return {
-        'school':     school,
-        'conference': conf,
-        'finish':     team_rec['finish'],
-        'tier':       team_rec['tier'],
-        'psf':        psf,
-        'rawPts':     raw_pts,
-        'adjPts':     adj_pts,
-        'adjTier':    adj_tier,
-        'top3':       top3,
-        'allEvents':  all_events,
-        'normalized': team_rec['normalized'],
-        'rawName':    team_rec['raw_name'],
+        'school':          school,
+        'conference':      conf,
+        'finish':          team_rec['finish'],
+        'tier':            team_rec['tier'],
+        'psf':             psf,
+        'rawPts':          raw_pts,
+        'adjPts':          adj_pts,
+        'adjTier':         adj_tier,
+        'top3':            top3,
+        'allEvents':       all_events,
+        'normalized':      team_rec['normalized'],
+        'rawName':         team_rec['raw_name'],
+        'confTierShort':   team_rec.get('conf_tier_short', ''),
+        'confTier':        team_rec.get('conf_tier', ''),
+        'confFinish2026':  team_rec.get('conf_finish_2026'),
+        'confScore2026':   team_rec.get('conf_score_2026', ''),
+        'confPowerClass':  team_rec.get('conf_power_class', ''),
     }
 
 # ── Admission layer v2 — matrix model ───────────────────────────────────────
