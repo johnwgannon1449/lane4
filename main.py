@@ -3157,7 +3157,14 @@ def search():
     if direct_match:
         excl_names.add(direct_match['school'])
 
-    pool = [r for r in all_results if r['school'] not in excl_names][:35]
+    candidates = [r for r in all_results if r['school'] not in excl_names]
+    if direct_match:
+        dm_div   = direct_match.get('division', '')
+        same_div = [r for r in candidates if r.get('division') == dm_div]
+        other    = [r for r in candidates if r.get('division') != dm_div]
+        pool     = (same_div + other)[:35]
+    else:
+        pool = candidates[:35]
 
     client = _get_anthropic()
     if not client:

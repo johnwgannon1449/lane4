@@ -1384,7 +1384,7 @@ function renderResultCards(schools, container, isDirect, answer) {
     const isOOU    = r.outOfUniverse;
     const confLine = [r.conference, meta.location].filter(Boolean).join(' · ');
     const TIER_LABELS = {'1A':'Super Powerhouse','1B':'Powerhouse','2':'Strong Program','3':'Mid-pack','4':'Developing'};
-    const progStrength = r.adjTier || TIER_LABELS[r.confTierShort] || '';
+    const progStrength = r.adjTier || (['1A','1B'].includes(r.confTierShort) ? TIER_LABELS[r.confTierShort] : '') || '';
     return `
     <div class="result-card" id="rcard-${i}">
       ${r.aiWhy ? `<div class="ai-why">✦ ${esc(r.aiWhy)}</div>` : ''}
