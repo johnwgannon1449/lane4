@@ -1,0 +1,131 @@
+Important reset before you touch anything else:
+
+DO NOT rebuild our calculations.
+DO NOT redesign our scoring model.
+DO NOT invent new heuristics.
+DO NOT replace existing admissions/recruiting logic with new logic.
+DO NOT ‘improve’ the formulas.
+
+I am specifically worried about drift.
+
+We already have logic that works.
+The problem is not the formulas.
+The problem is that the formulas are still being applied through the old 76-school architecture.
+
+So the task is NOT:
+- create new calculations for 324 schools
+
+The task IS:
+- preserve the existing calculations exactly
+- preserve the existing labels exactly
+- preserve the existing thresholds exactly
+- preserve the existing summary/deep-dive logic exactly
+- and apply that SAME logic through the new unified school dataset
+
+Think of this as a plumbing refactor, not a model rewrite.
+
+==================================================
+NON-NEGOTIABLE RULE
+==================================================
+
+Existing calculation/scoring logic is frozen unless I explicitly approve a change.
+
+That includes:
+- admissions likelihood logic
+- recruiting likelihood logic
+- school scoring logic
+- badge logic
+- summary logic
+- deep-dive logic
+- any thresholds / banding / labels currently in use
+
+You may move that logic.
+You may rewire inputs to that logic.
+You may standardize object shape around that logic.
+You may make the logic callable for all schools in the unified dataset.
+
+But you may NOT materially change the logic itself.
+
+==================================================
+WHAT I WANT
+==================================================
+
+Use the existing app logic as-is wherever possible.
+
+Refactor only these things:
+1. the source school universe
+2. the matching/normalization layer
+3. the object-building path
+4. the runtime wiring so all supported schools pass through the same logic
+
+In other words:
+same brain, new body
+
+NOT:
+new brain
+
+==================================================
+SAFE IMPLEMENTATION STRATEGY
+==================================================
+
+For every important existing function, do one of these only:
+- leave it unchanged
+- wrap it
+- adapt its inputs
+- call it from the unified school builder
+- call it from the unified search/deep-dive pipeline
+
+Do NOT rewrite the internal formula unless absolutely necessary.
+
+If a function currently expects the old school object shape, adapt the unified record to that expected input shape.
+Do not rewrite the function unless there is no alternative.
+
+==================================================
+FIELD HANDLING RULE
+==================================================
+
+For the added schools, I do NOT want you inventing brand new synthetic admissions/recruiting systems.
+
+Instead:
+- use existing logic where data supports it
+- attach existing enrichment where available
+- expose existing snapshot/championship fields where that is what we truly have
+- leave specific unsupported fields blank/null if needed
+
+That is safer than rebuilding the model.
+
+==================================================
+BEFORE YOU CODE
+==================================================
+
+Please do a “freeze audit” and report:
+
+A. Which current functions contain core calculations/threshold logic that should be preserved unchanged
+B. Which current functions are only plumbing/builders/search glue and are safe to refactor
+C. Which places currently force the old 76-school universe
+D. The minimum set of files/functions you will touch to rewire the app WITHOUT altering the core model
+
+==================================================
+IMPLEMENTATION RULE
+==================================================
+
+Your refactor should aim for:
+- minimal logic changes
+- maximum reuse of existing functions
+- maximum preservation of outputs for the original supported schools
+- unified handling path for the larger school universe
+
+I want the smallest possible architectural change that removes the old 76-school control path without changing our underlying model behavior.
+
+==================================================
+PROOF REQUIREMENT
+==================================================
+
+After changes, report:
+
+1. Which core calculation functions were left unchanged
+2. Which plumbing/wiring functions were changed
+3. Whether any scoring formula or threshold changed at all
+4. If anything did change, list it explicitly and why
+
+If you cannot do the refactor without changing a core calculation, STOP and report that exact dependency before changing it.
