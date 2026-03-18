@@ -2906,7 +2906,7 @@ def _get_anthropic():
 
 def _pre_sort(results, query, eliminated, my_list):
     """
-    Re-sort top-35 slice based on query intent — per LOGIC_RULES.md section 10.
+    Re-sort top-35 slice based on query intent.
     Excludes eliminated schools and my-list schools before sorting.
     Returns top 35 from the resulting list.
     """
@@ -2914,20 +2914,70 @@ def _pre_sort(results, query, eliminated, my_list):
     pool = [r for r in results if r['school'] not in excl]
 
     q = query.lower()
-    if any(k in q for k in ('prestig', 'best school', 'academic')):
+
+    # Unified strength score that works for both swim-scored and non-swim schools.
+    # Swim schools have adjPts (real scored range); non-swim schools get a proxy
+    # from confTierShort so they can compete in the pool instead of all sinking to 0.
+    _TIER_PROXY = {'1A': 120, '1B': 95, '2': 70, '3': 45, '4': 20}
+    def _strength(r):
+        pts = r.get('adjPts') or 0
+        return pts if pts > 0 else _TIER_PROXY.get(r.get('confTierShort', ''), 0)
+
+    # Geographic region → set of 2-letter state abbreviations found in meta.location
+    _GEO: dict[str, set[str]] = {
+        'west coast':       {'CA', 'OR', 'WA'},
+        'california':       {'CA'},
+        'pacific northwest':{'OR', 'WA'},
+        'southwest':        {'CA', 'AZ', 'NM', 'NV', 'UT', 'CO'},
+        'mountain':         {'CO', 'UT', 'WY', 'ID', 'MT', 'NV', 'AZ', 'NM'},
+        'new england':      {'MA', 'ME', 'NH', 'VT', 'RI', 'CT'},
+        'northeast':        {'NY', 'NJ', 'CT', 'MA', 'ME', 'NH', 'VT', 'RI', 'PA', 'MD', 'DE'},
+        'east coast':       {'NY', 'NJ', 'CT', 'MA', 'ME', 'NH', 'VT', 'RI', 'MD', 'DE',
+                             'VA', 'NC', 'SC', 'GA', 'FL', 'DC'},
+        'southeast':        {'VA', 'NC', 'SC', 'GA', 'FL', 'TN', 'AL', 'MS', 'LA', 'AR',
+                             'KY', 'WV'},
+        'south':            {'TX', 'LA', 'MS', 'AL', 'GA', 'FL', 'SC', 'NC', 'TN',
+                             'KY', 'AR', 'OK', 'VA'},
+        'texas':            {'TX'},
+        'midwest':          {'OH', 'IN', 'IL', 'MI', 'WI', 'MN', 'IA', 'MO',
+                             'ND', 'SD', 'NE', 'KS'},
+        'florida':          {'FL'},
+        'new york':         {'NY'},
+    }
+
+    geo_states: set[str] | None = None
+    for kw, states in _GEO.items():
+        if kw in q:
+            geo_states = states
+            break
+
+    def _state(r) -> str:
+        loc = r['meta'].get('location', '')
+        return loc.rsplit(', ', 1)[-1].strip() if ', ' in loc else ''
+
+    if geo_states:
+        pool.sort(key=lambda r: (0 if _state(r) in geo_states else 1, -_strength(r)))
+    elif any(k in q for k in ('prestig', 'best school', 'academic', 'selective')):
         pool.sort(key=lambda r: (r['meta'].get('accept') or 999))
     elif any(k in q for k in ('stem', 'engineer', 'tech', 'med', 'science')):
-        pool.sort(key=lambda r: (0 if r['meta'].get('stem') else 1))
-    elif any(k in q for k in ('money', 'cost', 'afford', 'save')):
+        pool.sort(key=lambda r: (0 if r['meta'].get('stem') else 1, -_strength(r)))
+    elif any(k in q for k in ('money', 'cost', 'afford', 'save', 'merit', 'scholarship')):
         rank = {'high': 0, 'moderate': 1, 'none': 2, '': 3}
         pool.sort(key=lambda r: rank.get(r['meta'].get('merit', ''), 3))
-    elif any(k in q for k in ('star', 'podium', 'win', 'lead')):
-        pool.sort(key=lambda r: -r['adjPts'])
-    elif any(k in q for k in ('fun', 'social', 'happy', 'vibe')):
+    elif any(k in q for k in ('star', 'podium', 'win', 'lead', 'competi')):
+        pool.sort(key=lambda r: -_strength(r))
+    elif any(k in q for k in ('fun', 'social', 'happy', 'vibe', 'culture')):
         pool.sort(key=lambda r: -(r['meta'].get('accept') or 0))
     elif 'hidden ivy' in q or 'ivy' in q:
-        pool.sort(key=lambda r: (0 if r['meta'].get('hiddenIvy') else 1))
-    # default: already sorted by adjPts desc from build_school_universe()
+        pool.sort(key=lambda r: (0 if r['meta'].get('hiddenIvy') or r['meta'].get('ivyLeague') else 1))
+    elif any(k in q for k in ('d1', 'division 1', 'division one', 'big school', 'large')):
+        pool.sort(key=lambda r: (0 if r.get('division') == 'D1' else 1, -_strength(r)))
+    elif any(k in q for k in ('d3', 'division 3', 'division iii', 'small school', 'small college')):
+        pool.sort(key=lambda r: (0 if r.get('division') == 'D3' else 1, -_strength(r)))
+    else:
+        # Default: balanced sort using unified strength so non-swim schools
+        # are not all buried at adjPts=0 behind every swim-scored D3 school.
+        pool.sort(key=lambda r: -_strength(r))
 
     return pool[:35]
 
