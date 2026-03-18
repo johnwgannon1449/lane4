@@ -2123,8 +2123,8 @@ def _supplement_from_csv():
                     continue
                 conf = (row.get('Conference') or '').strip()
                 raw  = (row.get('Team') or '').strip()
-                if not conf or not raw:
-                    continue
+                if not conf or not raw or conf == 'Unknown':
+                    continue  # 'Unknown' conference has no benchmarks — useless and harmful
                 # Apply name normalization
                 canonical = raw
                 if raw in TEAM_NAME_MAP:
@@ -2311,9 +2311,17 @@ def _build_explore_schools():
         women_ts = women_row.get('tier_short', '') if women_row else ''
         ts       = men_ts or women_ts
 
+        raw_conf = primary.get('Conference', '')
+        # If the snapshot CSV recorded 'Unknown' (unrecognised PDF conference),
+        # fall back to the team_rec's conference so scoring and display use the
+        # correct real conference name.
+        display_conf = (tr['conference']
+                        if tr and raw_conf in ('Unknown', '', None)
+                        else raw_conf)
+
         entry = {
             'school':            school,
-            'conference':        primary.get('Conference', ''),
+            'conference':        display_conf,
             'conf_tier_short':   ts,
             'conf_tier':         (men_row or women_row).get('final_tier', ''),
             'conf_power_class':  (men_row or women_row).get('PowerClass', ''),
