@@ -179,6 +179,27 @@ JAMES = {
 }
 
 # ---------------------------------------------------------------------------
+# Conference → NCAA division label (used by build_school_universe)
+CONF_DIVISION: dict[str, str] = {
+    # ── D1 ────────────────────────────────────────────────────────────────────
+    "ACC":            "D1", "ASUN":          "D1", "America East":  "D1",
+    "Atlantic 10":    "D1", "Big 12":        "D1", "Big East":      "D1",
+    "Big Ten":        "D1", "Big West":      "D1", "CAA":           "D1",
+    "Horizon League": "D1", "Ivy League":    "D1", "MAAC":          "D1",
+    "MPSF":           "D1", "Patriot":       "D1", "SEC":           "D1",
+    "Summit League":  "D1", "WAC":           "D1",
+    # ── D2 ────────────────────────────────────────────────────────────────────
+    "GLIAC":          "D2", "PSAC":          "D2", "SAC":           "D2",
+    # ── D3 ────────────────────────────────────────────────────────────────────
+    "CCIW":           "D3", "Centennial":    "D3", "Colorado College": "D3",
+    "Landmark":       "D3", "Liberty League":"D3", "MAC":           "D3",
+    "MIAC":           "D3", "NCAC":          "D3", "NESCAC":        "D3",
+    "NEWMAC":         "D3", "NWC":           "D3", "ODAC":          "D3",
+    "SCIAC":          "D3", "UAA":           "D3",
+    # ── NAIA ──────────────────────────────────────────────────────────────────
+    "PCSC":           "NAIA",
+}
+
 # SCHOOL_META — per-school metadata for all 76 programs
 # Fields: accept (int %), satMedian (int), hiddenIvy (bool), stem (bool),
 #         merit ("none"|"moderate"|"high"), location (str), vibe (str),
@@ -2447,7 +2468,7 @@ def _score_school_swim(team_rec, times):
     return {
         'school':          school,
         'conference':      conf,
-        'division':        'D3',
+        'division':        CONF_DIVISION.get(conf, 'D3'),
         'finish':          team_rec['finish'],
         'tier':            team_rec['tier'],
         'psf':             psf,
@@ -2790,7 +2811,7 @@ def build_school_universe(times, sat, gpa):
         results.append({
             'school':         school_name,
             'conference':     conference,
-            'division':       'D3',
+            'division':       CONF_DIVISION.get(conference, 'D3'),
             'adjTier':        adj_tier,
             'adjPts':         float(adj_pts),
             'rawPts':         float(raw_pts),
@@ -3191,7 +3212,12 @@ def search():
         answer, ai_schools = _parse_search_response(raw_text, pool)
 
         if direct_match:
-            dm = {**direct_match, 'directMatch': True, 'aiWhy': 'You searched for this school directly.'}
+            _dm_conf = direct_match.get('conference', '')
+            _dm_div  = direct_match.get('division', '')
+            _dm_str  = _program_strength_desc(direct_match)
+            _dm_parts = [p for p in [_dm_conf, _dm_div, _dm_str] if p]
+            _dm_why  = ' · '.join(_dm_parts) if _dm_parts else 'Matched from our database'
+            dm = {**direct_match, 'directMatch': True, 'aiWhy': _dm_why}
             schools = [dm] + ai_schools
         else:
             schools = ai_schools

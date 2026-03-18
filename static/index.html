@@ -1387,7 +1387,7 @@ function renderResultCards(schools, container, isDirect, answer) {
     const progStrength = r.adjTier || TIER_LABELS[r.confTierShort] || '';
     return `
     <div class="result-card" id="rcard-${i}">
-      ${r.aiWhy && !r.directMatch ? `<div class="ai-why">✦ ${esc(r.aiWhy)}</div>` : ''}
+      ${r.aiWhy ? `<div class="ai-why">✦ ${esc(r.aiWhy)}</div>` : ''}
       <div class="result-card-top">
         <div>
           <div class="result-school-name">${esc(r.school)}</div>
