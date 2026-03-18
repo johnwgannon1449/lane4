@@ -479,7 +479,7 @@
   <div class="ob-card">
     <div class="ob-logo">Lane<span>4</span></div>
     <div class="ob-headline">Let's set up your swimmer profile.</div>
-    <div class="ob-sub">Lane4 uses your times, academics, and preferences to score all 76 D3 programs and personalize every insight. Takes about 2 minutes.</div>
+    <div class="ob-sub">Lane4 uses your times, academics, and preferences to score every program and personalize every insight. Takes about 2 minutes.</div>
 
     <div class="ob-section">
       <div class="ob-section-label">About the swimmer</div>
@@ -1401,7 +1401,7 @@ function renderResultCards(schools, container, isDirect, answer) {
         ${meta.hiddenIvy ? '<span class="badge badge-ivy">Hidden Ivy</span>' : ''}
         ${meta.stem      ? '<span class="badge badge-stem">STEM</span>' : ''}
         ${meta.merit === 'high' ? '<span class="badge" style="background:#D1FAE5;color:#065F46;">High Merit Aid</span>' : ''}
-        ${isOOU  ? '<span class="badge" style="background:#F1F5F9;color:#64748B;">Not in our D3 database</span>' : ''}
+        ${isOOU  ? '<span class="badge" style="background:#F1F5F9;color:#64748B;">No swim data on file</span>' : ''}
         ${isSnap && !isOOU ? '<span class="badge" style="background:#FEF9C3;color:#854D0E;">Conference data only</span>' : ''}
       </div>
       ${meta.vibe ? `<div class="result-vibe">"${esc(meta.vibe)}"</div>` : ''}
