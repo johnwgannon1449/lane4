@@ -1,0 +1,294 @@
+We need a full end-to-end audit of how Lane4 produces BOTH of these kid-specific outputs for a given school:
+
+1. Recruiting Likelihood (swim-only)
+2. Overall Chance of Admissions (all-in: academics + swim support)
+
+This is a SYSTEM AUDIT — not a summary.
+
+IMPORTANT:
+- Do NOT change any code
+- Do NOT propose improvements
+- Do NOT refactor anything
+- This is inspection and explanation only
+- Be extremely concrete and specific
+
+==================================================
+CRITICAL MODEL RELATIONSHIP
+==================================================
+
+Recruiting Likelihood is computed FIRST and feeds into Overall Chance of Admissions.
+
+This means:
+- swim performance and recruiting status can INCREASE admissions chances
+- weak recruiting should NOT reduce academic admissibility (unless explicitly designed — if so, show exactly where)
+
+You MUST reflect this dependency in the audit:
+- fully compute Recruiting Likelihood first
+- then show exactly how it feeds into Overall Chance
+
+==================================================
+PART 1 — SYSTEM MAP
+==================================================
+
+List every file, function, dataset, and logic block involved in producing:
+
+A. Recruiting Likelihood
+B. Overall Chance of Admissions
+
+For each:
+- file name
+- function name
+- what it does
+- inputs
+- outputs
+- whether it is:
+  - backend logic
+  - frontend logic
+  - static dataset
+  - generated dataset
+  - AI-generated content
+
+==================================================
+PART 2 — DATA INVENTORY
+==================================================
+
+For every field used in either label:
+
+Provide:
+1. field name
+2. where it lives (csv/json/python/js/etc.)
+3. current source of truth
+4. original source
+
+Categorize each into ONE of:
+
+- PARSER-DERIVED DATA
+  (from championship PDF pipeline / lane4_snapshot / team tiers / etc.)
+
+- AGENT / SCRAPED / MODELED DATA
+  (admit rates, SAT ranges, GPA ranges, school metadata, STEM flags, etc.)
+
+- WEB-FED / EXTERNAL DATA
+  (APIs, runtime pulls, etc.)
+
+- TRUE AI LOGIC / INFERENCE
+  (LLM-generated text, classification reasoning, summaries)
+
+Explain WHY each field belongs in its category.
+
+==================================================
+PART 3 — RECRUITING LIKELIHOOD LOGIC (FIRST)
+==================================================
+
+Explain the FULL pipeline from swim times → final recruiting label.
+
+Include:
+
+INPUTS:
+- swimmer event times
+- event list handling
+- missing events behavior
+
+EVENT SCORING:
+- how benchmark times are sourced (conference/program level)
+- how projected place is determined
+- how expPts is calculated
+- how confidence is calculated and applied
+
+AGGREGATION:
+- how many events are used
+- how top events are selected
+- how rawPts is calculated
+
+PROGRAM STRENGTH:
+- how PSF is calculated
+- what inputs determine PSF (team tier, conference strength, etc.)
+- how adjPts = rawPts × PSF
+
+TIERING:
+- exact adjPts thresholds → adjTier
+- full 7-level system
+
+FRONTEND COLLAPSE:
+- adjTier → band mapping (0–4, -1)
+- band → displayed label
+
+DATA SOURCES:
+- explicitly identify what comes from:
+  - parser data
+  - modeled school data
+  - assumptions
+  - hardcoded constants
+
+EDGE CASES:
+- no swim data
+- partial data
+- weak conferences
+- powerhouse programs
+
+==================================================
+PART 4 — OVERALL CHANCE OF ADMISSIONS LOGIC
+==================================================
+
+Explain the FULL pipeline for Overall Chance of Admissions.
+
+This MUST explicitly include how Recruiting Likelihood feeds into it.
+
+INPUTS:
+- GPA
+- number of APs
+- SAT / ACT
+- school academic profile (ranges, admit rate, etc.)
+- recruiting likelihood output from Part 3
+- any school-level flags (Ivy, D1, etc.)
+
+ACADEMIC EVALUATION:
+- how GPA is interpreted
+- how AP count is used
+- how SAT/ACT is used
+- test-optional handling
+- fallback logic when data is missing
+
+SELECTIVITY:
+- how admit rate or school difficulty is used
+- any tiering of academic difficulty
+
+RECRUITING IMPACT:
+- EXACTLY how recruiting likelihood modifies admissions
+- where in the code this happens
+- whether boosts differ by:
+  - division
+  - conference strength
+  - school type (Ivy vs D3 vs others)
+- whether there are caps or ceilings
+
+BLENDING LOGIC:
+- how academics + recruiting combine
+- any formulas, weights, or rule-based overrides
+- any floors or ceilings
+
+OUTPUT:
+- full list of possible labels
+- exact thresholds or rules for each
+
+EDGE CASES:
+- no swim data
+- snapshot-only schools
+- missing academic ranges
+
+==================================================
+PART 5 — PER-SCHOOL TRACE (5 EXAMPLES)
+==================================================
+
+Pick 5 schools covering:
+
+- elite D1 powerhouse
+- highly selective academic + strong swim
+- academically possible but swim unrealistic
+- strong recruit but hard admissions
+- snapshot-only school
+
+For EACH school:
+
+A. RAW DATA
+- all academic inputs
+- all swim/program inputs
+- source of each field (parser / modeled / AI / fallback)
+
+B. RECRUITING TRACE
+- event scoring
+- rawPts
+- PSF
+- adjPts
+- adjTier
+- band
+- final label
+
+C. ADMISSIONS TRACE
+- academic evaluation
+- recruiting influence
+- intermediate steps
+- final label
+
+D. FALLBACKS / MISSING DATA
+- what was missing
+- what substituted
+- confidence implications
+
+==================================================
+PART 6 — SNAPSHOT VS MODELED SCHOOL DIFFERENCES
+==================================================
+
+Explain differences between:
+
+- original modeled schools (~76)
+- snapshot-derived schools (~324 total set)
+
+Detail:
+- missing fields
+- fallback logic
+- reliability differences
+- whether admissions is weaker / more heuristic
+- whether recruiting is more reliable
+
+==================================================
+PART 7 — SEARCH / AI EXPLANATION LAYER
+==================================================
+
+Explain how search results and school summaries are generated:
+
+- what is deterministic filtering
+- what is AI-generated text
+- what prompt drives the AI (if applicable)
+- whether labels are computed BEFORE AI text
+- whether AI can misinterpret labels
+- source of one-line descriptions
+
+==================================================
+PART 8 — TRUST / RISK AUDIT
+==================================================
+
+Identify where the system may mislead users:
+
+- labels too confident vs data quality
+- weak academic data but strong swim signal
+- missing swim data
+- snapshot schools overstated
+- AI text sounding authoritative beyond data
+- anywhere true AI inference replaces deterministic logic
+
+DO NOT suggest fixes — only identify risks.
+
+==================================================
+PART 9 — CODE POINTERS
+==================================================
+
+Provide file + function locations for:
+
+- recruiting likelihood logic
+- PSF logic
+- admissions logic
+- recruiting → admissions integration
+- dataset loading / merging
+- snapshot vs modeled branching
+- search/AI generation
+- frontend label rendering
+
+==================================================
+PART 10 — EXECUTIVE SUMMARY
+==================================================
+
+Summarize clearly:
+
+1. What is deterministic
+2. What is parser-derived
+3. What is scraped/modeled
+4. What is AI inference
+5. Where recruiting is strongest
+6. Where admissions is weakest
+7. Where we should be cautious
+
+FINAL INSTRUCTION:
+This must be detailed enough that we can manually reproduce both labels for any school.
+
+If anything is unclear due to code structure, explicitly say where and why.

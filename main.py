@@ -210,7 +210,7 @@ CONF_DIVISION: dict[str, str] = {
 SCHOOL_META = {
     # ── CENTENNIAL ───────────────────────────────────────────────────────────
     "Johns Hopkins University": {
-        "accept": 7, "satMedian": 1510, "hiddenIvy": True, "stem": True,
+        "accept": 7, "satMedian": 1510, "sat25": 1530, "sat75": 1560, "gpaMean": 3.93, "hiddenIvy": True, "stem": True,
         "merit": "none", "location": "Baltimore, MD",
         "vibe": "Research powerhouse where pre-med and STEM culture run the campus",
     },
@@ -220,7 +220,7 @@ SCHOOL_META = {
         "vibe": "Historic campus with strong Greek life and leadership culture",
     },
     "Swarthmore College": {
-        "accept": 7, "satMedian": 1505, "hiddenIvy": True, "stem": True,
+        "accept": 7, "satMedian": 1505, "sat25": 1490, "sat75": 1550, "gpaMean": 3.91, "hiddenIvy": True, "stem": True,
         "merit": "none", "location": "Swarthmore, PA",
         "vibe": "Academically intense and collaborative with Quaker roots",
     },
@@ -261,7 +261,7 @@ SCHOOL_META = {
         "vibe": "Tech and project-driven culture built around co-ops and real careers",
     },
     "Rensselaer Polytechnic Institute": {
-        "accept": 63, "satMedian": 1410, "hiddenIvy": False, "stem": True,
+        "accept": 63, "satMedian": 1410, "sat25": 1280, "sat75": 1480, "hiddenIvy": False, "stem": True,
         "merit": "moderate", "location": "Troy, NY",
         "vibe": "Pure engineering culture; hard-working students who live for problems",
     },
@@ -276,12 +276,12 @@ SCHOOL_META = {
         "vibe": "Liberal arts meets engineering; theme houses and strong traditions",
     },
     "Skidmore College": {
-        "accept": 29, "satMedian": 1300, "hiddenIvy": False, "stem": False,
+        "accept": 29, "satMedian": 1300, "sat25": 1230, "sat75": 1390, "gpaMean": 3.76, "hiddenIvy": False, "stem": False,
         "merit": "none", "location": "Saratoga Springs, NY",
         "vibe": "Creative and arts-forward campus in a lively upstate NY town",
     },
     "Vassar College": {
-        "accept": 18, "satMedian": 1455, "hiddenIvy": True, "stem": False,
+        "accept": 18, "satMedian": 1455, "sat25": 1400, "sat75": 1540, "gpaMean": 3.82, "hiddenIvy": True, "stem": False,
         "merit": "none", "location": "Poughkeepsie, NY",
         "vibe": "Progressive intellectual culture; students who love big ideas",
     },
@@ -302,7 +302,7 @@ SCHOOL_META = {
     },
     # ── NCAC ─────────────────────────────────────────────────────────────────
     "Denison University": {
-        "accept": 28, "satMedian": 1325, "hiddenIvy": True, "stem": False,
+        "accept": 28, "satMedian": 1325, "sat25": 1200, "sat75": 1400, "gpaMean": 3.73, "hiddenIvy": True, "stem": False,
         "merit": "high", "location": "Granville, OH",
         "vibe": "Beautiful hilltop campus; ambitious academics and a strong social scene",
     },
@@ -348,17 +348,17 @@ SCHOOL_META = {
     },
     # ── NESCAC ───────────────────────────────────────────────────────────────
     "Williams College": {
-        "accept": 9, "satMedian": 1510, "hiddenIvy": True, "stem": False,
+        "accept": 9, "satMedian": 1510, "sat25": 1500, "sat75": 1560, "gpaMean": 3.94, "hiddenIvy": True, "stem": False,
         "merit": "none", "location": "Williamstown, MA",
         "vibe": "Consistently ranked #1 LAC; mountain campus with elite academics",
     },
     "Tufts University": {
-        "accept": 9, "satMedian": 1500, "hiddenIvy": True, "stem": True,
+        "accept": 9, "satMedian": 1500, "sat25": 1390, "sat75": 1540, "gpaMean": 3.87, "hiddenIvy": True, "stem": True,
         "merit": "none", "location": "Medford, MA",
         "vibe": "Globally minded near Boston; research-intensive with elite academics",
     },
     "Amherst College": {
-        "accept": 9, "satMedian": 1515, "hiddenIvy": True, "stem": False,
+        "accept": 9, "satMedian": 1515, "sat25": 1500, "sat75": 1560, "gpaMean": 3.93, "hiddenIvy": True, "stem": False,
         "merit": "none", "location": "Amherst, MA",
         "vibe": "Open curriculum, no required courses; fiercely intellectual with 5-College access",
     },
@@ -368,27 +368,27 @@ SCHOOL_META = {
         "vibe": "Student self-governance model; students run nearly everything on campus",
     },
     "Bates College": {
-        "accept": 13, "satMedian": 1430, "hiddenIvy": True, "stem": False,
+        "accept": 13, "satMedian": 1430, "sat25": 1330, "sat75": 1500, "gpaMean": 3.78, "hiddenIvy": True, "stem": False,
         "merit": "none", "location": "Lewiston, ME",
         "vibe": "Politically engaged and outdoorsy; tight community in coastal Maine",
     },
     "Hamilton College": {
-        "accept": 14, "satMedian": 1440, "hiddenIvy": True, "stem": False,
+        "accept": 14, "satMedian": 1440, "sat25": 1360, "sat75": 1500, "gpaMean": 3.79, "hiddenIvy": True, "stem": False,
         "merit": "none", "location": "Clinton, NY",
         "vibe": "Writing-intensive; every major leads to a thesis on a beautiful rural campus",
     },
     "Bowdoin College": {
-        "accept": 9, "satMedian": 1495, "hiddenIvy": True, "stem": False,
+        "accept": 9, "satMedian": 1495, "sat25": 1470, "sat75": 1540, "gpaMean": 3.86, "hiddenIvy": True, "stem": False,
         "merit": "none", "location": "Brunswick, ME",
         "vibe": "Outdoorsy and intellectual in coastal Maine; sustainability and community",
     },
     "Middlebury College": {
-        "accept": 13, "satMedian": 1445, "hiddenIvy": True, "stem": False,
+        "accept": 13, "satMedian": 1445, "sat25": 1390, "sat75": 1520, "gpaMean": 3.83, "hiddenIvy": True, "stem": False,
         "merit": "none", "location": "Middlebury, VT",
         "vibe": "Environmental passion meets rigorous academics in a beautiful Vermont setting",
     },
     "Colby College": {
-        "accept": 11, "satMedian": 1435, "hiddenIvy": True, "stem": False,
+        "accept": 11, "satMedian": 1435, "sat25": 1360, "sat75": 1490, "gpaMean": 3.79, "hiddenIvy": True, "stem": False,
         "merit": "none", "location": "Waterville, ME",
         "vibe": "Liberal arts in the Maine wilderness; entrepreneurial with a tight community",
     },
@@ -398,18 +398,18 @@ SCHOOL_META = {
         "vibe": "Classic New England campus with strong city partnerships and Greek life",
     },
     "Wesleyan University": {
-        "accept": 17, "satMedian": 1455, "hiddenIvy": True, "stem": False,
+        "accept": 17, "satMedian": 1455, "sat25": 1410, "sat75": 1530, "gpaMean": 3.85, "hiddenIvy": True, "stem": False,
         "merit": "none", "location": "Middletown, CT",
         "vibe": "Quirky and politically active; film and social sciences define the culture",
     },
     # ── NEWMAC ───────────────────────────────────────────────────────────────
     "MIT": {
-        "accept": 4, "satMedian": 1565, "hiddenIvy": False, "stem": True,
+        "accept": 4, "satMedian": 1565, "sat25": 1500, "sat75": 1580, "gpaMean": 3.97, "hiddenIvy": False, "stem": True,
         "merit": "none", "moonshot": True, "location": "Cambridge, MA",
         "vibe": "The world's most famous STEM institution; unmatched resources and intensity",
     },
     "U.S. Coast Guard Academy": {
-        "accept": 14, "satMedian": 1265, "hiddenIvy": False, "stem": True,
+        "accept": 14, "satMedian": 1265, "sat25": 1190, "sat75": 1360, "hiddenIvy": False, "stem": True,
         "merit": "none", "location": "New London, CT",
         "vibe": "Military service academy; full scholarship, intense discipline, meaningful mission",
     },
@@ -419,7 +419,7 @@ SCHOOL_META = {
         "vibe": "Project-based learning at a tech school with strong industry connections",
     },
     "Babson College": {
-        "accept": 24, "satMedian": 1330, "hiddenIvy": False, "stem": False,
+        "accept": 24, "satMedian": 1330, "sat25": 1260, "sat75": 1410, "gpaMean": 3.65, "hiddenIvy": False, "stem": False,
         "merit": "moderate", "location": "Wellesley, MA",
         "vibe": "#1 entrepreneurship school; every freshman runs a real business for credit",
     },
@@ -481,12 +481,12 @@ SCHOOL_META = {
     },
     # ── SCIAC ────────────────────────────────────────────────────────────────
     "Pomona-Pitzer": {
-        "accept": 7, "satMedian": 1510, "hiddenIvy": True, "stem": True,
+        "accept": 7, "satMedian": 1510, "sat25": 1470, "sat75": 1550, "gpaMean": 3.91, "hiddenIvy": True, "stem": True,
         "merit": "none", "location": "Claremont, CA",
         "vibe": "Elite SoCal LAC in the Claremont Consortium; 5 colleges sharing resources",
     },
     "Claremont-Mudd-Scripps": {
-        "accept": 9, "satMedian": 1490, "hiddenIvy": True, "stem": True,
+        "accept": 9, "satMedian": 1490, "sat25": 1470, "sat75": 1560, "gpaMean": 3.9, "hiddenIvy": True, "stem": True,
         "merit": "none", "location": "Claremont, CA",
         "vibe": "Harvey Mudd's STEM intensity meets Scripps' creative and humanistic edge",
     },
@@ -496,7 +496,7 @@ SCHOOL_META = {
         "vibe": "Film school prestige meets SoCal sunshine; entrepreneurial and media-forward",
     },
     "Caltech": {
-        "accept": 3, "satMedian": 1560, "hiddenIvy": False, "stem": True,
+        "accept": 3, "satMedian": 1560, "sat25": 1530, "sat75": 1580, "gpaMean": 3.97, "hiddenIvy": False, "stem": True,
         "merit": "none", "moonshot": True, "location": "Pasadena, CA",
         "vibe": "Hardest STEM school to enter in America; Nobel laureates teach undergrads",
     },
@@ -528,42 +528,42 @@ SCHOOL_META = {
     # ── UAA ──────────────────────────────────────────────────────────────────
     # Names are abbreviated in the workbook — kept as-is (not truncation, just short forms)
     "Emory": {
-        "accept": 12, "satMedian": 1470, "hiddenIvy": False, "stem": False,
+        "accept": 12, "satMedian": 1470, "sat25": 1360, "sat75": 1530, "gpaMean": 3.87, "hiddenIvy": False, "stem": False,
         "merit": "none", "location": "Atlanta, GA",
         "vibe": "Research powerhouse in Atlanta; dominant pre-med culture and strong social scene",
     },
     "NYU": {
-        "accept": 12, "satMedian": 1460, "hiddenIvy": False, "stem": False,
+        "accept": 12, "satMedian": 1460, "sat25": 1350, "sat75": 1530, "gpaMean": 3.79, "hiddenIvy": False, "stem": False,
         "merit": "none", "location": "New York, NY",
         "vibe": "Urban campus without borders; Greenwich Village is your quad in the heart of NYC",
     },
     "Chicago": {
-        "accept": 6, "satMedian": 1530, "hiddenIvy": False, "stem": False,
+        "accept": 6, "satMedian": 1530, "sat25": 1510, "sat75": 1570, "gpaMean": 3.94, "hiddenIvy": False, "stem": False,
         "merit": "none", "location": "Chicago, IL",
         "vibe": "Intellectual intensity above all else; famous for taking ideas more seriously than sleep",
     },
     "Washington (Mo)": {
-        "accept": 14, "satMedian": 1500, "hiddenIvy": False, "stem": True,
+        "accept": 14, "satMedian": 1500, "sat25": 1480, "sat75": 1560, "gpaMean": 3.94, "hiddenIvy": False, "stem": True,
         "merit": "none", "location": "St. Louis, MO",
         "vibe": "Research powerhouse in the Midwest; strong pre-med, engineering, and business",
     },
     "Carnegie Mellon": {
-        "accept": 11, "satMedian": 1535, "hiddenIvy": False, "stem": True,
+        "accept": 11, "satMedian": 1535, "sat25": 1460, "sat75": 1560, "gpaMean": 3.87, "hiddenIvy": False, "stem": True,
         "merit": "none", "location": "Pittsburgh, PA",
         "vibe": "Top CS and engineering with a rigorous, career-driven campus culture",
     },
     "Case Western": {
-        "accept": 30, "satMedian": 1455, "hiddenIvy": False, "stem": True,
+        "accept": 30, "satMedian": 1455, "sat25": 1430, "sat75": 1560, "gpaMean": 3.82, "hiddenIvy": False, "stem": True,
         "merit": "high", "location": "Cleveland, OH",
         "vibe": "STEM-focused research university; pre-med and engineering define campus life",
     },
     "Rochester": {
-        "accept": 29, "satMedian": 1440, "hiddenIvy": False, "stem": True,
+        "accept": 29, "satMedian": 1440, "sat25": 1380, "sat75": 1530, "gpaMean": 3.83, "hiddenIvy": False, "stem": True,
         "merit": "high", "location": "Rochester, NY",
         "vibe": "Research-intensive with strong engineering, optics, and pre-med programs",
     },
     "Brandeis": {
-        "accept": 37, "satMedian": 1420, "hiddenIvy": False, "stem": False,
+        "accept": 37, "satMedian": 1420, "sat25": 1380, "sat75": 1530, "gpaMean": 3.79, "hiddenIvy": False, "stem": False,
         "merit": "moderate", "location": "Waltham, MA",
         "vibe": "Social justice mission and research strength near Boston with a unique founding story",
     },
@@ -574,7 +574,7 @@ SCHOOL_META = {
         "vibe": "Lutheran liberal arts with Swedish heritage and strong athletics in Minnesota",
     },
     "Carleton College": {
-        "accept": 18, "satMedian": 1495, "hiddenIvy": False, "stem": False,
+        "accept": 18, "satMedian": 1495, "sat25": 1470, "sat75": 1540, "gpaMean": 3.89, "hiddenIvy": False, "stem": False,
         "merit": "none", "location": "Northfield, MN",
         "vibe": "One of the Midwest's best LACs; intellectual culture with top grad school placement",
     },
@@ -584,7 +584,7 @@ SCHOOL_META = {
         "vibe": "Coordinate college with Saint Benedict; Benedictine tradition and strong community",
     },
     "Macalester College": {
-        "accept": 28, "satMedian": 1430, "hiddenIvy": False, "stem": False,
+        "accept": 28, "satMedian": 1430, "sat25": 1380, "sat75": 1520, "gpaMean": 3.85, "hiddenIvy": False, "stem": False,
         "merit": "none", "location": "Saint Paul, MN",
         "vibe": "Globally focused and politically active urban LAC with high international enrollment",
     },
@@ -631,7 +631,7 @@ SCHOOL_META = {
         "vibe": "Premier women's liberal arts college; consistently top-ranked with exceptional alumnae network",
     },
     "Wellesley College": {
-        "accept": 14, "satMedian": 1440, "hiddenIvy": True, "stem": False,
+        "accept": 14, "satMedian": 1440, "sat25": 1370, "sat75": 1510, "gpaMean": 3.87, "hiddenIvy": True, "stem": False,
         "merit": "none", "location": "Wellesley, MA",
         "vibe": "Elite women's college near Boston; Hillary Clinton and Madeline Albright territory",
     },
@@ -687,7 +687,7 @@ SCHOOL_META = {
         "vibe": "Methodist university near Virginia Beach with a student-centered campus and growing athletics",
     },
     "Washington and Lee University": {
-        "accept": 21, "satMedian": 1455, "hiddenIvy": True, "stem": False,
+        "accept": 21, "satMedian": 1455, "sat25": 1390, "sat75": 1520, "gpaMean": 3.82, "hiddenIvy": True, "stem": False,
         "merit": "none", "location": "Lexington, VA",
         "vibe": "Honor-code-driven LAC with an exceptional law school pipeline and Southern intellectual tradition",
     },
@@ -815,7 +815,7 @@ SCHOOL_META = {
         "vibe": "Health sciences powerhouse in northeast PA; outstanding PT, OT, and nursing programs",
     },
     "Stevens Institute of Technolog": {
-        "accept": 42, "satMedian": 1400, "hiddenIvy": False, "stem": True,
+        "accept": 42, "satMedian": 1400, "sat25": 1310, "sat75": 1480, "hiddenIvy": False, "stem": True,
         "merit": "moderate", "location": "Hoboken, NJ",
         "vibe": "Engineering and tech university on the Hudson with a stunning Manhattan skyline view",
     },
@@ -902,7 +902,7 @@ SCHOOL_META = {
         "vibe": "International relations and politics powerhouse in DC; students go straight from class to Capitol Hill",
     },
     "Boston University": {
-        "accept": 14, "satMedian": 1450, "hiddenIvy": False, "stem": True,
+        "accept": 14, "satMedian": 1450, "sat25": 1350, "sat75": 1500, "gpaMean": 3.73, "hiddenIvy": False, "stem": True,
         "merit": "moderate", "location": "Boston, MA",
         "vibe": "Large research university on the Charles with elite engineering, business, and communications",
     },
@@ -912,7 +912,7 @@ SCHOOL_META = {
         "vibe": "Selective LAC-meets-engineering in central PA; strong alumni network and Greek life culture",
     },
     "Colgate University": {
-        "accept": 21, "satMedian": 1420, "hiddenIvy": True, "stem": False,
+        "accept": 21, "satMedian": 1420, "sat25": 1380, "sat75": 1510, "gpaMean": 3.82, "hiddenIvy": True, "stem": False,
         "merit": "none", "location": "Hamilton, NY",
         "vibe": "Highly selective rural NY LAC with strong preprofessional culture and loyal athletic fanbase",
     },
@@ -937,79 +937,79 @@ SCHOOL_META = {
         "vibe": "Jesuit university overlooking Baltimore; strong business, communications, and service programs",
     },
     "United States Military Academy": {
-        "accept": 9, "satMedian": 1270, "hiddenIvy": False, "stem": True,
+        "accept": 9, "satMedian": 1270, "sat25": 1200, "sat75": 1400, "hiddenIvy": False, "stem": True,
         "merit": "none", "location": "West Point, NY",
         "vibe": "West Point — full scholarship, intense commitment, and guaranteed career in military leadership",
     },
     "United States Navy Academy": {
-        "accept": 9, "satMedian": 1290, "hiddenIvy": False, "stem": True,
+        "accept": 9, "satMedian": 1290, "sat25": 1220, "sat75": 1390, "hiddenIvy": False, "stem": True,
         "merit": "none", "location": "Annapolis, MD",
         "vibe": "Annapolis — full scholarship, rigorous engineering curriculum, and a Navy or Marine career ahead",
     },
     # ── IVY LEAGUE ───────────────────────────────────────────────────────────
     "Brown University": {
-        "accept": 5, "satMedian": 1510, "hiddenIvy": False, "ivyLeague": True, "stem": False,
+        "accept": 5, "satMedian": 1510, "sat25": 1440, "sat75": 1570, "gpaMean": 3.94, "hiddenIvy": False, "ivyLeague": True, "stem": False,
         "merit": "none", "location": "Providence, RI",
         "vibe": "Open Curriculum Ivy gives students unusual freedom — Brown is the most academically flexible of the eight",
     },
     "Columbia University": {
-        "accept": 4, "satMedian": 1530, "hiddenIvy": False, "ivyLeague": True, "stem": True,
+        "accept": 4, "satMedian": 1530, "sat25": 1470, "sat75": 1560, "gpaMean": 3.92, "hiddenIvy": False, "ivyLeague": True, "stem": True,
         "merit": "none", "location": "New York, NY",
         "vibe": "Ivy in Morningside Heights — the Core Curriculum meets the greatest city on earth",
     },
     "Cornell University": {
-        "accept": 7, "satMedian": 1490, "hiddenIvy": False, "ivyLeague": True, "stem": True,
+        "accept": 7, "satMedian": 1490, "sat25": 1400, "sat75": 1560, "gpaMean": 3.89, "hiddenIvy": False, "ivyLeague": True, "stem": True,
         "merit": "none", "location": "Ithaca, NY",
         "vibe": "The broadest Ivy — engineering, agriculture, hotel, and arts all on one spectacular gorge campus",
     },
     "Dartmouth College": {
-        "accept": 6, "satMedian": 1510, "hiddenIvy": False, "ivyLeague": True, "stem": False,
+        "accept": 6, "satMedian": 1510, "sat25": 1440, "sat75": 1560, "gpaMean": 3.95, "hiddenIvy": False, "ivyLeague": True, "stem": False,
         "merit": "none", "location": "Hanover, NH",
         "vibe": "Smallest Ivy with fierce alumni loyalty; outdoor culture, Greek life, and an undergrad-first focus",
     },
     "Harvard University": {
-        "accept": 3, "satMedian": 1540, "hiddenIvy": False, "ivyLeague": True, "stem": True,
+        "accept": 3, "satMedian": 1540, "sat25": 1460, "sat75": 1570, "gpaMean": 3.95, "hiddenIvy": False, "ivyLeague": True, "stem": True,
         "merit": "none", "location": "Cambridge, MA",
         "vibe": "The most recognized university brand in the world — extraordinary in every dimension",
     },
     "Princeton University": {
-        "accept": 4, "satMedian": 1530, "hiddenIvy": False, "ivyLeague": True, "stem": True,
+        "accept": 4, "satMedian": 1530, "sat25": 1460, "sat75": 1570, "gpaMean": 3.94, "hiddenIvy": False, "ivyLeague": True, "stem": True,
         "merit": "none", "location": "Princeton, NJ",
         "vibe": "No-loan financial aid and the strongest endowment per student of any university in America",
     },
     "University of Pennsylvania": {
-        "accept": 6, "satMedian": 1510, "hiddenIvy": False, "ivyLeague": True, "stem": True,
+        "accept": 6, "satMedian": 1510, "sat25": 1450, "sat75": 1560, "gpaMean": 3.9, "hiddenIvy": False, "ivyLeague": True, "stem": True,
         "merit": "none", "location": "Philadelphia, PA",
         "vibe": "Wharton, Penn Medicine, and interdisciplinary programs in one of America's greatest college cities",
     },
     "Yale University": {
-        "accept": 5, "satMedian": 1535, "hiddenIvy": False, "ivyLeague": True, "stem": False,
+        "accept": 5, "satMedian": 1535, "sat25": 1460, "sat75": 1570, "gpaMean": 3.95, "hiddenIvy": False, "ivyLeague": True, "stem": False,
         "merit": "none", "location": "New Haven, CT",
         "vibe": "Architecture, drama, law, and music in a campus that looks like what college is supposed to look like",
     },
     # ── ACC ───────────────────────────────────────────────────────────────────
     "Boston College": {
-        "accept": 19, "satMedian": 1410, "hiddenIvy": False, "stem": False,
+        "accept": 19, "satMedian": 1410, "sat25": 1360, "sat75": 1520, "gpaMean": 3.87, "hiddenIvy": False, "stem": False,
         "merit": "moderate", "location": "Chestnut Hill, MA",
         "vibe": "Jesuit university with major football culture and strong pre-law, finance, and nursing programs",
     },
     "California, University of, Ber": {
-        "accept": 14, "satMedian": 1415, "hiddenIvy": False, "stem": True,
+        "accept": 14, "satMedian": 1415, "sat25": 1310, "sat75": 1530, "gpaMean": 3.9, "hiddenIvy": False, "stem": True,
         "merit": "none", "location": "Berkeley, CA",
         "vibe": "The flagship UC — world-class research, Nobel laureates, and legendary campus activism",
     },
     "Duke University": {
-        "accept": 6, "satMedian": 1530, "hiddenIvy": False, "stem": True,
+        "accept": 6, "satMedian": 1530, "sat25": 1450, "sat75": 1570, "gpaMean": 3.94, "hiddenIvy": False, "stem": True,
         "merit": "none", "location": "Durham, NC",
         "vibe": "Elite research university with a powerhouse basketball program and a beautiful Gothic campus",
     },
     "Florida State University": {
-        "accept": 25, "satMedian": 1265, "hiddenIvy": False, "stem": False,
+        "accept": 25, "satMedian": 1265, "sat25": 1230, "sat75": 1390, "gpaMean": 3.69, "hiddenIvy": False, "stem": False,
         "merit": "moderate", "location": "Tallahassee, FL",
         "vibe": "Major public flagship with strong business, film, and performing arts in Florida's capital city",
     },
     "Georgia Institute of Technolog": {
-        "accept": 17, "satMedian": 1440, "hiddenIvy": False, "stem": True,
+        "accept": 17, "satMedian": 1440, "sat25": 1360, "sat75": 1530, "gpaMean": 3.87, "hiddenIvy": False, "stem": True,
         "merit": "moderate", "location": "Atlanta, GA",
         "vibe": "Top-3 public engineering school; demanding but with a world-class alumni network and Atlanta access",
     },
@@ -1024,12 +1024,12 @@ SCHOOL_META = {
         "vibe": "NC's engineering and agriculture flagship in Research Triangle; career-focused and highly connected",
     },
     "North Carolina, University of": {
-        "accept": 17, "satMedian": 1340, "hiddenIvy": False, "stem": False,
+        "accept": 17, "satMedian": 1340, "sat25": 1300, "sat75": 1490, "gpaMean": 3.89, "hiddenIvy": False, "stem": False,
         "merit": "moderate", "location": "Chapel Hill, NC",
         "vibe": "The birthplace of public higher education in America; research powerhouse with a legendary campus",
     },
     "Notre Dame, University of": {
-        "accept": 13, "satMedian": 1500, "hiddenIvy": False, "stem": True,
+        "accept": 13, "satMedian": 1500, "sat25": 1400, "sat75": 1550, "gpaMean": 3.94, "hiddenIvy": False, "stem": True,
         "merit": "none", "location": "Notre Dame, IN",
         "vibe": "Elite Catholic university with a massive football identity, strong business, and an unmatched alumni network",
     },
@@ -1044,12 +1044,12 @@ SCHOOL_META = {
         "vibe": "Well-heeled Dallas campus with Dedman School of Law and a strong pre-law and business culture",
     },
     "Stanford University": {
-        "accept": 4, "satMedian": 1530, "hiddenIvy": False, "stem": True,
+        "accept": 4, "satMedian": 1530, "sat25": 1440, "sat75": 1570, "gpaMean": 3.96, "hiddenIvy": False, "stem": True,
         "merit": "none", "moonshot": True, "location": "Stanford, CA",
         "vibe": "Silicon Valley's university — extraordinary in every dimension, and nearly impossible to enter",
     },
     "University of Miami (Florida)": {
-        "accept": 23, "satMedian": 1380, "hiddenIvy": False, "stem": False,
+        "accept": 23, "satMedian": 1380, "sat25": 1290, "sat75": 1440, "gpaMean": 3.75, "hiddenIvy": False, "stem": False,
         "merit": "moderate", "location": "Coral Gables, FL",
         "vibe": "Selective private research university in South Florida; strong music, marine science, and business",
     },
@@ -1059,7 +1059,7 @@ SCHOOL_META = {
         "vibe": "Engineering and architecture powerhouse in the Blue Ridge; strong Hokie athletics culture",
     },
     "Virginia, University of": {
-        "accept": 20, "satMedian": 1425, "hiddenIvy": False, "stem": False,
+        "accept": 20, "satMedian": 1425, "sat25": 1340, "sat75": 1520, "gpaMean": 3.88, "hiddenIvy": False, "stem": False,
         "merit": "moderate", "location": "Charlottesville, VA",
         "vibe": "Jefferson's academical village — academically elite public flagship with strong honor culture",
     },
@@ -1075,12 +1075,12 @@ SCHOOL_META = {
         "vibe": "Big Ten flagship with the nation's top-ranked creative writing program and strong health sciences",
     },
     "Michigan, University of": {
-        "accept": 18, "satMedian": 1445, "hiddenIvy": False, "stem": True,
+        "accept": 18, "satMedian": 1445, "sat25": 1340, "sat75": 1530, "gpaMean": 3.89, "hiddenIvy": False, "stem": True,
         "merit": "none", "location": "Ann Arbor, MI",
         "vibe": "The Michigan Difference — elite public university with a massive endowment and All-American campus",
     },
     "Northwestern University": {
-        "accept": 7, "satMedian": 1530, "hiddenIvy": True, "stem": True,
+        "accept": 7, "satMedian": 1530, "sat25": 1440, "sat75": 1550, "gpaMean": 3.94, "hiddenIvy": True, "stem": True,
         "merit": "none", "location": "Evanston, IL",
         "vibe": "The Ivy of the Midwest — elite research university on Lake Michigan with a powerhouse journalism school",
     },
@@ -1105,7 +1105,7 @@ SCHOOL_META = {
         "vibe": "New Jersey's flagship public university with strong pharmacy, business, and public policy programs",
     },
     "University of California, Los": {
-        "accept": 9, "satMedian": 1405, "hiddenIvy": False, "stem": True,
+        "accept": 9, "satMedian": 1405, "sat25": 1280, "sat75": 1530, "gpaMean": 3.9, "hiddenIvy": False, "stem": True,
         "merit": "none", "location": "Los Angeles, CA",
         "vibe": "UCLA — elite public research university in LA with Bruin athletics and world-class film and medicine",
     },
@@ -1125,7 +1125,7 @@ SCHOOL_META = {
         "vibe": "Nebraska Cornhusker pride meets strong engineering and agriculture in a welcoming college town",
     },
     "University of Southern Califor": {
-        "accept": 12, "satMedian": 1455, "hiddenIvy": False, "stem": True,
+        "accept": 12, "satMedian": 1455, "sat25": 1360, "sat75": 1530, "gpaMean": 3.87, "hiddenIvy": False, "stem": True,
         "merit": "none", "location": "Los Angeles, CA",
         "vibe": "USC — elite private research university in LA; elite alumni network, film school, and strong athletics",
     },
@@ -1181,7 +1181,7 @@ SCHOOL_META = {
         "vibe": "Razorbacks flagship in the Ozarks with a strong Walton School of Business and growing research profile",
     },
     "University of Florida": {
-        "accept": 23, "satMedian": 1385, "hiddenIvy": False, "stem": True,
+        "accept": 23, "satMedian": 1385, "sat25": 1310, "sat75": 1470, "gpaMean": 3.89, "hiddenIvy": False, "stem": True,
         "merit": "moderate", "location": "Gainesville, FL",
         "vibe": "Top-5 public university — UF has elite research, Gator athletics, and an outstanding value proposition",
     },
@@ -1191,12 +1191,12 @@ SCHOOL_META = {
         "vibe": "Vol Nation — Tennessee orange campus on the Tennessee River with strong business and engineering",
     },
     "University of Texas": {
-        "accept": 29, "satMedian": 1360, "hiddenIvy": False, "stem": True,
+        "accept": 29, "satMedian": 1360, "sat25": 1230, "sat75": 1460, "gpaMean": 3.72, "hiddenIvy": False, "stem": True,
         "merit": "moderate", "location": "Austin, TX",
         "vibe": "UT Austin — What starts here changes the world; massive flagship in the live music capital",
     },
     "Vanderbilt University": {
-        "accept": 7, "satMedian": 1530, "hiddenIvy": False, "stem": True,
+        "accept": 7, "satMedian": 1530, "sat25": 1460, "sat75": 1560, "gpaMean": 3.92, "hiddenIvy": False, "stem": True,
         "merit": "none", "location": "Nashville, TN",
         "vibe": "Elite private research university in Nashville; Vandy offers Ivy-caliber academics with SEC athletics",
     },
@@ -1263,7 +1263,7 @@ SCHOOL_META = {
         "vibe": "UConn — flagship with elite nursing, business, and pharmacy programs and a historic basketball tradition",
     },
     "Georgetown University": {
-        "accept": 12, "satMedian": 1490, "hiddenIvy": False, "stem": False,
+        "accept": 12, "satMedian": 1490, "sat25": 1380, "sat75": 1550, "gpaMean": 3.89, "hiddenIvy": False, "stem": False,
         "merit": "none", "location": "Washington, DC",
         "vibe": "Elite Jesuit university in DC — politics, pre-law, and international relations on Capitol Hill's doorstep",
     },
@@ -1278,7 +1278,7 @@ SCHOOL_META = {
         "vibe": "Catholic university 14 miles from Manhattan; strong diplomacy, nursing, and business programs",
     },
     "Villanova University": {
-        "accept": 24, "satMedian": 1415, "hiddenIvy": False, "stem": False,
+        "accept": 24, "satMedian": 1415, "sat25": 1310, "sat75": 1470, "gpaMean": 3.8, "hiddenIvy": False, "stem": False,
         "merit": "moderate", "location": "Villanova, PA",
         "vibe": "Augustinian university near Philadelphia; highly selective with elite business, nursing, and law pipeline",
     },
@@ -1330,7 +1330,7 @@ SCHOOL_META = {
     },
     # ── ATLANTIC 10 ───────────────────────────────────────────────────────────
     "Davidson College": {
-        "accept": 19, "satMedian": 1400, "hiddenIvy": True, "stem": False,
+        "accept": 19, "satMedian": 1400, "sat25": 1350, "sat75": 1490, "gpaMean": 3.83, "hiddenIvy": True, "stem": False,
         "merit": "none", "location": "Davidson, NC",
         "vibe": "Elite honor-code LAC near Charlotte; consistently tops national rankings and places students at top grad schools",
     },
@@ -1375,7 +1375,7 @@ SCHOOL_META = {
         "vibe": "URI — strong pharmacy, engineering, and ocean science programs in coastal Rhode Island",
     },
     "University of Richmond": {
-        "accept": 28, "satMedian": 1380, "hiddenIvy": False, "stem": False,
+        "accept": 28, "satMedian": 1380, "sat25": 1240, "sat75": 1420, "gpaMean": 3.79, "hiddenIvy": False, "stem": False,
         "merit": "none", "location": "Richmond, VA",
         "vibe": "Selective private university with a beautiful campus; strong business, law pipeline, and generous aid",
     },
@@ -1396,7 +1396,7 @@ SCHOOL_META = {
         "vibe": "NJ shore university near NYC with a stunning campus and strong communications and business programs",
     },
     "Northeastern University": {
-        "accept": 7, "satMedian": 1490, "hiddenIvy": False, "stem": True,
+        "accept": 7, "satMedian": 1490, "sat25": 1440, "sat75": 1550, "gpaMean": 3.84, "hiddenIvy": False, "stem": True,
         "merit": "none", "location": "Boston, MA",
         "vibe": "Co-op model taken to the extreme — Northeastern's network places students at the world's top employers",
     },
@@ -1416,7 +1416,7 @@ SCHOOL_META = {
         "vibe": "UNCW — coastal NC campus with outstanding marine biology, film, and business programs",
     },
     "William and Mary": {
-        "accept": 33, "satMedian": 1400, "hiddenIvy": False, "stem": False,
+        "accept": 33, "satMedian": 1400, "sat25": 1280, "sat75": 1470, "gpaMean": 3.79, "hiddenIvy": False, "stem": False,
         "merit": "moderate", "location": "Williamsburg, VA",
         "vibe": "America's second-oldest university and the 'Public Ivy' of Virginia; strong law, business, and history",
     },
@@ -1493,12 +1493,12 @@ SCHOOL_META = {
         "vibe": "UC Davis — world's top agriculture and veterinary school; bike-friendly campus near Sacramento",
     },
     "UC San Diego": {
-        "accept": 24, "satMedian": 1370, "hiddenIvy": False, "stem": True,
+        "accept": 24, "satMedian": 1370, "sat25": 1290, "sat75": 1450, "gpaMean": 3.9, "hiddenIvy": False, "stem": True,
         "merit": "moderate", "location": "La Jolla, CA",
         "vibe": "UCSD — elite research campus with top-3 global ranking in oceanography and strong STEM programs",
     },
     "UC Santa Barbara": {
-        "accept": 26, "satMedian": 1330, "hiddenIvy": False, "stem": True,
+        "accept": 26, "satMedian": 1330, "sat25": 1270, "sat75": 1440, "gpaMean": 3.83, "hiddenIvy": False, "stem": True,
         "merit": "moderate", "location": "Santa Barbara, CA",
         "vibe": "UCSB — stunning ocean campus with Nobel-laureate faculty and a strong surf and research culture",
     },
@@ -1621,7 +1621,7 @@ SCHOOL_META = {
         "vibe": "Christian university on a Pacific Ocean bluff in Malibu; strong law, business, and international programs",
     },
     "US Air Force Academy": {
-        "accept": 11, "satMedian": 1340, "hiddenIvy": False, "stem": True,
+        "accept": 11, "satMedian": 1340, "sat25": 1240, "sat75": 1410, "hiddenIvy": False, "stem": True,
         "merit": "none", "location": "Colorado Springs, CO",
         "vibe": "Full scholarship service academy with rigorous STEM curriculum and a guaranteed Air Force career",
     },
@@ -1678,7 +1678,7 @@ SCHOOL_META = {
     },
     # ── WAC ───────────────────────────────────────────────────────────────────
     "Air Force": {
-        "accept": 11, "satMedian": 1340, "hiddenIvy": False, "stem": True,
+        "accept": 11, "satMedian": 1340, "sat25": 1240, "sat75": 1410, "hiddenIvy": False, "stem": True,
         "merit": "none", "location": "Colorado Springs, CO",
         "vibe": "Full scholarship service academy with rigorous STEM curriculum and a guaranteed Air Force career",
     },
@@ -1950,11 +1950,11 @@ OOU_SCHOOL_META = {
     "Vanderbilt":   {"accept": 7,  "satMedian": 1540, "merit": "moderate","location": "Nashville, TN",    "vibe": "Southern hospitality meets elite academics in a vibrant music city."},
     "Emory":        {"accept": 11, "satMedian": 1480, "hiddenIvy": True,  "merit": "moderate", "location": "Atlanta, GA",        "vibe": "Hidden Ivy with top pre-med programs and CDC proximity."},
     "Tufts":        {"accept": 11, "satMedian": 1490, "hiddenIvy": True,  "merit": "none",     "location": "Medford, MA",        "vibe": "Hidden Ivy bridging liberal arts and research, just outside Boston."},
-    "Wake Forest":  {"accept": 21, "satMedian": 1400, "merit": "moderate","location": "Winston-Salem, NC","vibe": "Small research university with a pro-human motto and strong business school."},
-    "Boston College": {"accept": 15,"satMedian": 1430,"merit": "none",    "location": "Chestnut Hill, MA","vibe": "Jesuit institution with strong business, nursing, and law programs."},
-    "Boston University": {"accept": 19,"satMedian": 1400,"merit": "moderate","location": "Boston, MA",   "vibe": "Large urban research university with 300+ programs along the Charles River."},
-    "Northeastern": {"accept": 7,  "satMedian": 1490, "stem": True,       "merit": "moderate", "location": "Boston, MA",         "vibe": "Co-op powerhouse — students graduate with up to two years of work experience."},
-    "Rice":         {"accept": 9,  "satMedian": 1540, "stem": True,       "merit": "none",     "location": "Houston, TX",        "vibe": "Tiny but mighty — residential college system and elite engineering."},
+    "Wake Forest":  {"accept": 21, "satMedian": 1400, "sat25": 1290, "sat75": 1480, "gpaMean": 3.82, "merit": "moderate","location": "Winston-Salem, NC","vibe": "Small research university with a pro-human motto and strong business school."},
+    "Boston College": {"accept": 15,"satMedian": 1430,"sat25": 1360,"sat75": 1520,"gpaMean": 3.87,"merit": "none",    "location": "Chestnut Hill, MA","vibe": "Jesuit institution with strong business, nursing, and law programs."},
+    "Boston University": {"accept": 19,"satMedian": 1400,"sat25": 1350,"sat75": 1500,"gpaMean": 3.73,"merit": "moderate","location": "Boston, MA",   "vibe": "Large urban research university with 300+ programs along the Charles River."},
+    "Northeastern": {"accept": 7,  "satMedian": 1490,"sat25": 1440,"sat75": 1550,"gpaMean": 3.84,"stem": True,       "merit": "moderate", "location": "Boston, MA",         "vibe": "Co-op powerhouse — students graduate with up to two years of work experience."},
+    "Rice":         {"accept": 9,  "satMedian": 1540, "sat25": 1490, "sat75": 1570, "gpaMean": 3.92, "stem": True,       "merit": "none",     "location": "Houston, TX",        "vibe": "Tiny but mighty — residential college system and elite engineering."},
     "University of Chicago": {"accept": 7,"satMedian": 1560,"hiddenIvy": True,"merit": "none","location": "Chicago, IL",         "vibe": "Rigorously intellectual — the life of the mind in the heart of Chicago."},
     "UChicago":     {"accept": 7,  "satMedian": 1560, "hiddenIvy": True,  "merit": "none",     "location": "Chicago, IL",        "vibe": "Rigorously intellectual — the life of the mind in the heart of Chicago."},
     "Carnegie Mellon": {"accept": 11,"satMedian": 1530,"stem": True,      "merit": "none",     "location": "Pittsburgh, PA",     "vibe": "CS and engineering titan with one of the world's top drama programs."},
@@ -2687,22 +2687,6 @@ def _selectivity_tier(accept_pct, sat_median):
     return 'broader_admit'
 
 
-def _estimate_mean_gpa(sat_median: int | None) -> float:
-    """
-    Estimate the average admitted-student GPA for a school from its SAT median.
-    Used to contextualise the swimmer's GPA relative to the school's typical student.
-    Thresholds derived from published Common Data Sets across the selectivity spectrum.
-    """
-    if sat_median is None:
-        return 3.40
-    if sat_median >= 1550: return 3.90
-    if sat_median >= 1480: return 3.80
-    if sat_median >= 1420: return 3.72
-    if sat_median >= 1350: return 3.60
-    if sat_median >= 1280: return 3.50
-    if sat_median >= 1200: return 3.40
-    return 3.30
-
 
 def admission_chance(school, sat, gpa, adj_tier, psf):
     """
@@ -2739,11 +2723,10 @@ def admission_chance(school, sat, gpa, adj_tier, psf):
     accept_pct = meta.get('accept')      # integer percent, e.g. 7 for 7%
     sat_median = meta.get('satMedian')   # integer, e.g. 1510
 
-    # ── School academic ranges (estimated from satMedian ±60 per spec fallback) ──
-    sat25 = (sat_median - 60) if sat_median else None
-    sat75 = (sat_median + 60) if sat_median else None
-    # No GPA percentile data in SCHOOL_META — gpa sub-score will be 0 (neutral)
-    gpa25, gpa75 = None, None
+    # ── School academic ranges ────────────────────────────────────────────────
+    # Prefer real CDS sat25/sat75 stored in SCHOOL_META; fall back to satMedian ±60.
+    sat25 = meta.get('sat25') or ((sat_median - 60) if sat_median else None)
+    sat75 = meta.get('sat75') or ((sat_median + 60) if sat_median else None)
 
     # ── Selectivity tier & floors ────────────────────────────────────────────
     sel_tier = _selectivity_tier(accept_pct, sat_median)
@@ -2776,15 +2759,18 @@ def admission_chance(school, sat, gpa, adj_tier, psf):
             elif not sat_below_floor:  sat_sub =  0
             else:                      sat_sub = -2
 
-        # GPA sub-score — compare swimmer GPA to school's estimated mean GPA.
-        # mean_gpa is derived from satMedian via _estimate_mean_gpa().
-        # +1: GPA clearly above mean (>+0.15)  0: near mean  -1: clearly below (>-0.15)
-        mean_gpa = _estimate_mean_gpa(sat_median)
-        if g is None:
+        # GPA sub-score — compare swimmer GPA to school's real mean unweighted GPA.
+        # gpaMean is sourced from published CDS or institutional data stored in SCHOOL_META.
+        # When no real gpaMean is available, gpa_sub stays 0 (neutral) — no derivation.
+        # +1: GPA > gpaMean + 0.10  (meaningfully above school's average)
+        # -1: GPA < gpaMean - 0.15  (user-specified penalty threshold)
+        #  0: within range, or no gpaMean data for this school
+        gpa_mean = meta.get('gpaMean')
+        if g is None or gpa_mean is None:
             gpa_sub = 0
-        elif g > mean_gpa + 0.15:
+        elif g > gpa_mean + 0.10:
             gpa_sub = 1
-        elif g < mean_gpa - 0.15:
+        elif g < gpa_mean - 0.15:
             gpa_sub = -1
         else:
             gpa_sub = 0
