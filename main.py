@@ -2069,7 +2069,101 @@ def load_data():
             key=lambda s: TEAMS.get(f"{conf}|{s}", {}).get('finish') or 99
         )
 
+    _supplement_from_csv()
     _load_conf_tier_lookup()
+
+
+def _supplement_from_csv():
+    """
+    Extends BENCHMARKS and TEAMS_LIST from CSV outputs for all conferences
+    not already covered by the Excel model file.
+
+    - output/all_event_anchors.csv  → adds benchmark rows to BENCHMARKS
+    - output/lane4_snapshot_compatible.csv → adds team_recs to TEAMS_LIST
+
+    Excel data always takes priority; this function never overwrites existing keys.
+    Must be called after load_data() Excel loading and before _load_conf_tier_lookup().
+    """
+    import csv as _csv
+
+    excel_confs = set(k.split('|')[0] for k in BENCHMARKS)
+
+    # ── 1. Supplement BENCHMARKS from all_event_anchors.csv ─────────────────
+    anchors_path = os.path.join(os.path.dirname(__file__), 'output', 'all_event_anchors.csv')
+    if os.path.exists(anchors_path):
+        new_bench = 0
+        with open(anchors_path, newline='', encoding='utf-8') as f:
+            for row in _csv.DictReader(f):
+                conf  = (row.get('Conference') or '').strip()
+                event = (row.get('Event') or '').strip()
+                if not conf or not event:
+                    continue
+                key = f"{conf}|{event}"
+                if key in BENCHMARKS:
+                    continue  # Excel entry takes priority
+                first  = _float(row.get('1st_seconds'))
+                eighth = _float(row.get('8th_seconds'))
+                sixteenth = _float(row.get('16th_seconds'))
+                spp   = _float(row.get('Sec_per_place'))
+                if first is None and eighth is None:
+                    continue  # no usable benchmark data
+                BENCHMARKS[key] = {
+                    'first':         first,
+                    'eighth':        eighth,
+                    'sixteenth':     sixteenth,
+                    'sec_per_place': spp,
+                }
+                new_bench += 1
+        print(f"[supplement] Added {new_bench} benchmark rows from all_event_anchors.csv")
+
+    # ── 2. Supplement TEAMS_LIST from lane4_snapshot_compatible.csv ─────────
+    snap_path = os.path.join(os.path.dirname(__file__), 'output', 'lane4_snapshot_compatible.csv')
+    if os.path.exists(snap_path):
+        excel_team_keys = set(TEAMS.keys())
+        new_teams = 0
+        with open(snap_path, newline='', encoding='utf-8') as f:
+            for row in _csv.DictReader(f):
+                if (row.get('gender') or '').lower() != 'men':
+                    continue
+                conf = (row.get('Conference') or '').strip()
+                raw  = (row.get('Team') or '').strip()
+                if not conf or not raw:
+                    continue
+                # Apply name normalization
+                canonical = raw
+                if raw in TEAM_NAME_MAP:
+                    canonical, _ = TEAM_NAME_MAP[raw]
+                key = f"{conf}|{canonical}"
+                if key in excel_team_keys:
+                    continue  # Excel entry takes priority
+                try:
+                    finish = int(row.get('Finish') or 0) or None
+                except (ValueError, TypeError):
+                    finish = None
+                team_rec = {
+                    'conference':      conf,
+                    'school':          canonical,
+                    'raw_name':        raw,
+                    'psf':             _float(row.get('PSF')) or 1.0,
+                    'tier':            row.get('Tier') or '',
+                    'finish':          finish,
+                    'men_points':      _float(row.get('MenPoints')),
+                    'normalized':      raw != canonical,
+                    'conf_tier_short': row.get('tier_short') or '',
+                    'conf_tier':       row.get('final_tier') or '',
+                    'conf_finish_2026': finish,
+                    'conf_score_2026': row.get('MenPoints') or '',
+                    'conf_power_class': row.get('PowerClass') or '',
+                }
+                TEAMS[key] = team_rec
+                TEAMS_LIST.append(team_rec)
+                excel_team_keys.add(key)
+                if conf not in CONFERENCES:
+                    CONFERENCES[conf] = []
+                if canonical not in CONFERENCES[conf]:
+                    CONFERENCES[conf].append(canonical)
+                new_teams += 1
+        print(f"[supplement] Added {new_teams} team records from snapshot CSV")
 
 
 def _norm_key(s):
