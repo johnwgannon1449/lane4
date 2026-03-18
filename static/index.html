@@ -195,7 +195,7 @@
     .btn-added { background: var(--green-m); color: var(--green); cursor: default; border: 1.5px solid var(--green-m); }
 
     /* place label colors */
-    .pl-winner { background: #FEF3C7; color: #92400E; }
+    .pl-contender { background: #FEF3C7; color: #92400E; }
     .pl-podium  { background: #FEF9C3; color: #854D0E; }
     .pl-afinal  { background: var(--blue-l); color: var(--blue); }
     .pl-bfinal  { background: #F1F5F9; color: var(--slate); }
@@ -2226,7 +2226,7 @@ function esc(s) {
 }
 
 function place_label(place) {
-  if (place <= 1.5)  return '🥇 Winner';
+  if (place <= 1.5)  return 'Contender';
   if (place <= 3.5)  return '🏅 Podium';
   if (place <= 8.5)  return 'A Final';
   if (place <= 16.5) return 'B Final';
@@ -2235,7 +2235,7 @@ function place_label(place) {
 }
 
 function placeClass(place) {
-  if (place <= 1.5)  return 'pl-winner';
+  if (place <= 1.5)  return 'pl-contender';
   if (place <= 3.5)  return 'pl-podium';
   if (place <= 8.5)  return 'pl-afinal';
   if (place <= 16.5) return 'pl-bfinal';

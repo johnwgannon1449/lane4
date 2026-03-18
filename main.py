@@ -957,7 +957,7 @@ def confidence_weight(place):
 
 def place_label(place):
     """Human-readable place outcome — OUTPUT_SCHEMA thresholds."""
-    if place <= 1.5:  return '🥇 Winner'
+    if place <= 1.5:  return 'Contender'
     if place <= 3.5:  return '🏅 Podium'
     if place <= 8.5:  return 'A Final'
     if place <= 16.5: return 'B Final'
@@ -1477,7 +1477,7 @@ def _parse_search_response(text, sorted_35):
     return answer, schools
 
 def _build_top3_text(top3):
-    """'1650 Free: 🥇 Winner; 500 Free: 🏅 Podium' style string."""
+    """'1650 Free: Contender; 500 Free: 🏅 Podium' style string."""
     return '; '.join(f"{e['event']}: {place_label(e['place'])}" for e in top3)
 
 def _build_vibe_lines(vibe, other_prefs=''):
