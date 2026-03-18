@@ -1629,6 +1629,46 @@ def search():
                 }
                 break
 
+    # Fourth pass: query looks like a specific school name but we have no record
+    # of it at all. Build a stub so the user always gets back the school they
+    # typed rather than a pile of unrelated D3 schools.
+    if not direct_match:
+        _desc_words = {
+            'find','show','good','best','near','with','help','looking','want',
+            'suggest','recommend','schools','colleges','programs','like','similar',
+            'strong','competitive','academic','research','liberal','division','d3',
+            'private','public','small','large','northeast','south','west','midwest',
+        }
+        _words = q_lower.split()
+        _looks_like_name = (
+            1 <= len(_words) <= 5 and
+            not any(w in _desc_words for w in _words) and
+            not q_lower.endswith('?')
+        )
+        if _looks_like_name:
+            # Title-case each word, but preserve known all-caps tokens (e.g. "MIT")
+            display_name = ' '.join(
+                w.upper() if w == w.upper() and len(w) > 1 else w.title()
+                for w in query.split()
+            )
+            direct_match = {
+                'school':         display_name,
+                'conference':     '',
+                'division':       '',
+                'adjTier':        '',
+                'psf':            1.0,
+                'admission':      {'label': 'No data', 'score': 0},
+                'top3':           [],
+                'meta':           {},
+                'confTierShort':  '',
+                'confTier':       '',
+                'confFinish2026': None,
+                'confScore2026':  None,
+                'confPowerClass': '',
+                'snapshotOnly':   True,
+                'outOfUniverse':  True,
+            }
+
     excl_names = set(eliminated) | set(my_list)
     if direct_match:
         excl_names.add(direct_match['school'])

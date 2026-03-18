@@ -1372,25 +1372,28 @@ function renderResultCards(schools, container, isDirect, answer) {
     const adm      = r.admission || { label: 'No data', score: 0 };
     const admColor = safeAdmColor(adm);
     const isSnap   = r.snapshotOnly;
+    const isOOU    = r.outOfUniverse;
+    const confLine = [r.conference, meta.location].filter(Boolean).join(' · ');
     return `
     <div class="result-card" id="rcard-${i}">
       ${r.aiWhy && !r.directMatch ? `<div class="ai-why">✦ ${esc(r.aiWhy)}</div>` : ''}
       <div class="result-card-top">
         <div>
           <div class="result-school-name">${esc(r.school)}</div>
-          <div class="result-conference">${esc(r.conference)} · ${esc(meta.location || '')}</div>
+          ${confLine ? `<div class="result-conference">${esc(confLine)}</div>` : ''}
         </div>
         <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;">
           ${!isSnap ? `<span class="badge badge-adm" style="background:${admColor};">${esc(adm.label)}</span>` : ''}
           ${r.adjTier && !isSnap ? `<span class="badge badge-tier">${esc(r.adjTier)}</span>` : ''}
-          ${r.division ? `<span class="badge" style="background:#F1F5F9;color:#475569;font-size:0.68rem;">${esc(r.division)}</span>` : ''}
+          ${r.division && !isOOU ? `<span class="badge" style="background:#F1F5F9;color:#475569;font-size:0.68rem;">${esc(r.division)}</span>` : ''}
         </div>
       </div>
       <div class="result-badges">
         ${meta.hiddenIvy ? '<span class="badge badge-ivy">Hidden Ivy</span>' : ''}
         ${meta.stem      ? '<span class="badge badge-stem">STEM</span>' : ''}
         ${meta.merit === 'high' ? '<span class="badge" style="background:#D1FAE5;color:#065F46;">High Merit Aid</span>' : ''}
-        ${isSnap ? '<span class="badge" style="background:#FEF9C3;color:#854D0E;">Conference data only</span>' : ''}
+        ${isOOU  ? '<span class="badge" style="background:#F1F5F9;color:#64748B;">Not in our D3 database</span>' : ''}
+        ${isSnap && !isOOU ? '<span class="badge" style="background:#FEF9C3;color:#854D0E;">Conference data only</span>' : ''}
       </div>
       ${meta.vibe ? `<div class="result-vibe">"${esc(meta.vibe)}"</div>` : ''}
       <div class="result-events">
