@@ -1401,7 +1401,6 @@ function renderResultCards(schools, container, isDirect, answer) {
         ${meta.hiddenIvy ? '<span class="badge badge-ivy">Hidden Ivy</span>' : ''}
         ${meta.stem      ? '<span class="badge badge-stem">STEM</span>' : ''}
         ${meta.merit === 'high' ? '<span class="badge" style="background:#D1FAE5;color:#065F46;">High Merit Aid</span>' : ''}
-        ${isOOU  ? '<span class="badge" style="background:#F1F5F9;color:#64748B;">No swim data on file</span>' : ''}
         ${isSnap && !isOOU ? '<span class="badge" style="background:#FEF9C3;color:#854D0E;">Conference data only</span>' : ''}
       </div>
       ${meta.vibe ? `<div class="result-vibe">"${esc(meta.vibe)}"</div>` : ''}
