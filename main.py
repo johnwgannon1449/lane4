@@ -1702,5 +1702,10 @@ def health():
         'anthropicKey':  key_ok,
     })
 
+@app.route('/snapshot', methods=['GET'])
+def download_snapshot():
+    """Serve the latest Lane4 team-tier snapshot CSV for download."""
+    return send_from_directory('output', 'lane4_snapshot.csv', as_attachment=True)
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
