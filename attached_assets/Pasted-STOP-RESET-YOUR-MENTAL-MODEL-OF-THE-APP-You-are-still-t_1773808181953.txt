@@ -1,0 +1,269 @@
+STOP. RESET YOUR MENTAL MODEL OF THE APP.
+
+You are still treating “new schools” as a second-class extension of the old app.
+That is wrong.
+
+There are NO “new schools.”
+There are NO “legacy schools.”
+There are NO “modeled schools vs added schools” in Explore/search behavior.
+
+For swimming, there is now exactly ONE school universe:
+~324 deduped swimming schools.
+
+From this point on, every school must be handled IDENTICALLY by the app.
+
+READ THIS TWICE:
+THE APP MUST NOT HAVE TWO TIERS OF SCHOOL TREATMENT.
+THE APP MUST NOT HAVE A PRIMARY SCHOOL LIST AND AN APPENDED SCHOOL LIST.
+THE APP MUST NOT HAVE A RICH PATH FOR SOME SCHOOLS AND A FALLBACK/STUB PATH FOR OTHERS.
+
+==================================================
+PRODUCT RULE
+==================================================
+
+For swimming, every school in the deduped ~324-school universe must receive ALL OF THE SAME TREATMENT in every place we handle schools in Explore/search.
+
+That means:
+- same dataset
+- same object shape
+- same builder path
+- same card renderer path
+- same search indexing path
+- same filter/sort path
+- same summary-generation path
+- same badges/labels path
+- same deep-dive eligibility logic path
+- same admissions/selectivity logic path
+- same hover/detail/meta path
+- same normalization/deduplication path
+
+Some schools may have richer underlying values than others, but they must STILL go through the exact same architecture.
+
+Difference in value richness is allowed.
+Difference in code path is NOT allowed.
+
+==================================================
+WHAT YOU KEEP DOING WRONG
+==================================================
+
+You keep doing some version of this:
+
+1. Start with the old app’s school list
+2. Build rich objects for those schools
+3. Append the rest later
+4. Create fallback/stub objects for schools missing modeled metadata
+5. Try to patch missing UI features onto those stub schools
+
+That is the bug.
+That entire architecture must be removed.
+
+Do NOT do:
+- old-school-first build
+- append later
+- fourth pass
+- stub cards
+- meta: {}
+- “No data” hardcodes for one subgroup
+- special-case elite-school tables
+- SCHOOL_META-gated richness
+- if school exists in legacy map then rich else fallback
+
+If any of that remains, the job is not done.
+
+==================================================
+THE ONLY ACCEPTABLE ARCHITECTURE
+==================================================
+
+There is ONE unified swimming school dataset.
+
+It must be built like this:
+
+STEP 1:
+Create the full swimming school universe first.
+Source: deduped school-level records from output/lane4_snapshot.csv (574 team rows -> ~324 unique schools).
+
+STEP 2:
+Create ONE master school record per school.
+
+STEP 3:
+Merge every available enrichment source into that master school universe.
+This can include:
+- snapshot-derived school-level aggregates
+- conference
+- conf tier
+- power/tier labels
+- legacy modeled/admissions data IF available
+- any existing summary/meta fields already used by Explore/search
+
+STEP 4:
+For fields that are missing for some schools, compute fallback VALUES inside the same unified record builder.
+Fallback VALUES are allowed.
+Fallback CODE PATHS are not.
+
+STEP 5:
+Output one final unified dataset for swimming schools.
+
+STEP 6:
+Make Explore/search consume ONLY that one unified dataset.
+
+STEP 7:
+Delete all alternate school-construction paths.
+
+==================================================
+CRITICAL DISTINCTION
+==================================================
+
+Allowed:
+- one school has richer admissions info than another
+- one school has more complete summary text than another
+- one school has more source fields populated than another
+
+Not allowed:
+- one school is built by a different constructor
+- one school gets a different object shape
+- one school gets a stub object
+- one school gets excluded from deep-dive logic path
+- one school gets different badge generation logic
+- one school gets different summary logic
+- one school gets different search indexing logic
+
+EVERY SCHOOL MUST FLOW THROUGH THE SAME PIPELINE.
+
+==================================================
+ABSOLUTE REQUIREMENTS
+==================================================
+
+I want one school object schema for ALL ~324 swimming schools.
+
+Every school object should have the same final keys used by Explore/search, even if some values are null/fallback-derived.
+
+At minimum, unify fields like:
+- school_key
+- school_name
+- normalized_name
+- conference
+- conf_tier
+- power_label
+- division
+- source flags
+- admissions/selectivity label
+- deep_dive_available
+- search text/index fields
+- summary/meta fields used by cards
+- badge-driving fields
+- any sort/filter fields currently used by Explore
+
+Do not leave some schools without these keys.
+Do not create partial object shapes.
+
+==================================================
+VERY IMPORTANT IMPLEMENTATION RULE
+==================================================
+
+The builder must start from the FULL deduped school universe.
+
+NOT from the old 76.
+NOT from SCHOOL_META.
+NOT from the old modeled list.
+NOT from a hardcoded app list.
+
+Start from the complete swimming universe, then merge data into it.
+
+The complete school universe is the base table.
+Everything else is enrichment.
+
+==================================================
+HARVARD TEST / UNIVERSAL TEST
+==================================================
+
+Harvard is not special.
+Harvard is just the proof that the architecture is broken.
+
+The correct goal is not:
+“make Harvard richer.”
+
+The correct goal is:
+“make Harvard go through the exact same unified record builder as every other school.”
+
+Replace “Harvard” with any of the other ~323 schools and the same rule must hold.
+
+==================================================
+DEFINITION OF DONE
+==================================================
+
+This work is only done when ALL of these are true:
+
+1. There is one unified swimming dataset with ~324 deduped schools.
+2. Explore/search reads only that unified dataset.
+3. No code begins from the legacy school list.
+4. No code appends a second class of schools later.
+5. No stub/fallback school objects are created anywhere.
+6. No card or summary is built from meta: {}.
+7. No SCHOOL_META branch determines whether a school gets a “real” card.
+8. All schools share the same final object shape.
+9. All schools share the same rendering/search/filter/sort pipeline.
+10. The code no longer contains the concept of “old schools vs new schools” for swimming Explore/search.
+
+If any one of those is false, the refactor is incomplete.
+
+==================================================
+WHAT I WANT YOU TO DO
+==================================================
+
+Do this in order.
+
+PART 1 — AUDIT THE CURRENT CODE
+Find and report:
+- every file/function where the app still starts from the old modeled-school list
+- every file/function where extra schools are appended later
+- every file/function where a stub/fallback school object is created
+- every file/function where SCHOOL_META or equivalent creates a privileged path
+- the exact current source-of-truth for Explore/search school data
+- the exact places where cards/summaries/badges/deep-dive/search indexing are generated differently for different school groups
+
+Then give me a SHORT plan with the exact files/functions you will change.
+
+PART 2 — IMPLEMENT THE REFACTOR
+Refactor the code so that:
+- one unified builder creates the final school dataset for all ~324 schools
+- all enrichment happens by merging into that master dataset
+- fallback values are computed inside the unified builder
+- Explore/search consumes only the unified dataset
+- all alternate/stub/legacy-first paths are removed
+
+PART 3 — PROVE IT
+After coding, report:
+- exact files changed
+- exact functions added/removed/rewired
+- the new data flow from CSVs to final Explore objects
+- confirmation that there is no remaining stub path
+- confirmation that there is no remaining legacy-first path
+- confirmation that every school now shares the same object schema
+
+==================================================
+DO NOT DO THESE THINGS
+==================================================
+
+Do not:
+- add a tiny elite metadata table
+- patch Harvard only
+- patch Ivy schools only
+- create a new fourth/fifth pass
+- preserve the old 76 as the primary list
+- leave any “fallback card” builder in place
+- say “rich schools” vs “snapshot schools”
+- keep two school universes in any form
+
+==================================================
+FINAL INSTRUCTION
+==================================================
+
+Treat this as an architecture replacement, not a patch.
+
+The old mental model is dead.
+
+For swimming Explore/search, there is now ONE dataset, ONE school universe, and ONE handling path for ALL ~324 schools.
+
+Proceed with audit first, then implementation.
+Do not drift into track.
+Do not stop at a partial patch.
