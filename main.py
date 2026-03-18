@@ -144,6 +144,7 @@ TEAM_NAME_MAP = {
     "Whitworth University Swim Team": ("Whitworth University",              "trailing qualifier"),
     "California Institute of Techno": ("Caltech",                           "truncated — schema uses 'Caltech'"),
     "Saint Johns University":          ("Saint John's University",           "missing apostrophe"),
+    "Harvard Men's Swimming":          ("Harvard University",                 "gendered PDF team name artifact"),
 }
 
 # ---------------------------------------------------------------------------
@@ -965,11 +966,6 @@ SCHOOL_META = {
         "accept": 6, "satMedian": 1510, "hiddenIvy": False, "ivyLeague": True, "stem": False,
         "merit": "none", "location": "Hanover, NH",
         "vibe": "Smallest Ivy with fierce alumni loyalty; outdoor culture, Greek life, and an undergrad-first focus",
-    },
-    "Harvard Men's Swimming": {
-        "accept": 3, "satMedian": 1540, "hiddenIvy": False, "ivyLeague": True, "stem": True,
-        "merit": "none", "location": "Cambridge, MA",
-        "vibe": "The most recognized university brand in the world — extraordinary in every dimension",
     },
     "Harvard University": {
         "accept": 3, "satMedian": 1540, "hiddenIvy": False, "ivyLeague": True, "stem": True,
@@ -2273,6 +2269,8 @@ def _build_explore_schools():
     for row in snap_rows:
         gender = row.get('gender', '').lower()
         school = row.get('Team', '').strip()
+        if school in TEAM_NAME_MAP:
+            school, _ = TEAM_NAME_MAP[school]   # normalize PDF team names to canonical
         if school and gender:
             by_school[school][gender] = row
 
