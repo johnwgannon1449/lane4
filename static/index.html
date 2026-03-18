@@ -305,22 +305,31 @@
     .list-school-right { display: flex; align-items: center; gap: 0.5rem; flex-shrink: 0; flex-wrap: nowrap; }
     .status-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
     .status-oval {
-      display: inline-block; padding: 3px 11px; border-radius: 50px;
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 3px 10px; border-radius: 50px; border: none; cursor: pointer;
       font-size: 0.68rem; font-weight: 700; color: white; white-space: nowrap;
+      font-family: 'Figtree', sans-serif;
     }
+    .status-oval:after { content: '▾'; font-size: 0.6rem; opacity: 0.85; }
     .adm-oval {
       display: inline-block; padding: 3px 11px; border-radius: 50px;
       font-size: 0.68rem; font-weight: 700; color: white; white-space: nowrap;
     }
     .toggle-arrow { font-size: 0.75rem; color: var(--muted); flex-shrink: 0; }
     .crm-body { border-top: 1px solid var(--border); padding: 1rem 1.1rem; }
-    .status-row { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1rem; }
-    .status-btn {
-      padding: 5px 12px; border-radius: 20px; border: 1.5px solid var(--border);
-      font-size: 0.78rem; font-weight: 600; cursor: pointer; background: var(--white);
-      color: var(--slate); transition: all 0.15s;
+    .status-dd-wrap { position: relative; flex-shrink: 0; }
+    .status-dropdown {
+      position: absolute; right: 0; top: calc(100% + 6px); z-index: 200;
+      background: var(--white); border: 1.5px solid var(--border); border-radius: 10px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.12); min-width: 150px; overflow: hidden;
     }
-    .status-btn.active { border-color: transparent; color: white; }
+    .status-dd-item {
+      display: block; width: 100%; text-align: left; padding: 9px 14px;
+      border: none; background: none; font-family: 'Figtree', sans-serif;
+      font-size: 0.82rem; font-weight: 600; cursor: pointer; color: var(--navy);
+    }
+    .status-dd-item:hover { background: var(--bg); }
+    .status-dd-item.active { color: white; }
     .crm-section { margin-bottom: 1rem; }
     .crm-section-title { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); margin-bottom: 0.5rem; }
     .note-item { background: var(--bg); border-radius: 8px; padding: 0.65rem 0.75rem; margin-bottom: 0.4rem; font-size: 0.83rem; color: var(--slate); display: flex; justify-content: space-between; align-items: flex-start; gap: 0.5rem; }
@@ -670,6 +679,7 @@ let ALL_RESULTS   = [];   // full ranked list from /api/score-all (76 modeled sc
 let ALL_SCHOOLS   = [];   // unified 324-school browse list from /api/schools
 let JAMES         = {};   // swimmer profile
 let CRM_DATA      = {};   // { schoolName: { status, notes, reminders } }
+let OPEN_STATUS_DD = null; // school name whose status dropdown is open
 let MY_LIST       = [];   // array of school name strings (ordered)
 let ELIMINATED    = [];   // eliminated in current session
 let LAST_RESULTS  = null; // last search result { answer, schools }
@@ -1587,11 +1597,6 @@ function renderMyList() {
     const adm    = result?.admission || {};
     const isOpen = OPEN_CRM === school;
 
-    const statusBtns = Object.entries(STATUS_CONFIG).map(([k, v]) =>
-      `<button class="status-btn ${crm.status === k ? 'active' : ''}"
-        style="${crm.status === k ? 'background:' + v.color + ';' : ''}"
-        onclick='setCrmStatus(${JSON.stringify(school)}, "${k}")'>${v.label}</button>`
-    ).join('');
 
     const noteItems = (crm.notes || []).map((n, ni) => `
       <div class="note-item">
@@ -1622,17 +1627,23 @@ function renderMyList() {
         </div>
         <div class="list-school-right">
           ${adm.label ? `<span class="adm-oval" style="background:${safeAdmColor(adm)};">${esc(adm.label)}</span>` : ''}
-          <span class="status-oval" style="background:${cfg.color};">${cfg.label}</span>
+          <div class="status-dd-wrap">
+            <button class="status-oval" style="background:${cfg.color};"
+              onclick='toggleStatusDD(${JSON.stringify(school)}, event)'>${esc(cfg.label)}</button>
+            ${OPEN_STATUS_DD === school ? `
+            <div class="status-dropdown">
+              ${Object.entries(STATUS_CONFIG).map(([k, v]) =>
+                `<button class="status-dd-item ${crm.status === k ? 'active' : ''}"
+                  style="${crm.status === k ? `background:${v.color};` : ''}"
+                  onclick='setCrmStatusDD(${JSON.stringify(school)}, "${k}", event)'>${v.label}</button>`
+              ).join('')}
+            </div>` : ''}
+          </div>
           <span class="toggle-arrow">${isOpen ? '▴' : '▾'}</span>
         </div>
       </div>
       ${isOpen ? `
       <div class="crm-body">
-        <div class="crm-section">
-          <div class="crm-section-title">Status</div>
-          <div class="status-row">${statusBtns}</div>
-        </div>
-
         <div class="crm-section">
           <div class="crm-section-title">Notes</div>
           ${noteItems || '<div style="font-size:0.82rem;color:var(--muted);">No notes yet.</div>'}
@@ -1675,9 +1686,28 @@ function toggleCRM(school) {
 function setCrmStatus(school, status) {
   if (!CRM_DATA[school]) CRM_DATA[school] = { status: 'researching', notes: [], reminders: [] };
   CRM_DATA[school].status = status;
-  renderMyList();
   saveToStorage();
+  renderMyList();
 }
+
+function toggleStatusDD(school, event) {
+  event.stopPropagation();
+  OPEN_STATUS_DD = OPEN_STATUS_DD === school ? null : school;
+  renderMyList();
+}
+
+function setCrmStatusDD(school, status, event) {
+  event.stopPropagation();
+  if (!CRM_DATA[school]) CRM_DATA[school] = { status: 'researching', notes: [], reminders: [] };
+  CRM_DATA[school].status = status;
+  OPEN_STATUS_DD = null;
+  saveToStorage();
+  renderMyList();
+}
+
+document.addEventListener('click', () => {
+  if (OPEN_STATUS_DD !== null) { OPEN_STATUS_DD = null; renderMyList(); }
+});
 
 function addNote(school, si) {
   const cat  = document.getElementById('note-cat-' + si)?.value || 'General';
