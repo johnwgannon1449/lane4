@@ -1385,6 +1385,17 @@ function renderResultCards(schools, container, isDirect, answer) {
     const confLine = [r.conference, meta.location].filter(Boolean).join(' · ');
     const TIER_LABELS = {'1A':'Super Powerhouse','1B':'Powerhouse','2':'Strong Program','3':'Mid-pack','4':'Developing'};
     const progStrength = r.adjTier || (['1A','1B'].includes(r.confTierShort) ? TIER_LABELS[r.confTierShort] : '') || '';
+    const _RECRUIT_LABEL = {4:'Prime Recruit', 3:'Strong Recruit', 2:'On Their Radar', 1:'Borderline Fit'};
+    const _RECRUIT_STYLE = {
+      4: 'background:#D1FAE5;color:#065F46;font-weight:700;',
+      3: 'background:#DBEAFE;color:#1E40AF;font-weight:700;',
+      2: 'background:#F0F9FF;color:#0369A1;font-weight:600;',
+      1: 'background:#FEF3C7;color:#92400E;font-weight:600;'
+    };
+    const ss = adm.swimScore;
+    const recruitBadge = (!isOOU && ss >= 1)
+      ? `<span class="badge" style="${_RECRUIT_STYLE[ss]}">${_RECRUIT_LABEL[ss]}</span>`
+      : '';
     return `
     <div class="result-card" id="rcard-${i}">
       ${r.aiWhy ? `<div class="ai-why">✦ ${esc(r.aiWhy)}</div>` : ''}
@@ -1400,6 +1411,7 @@ function renderResultCards(schools, container, isDirect, answer) {
         </div>
       </div>
       <div class="result-badges">
+        ${recruitBadge}
         ${meta.ivyLeague ? '<span class="badge" style="background:#1E3A5F;color:#fff;">Ivy League</span>' : ''}
         ${meta.hiddenIvy ? '<span class="badge badge-ivy">Hidden Ivy</span>' : ''}
         ${meta.stem      ? '<span class="badge badge-stem">STEM</span>' : ''}
