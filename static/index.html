@@ -1392,11 +1392,21 @@ function renderResultCards(schools, container, isDirect, answer) {
       2: 'background:#F0F9FF;color:#0369A1;font-weight:600;',
       1: 'background:#FEF3C7;color:#92400E;font-weight:600;'
     };
-    const ss = adm.swimScore;
+    // Swim badge derived purely from adjTier (swim performance vs school benchmarks),
+    // NOT from admission.swimScore — so a world-record swimmer at Stanford correctly
+    // shows "Prime Recruit" even if their SAT makes overall admission a Moonshot.
+    const _ADJ_TIER_BAND = {
+      'High-Point Contender': 4, 'Conference Star': 4,
+      'Priority Recruit': 3,     'Top Recruit': 3,
+      'Recruitable': 2,
+      'Reach': 1,
+      'Moonshot': 0
+    };
+    const swimBand = r.adjTier ? (_ADJ_TIER_BAND[r.adjTier] ?? 0) : (r.hasSwimData ? 0 : -1);
     const recruitBadge = isOOU ? '' :
-      (ss >= 1
-        ? `<span class="badge" style="${_RECRUIT_STYLE[ss]}">${_RECRUIT_LABEL[ss]}</span>`
-        : (r.hasSwimData
+      (swimBand >= 1
+        ? `<span class="badge" style="${_RECRUIT_STYLE[swimBand]}">${_RECRUIT_LABEL[swimBand]}</span>`
+        : (swimBand === 0
             ? `<span class="badge" style="background:#FEE2E2;color:#991B1B;font-weight:600;">Reach</span>`
             : ''));
     return `
