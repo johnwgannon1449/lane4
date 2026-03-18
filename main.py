@@ -1058,6 +1058,7 @@ def _score_school_swim(team_rec, times):
     return {
         'school':          school,
         'conference':      conf,
+        'division':        'D3',
         'finish':          team_rec['finish'],
         'tier':            team_rec['tier'],
         'psf':             psf,
@@ -1601,6 +1602,7 @@ def search():
                 direct_match = {
                     'school':         s['school'],
                     'conference':     s.get('conference', ''),
+                    'division':       'D3',
                     'adjTier':        '',
                     'psf':            1.0,
                     'admission':      {'label': 'No data', 'score': 0},
