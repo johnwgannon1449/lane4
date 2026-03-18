@@ -1383,6 +1383,8 @@ function renderResultCards(schools, container, isDirect, answer) {
     const isNoSwim = r.hasSwimData === false;
     const isOOU    = r.outOfUniverse;
     const confLine = [r.conference, meta.location].filter(Boolean).join(' · ');
+    const TIER_LABELS = {'1A':'Super Powerhouse','1B':'Powerhouse','2':'Strong Program','3':'Mid-pack','4':'Developing'};
+    const progStrength = r.adjTier || TIER_LABELS[r.confTierShort] || '';
     return `
     <div class="result-card" id="rcard-${i}">
       ${r.aiWhy && !r.directMatch ? `<div class="ai-why">✦ ${esc(r.aiWhy)}</div>` : ''}
@@ -1393,7 +1395,7 @@ function renderResultCards(schools, container, isDirect, answer) {
         </div>
         <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;">
           ${adm.label && adm.label !== 'Unknown' && adm.label !== 'No data' ? `<span class="badge badge-adm" style="background:${admColor};">${esc(adm.label)}</span>` : ''}
-          ${r.adjTier ? `<span class="badge badge-tier">${esc(r.adjTier)}</span>` : ''}
+          ${progStrength ? `<span class="badge badge-tier" ${!r.adjTier && r.confTierShort ? 'style="background:#E0E7FF;color:#3730A3;"' : ''}>${esc(progStrength)}</span>` : ''}
           ${r.division && !isOOU ? `<span class="badge" style="background:#F1F5F9;color:#475569;font-size:0.68rem;">${esc(r.division)}</span>` : ''}
         </div>
       </div>
@@ -1404,7 +1406,11 @@ function renderResultCards(schools, container, isDirect, answer) {
         ${meta.merit === 'high' ? '<span class="badge" style="background:#D1FAE5;color:#065F46;">High Merit Aid</span>' : ''}
         ${isNoSwim && !isOOU ? '<span class="badge" style="background:#FEF9C3;color:#854D0E;">Conference data only</span>' : ''}
       </div>
-      ${meta.vibe ? `<div class="result-vibe">"${esc(meta.vibe)}"</div>` : ''}
+      ${meta.vibe
+        ? `<div class="result-vibe">"${esc(meta.vibe)}"</div>`
+        : (isNoSwim && !isOOU && r.confFinish2026
+            ? `<div class="result-vibe" style="font-style:normal;color:#64748B;font-size:0.82rem;">Finished #${r.confFinish2026} in the ${esc(r.conference || '')} championship · ${r.confScore2026 ? Math.round(r.confScore2026) + ' team pts' : ''}</div>`
+            : '')}
       <div class="result-events">
         ${top1 ? `<span class="badge ${placeClass(top1.place)}">${esc(top1.event)}: ${esc(place_label(top1.place))}</span>` : ''}
         ${top2 ? `<span class="badge ${placeClass(top2.place)}">${esc(top2.event)}: ${esc(place_label(top2.place))}</span>` : ''}
