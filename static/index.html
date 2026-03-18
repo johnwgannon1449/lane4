@@ -298,22 +298,18 @@
 
     /* ── MY LIST TAB ─────────────────────────────────────────── */
     .list-school-card { background: var(--white); border: 1.5px solid var(--border); border-radius: 12px; margin-bottom: 0.75rem; overflow: hidden; }
-    .list-school-header { display: flex; justify-content: space-between; align-items: center; padding: 0.9rem 1.1rem; cursor: pointer; gap: 0.75rem; }
+    .list-school-header { display: flex; flex-direction: column; padding: 0.9rem 1.1rem; cursor: pointer; }
     .list-school-header:hover { background: var(--bg); }
     .list-school-name { font-family: 'Fraunces', serif; font-weight: 700; font-size: 1rem; color: var(--navy); }
     .list-school-meta { font-size: 0.78rem; color: var(--muted); margin-top: 1px; }
     .list-school-right { display: flex; align-items: center; gap: 0.5rem; flex-shrink: 0; flex-wrap: nowrap; }
     .status-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
-    .status-oval {
-      display: inline-flex; align-items: center; gap: 4px;
-      padding: 3px 10px; border-radius: 50px; border: none; cursor: pointer;
-      font-size: 0.68rem; font-weight: 700; color: white; white-space: nowrap;
-      font-family: 'Figtree', sans-serif;
-    }
-    .status-oval:after { content: '▾'; font-size: 0.6rem; opacity: 0.85; }
-    .adm-oval {
-      display: inline-block; padding: 3px 11px; border-radius: 50px;
-      font-size: 0.68rem; font-weight: 700; color: white; white-space: nowrap;
+    .list-school-badges { display: flex; align-items: center; gap: 0.4rem; margin-top: 7px; flex-wrap: wrap; }
+    .list-badge {
+      display: inline-flex; align-items: center; gap: 3px;
+      padding: 4px 12px; border-radius: 50px;
+      font-size: 0.7rem; font-weight: 700; white-space: nowrap;
+      font-family: 'Figtree', sans-serif; letter-spacing: 0.01em;
     }
     .toggle-arrow { font-size: 0.75rem; color: var(--muted); flex-shrink: 0; }
     .crm-body { border-top: 1px solid var(--border); padding: 1rem 1.1rem; }
@@ -1630,15 +1626,18 @@ function renderMyList() {
     return `
     <div class="list-school-card">
       <div class="list-school-header" onclick='toggleCRM(${JSON.stringify(school)})'>
-        <div style="flex:1;min-width:0;">
-          <div class="list-school-name">${esc(school)}</div>
-          <div class="list-school-meta">${result ? esc(result.conference) : ''}</div>
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+          <div style="min-width:0;">
+            <div class="list-school-name">${esc(school)}</div>
+            <div class="list-school-meta">${result ? esc(result.conference) : ''}</div>
+          </div>
+          <span class="toggle-arrow" style="margin-top:2px;">${isOpen ? '▴' : '▾'}</span>
         </div>
-        <div class="list-school-right">
-          ${adm.label ? `<span class="adm-oval" style="background:${safeAdmColor(adm)};">${esc(adm.label)}</span>` : ''}
+        <div class="list-school-badges">
+          ${adm.label ? `<span class="list-badge" style="background:${safeAdmColor(adm)};color:#fff;">${esc(adm.label)}</span>` : ''}
           <div class="status-dd-wrap">
-            <button class="status-oval" style="background:${cfg.color};"
-              onclick='toggleStatusDD(${JSON.stringify(school)}, event)'>${esc(cfg.label)}</button>
+            <button class="list-badge" style="background:${cfg.color};color:#fff;border:none;cursor:pointer;"
+              onclick='toggleStatusDD(${JSON.stringify(school)}, event)'>${esc(cfg.label)} <span style="font-size:0.6rem;opacity:0.85;">▾</span></button>
             ${OPEN_STATUS_DD === school ? `
             <div class="status-dropdown">
               ${Object.entries(STATUS_CONFIG).map(([k, v]) =>
@@ -1648,7 +1647,6 @@ function renderMyList() {
               ).join('')}
             </div>` : ''}
           </div>
-          <span class="toggle-arrow">${isOpen ? '▴' : '▾'}</span>
         </div>
       </div>
       ${isOpen ? `
