@@ -579,16 +579,26 @@ SCHOOL_META = {
 }
 
 # ---------------------------------------------------------------------------
-# Data loading from Excel
+# Runtime data stores
 # ---------------------------------------------------------------------------
-EXCEL_PATH = os.path.join(os.path.dirname(__file__), 'data', 'lane4_swim_model.xlsx')
+# ── PRIMARY UNIVERSE (source of truth) ──────────────────────────────────────
+# EXPLORE_SCHOOLS is the canonical 324-school swimming universe.
+# Built at startup from output/lane4_snapshot_compatible.csv.
+# Every endpoint that needs a school list starts here — never from TEAMS_LIST.
+EXPLORE_SCHOOLS = []   # [{school, conference, conf_tier_short, meta, hasSwimData, …}]
 
+# ── ENRICHMENT SOURCES (read-only, merged into EXPLORE_SCHOOLS at startup) ──
+# lane4_swim_model.xlsx provides:
+#   BENCHMARKS  — event × conference benchmarks (needed for swim scoring)
+#   TEAMS/TEAMS_LIST — PSF + tier values for the 68 schools in both sources
+#   CONFERENCES — used only by score_one_school (manual calculator)
+# These dictionaries are never used as a school universe.  They enrich values.
+EXCEL_PATH = os.path.join(os.path.dirname(__file__), 'data', 'lane4_swim_model.xlsx')
 BENCHMARKS = {}    # "Conference|Event" -> {first, eighth, sixteenth, sec_per_place}
-TEAMS = {}         # "Conference|School" -> {conference, school, psf, tier, finish, normalized}
-TEAMS_LIST = []    # ordered list of all team dicts
+TEAMS = {}         # "Conference|School" -> enrichment record (PSF, tier, finish)
+TEAMS_LIST = []    # flat list of TEAMS records — enrichment only, not the universe
 CONFERENCES = {}   # conference name -> sorted list of canonical school names
-NORMALIZATION_LOG = []  # records every name that was normalized
-EXPLORE_SCHOOLS = []   # unified 324-school list for /api/schools
+NORMALIZATION_LOG = []  # records every name-normalization applied during load
 
 # ── Out-of-universe well-known schools ───────────────────────────────────────
 # Metadata for commonly searched schools outside our scored pool.
@@ -951,8 +961,9 @@ load_data()
 #   ADMISSION LAYER  ──  admission_chance(school, sat, gpa, adj_tier, psf)  →  AdmissionResult
 #                        (takes SwimResult outputs + academic inputs; returns {label, color, …})
 #
-#   FULL PIPELINE  ──  score_all_schools(times, sat, gpa)  →  [SchoolResult …]
-#                      (SwimResult + SCHOOL_META nested as `meta` + AdmissionResult)
+#   FULL PIPELINE  ──  build_school_universe(times, sat, gpa)  →  [SchoolResult …]
+#                      Starts from EXPLORE_SCHOOLS (324-school snapshot universe).
+#                      Merges swim scoring + SCHOOL_META + admission into one uniform shape.
 #
 # Output field names follow OUTPUT_SCHEMA.md exactly:
 #   EventScore:  { event, sec, place, pts }   (+ expPts, confidence, placeLabel for tracing)
@@ -1376,61 +1387,9 @@ def admission_chance(school, sat, gpa, adj_tier, psf):
         'swimScore': swim_band,
     }
 
-# ── Full pipeline ───────────────────────────────────────────────────────────
-
-def score_all_schools(times, sat, gpa):
-    """
-    Score swimmer against all 76 programs.
-    Returns list of SchoolResult dicts sorted by adjPts descending.
-
-    Pipeline: swim layer → meta lookup → admission layer.
-    Schools with rawPts == 0 (zero scorable events) are excluded entirely.
-
-    SchoolResult (OUTPUT_SCHEMA):
-      school, conference, tier, psf
-      rawPts, adjPts, adjTier
-      top3, allEvents
-      admission  — AdmissionResult { label, color, total*, acadScore*, swimScore* }
-      meta       — SchoolMeta nested object { accept, satMedian, hiddenIvy, stem,
-                   merit, location, vibe, moonshot? }
-      normalized, rawName  — provenance
-    """
-    results = []
-
-    for team_rec in TEAMS_LIST:
-        # ── Swim layer
-        swim = _score_school_swim(team_rec, times)
-        if swim is None:
-            continue
-
-        # ── Meta lookup (feeds admission layer and UI display)
-        meta_raw = SCHOOL_META.get(swim['school'], {})
-        meta = {
-            'accept':    meta_raw.get('accept'),
-            'satMedian': meta_raw.get('satMedian'),
-            'hiddenIvy': meta_raw.get('hiddenIvy', False),
-            'stem':      meta_raw.get('stem', False),
-            'merit':     meta_raw.get('merit', ''),
-            'location':  meta_raw.get('location', ''),
-            'vibe':      meta_raw.get('vibe', ''),
-        }
-        if meta_raw.get('moonshot'):
-            meta['moonshot'] = True
-
-        # ── Admission layer (consumes swim outputs + academic profile)
-        adm = admission_chance(swim['school'], sat, gpa, swim['adjTier'], swim['psf'])
-
-        # ── Assemble SchoolResult (OUTPUT_SCHEMA shape)
-        results.append({
-            **swim,              # school, conference, finish, tier, psf,
-                                 # rawPts, adjPts, adjTier, top3, allEvents,
-                                 # normalized, rawName
-            'admission': adm,    # { label, color, total, acadScore, swimScore }
-            'meta':      meta,   # nested SchoolMeta object
-        })
-
-    results.sort(key=lambda r: r['adjPts'], reverse=True)
-    return results
+# score_all_schools() removed — replaced by build_school_universe()
+# which starts from the 324-school snapshot universe (EXPLORE_SCHOOLS),
+# not from TEAMS_LIST.  See build_school_universe() below.
 
 
 def build_school_universe(times, sat, gpa):
@@ -1539,7 +1498,7 @@ def build_school_universe(times, sat, gpa):
 def score_one_school(times, conference, school):
     """
     Score arbitrary times at one specific school — for the manual calculator.
-    Runs the same swim + admission pipeline as score_all_schools() for one school.
+    Uses the TEAMS enrichment records directly (PSF + benchmarks).
     """
     team_key  = f"{conference}|{school}"
     team_rec  = TEAMS.get(team_key)
@@ -1630,7 +1589,7 @@ def _pre_sort(results, query, eliminated, my_list):
         pool.sort(key=lambda r: -(r['meta'].get('accept') or 0))
     elif 'hidden ivy' in q or 'ivy' in q:
         pool.sort(key=lambda r: (0 if r['meta'].get('hiddenIvy') else 1))
-    # default: already sorted by adjPts desc from score_all_schools
+    # default: already sorted by adjPts desc from build_school_universe()
 
     return pool[:35]
 
@@ -2246,13 +2205,21 @@ def coach_email():
 @app.route('/api/health', methods=['GET'])
 def health():
     key_ok = bool(os.environ.get('ANTHROPIC_API_KEY', '').strip())
+    swim_data_schools = sum(1 for s in EXPLORE_SCHOOLS if s.get('hasSwimData'))
     return jsonify({
-        'status':        'ok',
-        'benchmarks':    len(BENCHMARKS),
-        'teams':         len(TEAMS_LIST),
-        'schoolMeta':    len(SCHOOL_META),
-        'normalized':    len(NORMALIZATION_LOG),
-        'anthropicKey':  key_ok,
+        'status':              'ok',
+        # ── Primary universe (source of truth) ───
+        'universeSource':      'output/lane4_snapshot_compatible.csv',
+        'totalSchools':        len(EXPLORE_SCHOOLS),
+        'schoolsWithSwimData': swim_data_schools,
+        'conferenceOnlySchools': len(EXPLORE_SCHOOLS) - swim_data_schools,
+        # ── Enrichment sources ────────────────────
+        'enrichmentSource':    'data/lane4_swim_model.xlsx',
+        'benchmarks':          len(BENCHMARKS),
+        'enrichmentRecords':   len(TEAMS_LIST),
+        'admissionRecords':    len(SCHOOL_META),
+        'normalized':          len(NORMALIZATION_LOG),
+        'anthropicKey':        key_ok,
     })
 
 @app.route('/snapshot', methods=['GET'])
