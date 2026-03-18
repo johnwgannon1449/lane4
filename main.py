@@ -590,6 +590,59 @@ CONFERENCES = {}   # conference name -> sorted list of canonical school names
 NORMALIZATION_LOG = []  # records every name that was normalized
 EXPLORE_SCHOOLS = []   # unified 324-school list for /api/schools
 
+# ── Out-of-universe well-known schools ───────────────────────────────────────
+# Metadata for commonly searched schools outside our scored pool.
+# Keys are the canonical display names (title-cased as users would type them).
+# Fields match SCHOOL_META conventions; ivyLeague=True adds the Ivy badge.
+OOU_SCHOOL_META = {
+    # Ivy League
+    "Harvard":      {"accept": 4,  "satMedian": 1580, "ivyLeague": True,  "merit": "none",     "location": "Cambridge, MA",     "vibe": "The most storied name in higher education — ultra-selective by any measure."},
+    "Yale":         {"accept": 5,  "satMedian": 1570, "ivyLeague": True,  "merit": "none",     "location": "New Haven, CT",      "vibe": "World-class academics, drama, and debate — near-impossible odds."},
+    "Princeton":    {"accept": 4,  "satMedian": 1580, "ivyLeague": True,  "merit": "none",     "location": "Princeton, NJ",      "vibe": "Legendary campus, no-loan financial aid, and 4% acceptance."},
+    "Columbia":     {"accept": 4,  "satMedian": 1560, "ivyLeague": True,  "merit": "none",     "location": "New York, NY",       "vibe": "Ivy in the heart of Manhattan — urban energy meets academic prestige."},
+    "Brown":        {"accept": 6,  "satMedian": 1555, "ivyLeague": True,  "merit": "none",     "location": "Providence, RI",     "vibe": "Open Curriculum gives students unusual freedom to design their education."},
+    "Dartmouth":    {"accept": 6,  "satMedian": 1560, "ivyLeague": True,  "merit": "none",     "location": "Hanover, NH",        "vibe": "Tight-knit Ivy with a strong outdoors culture and fierce alumni loyalty."},
+    "Cornell":      {"accept": 9,  "satMedian": 1510, "ivyLeague": True,  "merit": "none",     "location": "Ithaca, NY",         "vibe": "The most accessible Ivy — broad programs, engineering powerhouse."},
+    "Penn":         {"accept": 7,  "satMedian": 1535, "ivyLeague": True,  "merit": "none",     "location": "Philadelphia, PA",   "vibe": "Wharton business, Penn Medicine, and strong interdisciplinary programs."},
+    "UPenn":        {"accept": 7,  "satMedian": 1535, "ivyLeague": True,  "merit": "none",     "location": "Philadelphia, PA",   "vibe": "Wharton business, Penn Medicine, and strong interdisciplinary programs."},
+    # Elite non-Ivy
+    "MIT":          {"accept": 4,  "satMedian": 1580, "stem": True,       "merit": "none",     "location": "Cambridge, MA",      "vibe": "Global STEM leader — demanding, collaborative, and transformative."},
+    "Stanford":     {"accept": 4,  "satMedian": 1560, "stem": True,       "merit": "none",     "location": "Stanford, CA",       "vibe": "Silicon Valley's university — entrepreneurship and research at scale."},
+    "Duke":         {"accept": 6,  "satMedian": 1540, "merit": "none",    "location": "Durham, NC",       "vibe": "Elite academics meets ACC athletics in a beautiful residential campus."},
+    "Northwestern": {"accept": 7,  "satMedian": 1530, "merit": "none",    "location": "Evanston, IL",     "vibe": "Quarter system, Big Ten athletics, and one of the strongest journalism schools."},
+    "Georgetown":   {"accept": 12, "satMedian": 1470, "merit": "none",    "location": "Washington, DC",   "vibe": "Jesuit traditions, global affairs, and unmatched access to DC institutions."},
+    "Notre Dame":   {"accept": 13, "satMedian": 1480, "merit": "none",    "location": "Notre Dame, IN",   "vibe": "Catholic identity, storied football, and a fiercely loyal alumni network."},
+    "Vanderbilt":   {"accept": 7,  "satMedian": 1540, "merit": "moderate","location": "Nashville, TN",    "vibe": "Southern hospitality meets elite academics in a vibrant music city."},
+    "Emory":        {"accept": 11, "satMedian": 1480, "hiddenIvy": True,  "merit": "moderate", "location": "Atlanta, GA",        "vibe": "Hidden Ivy with top pre-med programs and CDC proximity."},
+    "Tufts":        {"accept": 11, "satMedian": 1490, "hiddenIvy": True,  "merit": "none",     "location": "Medford, MA",        "vibe": "Hidden Ivy bridging liberal arts and research, just outside Boston."},
+    "Wake Forest":  {"accept": 21, "satMedian": 1400, "merit": "moderate","location": "Winston-Salem, NC","vibe": "Small research university with a pro-human motto and strong business school."},
+    "Boston College": {"accept": 15,"satMedian": 1430,"merit": "none",    "location": "Chestnut Hill, MA","vibe": "Jesuit institution with strong business, nursing, and law programs."},
+    "Boston University": {"accept": 19,"satMedian": 1400,"merit": "moderate","location": "Boston, MA",   "vibe": "Large urban research university with 300+ programs along the Charles River."},
+    "Northeastern": {"accept": 7,  "satMedian": 1490, "stem": True,       "merit": "moderate", "location": "Boston, MA",         "vibe": "Co-op powerhouse — students graduate with up to two years of work experience."},
+    "Rice":         {"accept": 9,  "satMedian": 1540, "stem": True,       "merit": "none",     "location": "Houston, TX",        "vibe": "Tiny but mighty — residential college system and elite engineering."},
+    "University of Chicago": {"accept": 7,"satMedian": 1560,"hiddenIvy": True,"merit": "none","location": "Chicago, IL",         "vibe": "Rigorously intellectual — the life of the mind in the heart of Chicago."},
+    "UChicago":     {"accept": 7,  "satMedian": 1560, "hiddenIvy": True,  "merit": "none",     "location": "Chicago, IL",        "vibe": "Rigorously intellectual — the life of the mind in the heart of Chicago."},
+    "Carnegie Mellon": {"accept": 11,"satMedian": 1530,"stem": True,      "merit": "none",     "location": "Pittsburgh, PA",     "vibe": "CS and engineering titan with one of the world's top drama programs."},
+    "WashU":        {"accept": 12, "satMedian": 1530, "hiddenIvy": True,  "merit": "moderate", "location": "St. Louis, MO",      "vibe": "Washington University — Hidden Ivy with generous merit aid and strong med school."},
+    "Washington University": {"accept": 12,"satMedian": 1530,"hiddenIvy": True,"merit": "moderate","location": "St. Louis, MO",  "vibe": "Hidden Ivy with generous merit aid and a strong medical school."},
+    "Bowdoin":      {"accept": 9,  "satMedian": 1490, "hiddenIvy": True,  "merit": "none",     "location": "Brunswick, ME",      "vibe": "Stunning Maine campus, need-blind admissions, and a powerhouse swim tradition."},
+    "Middlebury":   {"accept": 13, "satMedian": 1430, "hiddenIvy": True,  "merit": "none",     "location": "Middlebury, VT",     "vibe": "World-renowned language programs and a stunning Vermont campus."},
+    "Colby":        {"accept": 10, "satMedian": 1420, "hiddenIvy": True,  "merit": "none",     "location": "Waterville, ME",     "vibe": "NESCAC liberal arts with need-blind admissions and strong athletics."},
+    "Colgate":      {"accept": 21, "satMedian": 1400, "hiddenIvy": True,  "merit": "none",     "location": "Hamilton, NY",       "vibe": "Strong academics in a tight-knit upstate NY community."},
+}
+
+# Case-insensitive lookup helper
+def _oou_lookup(name: str) -> dict | None:
+    name_l = name.lower().strip()
+    for k, v in OOU_SCHOOL_META.items():
+        if k.lower() == name_l:
+            return v
+    # partial: e.g. "Harvard University" → "Harvard"
+    for k, v in OOU_SCHOOL_META.items():
+        if k.lower() in name_l or name_l in k.lower():
+            return v
+    return None
+
 # ── 2026 snapshot tier enrichment ────────────────────────────────────────────
 # Abbreviated Excel names → full snapshot names (UAA uses short names in the Excel)
 _UAA_SHORT = {
@@ -1098,6 +1151,38 @@ _LABEL_COLORS = {
     'Moonshot — Apply for Fun': '#6B7280',
     'Unknown':                  '#94A3B8',
 }
+
+def _oou_admission(oou_meta: dict, sat: int | None, gpa: float | None) -> dict:
+    """Compute a simplified admission label for out-of-universe schools."""
+    accept    = oou_meta.get('accept', 50)
+    sat_med   = oou_meta.get('satMedian', 1200)
+    s = sat if sat and sat >= 400 else None
+    g = gpa if gpa and gpa > 0  else None
+
+    if accept <= 7:
+        label = 'Moonshot'
+    elif accept <= 15:
+        if s and s >= sat_med - 30:
+            label = 'Major Reach'
+        else:
+            label = 'Moonshot'
+    elif accept <= 25:
+        if s and s >= sat_med:
+            label = 'Realistic Shot'
+        elif s and s >= sat_med - 60:
+            label = 'Major Reach'
+        else:
+            label = 'Moonshot'
+    else:
+        if s and s >= sat_med:
+            label = 'Strong Chance'
+        elif s and s >= sat_med - 80:
+            label = 'Realistic Shot'
+        else:
+            label = 'Major Reach'
+
+    return {'label': label, 'color': _LABEL_COLORS.get(label, '#94A3B8'),
+            'total': None, 'acadScore': None, 'swimScore': None}
 
 # Academic band × Swim support band → base admission label
 _ADMIT_MATRIX = {
@@ -1651,15 +1736,18 @@ def search():
                 w.upper() if w == w.upper() and len(w) > 1 else w.title()
                 for w in query.split()
             )
+            oou_meta = _oou_lookup(display_name) or {}
+            oou_adm  = (_oou_admission(oou_meta, sat, gpa)
+                        if oou_meta else {'label': '', 'color': '#94A3B8', 'total': None})
             direct_match = {
                 'school':         display_name,
                 'conference':     '',
                 'division':       '',
                 'adjTier':        '',
                 'psf':            1.0,
-                'admission':      {'label': 'No data', 'score': 0},
+                'admission':      oou_adm,
                 'top3':           [],
-                'meta':           {},
+                'meta':           oou_meta,
                 'confTierShort':  '',
                 'confTier':       '',
                 'confFinish2026': None,

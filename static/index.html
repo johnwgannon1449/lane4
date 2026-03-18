@@ -1398,6 +1398,7 @@ function renderResultCards(schools, container, isDirect, answer) {
         </div>
       </div>
       <div class="result-badges">
+        ${meta.ivyLeague ? '<span class="badge" style="background:#1E3A5F;color:#fff;">Ivy League</span>' : ''}
         ${meta.hiddenIvy ? '<span class="badge badge-ivy">Hidden Ivy</span>' : ''}
         ${meta.stem      ? '<span class="badge badge-stem">STEM</span>' : ''}
         ${meta.merit === 'high' ? '<span class="badge" style="background:#D1FAE5;color:#065F46;">High Merit Aid</span>' : ''}
@@ -1658,6 +1659,7 @@ function renderMyList() {
           ${adjTier ? `<span class="list-badge" style="background:var(--blue-l);color:var(--blue);">${esc(adjTier)}</span>` : ''}
           <span class="list-badge" style="background:${costBg};color:${costClr};border:${costBorder};${costStyle}"><span style="opacity:0.75;font-style:normal;">${costPrefix} </span>${esc(costLabel)}</span>
           ${division ? `<span class="list-badge" style="background:var(--bg);color:var(--slate);border:1px solid var(--border);">${esc(division)}</span>` : ''}
+          ${meta.ivyLeague ? `<span class="list-badge" style="background:#1E3A5F;color:#fff;">Ivy League</span>` : ''}
           ${meta.hiddenIvy ? `<span class="list-badge" style="background:var(--violet-l);color:var(--violet);">Hidden Ivy</span>` : ''}
           ${meta.stem ? `<span class="list-badge" style="background:var(--blue-l);color:var(--blue);">STEM</span>` : ''}
           <div class="status-dd-wrap">
