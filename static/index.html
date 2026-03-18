@@ -1403,12 +1403,33 @@ function renderResultCards(schools, container, isDirect, answer) {
       'Moonshot': 0
     };
     const swimBand = r.adjTier ? (_ADJ_TIER_BAND[r.adjTier] ?? 0) : (r.hasSwimData ? 0 : -1);
-    const recruitBadge = isOOU ? '' :
-      (swimBand >= 1
-        ? `<span class="badge" style="${_RECRUIT_STYLE[swimBand]}">${_RECRUIT_LABEL[swimBand]}</span>`
-        : (swimBand === 0
-            ? `<span class="badge" style="background:#FEE2E2;color:#991B1B;font-weight:600;">Reach</span>`
-            : ''));
+
+    // Recruiting badge — always rendered for every non-OOU school
+    const _recruitHtml = () => {
+      if (isOOU) return '';
+      if (swimBand >= 1) return `<span class="badge" style="${_RECRUIT_STYLE[swimBand]}">${_RECRUIT_LABEL[swimBand]}</span>`;
+      if (swimBand === 0) return `<span class="badge" style="background:#FEE2E2;color:#991B1B;font-weight:600;">Reach</span>`;
+      return `<span class="badge" style="background:#F1F5F9;color:#94A3B8;">No Swim Data</span>`;
+    };
+
+    // Admission badge — always rendered; fallback to neutral if missing
+    const _admHtml = () => {
+      if (isOOU) return '';
+      const lbl = adm.label && adm.label !== 'Unknown' && adm.label !== 'No data' ? adm.label : 'Admission N/A';
+      const bg  = (lbl === 'Admission N/A') ? '#94A3B8' : admColor;
+      return `<span class="badge badge-adm" style="background:${bg};">${esc(lbl)}</span>`;
+    };
+
+    // Division + powerhouse shown inline under school name (left side)
+    const divParts = [];
+    if (r.division && !isOOU) divParts.push(`<span style="font-size:0.7rem;font-weight:700;color:#64748B;">${esc(r.division)}</span>`);
+    if (progStrength) {
+      const psBg  = r.adjTier ? '#EFF6FF' : '#E0E7FF';
+      const psClr = r.adjTier ? '#1D4ED8' : '#3730A3';
+      divParts.push(`<span class="badge" style="background:${psBg};color:${psClr};font-size:0.68rem;">${esc(progStrength)}</span>`);
+    }
+    const metaLine = divParts.length ? `<div style="display:flex;align-items:center;gap:5px;margin-top:3px;">${divParts.join('')}</div>` : '';
+
     return `
     <div class="result-card" id="rcard-${i}">
       ${r.aiWhy ? `<div class="ai-why">✦ ${esc(r.aiWhy)}</div>` : ''}
@@ -1416,20 +1437,18 @@ function renderResultCards(schools, container, isDirect, answer) {
         <div>
           <div class="result-school-name">${esc(r.school)}</div>
           ${confLine ? `<div class="result-conference">${esc(confLine)}</div>` : ''}
+          ${metaLine}
         </div>
         <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;">
-          ${adm.label && adm.label !== 'Unknown' && adm.label !== 'No data' ? `<span class="badge badge-adm" style="background:${admColor};">${esc(adm.label)}</span>` : ''}
-          ${progStrength ? `<span class="badge badge-tier" ${!r.adjTier && r.confTierShort ? 'style="background:#E0E7FF;color:#3730A3;"' : ''}>${esc(progStrength)}</span>` : ''}
-          ${r.division && !isOOU ? `<span class="badge" style="background:#F1F5F9;color:#475569;font-size:0.68rem;">${esc(r.division)}</span>` : ''}
+          ${_admHtml()}
+          ${_recruitHtml()}
         </div>
       </div>
       <div class="result-badges">
-        ${recruitBadge}
         ${meta.ivyLeague ? '<span class="badge" style="background:#1E3A5F;color:#fff;">Ivy League</span>' : ''}
         ${meta.hiddenIvy ? '<span class="badge badge-ivy">Hidden Ivy</span>' : ''}
         ${meta.stem      ? '<span class="badge badge-stem">STEM</span>' : ''}
         ${meta.merit === 'high' ? '<span class="badge" style="background:#D1FAE5;color:#065F46;">High Merit Aid</span>' : ''}
-        ${isNoSwim && !isOOU ? '<span class="badge" style="background:#FEF9C3;color:#854D0E;">Conference data only</span>' : ''}
       </div>
       ${meta.vibe
         ? `<div class="result-vibe">"${esc(meta.vibe)}"</div>`
