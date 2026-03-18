@@ -1387,7 +1387,6 @@ function renderResultCards(schools, container, isDirect, answer) {
         </div>
         <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;">
           ${!isSnap ? `<span class="badge badge-adm" style="background:${admColor};">${esc(adm.label)}</span>` : ''}
-          ${r.confTierShort ? `<span class="badge badge-t${r.confTierShort.toLowerCase()}" title="${esc(r.confTier)} · 2026 conf finish #${r.confFinish2026}">${esc(r.confTierShort)}</span>` : ''}
           ${r.division ? `<span class="badge" style="background:#F1F5F9;color:#475569;font-size:0.68rem;">${esc(r.division)}</span>` : ''}
         </div>
       </div>
