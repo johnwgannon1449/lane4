@@ -1463,8 +1463,17 @@ def build_school_universe(times, sat, gpa):
             top3 = all_events = []
             psf = 1.0
 
-        # Admission — same function for all schools
-        adm = admission_chance(school_name, sat, gpa, adj_tier, psf)
+        # Admission — same function for all schools.
+        # SCHOOL_META keys may differ from snapshot CSV names (UAA abbreviated forms,
+        # 30-char truncations, casing).  team_rec['school'] has already had TEAM_NAME_MAP
+        # applied during load_data(), so it carries the correct canonical key.
+        # Try snapshot name first; fall back to team_rec canonical if not found.
+        _sm_key = (school_name
+                   if SCHOOL_META.get(school_name)
+                   else (team_rec['school']
+                         if team_rec and SCHOOL_META.get(team_rec['school'])
+                         else school_name))
+        adm = admission_chance(_sm_key, sat, gpa, adj_tier, psf)
         # 'Unknown' means no SCHOOL_META entry — normalise to empty (value diff, not path diff)
         if adm.get('label') == 'Unknown':
             adm = {'label': '', 'color': '#94A3B8',

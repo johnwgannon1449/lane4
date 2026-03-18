@@ -1,0 +1,147 @@
+We are shifting strategy.
+
+STOP making structural or logic changes.
+STOP refactoring scoring.
+STOP modifying formulas.
+
+We are now in DATA EXPANSION MODE ONLY.
+
+==================================================
+CRITICAL RULE
+==================================================
+
+All core logic is now FROZEN.
+
+DO NOT MODIFY:
+- admission_chance()
+- _score_school_swim()
+- _score_event()
+- any thresholds, bands, or labels
+- any summary logic
+- any badge logic
+- any deep-dive logic
+
+No changes to formulas. No changes to how outputs are computed.
+
+If you think something “should be improved,” DO NOT change it.
+
+==================================================
+CURRENT STATE (ACCEPTED)
+==================================================
+
+- We have a unified 324-school universe
+- All schools flow through the same architecture
+- Some schools lack inputs for existing models:
+  - no SCHOOL_META → no admission labels
+  - no TEAMS/PSF → no swim scoring
+  - no BENCHMARKS → no event scoring
+
+This is expected and correct behavior.
+
+The issue is now DATA COVERAGE, not code.
+
+==================================================
+GOAL
+==================================================
+
+Increase the number of schools that can be processed by existing models
+WITHOUT changing any model logic.
+
+==================================================
+WHAT YOU ARE ALLOWED TO CHANGE
+==================================================
+
+You may ONLY:
+1. Add data to existing data sources
+2. Improve matching/normalization so data attaches correctly
+3. Load additional data files
+4. Extend build_school_universe() to merge new data sources
+
+You may NOT:
+- change how any model computes outputs
+- add new scoring systems
+- create synthetic admissions/recruiting logic
+- create fallback scoring that mimics the model
+
+==================================================
+TASK 1 — DATA COVERAGE AUDIT
+==================================================
+
+Produce a clear report:
+
+A. For all 324 schools:
+- how many have SCHOOL_META (admissions inputs)
+- how many have TEAMS/PSF
+- how many have BENCHMARKS coverage via their conference
+
+B. List missing coverage:
+- schools missing admission inputs
+- schools missing PSF
+- conferences missing benchmarks
+
+C. Identify the smallest set of data additions that would unlock the largest number of schools.
+
+==================================================
+TASK 2 — LOW-RISK DATA EXPANSION PLAN
+==================================================
+
+Propose a plan that ONLY involves adding data, not changing logic.
+
+For example:
+- extending SCHOOL_META with more schools (admissions params)
+- extending Team_Tiers (PSF coverage)
+- extending BENCHMARKS for additional conferences
+
+The plan should:
+- prioritize high-impact additions
+- minimize manual work
+- avoid any changes to scoring formulas
+
+==================================================
+TASK 3 — IMPLEMENT ONE SAFE EXPANSION STEP
+==================================================
+
+Pick ONE of the following (lowest risk first):
+
+Option A:
+Improve SCHOOL_META matching (aliases, normalization) so more existing schools attach correctly
+
+Option B:
+Add a small batch of new schools to SCHOOL_META (e.g., 10–20) using the same structure
+
+Option C:
+Verify BENCHMARKS coverage and identify missing conferences without modifying scoring logic
+
+Do NOT try to solve everything at once.
+
+==================================================
+IMPORTANT GUARDRAILS
+==================================================
+
+- No code changes to core scoring functions
+- No new formulas
+- No rewriting of admission or swim models
+- No fake/default scoring for missing data
+- No fallback systems that imitate real outputs
+
+If data is missing, it is allowed to remain missing.
+
+==================================================
+SUCCESS CRITERIA
+==================================================
+
+- Number of schools with valid admission outputs increases
+- Number of schools with valid swim scoring increases
+- No change in outputs for existing fully-covered schools
+- No change in core logic
+
+==================================================
+FINAL INSTRUCTION
+==================================================
+
+We are no longer fixing architecture.
+We are no longer rewriting logic.
+
+We are extending the INPUT DATA that powers the existing system.
+
+Proceed with the audit first, then propose the smallest, safest data expansion step.
