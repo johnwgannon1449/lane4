@@ -1378,7 +1378,6 @@ function renderResultCards(schools, container, isDirect, answer) {
     const isSnap   = r.snapshotOnly;
     return `
     <div class="result-card" id="rcard-${i}">
-      ${r.directMatch ? '<div class="direct-match-banner">Exact Match</div>' : ''}
       ${r.aiWhy && !r.directMatch ? `<div class="ai-why">✦ ${esc(r.aiWhy)}</div>` : ''}
       <div class="result-card-top">
         <div>
