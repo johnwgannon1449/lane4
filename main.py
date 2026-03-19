@@ -2840,6 +2840,26 @@ def admission_chance(school, sat, gpa, adj_tier, psf):
     psf_mod   = 1 if psf > 1.00 else (-1 if psf <= 0.78 else 0)
     swim_band = _adm_clamp(swim_base + psf_mod, 0, 4)
 
+    # ── Academic floor + school tier (admissions realism rules) ──────────────
+    # hiddenIvy=True in SCHOOL_META marks top NESCAC/SCIAC LACs (Williams, Amherst,
+    # Bowdoin, Middlebury, Pomona-Pitzer, etc.) — spec's HIGHLY_SELECTIVE tier.
+    # MIT/Caltech are already caught by moonshot=True above and never reach here.
+    # Ivy League schools are D1/OOU and use _oou_admission() — not this path.
+    is_highly_selective = meta.get('hiddenIvy', False)
+
+    # Academic floor: sat < satMedian-120 OR GPA < 3.4 → swim cannot assist
+    sat_diff_from_med = (s - sat_median) if (s is not None and sat_median is not None) else None
+    below_acad_floor  = (
+        (sat_diff_from_med is not None and sat_diff_from_med <= -120) or
+        (g is not None and g < 3.4)
+    )
+
+    # Apply swim constraints before matrix lookup
+    if below_acad_floor:
+        swim_band = 0                       # swim cannot rescue academic weakness
+    elif is_highly_selective:
+        swim_band = min(swim_band, 2)       # max +2 swim assist at elite D3 LACs
+
     # ── Base label from matrix ────────────────────────────────────────────────
     label = _ADMIT_MATRIX[acad_band][swim_band]
 
@@ -2858,9 +2878,15 @@ def admission_chance(school, sat, gpa, adj_tier, psf):
     if sel_tier in ('highly_selective', 'ultra_selective') and g is not None and g < 3.5:
         label = 'Moonshot'
 
-    # G4: No swim support → cap at Possible
+    # G4: No swim support
+    # CORE_D3 schools with strong academics (acad_band ≥ 3) can reach Strong Chance
+    # without any swim support — academics alone justify it at broader-admit schools.
+    # Elite LACs (hiddenIvy) and any below-floor case still cap at Possible.
     if swim_band == 0:
-        label = _cap_label(label, 'Possible')
+        if acad_band >= 3 and not is_highly_selective and not below_acad_floor:
+            label = 'Strong Chance'
+        else:
+            label = _cap_label(label, 'Possible')
 
     # G5: Ultra-selective school extra caps
     if sel_tier == 'ultra_selective':
@@ -2875,6 +2901,10 @@ def admission_chance(school, sat, gpa, adj_tier, psf):
                 label = _cap_label(label, 'Major Reach')  # no better than Major Reach
             else:
                 label = 'Moonshot'
+
+    # Spec floor cap: regardless of all guardrails, academic weakness ≤ Major Reach
+    if below_acad_floor:
+        label = _cap_label(label, 'Major Reach')
 
     return {
         'label':     label,

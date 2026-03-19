@@ -1,0 +1,146 @@
+We are updating the Lane4 admissions scoring logic to better reflect real-world recruiting and academic constraints.
+
+IMPORTANT:
+- Do NOT change swim scoring (rawPts, adjPts, PSF)
+- Do NOT change recruiting likelihood labels
+- Do NOT change UI structure
+- Do NOT change deep dive generation logic structure
+- This is a targeted update to admissions calculation only
+
+--------------------------------------------------
+GOAL
+--------------------------------------------------
+
+Ensure that:
+1. Academics determine baseline admissibility
+2. Swim can assist admissions but NEVER override academic reality
+3. Ultra-elite schools (Ivy, MIT, Caltech) are handled correctly
+4. Academic floors are enforced at ALL schools
+
+--------------------------------------------------
+STEP 1 — DEFINE ACADEMIC BASE SCORE
+--------------------------------------------------
+
+Keep existing academic scoring inputs:
+- satDiff = swimmer.sat - school.satMedian
+- GPA consideration
+- acceptance rate adjustment
+
+This produces acadScore (existing system).
+
+--------------------------------------------------
+STEP 2 — ENFORCE ACADEMIC FLOOR
+--------------------------------------------------
+
+Add a floor check BEFORE applying swim:
+
+Define "below academic floor" as:
+- satDiff <= -120
+OR
+- GPA significantly below typical admitted range (e.g. < ~3.4 if GPA available)
+
+If below floor:
+- cap final admission outcome at:
+    → "Reach" OR "Extreme Reach"
+- DO NOT allow swim to increase this beyond that cap
+
+This applies to ALL schools, including D3.
+
+--------------------------------------------------
+STEP 3 — DEFINE SCHOOL TIERS (LOGICAL GROUPING)
+--------------------------------------------------
+
+Add internal classification:
+
+ULTRA_ELITE:
+- Ivy League
+- MIT
+- Caltech
+
+HIGHLY_SELECTIVE:
+- UAA (Emory, Chicago, etc.)
+- top LACs (Williams, Amherst, Swarthmore, etc.)
+
+CORE_D3:
+- all remaining schools
+
+Use existing metadata or create a simple internal mapping.
+
+--------------------------------------------------
+STEP 4 — SWIM AS ASSIST (NOT RESCUE)
+--------------------------------------------------
+
+Keep swimScore calculation, but apply it as a MODIFIER with constraints:
+
+A. If below academic floor:
+   → swimScore = 0 (no effect)
+
+B. ULTRA_ELITE rules:
+
+- If school is MIT or Caltech:
+    → swimScore = 0 (ignore swim completely)
+
+- If school is Ivy:
+    - If recruiting tier is low (Out of Range / In Range):
+        → swimScore = 0
+    - If strong recruit:
+        → allow small boost (reduced effect)
+
+C. HIGHLY_SELECTIVE:
+
+- swimScore applies normally, but cap total boost:
+    → max +2 impact from swim
+
+D. CORE_D3:
+
+- swimScore applies normally
+- but still cannot override academic floor
+
+--------------------------------------------------
+STEP 5 — FINAL SCORE COMBINATION
+--------------------------------------------------
+
+total = acadScore + adjusted swimScore
+
+Then map to labels (existing thresholds), BUT:
+
+- enforce caps from Step 2 (floor rule)
+- enforce ULTRA_ELITE limitations
+
+--------------------------------------------------
+STEP 6 — LABEL ADJUSTMENT
+--------------------------------------------------
+
+Ensure outputs reflect reality:
+
+- ULTRA_ELITE + no swim:
+    → "Extreme Reach" (even with strong academics)
+
+- Below academic floor:
+    → cannot exceed "Reach"
+
+- Strong academics + no swim (non-elite schools):
+    → allow "Strong Chance"
+
+--------------------------------------------------
+STEP 7 — LANGUAGE CONSISTENCY (NO UI CHANGE)
+--------------------------------------------------
+
+Do NOT change UI labels.
+
+But ensure logic aligns with:
+
+- swim assists admissions
+- swim does not override academic weakness
+- elite schools remain extremely selective
+
+--------------------------------------------------
+SUCCESS CRITERIA
+--------------------------------------------------
+
+- No false “Strong Chance” for low academics + strong swim
+- Ivy/MIT/Caltech remain extremely difficult without appropriate conditions
+- Strong academic students are not penalized for lack of swim
+- Swim meaningfully helps only where appropriate
+
+This should improve realism without changing the structure of the app.
