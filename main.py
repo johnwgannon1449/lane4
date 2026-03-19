@@ -24,6 +24,16 @@ def _load_language_prompt():
 
 LANE4_LANGUAGE_PROMPT = _load_language_prompt()
 
+def _load_deep_dive_prompt():
+    path = os.path.join(os.path.dirname(__file__), 'prompts', 'lane4_deep_dive_prompt.txt')
+    try:
+        with open(path, encoding='utf-8') as f:
+            return f.read().strip()
+    except FileNotFoundError:
+        return ''
+
+LANE4_DEEP_DIVE_PROMPT = _load_deep_dive_prompt()
+
 # ---------------------------------------------------------------------------
 # DATABASE
 # ---------------------------------------------------------------------------
@@ -3614,13 +3624,15 @@ def deep_dive():
     ) if conf_tier_short == '1A' else ''
 
     system_prompt = (
-        "You are Lane4, a college swim recruiting advisor. "
-        "Warm, honest, direct. Talk to a 17-year-old and their family. "
-        "Never use jargon. Never use the word 'tier' — describe programs as "
-        "'Super Powerhouse', 'Powerhouse', 'dominant in conference', 'competitive', etc. "
-        "'Hidden Ivy' means academically elite and employer-respected "
-        "without the Stanford rejection rate. The comp anchor — comparing to a dream school "
-        "— is powerful when honest."
+        LANE4_DEEP_DIVE_PROMPT + "\n\n"
+        "Lane4 Technical Vocabulary (always apply):\n"
+        "- Never use the word 'tier' — describe programs as 'Super Powerhouse', 'Powerhouse', "
+        "'dominant in conference', 'competitive', etc.\n"
+        "- 'Hidden Ivy' = academically elite and employer-respected without the Stanford rejection "
+        "rate. Use naturally when applicable.\n"
+        "- Never use the words 'profile', 'good school', or 'strong fit'.\n"
+        "- Respond using markdown sections starting with ## for each section title.\n"
+        "- Max 2-3 sentences per section."
     )
 
     ivy_note = '\nThis is an Ivy League school — need-based aid only, no merit scholarships.' if meta.get('ivyLeague') else ''
@@ -3642,8 +3654,9 @@ def deep_dive():
             "NOTE: This school is not in our swim recruiting database. Focus on academic and "
             "personal fit, not swim recruitment. The swimmer is using Lane4 to compare this school "
             "against their D3 options — be honest about how it stacks up.\n\n"
-            "Write exactly these sections. Warm, direct, honest. Talk to a 17-year-old and their family. "
-            "Max 2-3 sentences per section.\n\n"
+            "Write exactly these sections in this order. Max 2-3 sentences per section.\n\n"
+            "## The Bottom Line\n"
+            "One powerful sentence. Clearly answers: is this a real option, and how strong?\n"
             "## Your Honest Shot\n"
             "## What This School Is Actually Like\n"
             "## Academics & Campus Life\n"
@@ -3653,9 +3666,7 @@ def deep_dive():
             "## How It Compares to Your D3 Options\n"
             "Be honest — what does choosing this school mean for continuing to swim competitively?\n"
             "## Your Next Three Moves\n"
-            "Three specific actions this week.\n"
-            "## The Bottom Line\n"
-            "One sentence. Make it land."
+            "Three specific, actionable steps this week."
         )
     else:
         user_prompt = (
@@ -3674,21 +3685,20 @@ def deep_dive():
             f"Acceptance rate: ~{meta.get('accept', '?')}%\n"
             f"SAT median: ~{meta.get('satMedian', '?')}\n"
             f"Merit aid: {merit_label}\n\n"
-            "Write exactly these sections. Warm, direct, honest. Talk to a 17-year-old and their family. "
-            "Never clinical. Weave in what you know about their personality — don't just list "
-            "preferences, speak to them naturally. Use 'Hidden Ivy' naturally if applicable. "
-            "Never use the word 'tier'. Max 2-3 sentences per section.\n\n"
+            "Write exactly these sections in this order. Never clinical. Weave in what you know "
+            "about their personality — don't just list preferences, speak to them naturally. "
+            "Use 'Hidden Ivy' naturally if applicable. Max 2-3 sentences per section.\n\n"
+            "## The Bottom Line\n"
+            "One powerful sentence. Clearly answers: is this a real option, and how strong?\n"
             "## Your Honest Shot\n"
             "## What This School Is Actually Like\n"
             f"## How {swimmer_name} Fits on the Swim Team\n"
             "## Why a Coach Would Want to Call\n"
             "## Getting In — The Real Picture\n"
             "## The Money Conversation\n"
-            "Include: Estimated COA, Estimated Merit Aid for this profile, Estimated Net Cost\n"
+            "Include: Estimated COA, Estimated Merit Aid for this swimmer, Estimated Net Cost.\n"
             "## Your Next Three Moves\n"
-            "Three specific actions this week.\n"
-            "## The Bottom Line\n"
-            "One sentence. Make it land."
+            "Three specific, actionable steps this week."
         )
 
     try:
