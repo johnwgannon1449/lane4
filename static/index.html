@@ -321,6 +321,15 @@
       font-family: 'Figtree', sans-serif; letter-spacing: 0.01em;
     }
     .toggle-arrow { font-size: 0.75rem; color: var(--muted); flex-shrink: 0; }
+    .list-health-row { display: flex; align-items: center; gap: 0.65rem; margin-bottom: 1rem; flex-wrap: wrap; }
+    .list-health-badge { display: inline-flex; align-items: center; padding: 5px 14px; border-radius: 20px; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.01em; font-family: 'Figtree', sans-serif; }
+    .lhb-highrisk   { background: #FEE2E2; color: #991B1B; }
+    .lhb-strong     { background: #DBEAFE; color: #1E40AF; }
+    .lhb-verystrong { background: #D1FAE5; color: #065F46; }
+    .list-health-why { background: none; border: none; font-size: 0.76rem; color: var(--muted); cursor: pointer; padding: 0; text-decoration: underline; font-family: 'Figtree', sans-serif; }
+    .list-health-exp { margin-bottom: 1.1rem; padding: 0.85rem 1rem; background: var(--bg); border-radius: 10px; border: 1.5px solid var(--border); font-size: 0.82rem; color: var(--slate); line-height: 1.65; }
+    .list-health-exp p { margin: 0 0 0.55em; }
+    .list-health-exp p:last-child { margin-bottom: 0; }
     .crm-body { border-top: 1px solid var(--border); padding: 1rem 1.1rem; }
     .status-dd-wrap { position: relative; flex-shrink: 0; }
     .status-dropdown {
@@ -699,7 +708,8 @@ let LAST_RESULTS  = null; // last search result { answer, schools }
 let LAST_QUERY    = '';
 let ACTIVE_TAB    = 'explore';
 let VIBE_STATE    = {};   // { campus, friday, academic, compete, location, career }
-let OPEN_CRM      = null; // currently expanded CRM card
+let OPEN_CRM        = null; // currently expanded CRM card
+let LIST_HEALTH_OPEN = false; // list health explanation expanded
 let OTHER_PREFS   = '';   // free-form additional preferences from Profile tab
 
 // Maps adjTier string → recruiting label (same band logic as buildCard)
@@ -1240,7 +1250,7 @@ async function afterAuthBoot() {
 // TAB ROUTING
 // ════════════════════════════════════════════════════════════════
 function showTab(name) {
-  if (name !== 'mylist') OPEN_CRM = null;
+  if (name !== 'mylist') { OPEN_CRM = null; LIST_HEALTH_OPEN = false; }
   ACTIVE_TAB = name;
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
@@ -1656,6 +1666,91 @@ function addToListDirect(school) {
   saveToStorage();
 }
 
+function evaluateMyList() {
+  // Score bands for existing admission labels (from _LABEL_COLORS in backend)
+  const ADM_SCORE = {
+    'Very Strong Chance': 5, 'Strong Chance': 4, 'Realistic Shot': 3,
+    'Possible': 2, 'Major Reach': 1, 'Moonshot': 0, 'Moonshot — Apply for Fun': 0
+  };
+  // Swim performance bands (from _ADJ_TIER_BAND)
+  const SWIM_BAND = {
+    'High-Point Contender': 4, 'Conference Star': 4,
+    'Top Recruit': 3, 'Priority Recruit': 3,
+    'Recruitable': 2, 'Reach': 1, 'Moonshot': 0
+  };
+
+  const schools = MY_LIST
+    .map(s => ALL_RESULTS.find(r => r.school === s))
+    .filter(Boolean);
+  if (!schools.length) return null;
+
+  let realCount = 0, strongCount = 0, moonshotCount = 0, unknownCount = 0;
+
+  for (const r of schools) {
+    const swimBand = SWIM_BAND[r.adjTier] ?? -1;
+    const admLabel = r.admission?.label || '';
+    const admScore = ADM_SCORE[admLabel] ?? -1;
+
+    if (swimBand < 0 || admScore < 0) { unknownCount++; continue; }
+
+    // Moonshot: not competitive on swim side OR near-zero admission
+    if (swimBand <= 0 || admScore <= 0) { moonshotCount++; continue; }
+
+    // Real option: Roster-Level+ swim AND Possible+ admission
+    if (swimBand >= 2 && admScore >= 2) realCount++;
+    else moonshotCount++;  // reach-level on one or both axes
+
+    // Strong option: Serious Recruit+ AND Realistic Shot+ admission
+    if (swimBand >= 3 && admScore >= 3) strongCount++;
+  }
+
+  const scorable = schools.length - unknownCount;
+  const moonshotFraction = scorable > 0 ? moonshotCount / scorable : 0;
+  const tooManyMoonshots = moonshotFraction >= 0.55;
+
+  let badge, badgeClass;
+  if (realCount < 2 || (realCount < 3 && tooManyMoonshots)) {
+    badge = 'High Risk'; badgeClass = 'lhb-highrisk';
+  } else if (strongCount >= 2 && realCount >= 3 && !tooManyMoonshots) {
+    badge = 'Very Strong Options'; badgeClass = 'lhb-verystrong';
+  } else {
+    badge = 'Strong List'; badgeClass = 'lhb-strong';
+  }
+
+  const moonshotLine = tooManyMoonshots
+    ? 'A lot of your schools are long shots — either on the swim side or academically. That\'s fine in small doses. Keep a couple if you want, but they shouldn\'t be the center of your plan. The real energy should go toward schools where you\'re actually a fit.'
+    : '';
+
+  let explanation;
+  if (badge === 'High Risk') {
+    explanation = [
+      'Right now, this list is missing real options. You\'ve got a lot of schools where everything has to go right — but not enough where you\'d actually be a strong swim fit and a clear academic fit.',
+      moonshotLine,
+      'Keep working the list. The schools where this turns into calls, visits, and real choices are the ones where you actually fit.'
+    ].filter(Boolean);
+  } else if (badge === 'Very Strong Options') {
+    explanation = [
+      'This is a really strong list. You\'ve got multiple schools where you\'re a real swim fit and strong academically — this should turn into real choices.',
+      moonshotLine
+    ].filter(Boolean);
+  } else {
+    explanation = [
+      'This is a solid list. You\'ve got real opportunities here and a good mix of schools where this can work.',
+      moonshotLine
+    ].filter(Boolean);
+  }
+
+  return { badge, badgeClass, explanation };
+}
+
+function toggleListHealth() {
+  LIST_HEALTH_OPEN = !LIST_HEALTH_OPEN;
+  const el  = document.getElementById('list-health-exp');
+  const btn = document.getElementById('list-health-why-btn');
+  if (el)  el.style.display = LIST_HEALTH_OPEN ? 'block' : 'none';
+  if (btn) btn.textContent  = LIST_HEALTH_OPEN ? 'Got it ▴' : 'Why? ▾';
+}
+
 function renderMyList() {
   const el = document.getElementById('mylist-body');
 
@@ -1668,7 +1763,18 @@ function renderMyList() {
     return;
   }
 
-  el.innerHTML = MY_LIST.map((school, si) => {
+  // ── List health badge ────────────────────────────────────────────────────
+  const _health = evaluateMyList();
+  const _healthHtml = _health ? `
+    <div class="list-health-row">
+      <span class="list-health-badge ${_health.badgeClass}">${esc(_health.badge)}</span>
+      <button class="list-health-why" id="list-health-why-btn" onclick="toggleListHealth()">Why? ▾</button>
+    </div>
+    <div class="list-health-exp" id="list-health-exp" style="display:none;">
+      ${_health.explanation.map(p => `<p>${esc(p)}</p>`).join('')}
+    </div>` : '';
+
+  el.innerHTML = _healthHtml + MY_LIST.map((school, si) => {
     const crm    = CRM_DATA[school] || { status: 'researching', notes: [], reminders: [] };
     const cfg    = STATUS_CONFIG[crm.status] || STATUS_CONFIG.researching;
     const result = ALL_RESULTS.find(r => r.school === school);
@@ -1798,6 +1904,14 @@ function renderMyList() {
       </div>` : ''}
     </div>`;
   }).join('');
+
+  // Restore health explanation open state across re-renders
+  if (LIST_HEALTH_OPEN) {
+    const expEl  = document.getElementById('list-health-exp');
+    const btnEl  = document.getElementById('list-health-why-btn');
+    if (expEl)  expEl.style.display = 'block';
+    if (btnEl)  btnEl.textContent   = 'Got it ▴';
+  }
 }
 
 function toggleCRM(school) {

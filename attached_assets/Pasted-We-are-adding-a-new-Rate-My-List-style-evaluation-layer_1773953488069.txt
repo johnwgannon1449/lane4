@@ -1,0 +1,144 @@
+We are adding a new “Rate My List” style evaluation layer to Lane4.
+
+IMPORTANT:
+Do not change swim scoring logic.
+Do not change admissions logic.
+Do not change search behavior.
+Do not change deep dive structure.
+Do not change existing school card UI.
+This is a new list-evaluation feature only.
+
+GOAL:
+Evaluate the user’s saved school list and give a clear top-level assessment of whether the list contains enough real options.
+
+This feature is NOT predicting outcomes.
+It is evaluating whether the list is built in a way that gives us good reason to believe the swimmer should end up with real opportunities.
+
+CORE PRODUCT PHILOSOPHY:
+We are not punishing ambition.
+We are exposing when there is no plan underneath it.
+
+We care more about a lack of strong options than about the mere presence of reaches.
+However, an abundance of moonshots/reaches must still be called out clearly, because many users emotionally anchor to those schools even if their list contains better realistic options.
+
+We do NOT use the phrase “safety schools.”
+We use language like:
+- real options
+- strong options
+- schools where this can work
+- schools where this process turns into opportunities
+
+FEATURE REQUIREMENTS:
+
+1. Add a top-level list health badge to the saved list / My List experience.
+
+Badge values:
+- High Risk
+- Strong List
+- Very Strong Options
+
+No middle tier.
+
+2. Add a hidden or expandable explanation block below or near the badge.
+This should stay largely out of the way by default so the list UI remains clean.
+The explanation should expand only when the user chooses to view it (or via an equivalent clean hidden treatment).
+
+3. Evaluation priority order:
+
+PRIMARY:
+- Does this list contain enough real options?
+
+SECONDARY:
+- Is the list overloaded with moonshots / reaches?
+
+This means:
+- A list with a couple moonshots but many strong options can still be Strong List or Very Strong Options.
+- A list with too few real options should be High Risk even if it is long.
+- A list with many moonshots should be called out, especially if the moonshots are likely dominating the user’s attention.
+
+4. Use existing internal swim/admissions outputs to evaluate schools.
+Do not invent a new scoring engine.
+Use the school-level outputs we already compute.
+
+Use current internal labels / logic already available in the app to determine whether a school counts as:
+- a real swim option
+- a meaningful academic option
+- a moonshot / long shot / weak overall option
+
+You may map existing internal outputs into these buckets internally, but do not change the underlying production model.
+
+5. Badge meaning:
+
+High Risk:
+- not enough real options
+AND/OR
+- list leans too heavily toward moonshots/reaches
+AND/OR
+- we would not feel confident betting this list produces multiple real opportunities
+
+Strong List:
+- enough real options exist
+- healthy enough balance
+- list should reasonably produce opportunities if pursued well
+
+Very Strong Options:
+- multiple real swim opportunities
+- multiple academically strong options
+- list feels robust and low-risk
+- we would feel confident this list should lead to real choices
+
+6. Explanation block tone:
+
+Tone must be:
+- honest
+- calm
+- direct
+- not shaming
+- not preachy
+
+Do not say:
+- safety schools
+- backup schools
+- fallback options
+
+Do say:
+- real options
+- strong options
+- schools where this can work
+- schools where this process turns into opportunities
+
+7. Example explanation guidance:
+
+For High Risk:
+“Right now, this list is missing real options. You’ve got a lot of schools where everything has to go right—but not enough where you’d actually be a strong swim fit or clear academic fit.
+
+Keep a couple moonshots if you want—but they shouldn’t be the center of your list. The schools where this turns into calls, visits, and real choices are the ones where you actually fit.”
+
+For Strong List:
+“This is a solid list. You’ve got real opportunities here and a good mix of schools where this can work.”
+
+For Very Strong Options:
+“This is a really strong list. You’ve got multiple schools where you’re a real swim fit and strong academically—this should turn into real options.”
+
+8. Moonshot overload handling:
+This must be addressed in the explanation when present.
+We do not want to shame the user, but we do want to make clear that an abundance of moonshots is not reality-based planning.
+
+The wording should gently make clear:
+- moonshots are okay in small numbers
+- they should not be the center of the list
+- the real value is in the schools where the swimmer is actually wanted
+
+9. Keep UI clean.
+The list view is already visually busy.
+The badge should be compact and visible.
+The explanation should be hidden/collapsed by default or otherwise kept visually subtle until opened.
+
+10. No subtle add-on buttons or “show me better-fit schools” features for now.
+Keep scope tight and implementation clean.
+
+SUCCESS CRITERIA:
+- user can glance at badge and understand whether their list is healthy
+- user can expand explanation and get honest coaching
+- feature reinforces Lane4 philosophy without cluttering the UI
+- no changes to scoring/admissions/search/deep-dive systems
