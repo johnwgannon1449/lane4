@@ -2585,11 +2585,12 @@ def _score_school_swim(team_rec, times):
 
     SwimResult fields (OUTPUT_SCHEMA — swim-layer subset):
       school, conference, finish, tier, psf
-      rawPts   — sum of top-3 pts values
+      rawPts   — sum of top-4 pts values
       adjPts   — rawPts × psf
       adjTier  — tier label from adjPts
-      top3     — up to 3 highest-scoring EventScore objects
+      top3     — up to 4 highest-scoring EventScore objects (key kept for compat)
       allEvents — all scored EventScore objects, sorted pts desc
+      hasDepth  — True if swimmer has 4+ events with pts > 0
       normalized, rawName — provenance flags
     """
     conf   = team_rec['conference']
@@ -2602,16 +2603,17 @@ def _score_school_swim(team_rec, times):
         if es is not None:
             all_events.append(es)
 
-    # Sort by pts descending; top-3 drive rawPts
+    # Sort by pts descending; top-4 drive rawPts
     all_events.sort(key=lambda e: e['pts'], reverse=True)
-    top3    = all_events[:3]
-    raw_pts = round(sum(e['pts'] for e in top3), 2)
+    top4    = all_events[:4]
+    raw_pts = round(sum(e['pts'] for e in top4), 2)
 
     if raw_pts == 0:
         return None   # zero-score guardrail — school excluded from results
 
     adj_pts  = round(raw_pts * psf, 2)
     adj_tier = tier_label(adj_pts)
+    has_depth = sum(1 for e in all_events if e['pts'] > 0) >= 4
 
     return {
         'school':          school,
@@ -2623,7 +2625,8 @@ def _score_school_swim(team_rec, times):
         'rawPts':          raw_pts,
         'adjPts':          adj_pts,
         'adjTier':         adj_tier,
-        'top3':            top3,
+        'top3':            top4,   # key kept for downstream compat; now holds top 4
+        'hasDepth':        has_depth,
         'allEvents':       all_events,
         'normalized':      team_rec['normalized'],
         'rawName':         team_rec['raw_name'],
@@ -2942,19 +2945,22 @@ def build_school_universe(times, sat, gpa):
                 adj_tier   = swim['adjTier']
                 adj_pts    = swim['adjPts']
                 raw_pts    = swim['rawPts']
-                top3       = swim['top3']
+                top4       = swim['top3']   # dict key kept as 'top3' for compat
                 all_events = swim['allEvents']
                 psf        = swim['psf']
+                has_depth  = swim['hasDepth']
             else:
                 # Team data exists but swimmer has zero scorable events here
                 adj_tier = ''
                 adj_pts = raw_pts = 0.0
-                top3 = all_events = []
+                top4 = all_events = []
+                has_depth = False
                 psf = team_rec.get('psf', 1.0)
         else:
             adj_tier = ''
             adj_pts = raw_pts = 0.0
-            top3 = all_events = []
+            top4 = all_events = []
+            has_depth = False
             psf = 1.0
 
         # Admission — same function for all schools.
@@ -2981,7 +2987,8 @@ def build_school_universe(times, sat, gpa):
             'adjPts':         float(adj_pts),
             'rawPts':         float(raw_pts),
             'psf':            float(psf),
-            'top3':           top3,
+            'top3':           top4,
+            'hasDepth':       has_depth,
             'allEvents':      all_events,
             'admission':      adm,
             'meta':           meta,
@@ -3022,8 +3029,8 @@ def score_one_school(times, conference, school):
                              'sec': sec, 'benchmarked': False})
 
     scored.sort(key=lambda e: e['pts'], reverse=True)
-    top3    = scored[:3]
-    raw_pts = round(sum(e['pts'] for e in top3), 2)
+    top4    = scored[:4]
+    raw_pts = round(sum(e['pts'] for e in top4), 2)
     psf     = team_rec['psf']
     adj_pts = round(raw_pts * psf, 2)
     adj_tier = tier_label(adj_pts)
@@ -3038,7 +3045,7 @@ def score_one_school(times, conference, school):
         'rawPts':     raw_pts,
         'adjPts':     adj_pts,
         'adjTier':    adj_tier,
-        'top3':       [e['event'] for e in top3],
+        'top3':       [e['event'] for e in top4],   # key kept; now holds top 4
         'events':     scored + unscored,
         'admission':  adm,
         'meta': {
@@ -3401,6 +3408,7 @@ def search():
                 'psf':            1.0,
                 'admission':      oou_adm,
                 'top3':           [],
+                'hasDepth':       False,
                 'allEvents':      [],
                 'meta':           oou_meta,
                 'confTierShort':  '',
@@ -3635,6 +3643,7 @@ def deep_dive():
                 'psf':            1.0,
                 'admission':      oou_adm,
                 'top3':           [],
+                'hasDepth':       False,
                 'allEvents':      [],
                 'meta':           oou_meta_found,
                 'confTierShort':  '',

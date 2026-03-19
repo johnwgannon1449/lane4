@@ -1,0 +1,100 @@
+We are making a targeted update to the Lane4 swim scoring model.
+
+IMPORTANT:
+- Do NOT change anchors (keep current system)
+- Do NOT change PSF logic
+- Do NOT change adjPts formula
+- Do NOT change tier thresholds
+- Do NOT change admissions logic
+- Do NOT change UI structure
+- Do NOT change search or deep dive structure
+- This is a minimal change to event aggregation only
+
+--------------------------------------------------
+GOAL
+--------------------------------------------------
+
+Update the scoring model to use the swimmer’s TOP 4 scoring events instead of TOP 3.
+
+--------------------------------------------------
+CURRENT BEHAVIOR
+--------------------------------------------------
+
+rawPts is currently computed as:
+- sum of pts from top 3 events
+
+top3 array is:
+- sorted events by pts descending
+- first 3 used
+
+--------------------------------------------------
+NEW BEHAVIOR
+--------------------------------------------------
+
+1. Replace top3 logic with top4:
+
+- sort allEvents by pts descending
+- take top 4 events instead of 3
+- compute rawPts as sum of top 4 event pts
+
+2. Maintain backward compatibility:
+
+- If swimmer has fewer than 4 scoring events:
+  - use all available events (no errors)
+
+--------------------------------------------------
+DATA STRUCTURE UPDATE
+--------------------------------------------------
+
+- Replace top3 array with top4 array
+- Ensure downstream code references are updated accordingly
+
+If top3 is used in UI:
+- either rename to top4
+- or keep variable name but include 4 events (whichever is safer with minimal changes)
+
+--------------------------------------------------
+NO OTHER CHANGES
+--------------------------------------------------
+
+Do NOT:
+- change event scoring logic
+- change how pts are calculated
+- change PSF or adjPts
+- change tier assignment
+- introduce weighting
+- introduce new multipliers
+- change any thresholds
+
+--------------------------------------------------
+OPTIONAL (SAFE ADD)
+--------------------------------------------------
+
+If clean and easy:
+
+Add a boolean or flag in the school result object:
+
+hasDepth = true if swimmer has 4+ events with pts > 0
+
+This may be used later for messaging, but do NOT change UI or behavior now.
+
+--------------------------------------------------
+TESTING
+--------------------------------------------------
+
+After implementation:
+
+- confirm rawPts increases appropriately for swimmers with a real 4th event
+- confirm no change for swimmers with fewer than 4 scoring events
+- confirm tiers still compute correctly
+- confirm no crashes in UI where top3 was previously used
+
+--------------------------------------------------
+SUCCESS CRITERIA
+--------------------------------------------------
+
+- rawPts now reflects top 4 events
+- no unintended side effects
+- system remains stable and consistent
+
+This is a controlled improvement to better reflect multi-event swimmers.
