@@ -12,6 +12,19 @@ app = Flask(__name__, static_folder='static', static_url_path='')
 app.secret_key = os.environ.get('SESSION_SECRET', 'dev-secret-change-me')
 
 # ---------------------------------------------------------------------------
+# LANGUAGE PROMPT  (loaded once at startup; used as AI system prompt)
+# ---------------------------------------------------------------------------
+def _load_language_prompt():
+    path = os.path.join(os.path.dirname(__file__), 'prompts', 'lane4_language_prompt.txt')
+    try:
+        with open(path, encoding='utf-8') as f:
+            return f.read().strip()
+    except FileNotFoundError:
+        return ''
+
+LANE4_LANGUAGE_PROMPT = _load_language_prompt()
+
+# ---------------------------------------------------------------------------
 # DATABASE
 # ---------------------------------------------------------------------------
 def get_db():
