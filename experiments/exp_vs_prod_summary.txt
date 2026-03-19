@@ -1,0 +1,37 @@
+════════════════════════════════════════════════════════════
+EXPERIMENTAL vs PRODUCTION — SUMMARY
+════════════════════════════════════════════════════════════
+
+Swimmer: representative D3-competitive profile
+Events: 50 Free, 100 Free, 200 Free, 500 Free, 100 Fly, 200 IM, 400 IM
+
+Model differences:
+  Production:    3 zones (1st / 8th / 16th anchors)
+                 confidence: 1.0 (≤12), 0.85 (12–14), 0.65 (14–16), 0 (16+)
+  Experimental:  3 zones (1st / 5th / 14th anchors, derived)
+                 confidence: 1.0 (≤14), 0.35 (14–16), 0 (16+)
+
+────────────────────────────────────────────────────────────
+Schools HARDER under experimental (adjPts dropped >1.0):
+  (none)
+
+Schools SIMILAR (adjPts within ±1.0):
+  Johns Hopkins University: prod=4.62 → exp=5.46  (+0.84)
+  Macalester College: prod=37.70 → exp=37.06  (-0.64)
+  Whitman College: prod=20.92 → exp=20.44  (-0.48)
+
+Schools EASIER under experimental (adjPts gained >1.0):
+  Franklin & Marshall College: prod=7.92 → exp=9.36  (+1.44)
+  Gettysburg College: prod=6.60 → exp=7.80  (+1.20)
+
+Tier changes:
+  (no tier changes for this swimmer profile)
+
+────────────────────────────────────────────────────────────
+Interpretation:
+  If experimental shows harder scores at strong programs (UAA, NESCAC),
+  that aligns with recruiting reality — these programs are selective and
+  the 14–16 zone should not generate false optimism.
+  Tier changes from 'Top Recruit' → lower signal that the model is
+  correctly reducing borderline scores at top-end programs.
+════════════════════════════════════════════════════════════

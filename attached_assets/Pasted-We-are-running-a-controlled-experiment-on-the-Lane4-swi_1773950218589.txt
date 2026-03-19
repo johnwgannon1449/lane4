@@ -1,0 +1,113 @@
+We are running a controlled experiment on the Lane4 swim scoring model.
+
+IMPORTANT:
+Do not change production behavior.
+Do not change UI, labels, deep dive language, admissions logic, school metadata, or search behavior.
+Do not overwrite the current scoring system.
+This is an experimental side-by-side model only.
+
+GOAL:
+Test a new scoring/interpolation model that better reflects recruiting reality than the current 8th/16th anchor system.
+
+RATIONALE:
+The current model uses 8th and 16th place marks as anchors. That matches meet structure, but it may not match recruiting reality.
+
+Problems with current anchors:
+- 8th can be noisy due to bad swims, weak A-final depth, or thin events
+- 16th can be irrelevant in weak events and may overstate “scraping in”
+- stronger programs care more about top-end impact than fringe 16th-place scoring
+
+We want to test a model shaped around:
+- places 1–5 = premium impact zone
+- places 6–14 = meaningful recruiting / scoring zone
+- places 15–16+ = low-value extension, not a core anchor
+
+EXPERIMENTAL MODEL REQUIREMENTS:
+
+1. Keep the existing production scoring model intact.
+   - Current 8th/16th pipeline remains unchanged.
+   - No production outputs should change.
+
+2. Build a parallel experimental scoring model with these principles:
+
+   A. Use 5th place as the upper recruiting anchor.
+   B. Use 14th place as the lower meaningful anchor.
+   C. Treat places 1–5 as a premium zone.
+      - A swimmer projecting in this zone should gain value faster than in the current model.
+      - This zone should better reward podium / near-podium type swimmers.
+   D. Treat places 6–14 as the standard meaningful scoring / recruitable zone.
+      - This is the main interpolation band.
+   E. Treat places 15–16 and beyond as a low-value extension.
+      - Do NOT use 16th as a hard anchor.
+      - Instead, extrapolate beyond 14th using the slope from the 5–14 band or another reasonable low-value continuation.
+      - Keep continuity in the curve; do not create cliffs.
+
+3. Keep event scoring on the same broad scale as production if possible.
+   - We still want comparable rawPts / adjPts outputs.
+   - Do not invent a brand-new totally incompatible scoring universe unless necessary.
+   - Preserve intuitive relationships: better place = more value.
+
+4. Apply the full experimental math end-to-end.
+   That means:
+   - recalculate projected place / scoring value under the experimental model
+   - recalculate per-event points
+   - recalculate top event totals
+   - recalculate rawPts
+   - recalculate adjPts
+   - recalculate swim tier / recruit interpretation if tied to point totals
+
+5. IMPORTANT:
+   For this experiment, keep the “top 3 events” aggregation exactly as production currently does.
+   Do NOT yet change top-3 logic.
+   We will test multi-event depth separately later.
+   This experiment is only about the event scoring curve.
+
+OUTPUTS REQUIRED:
+
+Create a comparison output for a selected test school set showing old vs new results side by side.
+
+Test school set:
+- Emory
+- Johns Hopkins
+- University of Chicago
+- Williams
+- Franklin & Marshall
+- Gettysburg
+- Macalester
+- Whitman
+
+For each school, output:
+- school name
+- production rawPts
+- experimental rawPts
+- production adjPts
+- experimental adjPts
+- production tier
+- experimental tier
+- top 3 events under production
+- top 3 events under experimental
+- any meaningful place shifts that explain the difference
+
+Also create a short summary section:
+- which schools became harder under the experimental model
+- which schools stayed similar
+- which swimmer-school fits changed meaningfully
+- whether the new model appears to reduce false optimism at stronger programs
+
+IMPLEMENTATION NOTES:
+- This is a calibration experiment, not a UI feature
+- Keep code clean and isolated
+- Name clearly so production and experimental outputs cannot be confused
+- If needed, add a debug CSV or comparison table for inspection
+
+SUCCESS CRITERIA:
+We want to judge whether this experimental model feels more like real recruiting truth.
+
+The core question is:
+Does the 1–5 / 6–14 / 15+ model produce outputs that better match how coaches would actually view a swimmer than the current 8th/16th anchor system?
+
+Again:
+- do not change production logic
+- do not change language prompts
+- do not change top-3 aggregation yet
+- experimental scoring model only
