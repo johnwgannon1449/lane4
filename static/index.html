@@ -527,15 +527,21 @@
           <input class="ob-input" id="ob-gpa" type="number" step="0.01" min="0" max="4.0" placeholder="3.85" />
         </div>
         <div class="ob-field">
-          <label>SAT (400–1600)</label>
+          <label>SAT composite (400–1600)</label>
           <input class="ob-input" id="ob-sat" type="number" step="10" min="400" max="1600" placeholder="1350" />
         </div>
       </div>
       <div class="ob-row">
         <div class="ob-field">
-          <label>ACT (1–36)</label>
+          <label>SAT Math (200–800) <span style="font-weight:400;font-size:0.78em;color:var(--muted);">optional</span></label>
+          <input class="ob-input" id="ob-math-sat" type="number" step="10" min="200" max="800" placeholder="720" />
+        </div>
+        <div class="ob-field">
+          <label>ACT composite (1–36) <span style="font-weight:400;font-size:0.78em;color:var(--muted);">optional</span></label>
           <input class="ob-input" id="ob-act" type="number" step="1" min="1" max="36" placeholder="30" />
         </div>
+      </div>
+      <div class="ob-row">
         <div class="ob-field">
           <label>Projected APs by graduation</label>
           <select class="ob-input" id="ob-ap-count">
@@ -873,6 +879,7 @@ async function submitOnboarding() {
   const gradYear = gradEl.value;
   const gpa      = parseFloat(gpaEl.value) || 0;
   const sat      = parseInt(satEl.value)   || 0;
+  const mathSat  = parseInt(document.getElementById('ob-math-sat')?.value) || 0;
   const act      = parseInt(document.getElementById('ob-act')?.value) || 0;
   const apCount  = parseInt(document.getElementById('ob-ap-count')?.value) || 0;
 
@@ -914,16 +921,17 @@ async function submitOnboarding() {
   JAMES = {
     name,
     gradYear,
-    gpa:      gpa  || 0,
-    sat:      sat  || 0,
-    actScore: act  || 0,
+    gpa:      gpa     || 0,
+    sat:      sat     || 0,
+    mathSat:  mathSat || 0,
+    actScore: act     || 0,
     apCount:  apCount || 0,
     satProjected: 0,
-    mathSat: 0,
     times,
     vibe: {},
   };
-  if (act) { ACT_SCORE = act; SCORE_MODE = 'ACT'; } else { ACT_SCORE = null; SCORE_MODE = 'SAT'; }
+  ACT_SCORE  = act || null;
+  SCORE_MODE = (act && !sat) ? 'ACT' : 'SAT';
   ACT_PROJ = null;
   VIBE_STATE = {};
   MY_LIST    = [];
@@ -2127,78 +2135,49 @@ function renderStats() {
   if (!el) return;
 
   const apLabel = JAMES.apCount ? `${JAMES.apCount} APs` : '—';
+  const hasSat  = !!(JAMES.sat);
   const actVal  = JAMES.actScore || ACT_SCORE;
+  const hasAct  = !!(actVal);
 
-  if (SCORE_MODE === 'ACT' && actVal) {
-    const statTiles = [
-      { val: JAMES.gpa || '—',                          lbl: 'GPA' },
-      { val: `${actVal} ACT`,                            lbl: `≈ ${actToSat(actVal)} SAT equiv` },
-      { val: ACT_PROJ ? `${ACT_PROJ} target ACT` : '—', lbl: 'Target ACT' },
-      { val: apLabel,                                    lbl: 'Projected APs' },
-    ];
-    el.innerHTML = statTiles.map(s =>
-      `<div class="stat-tile"><div class="stat-val">${esc(String(s.val))}</div><div class="stat-lbl">${esc(s.lbl)}</div></div>`
-    ).join('');
-  } else {
-    const statTiles = [
-      { val: JAMES.gpa || '—',         lbl: 'GPA' },
-      { val: JAMES.sat || '—',         lbl: 'SAT' },
-      { val: actVal  || '—',           lbl: 'ACT' },
-      { val: apLabel,                  lbl: 'Projected APs' },
-    ];
-    el.innerHTML = statTiles.map(s =>
-      `<div class="stat-tile"><div class="stat-val">${esc(String(s.val))}</div><div class="stat-lbl">${esc(s.lbl)}</div></div>`
-    ).join('');
-  }
+  const statTiles = [
+    { val: JAMES.gpa || '—', lbl: 'GPA' },
+    ...(hasSat ? [{ val: JAMES.sat, lbl: 'SAT' }] : (!hasAct ? [{ val: '—', lbl: 'SAT' }] : [])),
+    ...(hasAct  ? [{ val: actVal,   lbl: 'ACT' }] : []),
+    { val: apLabel, lbl: 'Projected APs' },
+  ];
+  el.innerHTML = statTiles.map(s =>
+    `<div class="stat-tile"><div class="stat-val">${esc(String(s.val))}</div><div class="stat-lbl">${esc(s.lbl)}</div></div>`
+  ).join('');
 
   if (!panel) return;
   if (!EDIT_STATS) { panel.style.display = 'none'; return; }
   panel.style.display = 'block';
 
-  const isSAT = SCORE_MODE === 'SAT';
-  const actEq  = actVal ? `≈ ${actToSat(actVal)} SAT (used for scoring)` : '';
-  const actPEq = ACT_PROJ ? `≈ ${actToSat(ACT_PROJ)} SAT` : '';
+  const actEq = actVal ? `≈ ${actToSat(actVal)} SAT` : '';
   const apOptions = Array.from({length: 16}, (_, i) => i + 1)
     .map(n => `<option value="${n}" ${JAMES.apCount === n ? 'selected' : ''}>${n}</option>`).join('');
 
   panel.innerHTML = `
   <div class="card" style="margin-top:0.6rem;margin-bottom:0.75rem;">
-    <div class="score-mode-toggle">
-      <button class="score-mode-btn ${isSAT ? 'active' : ''}" onclick="setScoreMode('SAT')">SAT</button>
-      <button class="score-mode-btn ${!isSAT ? 'active' : ''}" onclick="setScoreMode('ACT')">ACT only</button>
-    </div>
     <div class="stat-edit-grid">
       <div class="stat-edit-field">
         <label>GPA (unweighted)</label>
         <input id="edit-gpa" type="number" step="0.01" min="0" max="4.0" value="${JAMES.gpa || ''}" placeholder="3.85">
       </div>
-      ${isSAT ? `
       <div class="stat-edit-field">
-        <label>SAT composite</label>
+        <label>SAT composite (400–1600)</label>
         <input id="edit-sat" type="number" step="10" min="400" max="1600" value="${JAMES.sat || ''}" placeholder="1450">
       </div>
       <div class="stat-edit-field">
-        <label>ACT score (if taken)</label>
-        <input id="edit-act-score" type="number" step="1" min="1" max="36" value="${JAMES.actScore || ''}" placeholder="32"
-          oninput="ACT_SCORE=parseInt(this.value)||null; document.getElementById('act-score-eq').textContent=parseInt(this.value)?'≈ '+actToSat(parseInt(this.value))+' SAT':''">
-        <span class="act-note" id="act-score-eq">${JAMES.actScore ? '≈ ' + actToSat(JAMES.actScore) + ' SAT' : ''}</span>
-      </div>
-      <div class="stat-edit-field">
-        <label>Math SAT</label>
+        <label>SAT Math (200–800) <span style="font-weight:400;font-size:0.78em;color:var(--muted);">optional</span></label>
         <input id="edit-math-sat" type="number" step="10" min="200" max="800" value="${JAMES.mathSat || ''}" placeholder="750">
-      </div>` : `
-      <div class="stat-edit-field">
-        <label>ACT composite</label>
-        <input id="edit-act" type="number" step="1" min="1" max="36" value="${actVal || ''}" placeholder="33"
-          oninput="ACT_SCORE=parseInt(this.value)||null; document.getElementById('act-eq').textContent=ACT_SCORE?'≈ '+actToSat(ACT_SCORE)+' SAT (used for scoring)':''">
-        <span class="act-note" id="act-eq">${actEq}</span>
       </div>
       <div class="stat-edit-field">
-        <label>Target ACT</label>
-        <input id="edit-act-proj" type="number" step="1" min="1" max="36" value="${ACT_PROJ || ''}" placeholder="35"
-          oninput="ACT_PROJ=parseInt(this.value)||null; document.getElementById('act-peq').textContent=ACT_PROJ?'≈ '+actToSat(ACT_PROJ)+' SAT':''">
-        <span class="act-note" id="act-peq">${actPEq}</span>
-      </div>`}
+        <label>ACT composite (1–36) <span style="font-weight:400;font-size:0.78em;color:var(--muted);">optional</span></label>
+        <input id="edit-act-score" type="number" step="1" min="1" max="36" value="${JAMES.actScore || ''}" placeholder="32"
+          oninput="ACT_SCORE=parseInt(this.value)||null; document.getElementById('edit-act-eq').textContent=ACT_SCORE?'≈ '+actToSat(ACT_SCORE)+' SAT':''">
+        <span class="act-note" id="edit-act-eq">${actEq}</span>
+      </div>
       <div class="stat-edit-field">
         <label>Projected APs by graduation</label>
         <select id="edit-ap-count">
@@ -2223,19 +2202,14 @@ async function saveStats() {
   const gpaVal = parseFloat(document.getElementById('edit-gpa')?.value);
   if (!isNaN(gpaVal) && gpaVal >= 0 && gpaVal <= 4.0) JAMES.gpa = gpaVal;
 
-  if (SCORE_MODE === 'SAT') {
-    const sat      = parseInt(document.getElementById('edit-sat')?.value);
-    const actScore = parseInt(document.getElementById('edit-act-score')?.value);
-    const math     = parseInt(document.getElementById('edit-math-sat')?.value);
-    if (sat      >= 400 && sat      <= 1600) JAMES.sat = sat;
-    if (actScore >= 1   && actScore <= 36)   { JAMES.actScore = actScore; ACT_SCORE = actScore; }
-    if (math     >= 200 && math     <= 800)  JAMES.mathSat = math;
-  } else {
-    const act  = parseInt(document.getElementById('edit-act')?.value);
-    const actP = parseInt(document.getElementById('edit-act-proj')?.value);
-    if (act  >= 1 && act  <= 36) { ACT_SCORE = act;  JAMES.actScore = act; JAMES.sat = actToSat(act); }
-    if (actP >= 1 && actP <= 36) { ACT_PROJ  = actP; }
-  }
+  const sat      = parseInt(document.getElementById('edit-sat')?.value);
+  const actScore = parseInt(document.getElementById('edit-act-score')?.value);
+  const math     = parseInt(document.getElementById('edit-math-sat')?.value);
+  JAMES.sat      = (sat      >= 400 && sat      <= 1600) ? sat  : 0;
+  JAMES.mathSat  = (math     >= 200 && math     <= 800)  ? math : 0;
+  if (actScore >= 1 && actScore <= 36) { JAMES.actScore = actScore; ACT_SCORE = actScore; }
+  else { JAMES.actScore = 0; ACT_SCORE = null; }
+  SCORE_MODE = (JAMES.actScore && !JAMES.sat) ? 'ACT' : 'SAT';
 
   const apVal = parseInt(document.getElementById('edit-ap-count')?.value);
   if (apVal >= 1 && apVal <= 16) JAMES.apCount = apVal;
