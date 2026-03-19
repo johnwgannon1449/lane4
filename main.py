@@ -2890,7 +2890,9 @@ def admission_chance(school, sat, gpa, adj_tier, psf):
 
     # G5: Ultra-selective school extra caps
     if sel_tier == 'ultra_selective':
-        if acad_band == 1 and swim_band == 4:
+        if swim_band == 0:
+            label = 'Moonshot'          # no swim support at elite schools → Extreme Reach
+        elif acad_band == 1 and swim_band == 4:
             label = _cap_label(label, 'Possible')
         if acad_band == 0:
             label = 'Moonshot'
