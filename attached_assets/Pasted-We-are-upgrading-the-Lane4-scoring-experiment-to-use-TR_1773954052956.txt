@@ -1,0 +1,150 @@
+We are upgrading the Lane4 scoring experiment to use TRUE 5th-place and 14th-place anchors from real parsed event results.
+
+IMPORTANT:
+- Do NOT change production scoring logic
+- Do NOT change UI, deep dive, admissions, or search
+- Do NOT overwrite any existing outputs
+- This is experimental only
+
+GOAL:
+Determine whether we already have enough event-level data to extract real 5th and 14th place marks.
+If we do, use it.
+If we don’t, minimally extend our data pipeline to support it.
+
+--------------------------------------------------
+STEP 1 — DATA AVAILABILITY CHECK (DO THIS FIRST)
+--------------------------------------------------
+
+Check whether we already have stored event-level parsed results that include:
+
+- event name
+- place (1, 2, 3, ..., 16+)
+- time
+- school
+
+Look in all existing outputs (especially anything like):
+- event-level CSVs
+- intermediate parser outputs
+- debug files
+- any saved structured event data
+
+Answer clearly:
+
+1. Do we already have full placement-level event data (not just 8th/16th anchors)?
+2. If yes:
+   - list the exact file paths
+   - describe the schema
+   - confirm we can directly access 5th and 14th place rows
+
+--------------------------------------------------
+STEP 2 — IF DATA EXISTS (PREFERRED PATH)
+--------------------------------------------------
+
+If full event-level data already exists:
+
+1. For each event (conference + gender + event):
+   - extract the TRUE 5th-place time
+   - extract the TRUE 14th-place time
+
+2. Build a new experimental anchor dataset:
+   - event
+   - conference
+   - gender
+   - time_5th
+   - time_14th
+
+3. DO NOT estimate anything from 8th/16th.
+   These must come from actual placements.
+
+--------------------------------------------------
+STEP 3 — IF DATA DOES NOT EXIST
+--------------------------------------------------
+
+If we do NOT have full event-level placement data:
+
+1. Modify the parser output (or intermediate storage) to retain:
+   - event
+   - conference
+   - gender
+   - place
+   - time
+   - school
+
+2. Keep this lean:
+   - DO NOT store swimmer names
+   - DO NOT store splits
+   - DO NOT store unnecessary metadata
+
+3. Re-run parsing ONLY to generate this richer dataset.
+
+4. Save as:
+   output/event_results_full.csv
+
+--------------------------------------------------
+STEP 4 — BUILD EXPERIMENTAL SCORING ANCHORS
+--------------------------------------------------
+
+Using real data (from Step 2 or Step 3):
+
+For each event:
+- use 5th place as upper anchor
+- use 14th place as lower meaningful anchor
+
+Conceptual model:
+
+- Places 1–5 → premium impact zone
+- Places 6–14 → main meaningful scoring/recruitable zone
+- Places 15+ → low-value extension (do NOT anchor at 16th)
+
+Do NOT reuse the 8th/16th curve.
+Do NOT derive 5th from 8th.
+
+--------------------------------------------------
+STEP 5 — RUN SIDE-BY-SIDE COMPARISON
+--------------------------------------------------
+
+Using BOTH models:
+
+- Production: 8th / 16th anchors
+- Experimental: true 5th / 14th anchors
+
+Run comparison for this school set:
+- Emory
+- Johns Hopkins
+- University of Chicago
+- Williams
+- Franklin & Marshall
+- Gettysburg
+- Macalester
+- Whitman
+
+Output a comparison table with:
+- school
+- production rawPts / adjPts / tier
+- experimental rawPts / adjPts / tier
+- top 3 events under each model
+- notable differences
+
+Save to:
+output/scoring_comparison_5_14.csv
+
+--------------------------------------------------
+STEP 6 — SUMMARY
+--------------------------------------------------
+
+Provide a short written summary:
+
+- Did we successfully use TRUE 5th/14th anchors?
+- Which schools became meaningfully harder or easier?
+- Does the new model appear to reduce false optimism at stronger programs?
+
+--------------------------------------------------
+SUCCESS CRITERIA
+--------------------------------------------------
+
+- No production behavior changes
+- No fake estimation of 5th/14th
+- Minimal data storage (lean event-level rows only)
+- Clear comparison output for evaluation
+
+The goal is to test whether using real 5th/14th placements produces a more realistic recruiting model than 8th/16th.

@@ -119,6 +119,10 @@ EVENT_HEADER_DEBUG_HEADER = [
     "Dedupe_Key", "Notes",
 ]
 
+FULL_PLACES_HEADER = [
+    "Conference", "Gender", "Event", "Place", "Time_Sec", "Data_Quality",
+]
+
 # Events never required for full coverage — detected if present, silent if absent.
 _OPTIONAL_EVENTS: frozenset[str] = frozenset({"1000 Free"})
 
@@ -1167,6 +1171,7 @@ def merge_bundle(
     }
 
     event_rows:      list[dict] = []
+    all_place_rows:  list[dict] = []   # lean per-place rows for experimental use
     all_fallback_rows: list[dict] = []
     events_found:    list[str]  = []
     events_missing:  list[str]  = []
@@ -1256,6 +1261,16 @@ def merge_bundle(
                     "Source_File":   best.source,
                     "Data_Quality":  dq,
                 })
+                # Collect full per-place data (experimental use only — no production effect)
+                for place_num in sorted(best.places.keys()):
+                    all_place_rows.append({
+                        "Conference": conference,
+                        "Gender":     gender,
+                        "Event":      event_name,
+                        "Place":      place_num,
+                        "Time_Sec":   round(best.places[place_num], 3),
+                        "Data_Quality": dq,
+                    })
             else:
                 missing      = best.missing_places()
                 place_labels = {1: "1st", 8: "8th", 16: "16th"}
@@ -1351,7 +1366,7 @@ def merge_bundle(
         "notes":               "; ".join(notes_parts) if notes_parts else "",
     }
 
-    return event_rows, unique_teams, all_flag_rows, all_debug_rows, all_fallback_rows, all_col_debug_rows, all_hdr_debug_rows, summary
+    return event_rows, unique_teams, all_flag_rows, all_debug_rows, all_fallback_rows, all_col_debug_rows, all_hdr_debug_rows, all_place_rows, summary
 
 
 # ── CSV writer ────────────────────────────────────────────────────────────────
@@ -1446,16 +1461,17 @@ def run(input_dir: Path, output_dir: Path, bundle_filter: list[str] | None = Non
             print(f"    · {fn}")
     print()
 
-    all_events:   list[dict] = []
-    all_teams:     list[dict] = []
-    all_flags:     list[dict] = []
-    all_debug_r:   list[dict] = []
-    all_debug_s:   list[dict] = []
-    all_summaries: list[dict] = []
-    all_fallbacks: list[dict] = []
-    all_col_debug: list[dict] = []
-    all_coverage:  list[dict] = []
-    all_hdr_debug: list[dict] = []
+    all_events:     list[dict] = []
+    all_teams:      list[dict] = []
+    all_flags:      list[dict] = []
+    all_debug_r:    list[dict] = []
+    all_debug_s:    list[dict] = []
+    all_summaries:  list[dict] = []
+    all_fallbacks:  list[dict] = []
+    all_col_debug:  list[dict] = []
+    all_coverage:   list[dict] = []
+    all_hdr_debug:  list[dict] = []
+    all_place_data: list[dict] = []   # full per-place rows (experimental, no production effect)
     # Cross-bundle dedup: key = (Conference, Year, Gender, Event)
     seen_anchors: set[tuple] = set()
 
@@ -1512,11 +1528,12 @@ def run(input_dir: Path, output_dir: Path, bundle_filter: list[str] | None = Non
             print(f"    → No results to merge.\n")
             continue
 
-        ev_rows, tm_rows, fl_rows, dr_rows, fb_rows, cd_rows, hdr_rows, summary = merge_bundle(
+        ev_rows, tm_rows, fl_rows, dr_rows, fb_rows, cd_rows, hdr_rows, pl_rows, summary = merge_bundle(
             bundle, file_results, parse_mode=parse_mode
         )
         all_col_debug.extend(cd_rows)
         all_hdr_debug.extend(hdr_rows)
+        all_place_data.extend(pl_rows)
         for row in ev_rows:
             anchor_key = (row["Conference"], row["Year"], row["Gender"], row["Event"])
             if anchor_key in seen_anchors:
@@ -1662,6 +1679,7 @@ def run(input_dir: Path, output_dir: Path, bundle_filter: list[str] | None = Non
     write_csv(output_dir / "column_mode_debug.csv",     COLUMN_MODE_DEBUG_HEADER, all_col_debug)
     write_csv(output_dir / "event_coverage_report.csv", EVENT_COVERAGE_HEADER,    all_coverage)
     write_csv(output_dir / "event_header_debug.csv",    EVENT_HEADER_DEBUG_HEADER, all_hdr_debug)
+    write_csv(output_dir / "event_results_full.csv",    FULL_PLACES_HEADER,       all_place_data)
 
     total_anchors  = len(all_events)
     total_missing  = sum(len(s["events_missing_list"]) for s in all_summaries)

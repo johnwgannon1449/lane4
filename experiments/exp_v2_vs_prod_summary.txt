@@ -1,0 +1,49 @@
+════════════════════════════════════════════════════════════════
+EXPERIMENTAL v2 vs PRODUCTION — SUMMARY
+TRUE 5th/14th anchors for PDF-parsed conferences
+════════════════════════════════════════════════════════════════
+
+Swimmer: representative D3-competitive profile
+Events: 50 Free, 100 Free, 200 Free, 500 Free, 100 Fly, 200 IM, 400 IM
+
+Model differences:
+  Production:      3 zones (1st / 8th / 16th anchors)
+                   confidence: 1.0 (≤12), 0.85 (12–14), 0.65 (14–16), 0 (16+)
+  Experimental v2: 3 zones (1st / 5th / 14th anchors)
+                   confidence: 1.0 (≤14), 0.35 (14–16), 0 (16+)
+                   5th/14th: TRUE from PDF for UAA/NESCAC/MIAC
+                             DERIVED from 1st/8th/16th for Centennial/NWC
+
+────────────────────────────────────────────────────────────────
+TRUE-anchor schools (UAA, NESCAC, MIAC):
+  Macalester College (MIAC): prod=37.70 → exp=37.90  (+0.20)
+
+DERIVED-anchor schools (Centennial, NWC):
+  Johns Hopkins University (Centennial): prod=4.62 → exp=5.46  (+0.84)
+  Franklin & Marshall College (Centennial): prod=7.92 → exp=9.36  (+1.44)
+  Gettysburg College (Centennial): prod=6.60 → exp=7.80  (+1.20)
+  Whitman College (NWC): prod=20.92 → exp=20.44  (-0.48)
+
+────────────────────────────────────────────────────────────────
+Schools HARDER under experimental (adjPts dropped >1.0):
+  (none)
+
+Schools SIMILAR (adjPts within ±1.0):
+  Macalester College: prod=37.70 → exp=37.90  (+0.20) [TRUE (PDF)]
+  Johns Hopkins University: prod=4.62 → exp=5.46  (+0.84) [DERIVED]
+  Whitman College: prod=20.92 → exp=20.44  (-0.48) [DERIVED]
+
+Schools EASIER under experimental (adjPts gained >1.0):
+  Franklin & Marshall College: prod=7.92 → exp=9.36  (+1.44) [DERIVED]
+  Gettysburg College: prod=6.60 → exp=7.80  (+1.20) [DERIVED]
+
+Tier changes:
+  (no tier changes for this swimmer profile)
+
+────────────────────────────────────────────────────────────────
+Key question: do TRUE anchors differ materially from DERIVED?
+  If Δadj for TRUE-anchor schools ≈ Δadj for DERIVED schools → model is
+  robust; derived anchors are good enough and no harvester change is needed.
+  If TRUE-anchor schools show larger/smaller shifts → the 4/7 interpolation
+  is wrong and we need conference-specific calibration.
+════════════════════════════════════════════════════════════════
