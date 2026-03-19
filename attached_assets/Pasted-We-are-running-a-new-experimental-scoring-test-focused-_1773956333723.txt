@@ -1,0 +1,98 @@
+We are running a new experimental scoring test focused on event depth.
+
+IMPORTANT:
+- Do NOT change production scoring logic
+- Do NOT change anchors (keep current system)
+- Do NOT change UI, admissions, or deep dive
+- This is experimental only
+
+GOAL:
+Test whether including additional events (beyond top 3) improves recruiting realism.
+
+--------------------------------------------------
+EXPERIMENT SETUP
+--------------------------------------------------
+
+Keep everything identical to production EXCEPT event aggregation.
+
+Build three scoring variants:
+
+1. PRODUCTION (control)
+   - top 3 events (unchanged)
+
+2. EXP_TOP4
+   - top 4 events
+
+3. EXP_TOP5
+   - top 5 events
+
+--------------------------------------------------
+WEIGHTING (CRITICAL)
+--------------------------------------------------
+
+To avoid over-rewarding weak depth, apply weights:
+
+- event 1 → 100%
+- event 2 → 100%
+- event 3 → 100%
+- event 4 → 70%
+- event 5 → 50%
+
+Apply weights only in EXP_TOP4 and EXP_TOP5 models.
+
+--------------------------------------------------
+CALCULATION
+--------------------------------------------------
+
+For each school:
+
+- sort swimmer events by pts (descending)
+- apply weights
+- sum to produce rawPts
+- apply existing PSF → adjPts
+- assign tiers using existing thresholds
+
+--------------------------------------------------
+OUTPUT
+--------------------------------------------------
+
+For the same test school set:
+
+- Emory
+- Johns Hopkins
+- University of Chicago
+- Williams
+- Franklin & Marshall
+- Gettysburg
+- Macalester
+- Whitman
+
+Produce a comparison table:
+
+- school
+- PROD adjPts / tier
+- TOP4 adjPts / tier
+- TOP5 adjPts / tier
+- list of top events used in each model
+
+Save to:
+output/scoring_depth_experiment.csv
+
+--------------------------------------------------
+SUMMARY
+--------------------------------------------------
+
+Provide a short written summary:
+
+- which schools changed meaningfully
+- whether depth improved realism at mid-tier schools
+- whether elite schools remained appropriately selective
+- whether weak events inflated results
+
+--------------------------------------------------
+SUCCESS CRITERIA
+--------------------------------------------------
+
+We want to determine if adding event depth produces a more realistic recruiting model than top-3-only scoring.
+
+Do not change anything else.

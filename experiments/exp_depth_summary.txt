@@ -1,0 +1,43 @@
+════════════════════════════════════════════════════════════════
+EVENT DEPTH EXPERIMENT — SUMMARY
+════════════════════════════════════════════════════════════════
+
+Swimmer: representative D3-competitive profile
+Events scored: 50 Free, 100 Free, 200 Free, 500 Free, 100 Fly, 200 IM, 400 IM
+Schools tested: 6 (skipped: Emory University, University of Chicago)
+
+Weights:  PROD=top3@100%  |  TOP4=+event4@70%  |  TOP5=+event5@50%
+
+────────────────────────────────────────────────────────────────
+Per-school results:
+  Johns Hopkins University (Centennial, PSF=0.7)
+    PROD=4.62  TOP4=4.62 (Δ+0.00)  TOP5=4.62 (Δ+0.00)
+  Williams College (NESCAC, PSF=0.78)
+    PROD=0.00  TOP4=0.00 (Δ+0.00)  TOP5=0.00 (Δ+0.00)
+  Franklin & Marshall College (Centennial, PSF=1.2)
+    PROD=7.92  TOP4=7.92 (Δ+0.00)  TOP5=7.92 (Δ+0.00)
+  Gettysburg College (Centennial, PSF=1.0)
+    PROD=6.60  TOP4=6.60 (Δ+0.00)  TOP5=6.60 (Δ+0.00)
+  Macalester College (MIAC, PSF=1.1)
+    PROD=37.70  TOP4=45.39 (Δ+7.69)  TOP5=50.73 (Δ+13.03)  ← tier: Conference Star → High-Point Contender
+  Whitman College (NWC, PSF=1.1)
+    PROD=20.92  TOP4=20.92 (Δ+0.00)  TOP5=20.92 (Δ+0.00)
+
+────────────────────────────────────────────────────────────────
+Tier changes vs PROD — TOP4: 0 school(s)
+  (none)
+Tier changes vs PROD — TOP5: 1 school(s)
+  Macalester College: Conference Star → High-Point Contender
+
+────────────────────────────────────────────────────────────────
+Assessment:
+  TOP5 produces meaningful gains (>2 adj pts) at 1 school(s):
+    Macalester College: +13.03 adj pts  (4th event: 400 IM)
+  Tier changes present — review whether they align with recruiting reality.
+
+────────────────────────────────────────────────────────────────
+Data notes:
+  Skipped schools (not in Team_Tiers XLSX): Emory University, University of Chicago
+  These schools exist in the app's live data but not in the Excel reference sheet.
+  All variants use production anchor benchmarks and PSF values unchanged.
+════════════════════════════════════════════════════════════════
