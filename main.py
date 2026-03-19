@@ -17,6 +17,20 @@ app.secret_key = os.environ.get('SESSION_SECRET', 'dev-secret-change-me')
 def get_db():
     return psycopg2.connect(os.environ['DATABASE_URL'])
 
+def _init_db():
+    """Create tables if they don't exist (safe to run on every startup)."""
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS users (
+                    id            SERIAL PRIMARY KEY,
+                    email         TEXT UNIQUE NOT NULL,
+                    password_hash TEXT NOT NULL,
+                    created_at    TIMESTAMPTZ DEFAULT NOW()
+                )
+            """)
+        conn.commit()
+
 def login_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
@@ -2378,6 +2392,7 @@ def _float(v):
         return None
 
 load_data()
+_init_db()
 
 # ---------------------------------------------------------------------------
 # Scoring engine — all formulas from Swimmer_Calcs (workbook authoritative)
