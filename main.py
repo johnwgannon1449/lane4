@@ -29,6 +29,16 @@ def _init_db():
                     created_at    TIMESTAMPTZ DEFAULT NOW()
                 )
             """)
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS sync_data (
+                    id         SERIAL PRIMARY KEY,
+                    user_id    INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+                    data_key   TEXT NOT NULL,
+                    data_value JSONB,
+                    updated_at TIMESTAMPTZ DEFAULT NOW(),
+                    UNIQUE (user_id, data_key)
+                )
+            """)
         conn.commit()
 
 def login_required(f):
@@ -100,7 +110,7 @@ def auth_me():
 # ---------------------------------------------------------------------------
 # DATA SYNC ENDPOINTS
 # ---------------------------------------------------------------------------
-_ALLOWED_KEYS = {'swimmer', 'my_list', 'crm_data'}
+_ALLOWED_KEYS = {'swimmer', 'my_list', 'crm_data', 'vibe_state', 'other_prefs'}
 
 @app.route('/api/data/load', methods=['GET'])
 @login_required

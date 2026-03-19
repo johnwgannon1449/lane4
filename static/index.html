@@ -1130,9 +1130,11 @@ async function pushToServer() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        swimmer:  JAMES,
-        my_list:  MY_LIST,
-        crm_data: CRM_DATA,
+        swimmer:     JAMES,
+        my_list:     MY_LIST,
+        crm_data:    CRM_DATA,
+        vibe_state:  VIBE_STATE,
+        other_prefs: OTHER_PREFS,
       }),
     });
   } catch(e) { console.warn('Server sync failed', e); }
@@ -1144,14 +1146,11 @@ async function loadFromServer() {
     if (!res.ok) return false;
     const body = await res.json();
     const d    = body.data || {};
-    if (d.swimmer  && typeof d.swimmer  === 'object') JAMES    = d.swimmer;
-    if (d.my_list  && Array.isArray(d.my_list))       MY_LIST  = d.my_list;
-    if (d.crm_data && typeof d.crm_data === 'object') CRM_DATA = d.crm_data;
-    // Also pull vibe/other_prefs from localStorage as before (not yet DB-backed)
-    const vibe = localStorage.getItem('lane4_vibe');
-    if (vibe) VIBE_STATE = JSON.parse(vibe);
-    const op = localStorage.getItem('lane4_other_prefs');
-    if (op !== null) OTHER_PREFS = op;
+    if (d.swimmer    && typeof d.swimmer    === 'object') JAMES      = d.swimmer;
+    if (d.my_list    && Array.isArray(d.my_list))         MY_LIST    = d.my_list;
+    if (d.crm_data   && typeof d.crm_data   === 'object') CRM_DATA   = d.crm_data;
+    if (d.vibe_state && typeof d.vibe_state === 'object') VIBE_STATE = d.vibe_state;
+    if (typeof d.other_prefs === 'string')                OTHER_PREFS = d.other_prefs;
     return true;
   } catch(e) { console.warn('Server load failed', e); return false; }
 }
