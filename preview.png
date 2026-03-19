@@ -1,0 +1,575 @@
+conference,gender,team,rank,score,champion_ratio,meet_share,final_tier,tier_short,generated_at,snapshot_version
+ACC,men,"California, University of, Ber",1,1154.0,1.0,0.134155,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+ACC,men,Stanford University,2,1076.0,0.932409,0.125087,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+ACC,men,North Carolina State Universit,3,973.0,0.843154,0.113113,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+ACC,men,"Louisville, University of",4,844.0,0.731369,0.098117,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+ACC,men,VA Tech,5,715.5,0.620017,0.083178,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+ACC,men,Florida State University,6,624.5,0.541161,0.072599,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+ACC,men,"Virginia, University of",7,577.5,0.500433,0.067136,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+ACC,men,"North Carolina, University of",8,572.5,0.496101,0.066554,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+ACC,men,"Notre Dame, University of",9,488.0,0.422877,0.056731,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+ACC,men,Southern Methodist University,10,407.0,0.352686,0.047315,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+ACC,men,"Pittsburgh, University of",11,401.0,0.347487,0.046617,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+ACC,men,Georgia Institute of Technolog,12,357.0,0.309359,0.041502,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+ACC,men,University of Miami (Florida),13,162.0,0.140381,0.018833,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+ACC,men,Duke University,14,138.0,0.119584,0.016043,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+ACC,men,Boston College,15,112.0,0.097054,0.01302,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+ACC,women,"Virginia, University of",1,1410.5,1.0,0.159163,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+ACC,women,Stanford University,2,1039.0,0.736618,0.117242,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+ACC,women,"California, University of, Ber",3,1027.5,0.728465,0.115944,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+ACC,women,"Louisville, University of",4,925.0,0.655796,0.104378,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+ACC,women,North Carolina State Universit,5,851.5,0.603687,0.096084,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+ACC,women,"Pittsburgh, University of",6,552.0,0.391351,0.062288,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+ACC,women,"North Carolina, University of",7,522.5,0.370436,0.05896,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+ACC,women,Duke University,8,432.5,0.306629,0.048804,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+ACC,women,VA Tech,9,409.5,0.290323,0.046209,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+ACC,women,Florida State University,10,371.0,0.263027,0.041864,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+ACC,women,"Notre Dame, University of",11,366.0,0.259482,0.0413,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+ACC,women,University of Miami (Florida),12,322.0,0.228288,0.036335,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+ACC,women,Georgia Institute of Technolog,13,274.0,0.194257,0.030919,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+ACC,women,Southern Methodist University,14,261.0,0.185041,0.029452,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+ACC,women,Boston College,15,98.0,0.069479,0.011058,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+America East,men,University of Maryland Baltimo,1,805.5,1.0,0.247922,Tier 1A,1A,2026-03-17T23:50:51Z,lane4_snapshot_v1
+America East,men,Binghamton University,2,748.0,0.928616,0.230225,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+America East,men,Bryant University,3,572.5,0.710739,0.176208,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+America East,men,Virginia Military Institute,4,423.0,0.52514,0.130194,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+America East,men,New Jersey Institute of Techno,5,353.0,0.438237,0.108649,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+America East,men,"Maine, University of",6,347.0,0.430788,0.106802,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+America East,women,Bryant University,1,775.0,1.0,0.22997,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+America East,women,"New Hampshire, University of",2,660.0,0.851613,0.195846,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+America East,women,"Vermont, University of",3,613.0,0.790968,0.181899,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+America East,women,University of Maryland Baltimo,4,446.0,0.575484,0.132344,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+America East,women,Binghamton University,5,403.0,0.52,0.119585,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+America East,women,"Maine, University of",6,314.0,0.405161,0.093175,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+America East,women,Virginia Military Institute,7,159.0,0.205161,0.047181,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+ASUN,men,Florida Atlantic University,1,782.5,1.0,0.236619,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+ASUN,men,Queens University of Charlotte,1,782.5,1.0,0.236619,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+ASUN,men,Delaware,3,762.0,0.973802,0.23042,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+ASUN,men,Gardner-Webb University,4,394.0,0.503514,0.119141,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+ASUN,men,Old Dominion University,5,367.0,0.46901,0.110977,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+ASUN,men,Bellarmine University,6,219.0,0.279872,0.066223,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+ASUN,women,Delaware,1,1627.0,1.0,0.203502,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+ASUN,women,Florida Gulf Coast University,2,1619.0,0.995083,0.202502,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+ASUN,women,Queens University of Charlotte,3,1217.5,0.74831,0.152283,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+ASUN,women,Georgia Southern University,4,795.5,0.488937,0.0995,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+ASUN,women,Univ North Carolina Asheville,5,768.0,0.472034,0.09606,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+ASUN,women,University of North Florida,6,648.5,0.398586,0.081113,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+ASUN,women,Old Dominion University,7,563.0,0.346036,0.070419,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+ASUN,women,Gardner-Webb University,8,470.5,0.289183,0.058849,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+ASUN,women,Bellarmine University,9,286.0,0.175784,0.035772,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Atlantic 10,men,George Washington University,1,784.83,1.0,0.234629,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Atlantic 10,men,George Mason University,2,585.66,0.746225,0.175086,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Atlantic 10,men,St Bonaventure University,3,506.5,0.645363,0.15142,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Atlantic 10,men,La Salle University,4,437.0,0.556808,0.130643,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Atlantic 10,men,Davidson College,5,420.0,0.535148,0.125561,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Atlantic 10,men,Saint Louis University,6,325.0,0.414102,0.09716,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Atlantic 10,men,Fordham University,7,286.0,0.36441,0.085501,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Atlantic 10,women,University of Richmond,1,600.0,1.0,0.164339,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Atlantic 10,women,George Washington University,2,572.5,0.954167,0.156806,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Atlantic 10,women,Duquesne University,3,516.5,0.860833,0.141468,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Atlantic 10,women,La Salle University,4,477.0,0.795,0.130649,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Atlantic 10,women,Fordham University,5,371.0,0.618333,0.101616,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Atlantic 10,women,St Bonaventure University,6,358.0,0.596667,0.098055,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Atlantic 10,women,University of Rhode Island,7,234.0,0.39,0.064092,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Atlantic 10,women,George Mason University,8,211.0,0.351667,0.057792,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Atlantic 10,women,Davidson College,9,169.0,0.281667,0.046289,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Atlantic 10,women,Saint Louis University,10,142.0,0.236667,0.038893,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Big 12,men,Arizona State University,1,1898.5,1.0,0.238027,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Big 12,men,University of Arizona,2,1552.5,0.817751,0.194646,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Big 12,men,University of Utah,3,1305.0,0.687385,0.163616,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Big 12,men,Texas Christian University,4,934.0,0.491967,0.117101,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Big 12,men,Brigham Young University,5,843.0,0.444035,0.105692,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Big 12,men,University of Cincinnati,6,802.0,0.422439,0.100552,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Big 12,men,West Virginia University,7,641.0,0.337635,0.080366,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Big 12,women,Arizona State University,1,1660.5,1.0,0.19117,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Big 12,women,University of Arizona,2,1442.5,0.868714,0.166072,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Big 12,women,University of Houston,3,1194.5,0.719362,0.13752,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Big 12,women,University of Cincinnati,4,770.0,0.463716,0.088648,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Big 12,women,University of Kansas,5,739.5,0.445348,0.085137,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Big 12,women,Texas Christian University,6,733.0,0.441433,0.084389,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Big 12,women,University of Utah,7,693.0,0.417344,0.079784,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Big 12,women,Brigham Young University,8,524.0,0.315568,0.060327,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Big 12,women,Iowa State University,9,520.0,0.313159,0.059866,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Big 12,women,West Virginia University,10,409.0,0.246311,0.047087,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Big East,men,Georgetown University,1,910.5,1.0,0.302592,Tier 1A,1A,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Big East,men,Seton Hall University,2,742.5,0.815486,0.24676,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Big East,men,Villanova University,3,610.0,0.669962,0.202725,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Big East,men,Xavier University,4,582.5,0.639758,0.193586,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Big East,men,Providence College,5,163.5,0.179572,0.054337,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Big East,women,Villanova University,1,1754.0,1.0,0.242198,Tier 1A,1A,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Big East,women,"Connecticut, University of",2,1520.0,0.866591,0.209887,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Big East,women,Georgetown University,3,1303.0,0.742873,0.179923,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Big East,women,Xavier University,4,1003.5,0.572121,0.138567,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Big East,women,Butler University,5,581.5,0.331528,0.080295,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Big East,women,Seton Hall University,6,559.0,0.3187,0.077189,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Big East,women,Providence College,7,521.0,0.297035,0.071941,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Big Ten,men,Indiana University,1,1544.5,1.0,0.192557,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Big Ten,men,"Michigan, University of",2,1208.0,0.78213,0.150605,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Big Ten,men,Ohio State University,3,1035.5,0.670444,0.129099,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Big Ten,men,Northwestern University,4,840.0,0.543865,0.104725,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Big Ten,men,"Wisconsin, University of, Madi",5,832.5,0.539009,0.10379,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Big Ten,men,Purdue University,6,783.0,0.50696,0.097619,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Big Ten,men,University of Southern Califor,7,707.5,0.458077,0.088206,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Big Ten,men,University of Minnesota,8,644.0,0.416963,0.080289,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Big Ten,men,Pennsylvania State University,9,426.0,0.275817,0.053111,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Big Ten,women,"Michigan, University of",1,1243.0,1.0,0.141058,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Big Ten,women,Indiana University,2,1084.0,0.872084,0.123014,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Big Ten,women,Ohio State University,3,1066.0,0.857603,0.120971,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Big Ten,women,"Wisconsin, University of, Madi",4,893.0,0.718423,0.101339,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Big Ten,women,University of Southern Califor,5,768.0,0.61786,0.087154,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Big Ten,women,University of Minnesota,6,701.0,0.563958,0.079551,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Big Ten,women,"University of California, Los",7,605.5,0.487128,0.068713,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Big Ten,women,Purdue University,8,497.0,0.399839,0.0564,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Big Ten,women,Northwestern University,9,446.0,0.358809,0.050613,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Big Ten,women,University of Nebraska-Lincoln,10,433.5,0.348753,0.049194,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Big Ten,women,Rutgers University,11,379.5,0.30531,0.043066,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Big Ten,women,"Iowa, University of",12,284.0,0.228479,0.032229,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Big Ten,women,Pennsylvania State University,13,216.0,0.173773,0.024512,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Big Ten,women,University of Illinois,14,195.5,0.157281,0.022186,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Big West,men,University of Hawaii,1,780.0,1.0,0.236364,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Big West,men,Grand Canyon University,2,728.0,0.933333,0.220606,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Big West,men,UC San Diego,3,571.0,0.732051,0.17303,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Big West,men,UC Santa Barbara,4,568.0,0.728205,0.172121,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Big West,men,Cal State Bakersfield,5,379.5,0.486538,0.115,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Big West,men,Seattle U,6,273.5,0.350641,0.082879,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Big West,women,University of Hawaii,1,798.0,1.0,0.229773,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Big West,women,UC Davis,2,692.0,0.867168,0.199251,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Big West,women,UC Santa Barbara,3,660.0,0.827068,0.190037,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Big West,women,UC San Diego,4,644.0,0.807018,0.18543,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Big West,women,University of San Diego,5,350.0,0.438596,0.100777,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Big West,women,Cal State Bakersfield,6,172.0,0.215539,0.049525,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Big West,women,Seattle U,7,157.0,0.196742,0.045206,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+CAA,men,University of North Carolina W,1,852.0,1.0,0.277253,Tier 1A,1A,2026-03-17T23:50:51Z,lane4_snapshot_v1
+CAA,men,Towson University,2,789.0,0.926056,0.256752,Tier 1A,1A,2026-03-17T23:50:51Z,lane4_snapshot_v1
+CAA,men,Drexel University,3,667.5,0.783451,0.217214,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+CAA,men,William and Mary,4,508.5,0.596831,0.165473,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+CAA,men,Monmouth University,5,256.0,0.300469,0.083306,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+CAA,women,William and Mary,1,1647.0,1.0,0.22311,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+CAA,women,University of North Carolina W,2,1415.5,0.859441,0.19175,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+CAA,women,Towson University,3,1117.5,0.678506,0.151382,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+CAA,women,Northeastern University,4,980.0,0.595021,0.132755,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+CAA,women,Drexel University,5,918.0,0.557377,0.124357,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+CAA,women,Stony Brook University,6,536.0,0.32544,0.072609,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+CAA,women,Campbell University,7,466.0,0.282939,0.063127,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+CAA,women,Monmouth University,8,302.0,0.183364,0.04091,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+CCIW,men,Augustana College,1,1036.0,1.0,0.317499,Tier 1A,1A,2026-03-17T23:50:51Z,lane4_snapshot_v1
+CCIW,men,Wheaton College,2,876.0,0.84556,0.268465,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+CCIW,men,Carthage College,3,756.0,0.72973,0.231689,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+CCIW,men,Illinois Wesleyan University,4,213.0,0.205598,0.065277,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+CCIW,men,Carroll University,5,199.0,0.192085,0.060987,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+CCIW,men,Millikin University,6,160.0,0.15444,0.049035,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+CCIW,men,North Central College,7,23.0,0.022201,0.007049,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+CCIW,women,Wheaton College,1,818.0,1.0,0.240376,Tier 1A,1A,2026-03-17T23:50:51Z,lane4_snapshot_v1
+CCIW,women,Augustana College,2,817.0,0.998778,0.240082,Tier 1A,1A,2026-03-17T23:50:51Z,lane4_snapshot_v1
+CCIW,women,Carthage College,3,736.0,0.899756,0.21628,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+CCIW,women,Illinois Wesleyan University,4,505.0,0.617359,0.148398,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+CCIW,women,Carroll University,5,256.0,0.312958,0.075228,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+CCIW,women,Millikin University,6,143.0,0.174817,0.042022,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+CCIW,women,North Central College,7,128.0,0.156479,0.037614,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Colorado College,men,Johns Hopkins University,1,940.5,1.0,0.26772,Tier 1A,1A,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Colorado College,men,Gettysburg College,2,726.0,0.77193,0.206661,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Colorado College,men,Swarthmore College,3,675.0,0.717703,0.192143,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Colorado College,men,Dickinson College,4,311.0,0.330675,0.088528,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Colorado College,men,Franklin & Marshall College,5,277.0,0.294524,0.07885,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Colorado College,men,Ursinus College,6,229.0,0.243488,0.065186,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Colorado College,men,Washington College,7,219.5,0.233386,0.062482,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Colorado College,men,McDaniel College Swim Team,8,135.0,0.143541,0.038429,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Colorado College,women,Swarthmore College,1,819.0,1.0,0.235887,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Colorado College,women,Johns Hopkins University,2,803.5,0.981074,0.231423,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Colorado College,women,Gettysburg College,3,626.0,0.764347,0.1803,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Colorado College,women,Ursinus College,4,299.0,0.365079,0.086118,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Colorado College,women,Franklin & Marshall College,5,259.0,0.316239,0.074597,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Colorado College,women,Dickinson College,6,231.5,0.282662,0.066676,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Colorado College,women,Washington College,7,189.0,0.230769,0.054435,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Colorado College,women,Bryn Mawr College Owls,8,141.0,0.172161,0.040611,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Colorado College,women,McDaniel College Swim Team,9,104.0,0.126984,0.029954,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+GLIAC,men,Grand Valley State University,1,847.5,1.0,0.233022,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+GLIAC,men,Wayne State University,2,652.0,0.769322,0.179269,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+GLIAC,men,Northern Michigan University,3,547.0,0.645428,0.150399,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+GLIAC,men,St Cloud State University (M),4,479.5,0.565782,0.131839,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+GLIAC,men,Saginaw Valley State Universit,5,412.0,0.486136,0.11328,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+GLIAC,men,Davenport University,6,297.0,0.350442,0.081661,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+GLIAC,men,Augustana University,7,262.5,0.309735,0.072175,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+GLIAC,men,Lake Superior State University,8,139.5,0.164602,0.038356,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+GLIAC,women,Grand Valley State University,1,1095.0,1.0,0.337859,Tier 1A,1A,2026-03-17T23:50:51Z,lane4_snapshot_v1
+GLIAC,women,Northern Michigan University,2,708.0,0.646575,0.218451,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+GLIAC,women,Wayne State University,3,591.0,0.539726,0.182351,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+GLIAC,women,Saginaw Valley State Universit,4,433.0,0.395434,0.133601,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+GLIAC,women,Davenport University,5,411.0,0.375342,0.126813,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+GLIAC,women,Lake Superior State University,6,3.0,0.00274,0.000926,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Horizon League,men,Oakland University,1,904.0,1.0,0.269368,Tier 1A,1A,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Horizon League,men,IU Indianapolis,2,785.5,0.868916,0.234058,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Horizon League,men,Youngstown State University,3,494.0,0.54646,0.147199,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Horizon League,men,University of Wisconsin-Milwau,4,438.0,0.484513,0.130513,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Horizon League,men,Cleveland State University,5,391.0,0.432522,0.116508,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Horizon League,men,Green Bay Phoenix,6,193.0,0.213496,0.057509,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Horizon League,men,Northern Kentucky University,7,150.5,0.166482,0.044845,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Horizon League,women,Oakland University,1,896.5,1.0,0.268092,Tier 1A,1A,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Horizon League,women,University of Wisconsin-Milwau,2,641.0,0.715003,0.191687,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Horizon League,women,IU Indianapolis,3,530.0,0.591188,0.158493,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Horizon League,women,Cleveland State University,4,442.0,0.493028,0.132177,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Horizon League,women,Youngstown State University,5,430.0,0.479643,0.128589,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Horizon League,women,Green Bay Phoenix,6,273.5,0.305075,0.081788,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Horizon League,women,Northern Kentucky University,7,131.0,0.146124,0.039175,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Ivy League,men,Princeton University,1,1474.0,1.0,0.187986,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Ivy League,men,Yale University,2,1274.5,0.864654,0.162543,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Ivy League,men,Harvard Men's Swimming,3,1173.5,0.796133,0.149662,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Ivy League,men,Columbia University,4,901.5,0.611601,0.114973,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Ivy League,men,Cornell University,5,841.0,0.570556,0.107257,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Ivy League,men,Brown University,6,805.0,0.546133,0.102665,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Ivy League,men,Dartmouth College,7,694.0,0.470828,0.088509,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Ivy League,men,University of Pennsylvania,8,677.5,0.459634,0.086405,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Ivy League,women,Princeton University,1,1432.0,1.0,0.192086,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Ivy League,women,University of Pennsylvania,2,1204.0,0.840782,0.161502,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Ivy League,women,Harvard University,3,1153.5,0.805517,0.154728,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Ivy League,women,Brown University,4,1137.0,0.793994,0.152515,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Ivy League,women,Yale University,5,840.0,0.586592,0.112676,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Ivy League,women,Cornell University,6,614.5,0.42912,0.082428,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Ivy League,women,Columbia University,7,550.5,0.384427,0.073843,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Ivy League,women,Dartmouth College,8,523.5,0.365573,0.070221,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Landmark,men,Catholic University of America,1,877.5,1.0,0.251217,Tier 1A,1A,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Landmark,men,University of Scranton,2,770.0,0.877493,0.220441,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Landmark,men,Drew University,3,720.0,0.820513,0.206127,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Landmark,men,Susquehanna University,4,304.5,0.347009,0.087174,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Landmark,men,Elizabethtown College,5,214.0,0.243875,0.061265,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Landmark,men,Wilkes University,6,185.0,0.210826,0.052963,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Landmark,men,Juniata College,7,150.0,0.17094,0.042943,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Landmark,men,Lycoming College,8,109.0,0.124217,0.031205,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Landmark,men,Moravian University,9,99.0,0.112821,0.028342,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Landmark,men,Goucher College,10,64.0,0.072934,0.018322,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Landmark,women,University of Scranton,1,887.0,1.0,0.24839,Tier 1A,1A,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Landmark,women,Catholic University of America,2,873.0,0.984216,0.244469,Tier 1A,1A,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Landmark,women,Drew University,3,425.0,0.479143,0.119014,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Landmark,women,Susquehanna University,4,348.5,0.392897,0.097592,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Landmark,women,Juniata College,5,299.5,0.337655,0.08387,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Landmark,women,Elizabethtown College,6,242.0,0.27283,0.067768,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Landmark,women,Wilkes University,7,211.0,0.23788,0.059087,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Landmark,women,Moravian University,8,122.0,0.137542,0.034164,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Landmark,women,Lycoming College,9,100.0,0.11274,0.028003,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Landmark,women,Goucher College,10,63.0,0.071026,0.017642,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+MAAC,men,Fairfield University,1,1341.83,1.0,0.178578,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+MAAC,men,Marist University,2,1276.0,0.95094,0.169817,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+MAAC,men,Niagara University,3,1139.33,0.849087,0.151628,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+MAAC,men,Iona University,4,1017.83,0.758539,0.135458,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+MAAC,men,Rider University,5,983.5,0.732954,0.130889,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+MAAC,men,Mount Saint Mary's University,6,597.0,0.444915,0.079452,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+MAAC,men,Canisius University,7,569.5,0.42442,0.075792,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+MAAC,men,Saint Peter's University,8,371.0,0.276488,0.049375,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+MAAC,men,Manhattan University,9,218.0,0.162465,0.029013,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+MAAC,women,Fairfield University,1,1325.5,1.0,0.162042,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+MAAC,women,Marist University,2,1315.5,0.992456,0.160819,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+MAAC,women,Niagara University,3,1074.0,0.81026,0.131296,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+MAAC,women,Sacred Heart University,4,893.5,0.674085,0.10923,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+MAAC,women,Iona University,5,724.0,0.546209,0.088509,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+MAAC,women,Mount Saint Mary's University,6,585.0,0.441343,0.071516,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+MAAC,women,Canisius University,7,516.0,0.389287,0.063081,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+MAAC,women,Rider University,7,516.0,0.389287,0.063081,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+MAAC,women,Siena University,9,434.5,0.327801,0.053117,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+MAAC,women,Merrimack College,10,340.0,0.256507,0.041565,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+MAAC,women,Saint Peter's University,11,259.0,0.195398,0.031663,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+MAAC,women,Manhattan University,12,197.0,0.148623,0.024083,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+MAC,men,Stevens Institute of Technolog,1,1623.0,1.0,0.204976,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+MAC,men,York College of Pennsylvania,2,1424.5,0.877696,0.179907,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+MAC,men,Misericordia University,3,969.0,0.597043,0.122379,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+MAC,men,Arcadia University,4,835.0,0.514479,0.105456,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+MAC,men,Widener University,5,801.5,0.493839,0.101225,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+MAC,men,Stevenson University,6,690.0,0.425139,0.087143,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+MAC,men,Messiah University,7,632.0,0.389402,0.079818,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+MAC,men,King's College,8,343.0,0.211337,0.043319,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+MAC,men,Hood College Swimming,9,267.0,0.16451,0.033721,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+MAC,men,Fairleigh Dickinson University,10,215.0,0.132471,0.027153,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+MAC,men,Lebanon Valley College,11,118.0,0.072705,0.014903,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+MAC,women,Stevens Institute of Technolog,1,1516.0,1.0,0.189051,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+MAC,women,Misericordia University,2,1227.0,0.809367,0.153012,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+MAC,women,Messiah University,3,1105.0,0.728892,0.137798,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+MAC,women,York College of Pennsylvania,4,923.0,0.608839,0.115102,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+MAC,women,Widener University,5,766.5,0.505607,0.095585,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+MAC,women,Arcadia University,6,763.0,0.503298,0.095149,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+MAC,women,Stevenson University,7,603.5,0.398087,0.075259,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+MAC,women,Fairleigh Dickinson University,8,488.0,0.3219,0.060855,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+MAC,women,Hood College Swimming,9,326.0,0.21504,0.040653,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+MAC,women,Lebanon Valley College,10,214.0,0.141161,0.026687,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+MAC,women,King's College,11,87.0,0.057388,0.010849,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+MIAC,men,Gustavus Adolphus College,1,953.0,1.0,0.296885,Tier 1A,1A,2026-03-17T23:50:51Z,lane4_snapshot_v1
+MIAC,men,Carleton College,2,628.5,0.659496,0.195794,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+MIAC,men,Saint Johns University,3,524.0,0.549843,0.16324,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+MIAC,men,Macalester College,4,497.5,0.522036,0.154984,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+MIAC,men,Saint Olaf College,5,426.0,0.447009,0.13271,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+MIAC,men,Hamline University,6,181.0,0.189927,0.056386,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+MIAC,women,Gustavus Adolphus College,1,788.0,1.0,0.222536,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+MIAC,women,Saint Olaf College,2,631.5,0.801396,0.178339,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+MIAC,women,Carleton College,3,576.5,0.731599,0.162807,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+MIAC,women,Macalester College,4,575.5,0.73033,0.162525,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+MIAC,women,College of Saint Benedict,5,467.0,0.59264,0.131884,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+MIAC,women,Saint Catherine University,6,219.5,0.278553,0.061988,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+MIAC,women,Hamline University,7,128.0,0.162437,0.036148,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+MIAC,women,Concordia College,8,114.0,0.14467,0.032194,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+MIAC,women,Augsburg University,9,41.0,0.05203,0.011579,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+MPSF,men,US Air Force Academy,1,819.5,1.0,0.263335,Tier 1A,1A,2026-03-17T23:50:51Z,lane4_snapshot_v1
+MPSF,men,University of Nevada Las Vegas,2,769.5,0.938987,0.247269,Tier 1A,1A,2026-03-17T23:50:51Z,lane4_snapshot_v1
+MPSF,men,University of Wyoming,3,726.0,0.885906,0.23329,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+MPSF,men,Cal Baptist University,4,510.0,0.622331,0.163882,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+MPSF,men,University of the Pacific,5,287.0,0.350214,0.092224,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+MPSF,women,Northern Arizona University,1,1350.0,1.0,0.168581,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+MPSF,women,New Mexico State University,2,1227.0,0.908889,0.153222,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+MPSF,women,"Northern Colorado, University",3,1171.5,0.867778,0.146291,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+MPSF,women,Cal Baptist University,4,980.5,0.726296,0.12244,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+MPSF,women,"Idaho, University of",5,942.0,0.697778,0.117632,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+MPSF,women,Pepperdine University,6,610.0,0.451852,0.076174,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+MPSF,women,Utah Tech University,7,604.0,0.447407,0.075425,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+MPSF,women,University of the Pacific,8,431.0,0.319259,0.053821,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+MPSF,women,University of Incarnate Word,9,420.5,0.311481,0.05251,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+MPSF,women,Univ Texas Rio Grande Valley,10,271.5,0.201111,0.033904,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+NESCAC,men,Williams College,1,1599.0,1.0,0.158946,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+NESCAC,men,Tufts University,2,1562.0,0.976861,0.155268,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+NESCAC,men,Amherst College,3,1217.0,0.761101,0.120974,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+NESCAC,men,Connecticut College,4,1077.0,0.673546,0.107058,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+NESCAC,men,Bates College,5,1041.5,0.651345,0.103529,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+NESCAC,men,Hamilton College,6,800.5,0.500625,0.079573,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+NESCAC,men,Bowdoin College,7,768.0,0.4803,0.076342,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+NESCAC,men,Middlebury College,8,702.0,0.439024,0.069781,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+NESCAC,men,Colby College,9,697.0,0.435897,0.069284,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+NESCAC,men,Trinity College,10,373.0,0.233271,0.037078,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+NESCAC,men,Wesleyan University,11,223.0,0.139462,0.022167,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+NESCAC,women,Williams College,1,1725.5,1.0,0.167492,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+NESCAC,women,Tufts University,2,1640.5,0.950739,0.159241,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+NESCAC,women,Colby College,3,1274.0,0.738337,0.123665,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+NESCAC,women,Amherst College,4,1130.0,0.654883,0.109687,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+NESCAC,women,Hamilton College,5,854.0,0.494929,0.082897,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+NESCAC,women,Middlebury College,6,817.0,0.473486,0.079305,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+NESCAC,women,Bowdoin College,7,706.5,0.409447,0.068579,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+NESCAC,women,Wesleyan University,8,596.0,0.345407,0.057853,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+NESCAC,women,Connecticut College,9,551.0,0.319328,0.053485,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+NESCAC,women,Bates College,10,543.0,0.314691,0.052708,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+NESCAC,women,Trinity College,11,464.5,0.269197,0.045088,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+NEWMAC,men,Massachusetts Institute of Tec,1,1481.5,1.0,0.283378,Tier 1A,1A,2026-03-17T23:50:51Z,lane4_snapshot_v1
+NEWMAC,men,U.S. Coast Guard Academy,2,1013.0,0.683766,0.193764,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+NEWMAC,men,Worcester Polytechnic Institut,3,731.0,0.493419,0.139824,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+NEWMAC,men,Babson College,4,692.0,0.467094,0.132364,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+NEWMAC,men,Wheaton College (Ma),5,625.0,0.42187,0.119549,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+NEWMAC,men,Springfield College,6,466.5,0.314884,0.089231,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+NEWMAC,men,Clark University,7,219.0,0.147823,0.04189,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+NEWMAC,women,Massachusetts Institute of Tec,1,1632.5,1.0,0.281223,Tier 1A,1A,2026-03-17T23:50:51Z,lane4_snapshot_v1
+NEWMAC,women,U.S. Coast Guard Academy,2,750.0,0.459418,0.129199,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+NEWMAC,women,Wellesley College,3,651.5,0.399081,0.112231,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+NEWMAC,women,Babson College,4,530.0,0.324655,0.091301,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+NEWMAC,women,Worcester Polytechnic Institut,5,515.0,0.315467,0.088717,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+NEWMAC,women,Smith College,6,492.0,0.301378,0.084755,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+NEWMAC,women,Wheaton College (Ma),7,480.0,0.294028,0.082687,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+NEWMAC,women,Springfield College,8,363.0,0.222358,0.062532,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+NEWMAC,women,Clark University,9,223.0,0.1366,0.038415,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+NEWMAC,women,Mount Holyoke College,10,168.0,0.10291,0.028941,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+ODAC,men,Washington and Lee University,1,861.5,1.0,0.270912,Tier 1A,1A,2026-03-17T23:50:51Z,lane4_snapshot_v1
+ODAC,men,University of Lynchburg,2,606.5,0.704005,0.190723,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+ODAC,men,Roanoke College Swimming Maroo,3,494.5,0.573999,0.155503,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+ODAC,men,Bridgewater College,4,477.5,0.554266,0.150157,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+ODAC,men,Randolph-Macon College,5,336.0,0.390017,0.10566,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+ODAC,men,Randolph College,6,143.0,0.16599,0.044969,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+ODAC,men,Virginia Wesleyan University,7,127.0,0.147417,0.039937,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+ODAC,men,Hampden-Sydney College,8,78.0,0.09054,0.024528,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+ODAC,men,Greensboro College,9,56.0,0.065003,0.01761,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+ODAC,women,Washington and Lee University,1,840.0,1.0,0.259019,Tier 1A,1A,2026-03-17T23:50:51Z,lane4_snapshot_v1
+ODAC,women,University of Lynchburg,2,604.0,0.719048,0.186247,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+ODAC,women,Randolph-Macon College,3,597.0,0.710714,0.184089,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+ODAC,women,Roanoke College Swimming Maroo,4,401.0,0.477381,0.123651,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+ODAC,women,Bridgewater College,5,310.0,0.369048,0.095591,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+ODAC,women,Virginia Wesleyan University,6,184.0,0.219048,0.056738,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+ODAC,women,Randolph College,7,130.0,0.154762,0.040086,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+ODAC,women,Hollins University,8,110.0,0.130952,0.033919,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+ODAC,women,Sweet Briar College,9,55.0,0.065476,0.01696,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+ODAC,women,Greensboro College,10,12.0,0.014286,0.0037,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Patriot,men,United States Navy Academy,1,1792.0,1.0,0.229449,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Patriot,men,United States Military Academy,2,1210.0,0.675223,0.15493,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Patriot,men,Loyola University,3,1061.0,0.592076,0.135851,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Patriot,men,Boston University,4,936.0,0.522321,0.119846,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Patriot,men,Bucknell University,5,863.0,0.481585,0.110499,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Patriot,men,Lehigh University,6,560.0,0.3125,0.071703,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Patriot,men,College of the Holy Cross,7,453.0,0.25279,0.058003,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Patriot,men,Lafayette College,8,360.0,0.200893,0.046095,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Patriot,men,Colgate University,9,345.0,0.192522,0.044174,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Patriot,men,American University,10,230.0,0.128348,0.029449,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Patriot,women,United States Navy Academy,1,1427.5,1.0,0.181662,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Patriot,women,United States Military Academy,2,1293.5,0.90613,0.164609,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Patriot,women,Bucknell University,3,1014.5,0.710683,0.129104,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Patriot,women,Boston University,4,914.0,0.64028,0.116315,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Patriot,women,Loyola University,5,797.0,0.558319,0.101425,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Patriot,women,Lehigh University,6,637.0,0.446235,0.081064,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Patriot,women,Colgate University,7,611.0,0.428021,0.077755,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Patriot,women,American University,8,523.5,0.366725,0.06662,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Patriot,women,College of the Holy Cross,9,337.0,0.236077,0.042886,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Patriot,women,Lafayette College,10,303.0,0.212259,0.038559,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+PCSC,men,"University of California, Sant",1,1917.5,1.0,0.265141,Tier 1A,1A,2026-03-17T23:50:51Z,lane4_snapshot_v1
+PCSC,men,Biola University,2,1723.0,0.898566,0.238247,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+PCSC,men,Fresno Pacific University,3,1047.5,0.546284,0.144842,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+PCSC,men,The Master's University,4,977.5,0.509778,0.135163,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+PCSC,men,Arizona Christian University,5,460.5,0.240156,0.063675,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+PCSC,men,College of Idaho,6,378.0,0.197132,0.052268,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+PCSC,men,Ottawa University of Arizona,7,314.0,0.163755,0.043418,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+PCSC,men,Soka University,8,255.5,0.133246,0.035329,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+PCSC,men,Simpson University,9,158.5,0.08266,0.021916,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+PCSC,women,"California State University, E",1,1353.5,1.0,0.166278,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+PCSC,women,"University of California, Sant",2,1301.0,0.961212,0.159828,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+PCSC,women,Biola University,3,1083.5,0.800517,0.133108,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+PCSC,women,Azusa Pacific University,4,1027.0,0.758774,0.126167,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+PCSC,women,University of Alaska Fairbanks,5,751.0,0.554858,0.09226,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+PCSC,women,Westmont College,6,667.0,0.492796,0.081941,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+PCSC,women,The Master's University,7,632.5,0.467307,0.077703,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+PCSC,women,Concordia University Irvine,8,384.0,0.283709,0.047174,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+PCSC,women,Fresno Pacific University,9,365.0,0.269671,0.04484,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+PCSC,women,Arizona Christian University,10,354.5,0.261914,0.04355,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+PCSC,women,Soka University,11,125.0,0.092353,0.015356,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+PCSC,women,Ottawa University of Arizona,12,96.0,0.070927,0.011794,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+PSAC,men,West Chester University,1,1050.0,1.0,0.313433,Tier 1A,1A,2026-03-17T23:50:51Z,lane4_snapshot_v1
+PSAC,men,Gannon University,2,529.0,0.50381,0.15791,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+PSAC,men,Bloomsburg University,3,477.0,0.454286,0.142388,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+PSAC,men,PennWest University Clarion,4,425.0,0.404762,0.126866,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+PSAC,men,Indiana University of PA,5,309.0,0.294286,0.092239,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+PSAC,men,Shippensburg University of PA,6,216.0,0.205714,0.064478,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+PSAC,men,Kutztown University,7,177.0,0.168571,0.052836,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+PSAC,men,PennWest Edinboro University,8,167.0,0.159048,0.049851,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+PSAC,women,West Chester University,1,1342.0,1.0,0.171655,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+PSAC,women,Indiana University of PA,2,1106.5,0.824516,0.141532,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+PSAC,women,Bloomsburg University,3,1014.5,0.755961,0.129765,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+PSAC,women,PennWest University Clarion,4,983.0,0.732489,0.125735,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+PSAC,women,PennWest Edinboro University,5,666.0,0.496274,0.085188,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+PSAC,women,Kutztown University,6,541.0,0.40313,0.069199,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+PSAC,women,Gannon University,7,540.0,0.402385,0.069071,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+PSAC,women,East Stroudsburg University,8,504.0,0.375559,0.064467,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+PSAC,women,Millersville University,9,438.0,0.326379,0.056025,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+PSAC,women,Shippensburg University of PA,10,362.0,0.269747,0.046303,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+PSAC,women,"PennWest University,California",11,162.0,0.120715,0.020721,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+PSAC,women,Lock Haven University,12,159.0,0.11848,0.020338,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+SAC,men,Wingate University,1,1833.5,1.0,0.311873,Tier 1A,1A,2026-03-17T23:50:51Z,lane4_snapshot_v1
+SAC,men,Catawba College,2,1645.0,0.897191,0.279809,Tier 1A,1A,2026-03-17T23:50:51Z,lane4_snapshot_v1
+SAC,men,Carson-Newman University,3,1327.5,0.724025,0.225804,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+SAC,men,Lenoir-Rhyne University,4,591.0,0.322334,0.100527,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+SAC,men,Mars Hill University,5,482.0,0.262885,0.081987,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+SAC,women,Wingate University,1,1826.5,1.0,0.306254,Tier 1A,1A,2026-03-17T23:50:51Z,lane4_snapshot_v1
+SAC,women,Catawba College,2,1818.0,0.995346,0.304829,Tier 1A,1A,2026-03-17T23:50:51Z,lane4_snapshot_v1
+SAC,women,Carson-Newman University,3,1224.5,0.670408,0.205315,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+SAC,women,Lenoir-Rhyne University,4,591.0,0.32357,0.099095,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+SAC,women,Mars Hill University,5,504.0,0.275938,0.084507,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+SCIAC,men,Pomona-Pitzer,1,922.0,1.0,0.234665,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+SCIAC,men,Claremont-Mudd-Scripps,2,820.5,0.889913,0.208832,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+SCIAC,men,Chapman University,3,609.0,0.660521,0.155001,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+SCIAC,men,California Institute of Techno,4,429.0,0.465293,0.109188,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+SCIAC,men,Whittier College,5,352.5,0.382321,0.089717,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+SCIAC,men,Cal Lutheran University,6,320.0,0.347072,0.081446,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+SCIAC,men,Occidental College,7,214.0,0.232104,0.054467,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+SCIAC,men,University of Redlands,8,187.0,0.20282,0.047595,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+SCIAC,men,University of La Verne,9,75.0,0.081345,0.019089,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+SCIAC,women,Pomona-Pitzer,1,1050.0,1.0,0.273082,Tier 1A,1A,2026-03-17T23:50:51Z,lane4_snapshot_v1
+SCIAC,women,Claremont-Mudd-Scripps,2,966.0,0.92,0.251235,Tier 1A,1A,2026-03-17T23:50:51Z,lane4_snapshot_v1
+SCIAC,women,Chapman University,3,409.0,0.389524,0.106372,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+SCIAC,women,California Institute of Techno,4,342.0,0.325714,0.088947,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+SCIAC,women,Cal Lutheran University,5,336.0,0.32,0.087386,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+SCIAC,women,Occidental College,6,246.0,0.234286,0.063979,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+SCIAC,women,Whittier College,7,213.0,0.202857,0.055397,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+SCIAC,women,University of Redlands,8,176.0,0.167619,0.045774,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+SCIAC,women,University of La Verne,9,107.0,0.101905,0.027828,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+SEC,men,University of Texas,1,1449.5,1.0,0.174765,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+SEC,men,University of Florida,2,1292.0,0.891342,0.155775,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+SEC,men,University of Tennessee,3,1061.5,0.732321,0.127984,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+SEC,men,"Georgia, University of",4,721.0,0.497413,0.08693,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+SEC,men,Auburn University,5,652.0,0.44981,0.078611,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+SEC,men,University of Alabama,6,642.5,0.443256,0.077466,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+SEC,men,Louisiana State University,7,614.0,0.423594,0.074029,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+SEC,men,"Kentucky, University of",8,582.0,0.401518,0.070171,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+SEC,men,Texas A&M University,9,503.5,0.347361,0.060707,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+SEC,men,Missouri,10,427.0,0.294584,0.051483,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+SEC,men,"South Carolina, University of",11,349.0,0.240773,0.042079,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+SEC,women,University of Texas,1,1413.5,1.0,0.164437,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+SEC,women,University of Tennessee,2,1086.0,0.768306,0.126338,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+SEC,women,University of Florida,3,1015.5,0.718429,0.118136,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+SEC,women,University of Alabama,4,689.0,0.487443,0.080154,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+SEC,women,Louisiana State University,5,668.5,0.47294,0.077769,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+SEC,women,"South Carolina, University of",6,666.5,0.471525,0.077536,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+SEC,women,Auburn University,7,654.5,0.463035,0.07614,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+SEC,women,"Georgia, University of",8,604.0,0.427308,0.070265,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+SEC,women,Texas A&M University,9,550.0,0.389105,0.063983,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+SEC,women,Missouri,10,468.0,0.331093,0.054444,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+SEC,women,University of Arkansas,11,350.0,0.247612,0.040717,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+SEC,women,"Kentucky, University of",12,284.5,0.201273,0.033097,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+SEC,women,Vanderbilt University,13,146.0,0.10329,0.016985,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Summit League,men,University of Denver,1,862.0,1.0,0.244678,Tier 1A,1A,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Summit League,men,University of South Dakota,2,832.0,0.965197,0.236162,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Summit League,men,University of Nebraska Omaha,3,577.5,0.669954,0.163923,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Summit League,men,South Dakota State University,4,458.0,0.531323,0.130003,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Summit League,men,University of St. Thomas MN,5,349.5,0.405452,0.099205,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Summit League,men,University of Southern Indiana,6,275.0,0.319026,0.078058,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Summit League,men,Eastern Illinois University,7,169.0,0.196056,0.04797,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Summit League,women,University of Denver,1,971.0,1.0,0.270851,Tier 1A,1A,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Summit League,women,University of South Dakota,2,799.0,0.822863,0.222873,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Summit League,women,University of Nebraska Omaha,3,533.0,0.548919,0.148675,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Summit League,women,South Dakota State University,4,458.0,0.471679,0.127755,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Summit League,women,University of St. Thomas MN,5,410.5,0.42276,0.114505,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Summit League,women,University of Southern Indiana,6,252.5,0.260041,0.070432,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Summit League,women,Eastern Illinois University,7,161.0,0.165808,0.044909,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+UAA,men,Emory University,1,1753.5,1.0,0.205256,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+UAA,men,New York University,2,1626.0,0.927288,0.190331,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+UAA,men,University of Chicago,3,1399.0,0.797833,0.16376,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+UAA,men,Washington University St Louis,4,1067.0,0.608497,0.124898,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+UAA,men,Carnegie Mellon University,5,1048.5,0.597947,0.122732,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+UAA,men,Case Western Reserve Universit,6,784.0,0.447106,0.091771,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+UAA,men,University of Rochester,7,520.0,0.29655,0.060869,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+UAA,men,Brandeis University,8,345.0,0.196749,0.040384,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+UAA,women,New York University,1,1900.0,1.0,0.219628,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+UAA,women,Emory University,2,1885.0,0.992105,0.217894,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+UAA,women,University of Chicago,3,1196.5,0.629737,0.138308,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+UAA,women,Washington University St Louis,4,1127.0,0.593158,0.130274,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+UAA,women,Carnegie Mellon University,5,964.5,0.507632,0.11149,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+UAA,women,Case Western Reserve Universit,6,673.5,0.354474,0.077852,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+UAA,women,University of Rochester,7,555.5,0.292368,0.064212,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+UAA,women,Brandeis University,8,349.0,0.183684,0.040342,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Unknown,men,Ithaca College,1,1722.0,1.0,0.213674,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Unknown,men,Rochester Institute of Technol,2,1625.5,0.943961,0.2017,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Unknown,men,Rensselaer Polytechnic Institu,3,1085.0,0.630081,0.134632,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Unknown,men,Clarkson University,4,1028.5,0.597271,0.127621,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Unknown,men,Union College (New York),5,686.5,0.398664,0.085184,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Unknown,men,Skidmore College,6,630.5,0.366144,0.078236,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Unknown,men,Vassar College,7,522.0,0.303136,0.064772,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Unknown,men,St. Lawrence University,8,325.0,0.188734,0.040328,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Unknown,men,Hobart and William Smith,9,272.0,0.157956,0.033751,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Unknown,men,Bard College,10,162.0,0.094077,0.020102,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Unknown,women,Ithaca College,1,1820.0,1.0,0.226059,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Unknown,women,Rensselaer Polytechnic Institu,2,1430.5,0.785989,0.17768,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Unknown,women,Skidmore College,3,1032.5,0.567308,0.128245,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Unknown,women,Rochester Institute of Technol,4,972.5,0.534341,0.120792,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Unknown,women,Vassar College,5,888.5,0.488187,0.110359,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Unknown,women,Union College (New York),6,539.0,0.296154,0.066948,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Unknown,women,Hobart and William Smith,7,428.0,0.235165,0.053161,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Unknown,women,St. Lawrence University,8,415.0,0.228022,0.051546,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Unknown,women,Clarkson University,9,385.0,0.211538,0.04782,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Unknown,women,Bard College,10,140.0,0.076923,0.017389,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Unknown,men,Denison University,1,1958.5,1.0,0.212511,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Unknown,men,Kenyon College,2,1741.5,0.889201,0.188965,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Unknown,men,John Carroll University,3,1192.5,0.608884,0.129395,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Unknown,men,DePauw University,4,1095.0,0.559101,0.118815,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Unknown,men,Wabash College,5,1030.0,0.525913,0.111762,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Unknown,men,College of Wooster,6,789.5,0.403115,0.085666,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Unknown,men,Oberlin College,7,786.0,0.401328,0.085286,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Unknown,men,Ohio Wesleyan University,8,450.0,0.229768,0.048828,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Unknown,men,Wittenberg University,9,173.0,0.088333,0.018772,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Unknown,women,Kenyon College,1,1944.0,1.0,0.218746,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Unknown,women,Denison University,2,1853.0,0.953189,0.208507,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Unknown,women,DePauw University,3,1377.5,0.708591,0.155002,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Unknown,women,John Carroll University,4,1037.0,0.533436,0.116687,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Unknown,women,College of Wooster,5,991.0,0.509774,0.111511,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Unknown,women,Oberlin College,6,681.0,0.350309,0.076629,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Unknown,women,Wittenberg University,7,579.5,0.298097,0.065208,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+Unknown,women,Ohio Wesleyan University,8,424.0,0.218107,0.04771,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+WAC,men,University of Nevada Las Vegas,1,802.0,1.0,0.239332,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+WAC,men,California Baptist,2,776.0,0.967581,0.231573,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+WAC,men,Air Force,3,638.5,0.796135,0.19054,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+WAC,men,Grand Canyon,4,531.0,0.662095,0.15846,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+WAC,men,University of Wyoming,5,365.5,0.455736,0.109072,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+WAC,men,Seattle,6,238.0,0.296758,0.071024,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+WAC,women,Northern Arizona,1,694.5,1.0,0.186093,Tier 1B,1B,2026-03-17T23:50:51Z,lane4_snapshot_v1
+WAC,women,New Mexico State,2,534.0,0.768898,0.143087,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+WAC,women,Grand Canyon,3,529.0,0.761699,0.141747,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+WAC,women,California Baptist,4,475.0,0.683945,0.127278,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+WAC,women,Idaho,5,470.0,0.676746,0.125938,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+WAC,women,Northern Colorado,6,458.5,0.660187,0.122856,Tier 2,2,2026-03-17T23:50:51Z,lane4_snapshot_v1
+WAC,women,Utah Tech University,7,248.0,0.357091,0.066452,Tier 3,3,2026-03-17T23:50:51Z,lane4_snapshot_v1
+WAC,women,Seattle,8,191.0,0.275018,0.051179,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
+WAC,women,University of Texas Rio Grande,9,132.0,0.190065,0.03537,Tier 4,4,2026-03-17T23:50:51Z,lane4_snapshot_v1
