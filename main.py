@@ -3521,6 +3521,77 @@ def search():
         }), 200
 
 
+def _act_to_sat(act):
+    """Rough ACT composite → SAT composite conversion."""
+    table = {
+        36: 1590, 35: 1540, 34: 1500, 33: 1460, 32: 1430, 31: 1400,
+        30: 1370, 29: 1340, 28: 1310, 27: 1280, 26: 1240, 25: 1210,
+        24: 1180, 23: 1140, 22: 1110, 21: 1080, 20: 1040, 19: 1010,
+        18:  970, 17:  930, 16:  890, 15:  850,
+    }
+    return table.get(int(act), round((int(act) / 36) * 1200 + 400))
+
+
+def _estimate_merit_block(merit_level, sat, gpa, sat_median, accept):
+    """
+    Compute deterministic merit estimates for The Money Conversation.
+    Returns a dict with coa, merit, net, note, has_merit.
+    """
+    # COA estimate from acceptance rate
+    if accept <= 20:
+        coa = 72000
+    elif accept <= 35:
+        coa = 67000
+    elif accept <= 55:
+        coa = 61000
+    elif accept <= 70:
+        coa = 56000
+    else:
+        coa = 51000
+    coa_str = f"~${coa:,}"
+
+    if merit_level == 'none':
+        return {
+            'coa':       coa_str,
+            'merit':     'None',
+            'net':       f"~${coa:,} before need-based aid",
+            'note':      "This school does not offer merit scholarships—aid here is need-based.",
+            'has_merit': False,
+        }
+
+    max_merit = 25000 if merit_level == 'high' else 15000
+    sat_diff  = (sat or 1000) - (sat_median or 1200)
+    elite_gpa = gpa >= 3.9
+
+    if sat_diff < -50:
+        lo_pct, hi_pct = 0.0, 0.0
+    elif sat_diff <= 50 and not elite_gpa:
+        lo_pct, hi_pct = 0.25, 0.40
+    elif sat_diff <= 120 and not elite_gpa:
+        lo_pct, hi_pct = 0.50, 0.65
+    else:
+        lo_pct, hi_pct = 0.65, 0.75
+
+    if lo_pct == 0.0:
+        return {
+            'coa':       coa_str,
+            'merit':     '$0',
+            'net':       coa_str,
+            'note':      "Your current academic numbers are below this school's typical merit threshold.",
+            'has_merit': False,
+        }
+
+    lo = round(max_merit * lo_pct / 1000) * 1000
+    hi = round(max_merit * hi_pct / 1000) * 1000
+    return {
+        'coa':       coa_str,
+        'merit':     f"~${lo:,}–${hi:,}",
+        'net':       f"~${max(0, coa - hi):,}–${max(0, coa - lo):,}",
+        'note':      "Strong students like you are often considered for merit here.",
+        'has_merit': True,
+    }
+
+
 @app.route('/api/deep-dive', methods=['POST'])
 def deep_dive():
     """
@@ -3591,11 +3662,22 @@ def deep_dive():
     other_prefs  = data.get('otherPrefs', '')
     vibe_lines   = _build_vibe_lines(vibe_answers, other_prefs)
 
-    merit_label = {
-        'none':     'Need-based only',
-        'high':     'Strong merit aid available',
-        'moderate': 'Moderate merit aid',
-    }.get(meta.get('merit', ''), 'Moderate merit aid')
+    _merit_sat = sat or (_act_to_sat(act_score) if act_score else 0)
+    money = _estimate_merit_block(
+        merit_level = meta.get('merit', 'moderate'),
+        sat         = _merit_sat,
+        gpa         = gpa,
+        sat_median  = meta.get('satMedian', 0),
+        accept      = meta.get('accept', 50),
+    )
+    money_block = (
+        f"MONEY DATA — use these exact figures, do not invent different numbers:\n"
+        f"Estimated COA: {money['coa']}\n"
+        f"Estimated Merit: {money['merit']}"
+        + (" (based on your academics)" if money['has_merit'] else "") + "\n"
+        f"Estimated Net: {money['net']}\n"
+        f"Merit note: {money['note']}"
+    )
 
     vibe_block = ''
     if vibe_lines:
@@ -3649,7 +3731,7 @@ def deep_dive():
             f"SAT median: ~{meta.get('satMedian', '?')}\n"
             f"School vibe: {meta.get('vibe', '')}\n"
             f"Location: {meta.get('location', '')}\n"
-            f"Merit aid: {merit_label}"
+            f"{money_block}"
             f"{hidden_ivy_note}{ivy_note}{stem_note}\n\n"
             "NOTE: This school is not in our swim recruiting database. Focus on academic and "
             "personal fit, not swim recruitment. The swimmer is using Lane4 to compare this school "
@@ -3662,7 +3744,7 @@ def deep_dive():
             "## Academics & Campus Life\n"
             "## Getting In — The Real Picture\n"
             "## The Money Conversation\n"
-            "Include: Estimated COA, financial aid philosophy (need-based vs merit), realistic net cost.\n"
+            "Use EXACTLY the MONEY DATA figures above. Do not change the numbers. Present them clearly, then add 1–2 lines from the merit note.\n"
             "## How It Compares to Your D3 Options\n"
             "Be honest — what does choosing this school mean for continuing to swim competitively?\n"
             "## Your Next Three Moves\n"
@@ -3684,7 +3766,7 @@ def deep_dive():
             f"Location: {meta.get('location', '')}\n"
             f"Acceptance rate: ~{meta.get('accept', '?')}%\n"
             f"SAT median: ~{meta.get('satMedian', '?')}\n"
-            f"Merit aid: {merit_label}\n\n"
+            f"{money_block}\n\n"
             "Write exactly these sections in this order. Never clinical. Weave in what you know "
             "about their personality — don't just list preferences, speak to them naturally. "
             "Use 'Hidden Ivy' naturally if applicable. Max 2-3 sentences per section.\n\n"
@@ -3696,7 +3778,7 @@ def deep_dive():
             "## Why a Coach Would Want to Call\n"
             "## Getting In — The Real Picture\n"
             "## The Money Conversation\n"
-            "Include: Estimated COA, Estimated Merit Aid for this swimmer, Estimated Net Cost.\n"
+            "Use EXACTLY the MONEY DATA figures above. Do not change the numbers. Present them clearly, then add 1–2 lines from the merit note.\n"
             "## Your Next Three Moves\n"
             "Three specific, actionable steps this week."
         )
