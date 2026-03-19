@@ -521,43 +521,43 @@ uaa_2026,UAA,women,5,Carnegie Mellon University,964.5,1900.0,8651.0,0.507632,0.1
 uaa_2026,UAA,women,6,Case Western Reserve Universit,673.5,1900.0,8651.0,0.354474,0.077852,Tier 3,,Tier 3
 uaa_2026,UAA,women,7,University of Rochester,555.5,1900.0,8651.0,0.292368,0.064212,Tier 4,,Tier 4
 uaa_2026,UAA,women,8,Brandeis University,349.0,1900.0,8651.0,0.183684,0.040342,Tier 4,,Tier 4
-unknown_2026,Unknown,men,1,Ithaca College,1722.0,1722.0,8059.0,1.0,0.213674,Tier 1,Powerhouse,Tier 1B
-unknown_2026,Unknown,men,2,Rochester Institute of Technol,1625.5,1722.0,8059.0,0.943961,0.2017,Tier 1,Powerhouse,Tier 1B
-unknown_2026,Unknown,men,3,Rensselaer Polytechnic Institu,1085.0,1722.0,8059.0,0.630081,0.134632,Tier 2,,Tier 2
-unknown_2026,Unknown,men,4,Clarkson University,1028.5,1722.0,8059.0,0.597271,0.127621,Tier 3,,Tier 3
-unknown_2026,Unknown,men,5,Union College (New York),686.5,1722.0,8059.0,0.398664,0.085184,Tier 3,,Tier 3
-unknown_2026,Unknown,men,6,Skidmore College,630.5,1722.0,8059.0,0.366144,0.078236,Tier 3,,Tier 3
-unknown_2026,Unknown,men,7,Vassar College,522.0,1722.0,8059.0,0.303136,0.064772,Tier 4,,Tier 4
-unknown_2026,Unknown,men,8,St. Lawrence University,325.0,1722.0,8059.0,0.188734,0.040328,Tier 4,,Tier 4
-unknown_2026,Unknown,men,9,Hobart and William Smith,272.0,1722.0,8059.0,0.157956,0.033751,Tier 4,,Tier 4
-unknown_2026,Unknown,men,10,Bard College,162.0,1722.0,8059.0,0.094077,0.020102,Tier 4,,Tier 4
-unknown_2026,Unknown,women,1,Ithaca College,1820.0,1820.0,8051.0,1.0,0.226059,Tier 1,Powerhouse,Tier 1B
-unknown_2026,Unknown,women,2,Rensselaer Polytechnic Institu,1430.5,1820.0,8051.0,0.785989,0.17768,Tier 2,,Tier 2
-unknown_2026,Unknown,women,3,Skidmore College,1032.5,1820.0,8051.0,0.567308,0.128245,Tier 3,,Tier 3
-unknown_2026,Unknown,women,4,Rochester Institute of Technol,972.5,1820.0,8051.0,0.534341,0.120792,Tier 3,,Tier 3
-unknown_2026,Unknown,women,5,Vassar College,888.5,1820.0,8051.0,0.488187,0.110359,Tier 3,,Tier 3
-unknown_2026,Unknown,women,6,Union College (New York),539.0,1820.0,8051.0,0.296154,0.066948,Tier 4,,Tier 4
-unknown_2026,Unknown,women,7,Hobart and William Smith,428.0,1820.0,8051.0,0.235165,0.053161,Tier 4,,Tier 4
-unknown_2026,Unknown,women,8,St. Lawrence University,415.0,1820.0,8051.0,0.228022,0.051546,Tier 4,,Tier 4
-unknown_2026,Unknown,women,9,Clarkson University,385.0,1820.0,8051.0,0.211538,0.04782,Tier 4,,Tier 4
-unknown_2026,Unknown,women,10,Bard College,140.0,1820.0,8051.0,0.076923,0.017389,Tier 4,,Tier 4
-unknown_unknown,Unknown,men,1,Denison University,1958.5,1958.5,9216.0,1.0,0.212511,Tier 1,Powerhouse,Tier 1B
-unknown_unknown,Unknown,men,2,Kenyon College,1741.5,1958.5,9216.0,0.889201,0.188965,Tier 1,Powerhouse,Tier 1B
-unknown_unknown,Unknown,men,3,John Carroll University,1192.5,1958.5,9216.0,0.608884,0.129395,Tier 2,,Tier 2
-unknown_unknown,Unknown,men,4,DePauw University,1095.0,1958.5,9216.0,0.559101,0.118815,Tier 3,,Tier 3
-unknown_unknown,Unknown,men,5,Wabash College,1030.0,1958.5,9216.0,0.525913,0.111762,Tier 3,,Tier 3
-unknown_unknown,Unknown,men,6,College of Wooster,789.5,1958.5,9216.0,0.403115,0.085666,Tier 3,,Tier 3
-unknown_unknown,Unknown,men,7,Oberlin College,786.0,1958.5,9216.0,0.401328,0.085286,Tier 3,,Tier 3
-unknown_unknown,Unknown,men,8,Ohio Wesleyan University,450.0,1958.5,9216.0,0.229768,0.048828,Tier 4,,Tier 4
-unknown_unknown,Unknown,men,9,Wittenberg University,173.0,1958.5,9216.0,0.088333,0.018772,Tier 4,,Tier 4
-unknown_unknown,Unknown,women,1,Kenyon College,1944.0,1944.0,8887.0,1.0,0.218746,Tier 1,Powerhouse,Tier 1B
-unknown_unknown,Unknown,women,2,Denison University,1853.0,1944.0,8887.0,0.953189,0.208507,Tier 1,Powerhouse,Tier 1B
-unknown_unknown,Unknown,women,3,DePauw University,1377.5,1944.0,8887.0,0.708591,0.155002,Tier 2,,Tier 2
-unknown_unknown,Unknown,women,4,John Carroll University,1037.0,1944.0,8887.0,0.533436,0.116687,Tier 3,,Tier 3
-unknown_unknown,Unknown,women,5,College of Wooster,991.0,1944.0,8887.0,0.509774,0.111511,Tier 3,,Tier 3
-unknown_unknown,Unknown,women,6,Oberlin College,681.0,1944.0,8887.0,0.350309,0.076629,Tier 3,,Tier 3
-unknown_unknown,Unknown,women,7,Wittenberg University,579.5,1944.0,8887.0,0.298097,0.065208,Tier 4,,Tier 4
-unknown_unknown,Unknown,women,8,Ohio Wesleyan University,424.0,1944.0,8887.0,0.218107,0.04771,Tier 4,,Tier 4
+liberty_league_2026,Liberty League,men,1,Ithaca College,1722.0,1722.0,8059.0,1.0,0.213674,Tier 1,Powerhouse,Tier 1B
+liberty_league_2026,Liberty League,men,2,Rochester Institute of Technol,1625.5,1722.0,8059.0,0.943961,0.2017,Tier 1,Powerhouse,Tier 1B
+liberty_league_2026,Liberty League,men,3,Rensselaer Polytechnic Institu,1085.0,1722.0,8059.0,0.630081,0.134632,Tier 2,,Tier 2
+liberty_league_2026,Liberty League,men,4,Clarkson University,1028.5,1722.0,8059.0,0.597271,0.127621,Tier 3,,Tier 3
+liberty_league_2026,Liberty League,men,5,Union College (New York),686.5,1722.0,8059.0,0.398664,0.085184,Tier 3,,Tier 3
+liberty_league_2026,Liberty League,men,6,Skidmore College,630.5,1722.0,8059.0,0.366144,0.078236,Tier 3,,Tier 3
+liberty_league_2026,Liberty League,men,7,Vassar College,522.0,1722.0,8059.0,0.303136,0.064772,Tier 4,,Tier 4
+liberty_league_2026,Liberty League,men,8,St. Lawrence University,325.0,1722.0,8059.0,0.188734,0.040328,Tier 4,,Tier 4
+liberty_league_2026,Liberty League,men,9,Hobart and William Smith,272.0,1722.0,8059.0,0.157956,0.033751,Tier 4,,Tier 4
+liberty_league_2026,Liberty League,men,10,Bard College,162.0,1722.0,8059.0,0.094077,0.020102,Tier 4,,Tier 4
+liberty_league_2026,Liberty League,women,1,Ithaca College,1820.0,1820.0,8051.0,1.0,0.226059,Tier 1,Powerhouse,Tier 1B
+liberty_league_2026,Liberty League,women,2,Rensselaer Polytechnic Institu,1430.5,1820.0,8051.0,0.785989,0.17768,Tier 2,,Tier 2
+liberty_league_2026,Liberty League,women,3,Skidmore College,1032.5,1820.0,8051.0,0.567308,0.128245,Tier 3,,Tier 3
+liberty_league_2026,Liberty League,women,4,Rochester Institute of Technol,972.5,1820.0,8051.0,0.534341,0.120792,Tier 3,,Tier 3
+liberty_league_2026,Liberty League,women,5,Vassar College,888.5,1820.0,8051.0,0.488187,0.110359,Tier 3,,Tier 3
+liberty_league_2026,Liberty League,women,6,Union College (New York),539.0,1820.0,8051.0,0.296154,0.066948,Tier 4,,Tier 4
+liberty_league_2026,Liberty League,women,7,Hobart and William Smith,428.0,1820.0,8051.0,0.235165,0.053161,Tier 4,,Tier 4
+liberty_league_2026,Liberty League,women,8,St. Lawrence University,415.0,1820.0,8051.0,0.228022,0.051546,Tier 4,,Tier 4
+liberty_league_2026,Liberty League,women,9,Clarkson University,385.0,1820.0,8051.0,0.211538,0.04782,Tier 4,,Tier 4
+liberty_league_2026,Liberty League,women,10,Bard College,140.0,1820.0,8051.0,0.076923,0.017389,Tier 4,,Tier 4
+ncac_2026,NCAC,men,1,Denison University,1958.5,1958.5,9216.0,1.0,0.212511,Tier 1,Powerhouse,Tier 1B
+ncac_2026,NCAC,men,2,Kenyon College,1741.5,1958.5,9216.0,0.889201,0.188965,Tier 1,Powerhouse,Tier 1B
+ncac_2026,NCAC,men,3,John Carroll University,1192.5,1958.5,9216.0,0.608884,0.129395,Tier 2,,Tier 2
+ncac_2026,NCAC,men,4,DePauw University,1095.0,1958.5,9216.0,0.559101,0.118815,Tier 3,,Tier 3
+ncac_2026,NCAC,men,5,Wabash College,1030.0,1958.5,9216.0,0.525913,0.111762,Tier 3,,Tier 3
+ncac_2026,NCAC,men,6,College of Wooster,789.5,1958.5,9216.0,0.403115,0.085666,Tier 3,,Tier 3
+ncac_2026,NCAC,men,7,Oberlin College,786.0,1958.5,9216.0,0.401328,0.085286,Tier 3,,Tier 3
+ncac_2026,NCAC,men,8,Ohio Wesleyan University,450.0,1958.5,9216.0,0.229768,0.048828,Tier 4,,Tier 4
+ncac_2026,NCAC,men,9,Wittenberg University,173.0,1958.5,9216.0,0.088333,0.018772,Tier 4,,Tier 4
+ncac_2026,NCAC,women,1,Kenyon College,1944.0,1944.0,8887.0,1.0,0.218746,Tier 1,Powerhouse,Tier 1B
+ncac_2026,NCAC,women,2,Denison University,1853.0,1944.0,8887.0,0.953189,0.208507,Tier 1,Powerhouse,Tier 1B
+ncac_2026,NCAC,women,3,DePauw University,1377.5,1944.0,8887.0,0.708591,0.155002,Tier 2,,Tier 2
+ncac_2026,NCAC,women,4,John Carroll University,1037.0,1944.0,8887.0,0.533436,0.116687,Tier 3,,Tier 3
+ncac_2026,NCAC,women,5,College of Wooster,991.0,1944.0,8887.0,0.509774,0.111511,Tier 3,,Tier 3
+ncac_2026,NCAC,women,6,Oberlin College,681.0,1944.0,8887.0,0.350309,0.076629,Tier 3,,Tier 3
+ncac_2026,NCAC,women,7,Wittenberg University,579.5,1944.0,8887.0,0.298097,0.065208,Tier 4,,Tier 4
+ncac_2026,NCAC,women,8,Ohio Wesleyan University,424.0,1944.0,8887.0,0.218107,0.04771,Tier 4,,Tier 4
 wac_2025,WAC,men,1,University of Nevada Las Vegas,802.0,802.0,3351.0,1.0,0.239332,Tier 1,Powerhouse,Tier 1B
 wac_2025,WAC,men,2,California Baptist,776.0,802.0,3351.0,0.967581,0.231573,Tier 1,Powerhouse,Tier 1B
 wac_2025,WAC,men,3,Air Force,638.5,802.0,3351.0,0.796135,0.19054,Tier 2,,Tier 2
