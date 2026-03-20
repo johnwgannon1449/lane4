@@ -1,0 +1,140 @@
+We are upgrading the visual design of the admissions comparison table in the Deep Dive.
+
+This is a FRONTEND UI/STYLE task only.
+Do not change backend logic, calculations, or data structure unless absolutely necessary to support rendering.
+
+GOAL
+Make the admissions table feel premium, clean, and intentional — not like a default HTML table.
+
+It should look like something from a high-end product, not a spreadsheet.
+
+---
+
+TABLE CONTEXT
+
+Section title:
+Are You Admissible?
+
+Current table includes:
+- Metric (GPA, SAT, etc.)
+- You
+- School Range
+
+---
+
+DESIGN REQUIREMENTS
+
+1. CARD CONTAINER
+- Wrap the table in a clean card container
+- Light background (white or very light gray)
+- Rounded corners (border-radius: 12–16px)
+- Subtle shadow (soft, not heavy)
+- Padding inside card (16–24px)
+
+---
+
+2. TABLE LAYOUT
+
+- Remove heavy borders and gridlines
+- Use clean row spacing instead
+- Columns:
+  Metric | You | School Range
+
+- Left-align Metric column
+- Center-align numeric values (You + School Range)
+
+- Increase row height for readability (comfortable spacing)
+
+---
+
+3. TYPOGRAPHY
+
+- Metric labels:
+  - slightly muted (gray-600 range)
+  - medium weight
+
+- “You” column:
+  - bold or semibold
+  - darker color (near black)
+  - should stand out as the focal column
+
+- School Range:
+  - slightly muted but still readable
+
+---
+
+4. VISUAL HIERARCHY (IMPORTANT)
+
+Make it immediately obvious:
+👉 where the student sits vs the school
+
+Add subtle visual emphasis to the “You” column:
+- slightly darker text
+- optional faint background highlight (very subtle)
+
+---
+
+5. OPTIONAL STATUS INDICATOR (HIGH VALUE)
+
+If safe to implement:
+
+Add a small inline indicator next to each row showing position:
+
+Examples:
+- In Range → green dot or small green text
+- Above Range → green
+- Slightly Below → yellow
+- Below → red
+
+Keep this subtle:
+- no big badges
+- no emojis
+- no loud colors
+
+Just small, clean indicators.
+
+---
+
+6. CLEAN LINES
+
+- No vertical borders
+- Optional very light horizontal divider between rows (gray-100)
+- Or no lines at all, just spacing
+
+---
+
+7. RESPONSIVENESS
+
+On mobile:
+- Maintain readability
+- Keep columns stacked or compressed cleanly
+- Avoid horizontal scrolling if possible
+
+---
+
+8. DO NOT
+
+- Do not use bright colors
+- Do not use gradients
+- Do not add icons unless extremely minimal
+- Do not make it flashy
+- Do not change wording or data values
+- Do not change section structure
+
+---
+
+IMPLEMENTATION NOTES
+
+- Use existing CSS system (Tailwind or current styles if present)
+- Keep consistent with overall Lane4 visual style
+- If needed, create a reusable “data-card” or “comparison-table” class/component
+
+---
+
+OUTPUT
+
+After implementing, provide:
+
+1. Short summary of visual changes
+2. Screenshot or description of final layout
+3. Any reusable class/component created

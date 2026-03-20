@@ -225,6 +225,22 @@
     }
     .deep-section-title { font-family: 'Fraunces', serif; font-weight: 700; font-size: 0.95rem; color: var(--navy); margin-bottom: 0.4rem; }
     .deep-section-body { font-size: 0.9rem; line-height: 1.65; color: var(--slate); white-space: pre-wrap; }
+    /* ── ADMISSIONS COMPARISON TABLE ─────────────────────────── */
+    .adm-card { background: #fff; border-radius: 14px; box-shadow: 0 1px 8px rgba(15,23,42,0.07); padding: 1rem 1.2rem; margin-bottom: 0.85rem; }
+    .adm-header { display: grid; grid-template-columns: 1.6fr 1fr 1.6fr; padding-bottom: 0.45rem; border-bottom: 1.5px solid #F1F5F9; margin-bottom: 0.1rem; }
+    .adm-col-label { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); }
+    .adm-col-label.adm-center { text-align: center; }
+    .adm-row { display: grid; grid-template-columns: 1.6fr 1fr 1.6fr; align-items: center; padding: 0.5rem 0; border-bottom: 1px solid #F8FAFC; }
+    .adm-row:last-child { border-bottom: none; }
+    .adm-metric { font-size: 0.83rem; font-weight: 500; color: var(--slate); }
+    .adm-you { font-size: 0.88rem; font-weight: 700; color: var(--navy); text-align: center; background: #EFF6FF; border-radius: 6px; padding: 3px 8px; display: flex; align-items: center; justify-content: center; gap: 5px; }
+    .adm-you-na { font-size: 0.83rem; color: var(--muted); text-align: center; }
+    .adm-school { font-size: 0.82rem; color: var(--slate); text-align: center; padding-left: 0.5rem; }
+    .adm-dot { font-size: 0.5rem; line-height: 1; }
+    .adm-green { color: #16A34A; }
+    .adm-yellow { color: #CA8A04; }
+    .adm-red { color: #DC2626; }
+    .adm-prose { font-size: 0.86rem; color: var(--muted); line-height: 1.6; margin-top: 0.6rem; padding-top: 0.6rem; border-top: 1px solid #F1F5F9; white-space: pre-wrap; }
     .bottom-line {
       background: var(--navy); border-radius: 12px; padding: 1.25rem 1.4rem; margin-bottom: 1.25rem;
     }
@@ -1526,6 +1542,75 @@ function addToList(school, idx) {
 // ════════════════════════════════════════════════════════════════
 // DEEP DIVE
 // ════════════════════════════════════════════════════════════════
+
+function buildAdmTableHTML(meta, swimmerGpa, swimmerSat, swimmerAct) {
+  const satMedian  = meta.satMedian  || 0;
+  const sat25      = meta.sat25      || 0;
+  const sat75      = meta.sat75      || 0;
+  const gpaMean    = meta.gpaMean    || 0;
+  const accept     = meta.accept     || 0;
+
+  const effectiveSat = swimmerSat || (swimmerAct ? Math.round(swimmerAct * 40 + 150) : 0);
+  const rows = [];
+
+  // GPA row
+  if (swimmerGpa) {
+    const g = parseFloat(swimmerGpa);
+    let dot = null, dotClass = '';
+    if (gpaMean) {
+      const diff = g - gpaMean;
+      if (diff >= -0.1)       { dot = '●'; dotClass = 'adm-green'; }
+      else if (diff >= -0.25) { dot = '●'; dotClass = 'adm-yellow'; }
+      else                    { dot = '●'; dotClass = 'adm-red'; }
+    }
+    const schoolGpa = gpaMean ? `avg ${gpaMean}` : '—';
+    rows.push({ metric: 'GPA', you: String(g), school: schoolGpa, dot, dotClass });
+  }
+
+  // SAT / ACT row
+  if (effectiveSat) {
+    let dot = null, dotClass = '';
+    const label = (swimmerSat ? 'SAT' : 'SAT (est.)');
+    const youVal = String(effectiveSat);
+    let schoolSat = '—';
+    if (satMedian) {
+      schoolSat = `median ${satMedian}`;
+      if (sat25 && sat75) schoolSat += ` · ${sat25}–${sat75}`;
+      const diff = effectiveSat - satMedian;
+      if (diff >= -40)       { dot = '●'; dotClass = 'adm-green'; }
+      else if (diff >= -100) { dot = '●'; dotClass = 'adm-yellow'; }
+      else                   { dot = '●'; dotClass = 'adm-red'; }
+    }
+    rows.push({ metric: label, you: youVal, school: schoolSat, dot, dotClass });
+  }
+
+  // Acceptance rate row (no swimmer comparison)
+  if (accept) {
+    rows.push({ metric: 'Acceptance', you: null, school: `~${accept}%`, dot: null, dotClass: '' });
+  }
+
+  if (!rows.length) return '';
+
+  const rowsHTML = rows.map(r => `
+    <div class="adm-row">
+      <div class="adm-metric">${esc(r.metric)}</div>
+      ${r.you !== null
+        ? `<div class="adm-you">${esc(r.you)}${r.dot ? `<span class="adm-dot ${r.dotClass}">${r.dot}</span>` : ''}</div>`
+        : `<div class="adm-you-na">—</div>`}
+      <div class="adm-school">${esc(r.school)}</div>
+    </div>`).join('');
+
+  return `
+    <div class="adm-card">
+      <div class="adm-header">
+        <div class="adm-col-label">Metric</div>
+        <div class="adm-col-label adm-center">You</div>
+        <div class="adm-col-label adm-center">School Range</div>
+      </div>
+      ${rowsHTML}
+    </div>`;
+}
+
 async function openDeepDive(school) {
   document.getElementById('explore-search').style.display    = 'none';
   document.getElementById('explore-deepdive').style.display  = 'block';
@@ -1581,11 +1666,18 @@ async function openDeepDive(school) {
           <div class="bottom-line-text">${esc(bottomLine.body)}</div>
         </div>` : ''}
 
-      ${mainSections.map(s => `
+      ${mainSections.map(s => {
+        const isAdm = s.title.toLowerCase().includes('admissible');
+        const admTable = isAdm
+          ? buildAdmTableHTML(meta, JAMES.gpa, JAMES.sat || 0, JAMES.actScore || 0)
+          : '';
+        return `
         <div class="deep-section">
           <div class="deep-section-title">${esc(s.title)}</div>
-          <div class="deep-section-body">${esc(s.body)}</div>
-        </div>`).join('')}
+          ${admTable}
+          <div class="${isAdm ? 'adm-prose' : 'deep-section-body'}">${esc(s.body)}</div>
+        </div>`;
+      }).join('')}
 
       <div id="dd-email-section" style="display:none;margin-top:1.5rem;">
         <div class="section-label">Coach Email Draft</div>
