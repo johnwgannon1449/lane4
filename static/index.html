@@ -452,8 +452,7 @@
 <div id="auth-overlay" style="display:none;">
   <div class="ob-card">
     <div class="ob-logo">Lane<span>4</span></div>
-    <div class="ob-headline" id="auth-headline">Welcome back.</div>
-    <div class="ob-sub" id="auth-sub">Sign in to access your swimmer profile and school list.</div>
+    <div class="ob-headline" id="auth-headline" style="margin-bottom:1.8rem;">Find your lane.</div>
 
     <div class="ob-section">
       <div class="ob-field">
@@ -477,12 +476,11 @@
     </div>
 
     <button class="ob-submit" id="auth-submit-btn" onclick="authSubmit()">Sign In →</button>
-    <div style="text-align:center;margin-top:0.9rem;">
-      <span id="auth-toggle-text" style="font-size:0.82rem;color:var(--muted);">No account yet?</span>
-      <button id="auth-toggle-btn" onclick="authToggleMode()" style="background:none;border:none;color:var(--blue);font-size:0.82rem;font-weight:600;cursor:pointer;padding:0 0 0 5px;text-decoration:underline;">Create one</button>
-    </div>
-    <div style="text-align:center;margin-top:0.6rem;font-size:0.73rem;color:var(--muted);">
-      🔒 One account per family. Your data is stored securely and tied to your login.
+    <div style="text-align:center;margin-top:1.4rem;">
+      <button id="auth-toggle-btn" onclick="authToggleMode()"
+        style="background:none;border:none;color:var(--muted);font-size:0.85rem;font-weight:500;cursor:pointer;padding:0;letter-spacing:0.01em;">
+        Create account
+      </button>
     </div>
   </div>
 </div>
@@ -1071,13 +1069,9 @@ function hideAuth() {
 function authToggleMode() {
   AUTH_MODE = AUTH_MODE === 'login' ? 'register' : 'login';
   const isReg = AUTH_MODE === 'register';
-  document.getElementById('auth-headline').textContent  = isReg ? 'Create your account.' : 'Welcome back.';
-  document.getElementById('auth-sub').textContent       = isReg
-    ? 'One account per family. Your swimmer data will be saved and synced.'
-    : 'Sign in to access your swimmer profile and school list.';
+  document.getElementById('auth-headline').textContent  = isReg ? 'Create your account.' : 'Find your lane.';
   document.getElementById('auth-submit-btn').textContent = isReg ? 'Create Account →' : 'Sign In →';
-  document.getElementById('auth-toggle-text').textContent = isReg ? 'Already have an account?' : 'No account yet?';
-  document.getElementById('auth-toggle-btn').textContent  = isReg ? 'Sign in' : 'Create one';
+  document.getElementById('auth-toggle-btn').textContent  = isReg ? 'Sign in' : 'Create account';
   document.getElementById('auth-err').textContent = '';
   document.getElementById('auth-password').autocomplete = isReg ? 'new-password' : 'current-password';
 }

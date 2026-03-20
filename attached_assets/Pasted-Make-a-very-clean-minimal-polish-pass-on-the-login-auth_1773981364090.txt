@@ -1,0 +1,58 @@
+Make a very clean, minimal polish pass on the login/auth screen only.
+
+Goals:
+1. Remove the generic login copy.
+2. Replace the current header/subheader:
+   - Remove: “Welcome back”
+   - Remove: “Sign in to access your swimmer profile and school list.”
+   - Replace with a single strong tagline only:
+     “Find your lane.”
+3. Simplify the create-account area below the login button:
+   - Remove: “No account yet? Create one”
+   - Remove: “🔒 One account per family. Your data is stored securely and tied to your login.”
+   - Replace the entire section with just:
+     “Create account”
+4. Make the overall login card feel clean, premium, and centered.
+5. Do not add extra explanatory text, helper text, badges, icons, or marketing copy.
+6. Keep the Lane4 logo.
+7. Keep all existing login/register functionality exactly as-is.
+8. Do not change routes, backend logic, API calls, validation, database behavior, or auth flow.
+9. Do not redesign the whole app — only refine the auth/login screen.
+
+Design direction:
+- Minimal, confident, polished
+- Strong visual hierarchy
+- Generous spacing
+- Make “Find your lane.” the focal text
+- “Create account” should look clean and intentional, not like an afterthought
+- Avoid clutter
+- Avoid generic SaaS feel
+- No cheesy gradients or overdesigned effects unless already consistent with the app
+
+Implementation notes:
+- Update only the relevant frontend auth/login UI
+- Preserve responsiveness on desktop and mobile
+- Keep styling consistent with the existing Lane4 look
+- After making the change, give me a short summary of exactly what was changed
+If you want it even tighter and more opinionated, use this version:
+Refine the login screen only.
+
+Required text changes:
+- Replace the current login heading/subtext with exactly:
+  Find your lane.
+- Remove all other descriptive copy under the logo.
+- Replace the entire create-account section below the login button with exactly:
+  Create account
+
+Constraints:
+- Keep the Lane4 logo
+- Keep all auth functionality unchanged
+- No backend changes
+- No route changes
+- No extra copy
+- No icons
+- No security text
+- No generic “welcome back” language
+
+Style goal:
+Make it feel premium, minimal, centered, and visually balanced with excellent spacing and hierarchy.
