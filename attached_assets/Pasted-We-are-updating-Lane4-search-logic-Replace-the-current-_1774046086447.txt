@@ -1,0 +1,164 @@
+We are updating Lane4 search logic. Replace the current school-selection logic for search results with the following AI-first flow.
+
+GOAL
+Search should no longer rely primarily on hardcoded school-selection rules. Instead, every user search should first be treated like a standalone guidance-counselor-style prompt to the LLM to generate a strong candidate school pool. After that, Lane4 should apply our existing structured logic (admissions + swim fit) to rank and trim the results.
+
+IMPORTANT
+This change applies ONLY to which school cards are returned from search.
+Do NOT change:
+- deep dive narrative generation
+- admissions scoring logic
+- recruiting/swim scoring logic
+- school card design/UI beyond count and ordering
+- existing labels and explanatory text unless needed for search plumbing
+
+NEW SEARCH ARCHITECTURE
+
+STEP 1 — INTERPRET THE USER QUERY
+Classify the query into one of these search modes:
+
+1. GUIDED
+Use when the query is clearly asking for schools for this kid, even if phrased loosely.
+Examples:
+- best schools for me
+- where should I swim
+- good colleges for swimming
+- best bio schools for me
+- what schools should I look at
+
+2. OBJECTIVE
+Use when the query is asking for a true/general answer, not a personalized one.
+Examples:
+- best STEM schools
+- top biology colleges
+- best colleges in America
+- best Ivy League schools
+
+3. CONSTRAINED
+Use when the query includes a specific academic/geographic/category constraint and may still be personalized.
+Examples:
+- best bio schools where I can get in
+- affordable colleges with strong biology
+- best engineering schools in the Midwest
+- best D3 schools for pre-med
+
+4. EXPLORATORY
+Use when the query is broad discovery, not explicitly “for me,” and not asking for literal top-ranked truth.
+Examples:
+- strong academic swim schools
+- schools with good biology programs
+- good colleges for pre-med
+- colleges like Emory
+
+QUERY MODE RULES
+- “for me” always implies GUIDED unless the query is obviously factual
+- “what schools should I look at” is GUIDED, not exploratory
+- “good colleges for swimming” and “best schools for swimming” should be treated as GUIDED for our product
+- explicit category requests like “Ivy League,” “NESCAC,” etc. must be honored exactly
+- exploratory mode should NOT personalize
+- objective mode should NOT personalize
+
+STEP 2 — AI GENERATES CANDIDATE SCHOOL POOL
+For every search, first call the LLM to generate a candidate list of schools.
+
+The LLM’s job:
+- identify strong schools relevant to the query topic
+- generate a wide but high-quality pool
+- NOT decide admissibility
+- NOT decide swim relevance
+- NOT use finances
+- NOT write narratives
+- ONLY return candidate school names
+
+For OBJECTIVE and EXPLORATORY:
+- do not pass swimmer profile data into the prompt
+- candidate list should reflect only the query
+
+For GUIDED and CONSTRAINED:
+- you may pass the swimmer profile/context to help the LLM interpret what the user is trying to find
+- HOWEVER, instruct the LLM not to filter based on admissions chance or swim fit
+- the swimmer data is only there to help contextualize academic intent, not to replace our scoring models
+
+LLM PROMPT TEMPLATE
+
+System:
+You are an expert U.S. college counselor helping generate a candidate list of colleges.
+
+Your job is ONLY to generate a strong candidate pool of schools relevant to the user’s search query.
+
+Rules:
+- Focus on academic/program strength, overall institutional fit to the query, and the type of school being asked for
+- Do NOT evaluate admissions likelihood
+- Do NOT evaluate athletic or swim fit
+- Do NOT evaluate affordability or financial aid
+- Do NOT explain your choices
+- Do NOT write narratives
+- Return ONLY school names
+- One school per line
+- Return between 12 and 18 schools
+- Include a high-quality range, not just the most elite schools
+- Honor explicit user constraints exactly (for example: Ivy League, NESCAC, Midwest, biology, engineering, etc.)
+
+For GUIDED / CONSTRAINED modes only, you may be given student context. Use it only to interpret what kinds of schools are relevant to the question. Do NOT use that context to filter for admissibility or swimming.
+
+User query:
+{USER_QUERY}
+
+Student context, when available:
+{STUDENT_CONTEXT_OR_BLANK}
+
+STEP 3 — MAP CANDIDATE SCHOOLS TO LANE4 SCHOOL RECORDS
+Take the returned school names and map them to schools in our internal dataset.
+- use robust normalization for names and aliases
+- ignore candidates that do not map confidently
+- do not fabricate schools
+- preserve the LLM candidate order only until structured scoring is applied
+
+STEP 4 — APPLY EXISTING LANE4 SCORING TO CANDIDATES
+Once candidate schools are mapped, score each school using our EXISTING logic.
+Do not rewrite these models.
+
+Use:
+- admissions score / admissions label
+- swim/recruiting score / swim label
+
+Also allow existing academic metadata and any existing school-level quality signals already in the system to contribute, but the two key truth filters are:
+1. admissibility
+2. swim relevance
+
+SEARCH RANKING PHILOSOPHY
+- AI proposes the candidate universe
+- Lane4 decides what actually survives and rises
+- admissions + swim logic should be strong enough that obvious poor fits sink out of the results
+- example: MIT can appear in the candidate pool for “best bio schools for me,” but should rank low enough to fall out if the student is not admissible and/or not pool-relevant
+- example: Michigan can appear in the candidate pool, but should fall out if the swimmer would not be relevant there
+
+STEP 5 — FINAL RANKING AND RETURN COUNT
+Sort candidates by final Lane4 search score after structured scoring is applied.
+
+Return rules:
+- default: return top 6 school cards
+- if user explicitly asks for more: return up to 12 max
+- never return more than 12
+- do not force low-quality filler just to hit 6 if the candidate pool collapses badly; in that case return fewer or regenerate a slightly wider candidate pool upstream
+
+DIVERSITY RULE
+Use no artificial diversity balancing except as a very light tie-breaker.
+- relevance always wins
+- explicit category queries must be honored exactly
+- do not swap out a more relevant school just to create variety
+- only use a tiny diversity adjustment when multiple schools are essentially tied and the query is broad/personalized
+
+IMPORTANT IMPLEMENTATION NOTES
+- This is a replacement for the current search-result school selection logic
+- The resulting cards should feel like something ChatGPT or Claude might intelligently surface from the query, but cleaned up by Lane4’s admissions/swim truth engines
+- The LLM should be upstream and generative
+- Lane4 scoring should be downstream and corrective
+- Keep the existing deep dive pipeline untouched
+
+DELIVERABLE
+Implement this new search pipeline in code, replacing the current search school-selection logic, and show me:
+1. the exact files/functions changed
+2. the new LLM prompt location in code
+3. the final ranking formula or ranking flow used after candidate generation
+4. one or two sample test queries demonstrating that unrealistic schools fall out of the top 6 after scoring

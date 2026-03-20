@@ -302,13 +302,14 @@
     .stat-tile { background: var(--white); border: 1.5px solid var(--border); border-radius: 10px; padding: 0.75rem 1rem; text-align: center; }
     .stat-val { font-family: 'Fraunces', serif; font-weight: 700; font-size: 1.35rem; color: var(--blue); }
     .stat-lbl { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin-top: 2px; }
-    .times-list { display: flex; flex-wrap: wrap; gap: 0.5rem; }
-    .time-pill {
-      font-family: var(--mono); font-size: 0.78rem; font-weight: 500;
-      background: var(--bg); border: 1.5px solid var(--border);
-      border-radius: 7px; padding: 5px 10px; color: var(--slate);
-    }
-    .time-pill strong { color: var(--navy); }
+    .times-grid { display: flex; flex-direction: column; }
+    .times-row { display: flex; align-items: center; padding: 9px 0; border-bottom: 1px solid var(--bg); gap: 1rem; min-height: 42px; }
+    .times-row:last-child { border-bottom: none; }
+    .times-ev-name { font-size: 0.73rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.07em; flex: 1; font-family: 'Figtree', sans-serif; }
+    .times-ev-val { font-family: 'Fraunces', serif; font-size: 1.15rem; font-weight: 700; color: var(--navy); letter-spacing: -0.02em; }
+    .times-row-edit { cursor: pointer; border-radius: 8px; margin: 0 -8px; padding: 9px 8px; transition: background 0.1s; }
+    .times-row-edit:hover { background: var(--bg); }
+    .times-inline-input { font-family: 'Fraunces', serif; font-size: 1rem; font-weight: 700; color: var(--navy); border: 1.5px solid var(--blue); border-radius: 6px; padding: 3px 8px; width: 90px; text-align: right; background: var(--white); outline: none; }
     .vibe-q { margin-bottom: 1.1rem; }
     .vibe-q-label { font-size: 0.85rem; font-weight: 600; color: var(--navy); margin-bottom: 0.5rem; }
     .vibe-options { display: flex; flex-wrap: wrap; gap: 0.4rem; }
@@ -2666,7 +2667,8 @@ function goToSchool(school) {
 // PROFILE — STATE & CONSTANTS
 // ════════════════════════════════════════════════════════════════
 let EDIT_STATS  = false;
-let EDIT_TIMES  = false;
+let EDIT_TIMES    = false;
+let EDIT_TIME_EV  = null;  // event name currently being inline-edited
 let SCORE_MODE  = 'SAT';   // 'SAT' | 'ACT'
 let ACT_SCORE   = null;
 let ACT_PROJ    = null;
@@ -2816,7 +2818,8 @@ async function saveStats() {
 
 // ── Times editing ──────────────────────────────────────────────
 function toggleEditTimes() {
-  EDIT_TIMES = !EDIT_TIMES;
+  EDIT_TIMES   = !EDIT_TIMES;
+  EDIT_TIME_EV = null;
   renderTimes();
 }
 
@@ -2825,21 +2828,48 @@ function renderTimes() {
   const panel   = document.getElementById('times-edit-panel');
   if (!timesEl) return;
 
+  const entries = Object.entries(JAMES.times || {});
+
   if (!EDIT_TIMES) {
-    timesEl.innerHTML = Object.entries(JAMES.times || {}).map(([ev, t]) =>
-      `<span class="time-pill"><strong>${esc(ev)}:</strong> ${esc(t)}</span>`
-    ).join('');
+    // ── View mode: clean 2-col rows ──────────────────────────────
+    timesEl.innerHTML = entries.length
+      ? `<div class="times-grid">${entries.map(([ev, t]) =>
+          `<div class="times-row">
+            <span class="times-ev-name">${esc(ev)}</span>
+            <span class="times-ev-val">${esc(t)}</span>
+          </div>`
+        ).join('')}</div>`
+      : `<span style="color:var(--muted);font-size:0.85rem;">No times entered yet.</span>`;
     if (panel) panel.style.display = 'none';
     return;
   }
 
-  // Edit mode: pills with delete buttons
-  timesEl.innerHTML = Object.entries(JAMES.times || {}).map(([ev, t]) =>
-    `<span class="time-pill time-pill-edit">
-       <strong>${esc(ev)}:</strong> ${esc(t)}
-       <button class="time-pill-del" title="Remove" onclick='deleteTime(${JSON.stringify(ev)})'>✕</button>
-     </span>`
-  ).join('') || '<span style="color:var(--muted);font-size:0.85rem;">No times entered yet.</span>';
+  // ── Edit mode: clickable rows with inline edit + delete ───────
+  timesEl.innerHTML = entries.length
+    ? `<div class="times-grid">${entries.map(([ev, t]) => {
+        const isEditing = EDIT_TIME_EV === ev;
+        return `<div class="times-row times-row-edit" onclick='startEditTime(${JSON.stringify(ev)})'>
+          <span class="times-ev-name">${esc(ev)}</span>
+          ${isEditing
+            ? `<input class="times-inline-input" id="edit-time-input"
+                value="${esc(t)}"
+                onclick="event.stopPropagation()"
+                onkeydown="if(event.key==='Enter'){event.stopPropagation();saveEditTime(${JSON.stringify(ev)},this.value)}"
+                onblur="saveEditTime(${JSON.stringify(ev)},this.value)" />`
+            : `<span class="times-ev-val">${esc(t)}</span>`
+          }
+          <button class="time-pill-del" title="Remove"
+            onclick='event.stopPropagation();deleteTime(${JSON.stringify(ev)})' style="margin-left:4px;font-size:0.85rem;">✕</button>
+        </div>`;
+      }).join('')}</div>`
+    : `<span style="color:var(--muted);font-size:0.85rem;">No times entered yet.</span>`;
+
+  if (EDIT_TIME_EV) {
+    setTimeout(() => {
+      const inp = document.getElementById('edit-time-input');
+      if (inp) { inp.focus(); inp.select(); }
+    }, 0);
+  }
 
   if (!panel) return;
   panel.style.display = 'block';
@@ -2869,7 +2899,26 @@ function renderTimes() {
   </div>`;
 }
 
+function startEditTime(ev) {
+  if (!EDIT_TIMES) return;
+  EDIT_TIME_EV = (EDIT_TIME_EV === ev) ? null : ev;
+  renderTimes();
+}
+
+async function saveEditTime(ev, val) {
+  if (EDIT_TIME_EV !== ev) return;
+  EDIT_TIME_EV = null;
+  val = (val || '').trim();
+  if (val && /^\d+(?::\d{2})?(?:\.\d{1,2})?$/.test(val) && val !== '0') {
+    JAMES.times = { ...JAMES.times, [ev]: val };
+    await refreshScores();
+    saveToStorage();
+  }
+  renderTimes();
+}
+
 async function deleteTime(ev) {
+  if (EDIT_TIME_EV === ev) EDIT_TIME_EV = null;
   const t = { ...JAMES.times };
   delete t[ev];
   JAMES.times = t;
@@ -2901,7 +2950,8 @@ async function addTime() {
 }
 
 async function doneEditTimes() {
-  EDIT_TIMES = false;
+  EDIT_TIMES   = false;
+  EDIT_TIME_EV = null;
   renderTimes();
 }
 
