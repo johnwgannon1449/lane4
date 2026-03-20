@@ -1,0 +1,285 @@
+We are upgrading Lane4’s visuals by adding school images and styling the cards/deep dives so the product feels premium, warm, and real.
+
+IMPORTANT
+This is a visual/UI upgrade only.
+Do NOT change:
+- search logic
+- admissions logic
+- swim/recruiting logic
+- deep dive narrative logic
+- scoring labels
+- school ranking behavior
+
+GOAL
+Implement a fast, automatic school image system with polished UI presentation.
+
+We want:
+1. ONE strong image on every school card
+2. THREE images on every deep dive:
+   - hero campus image (THE main campus shot)
+   - student life image (kids on campus / campus vibe)
+   - swim image (pool, team, aquatic center, swim culture)
+3. a noticeably more premium visual feel across the app
+
+==================================================
+PART 1 — IMAGE STRATEGY
+==================================================
+
+We are starting with the fastest scalable approach.
+
+For every school, dynamically generate or store image URLs using search-style queries. The goal is to get attractive images immediately for all schools without manual curation.
+
+Preferred image categories per school:
+
+A) Card / Deep Dive Hero Image
+Query:
+"{school name} campus"
+
+B) Deep Dive Student Life Image
+Query:
+"{school name} students campus"
+
+C) Deep Dive Swim Image
+Query:
+"{school name} swim team"
+fallback:
+"{school name} swimming pool"
+fallback:
+"{school name} aquatic center"
+
+If possible, implement this through a simple helper that builds image URLs from search-based sources.
+
+You may use a lightweight public image approach such as:
+- Unsplash source-style query URLs
+- Wikimedia Commons if convenient
+- another simple public image mechanism that does NOT require us to manually populate hundreds of images right now
+
+If using query-based image URLs, URL-encode school names properly.
+
+We want the system to be easy to replace later with curated school-specific image URLs.
+
+==================================================
+PART 2 — DATA MODEL / HELPER
+==================================================
+
+Implement one of these two patterns, whichever is cleaner in our current codebase:
+
+OPTION A — dynamic generation only
+Create a helper like:
+
+get_school_images(school_name)
+
+Returns:
+{
+  "hero": ...,
+  "student_life": ...,
+  "swim": ...
+}
+
+OPTION B — enrich school data records at runtime
+Add fields:
+- image_hero_url
+- image_student_life_url
+- image_swim_url
+
+If easier, keep these generated at runtime instead of permanently stored.
+
+Either way:
+- centralize the logic in one helper
+- keep it easy to swap sources later
+- use sane fallbacks
+
+==================================================
+PART 3 — FALLBACK RULES
+==================================================
+
+If a query-based image fails or looks broken:
+1. retry with a simpler query:
+   "{school name}"
+2. for swim:
+   retry with:
+   "{school name} athletics"
+3. if still unavailable:
+   use a polished default placeholder image
+
+We should have:
+- one default campus placeholder
+- one default student-life placeholder
+- one default swim placeholder
+
+Do NOT let broken image icons appear in the UI.
+
+==================================================
+PART 4 — SCHOOL CARD UI UPGRADE
+==================================================
+
+Every school card should now include a large hero image at the top.
+
+CARD LAYOUT TARGET
+- rounded, modern card
+- image-first design
+- school feels real and aspirational
+- still clean and information-dense below
+
+CARD IMAGE SPECS
+- full width
+- fixed aspect ratio (16:9 preferred)
+- object-fit: cover
+- top corners rounded with the card
+- subtle dark gradient overlay at bottom of image for text legibility if text overlays image
+
+CARD VISUAL STYLE
+- softer, more premium look
+- more spacing
+- less flat / drab
+- maintain speed and readability
+
+RECOMMENDED STRUCTURE
+
+Top section:
+- large hero image
+- optional gradient overlay
+- school name + location can appear either:
+  a) over the bottom of the image
+  OR
+  b) directly beneath the image in a clean header block
+Choose whichever looks best in our current app.
+
+Below image/header:
+- existing badges / tags / scores / labels / CTA
+- keep the existing school information architecture intact
+- improve spacing, alignment, and hierarchy where needed
+
+STYLE DIRECTION
+- clean
+- premium
+- collegiate
+- not flashy
+- not dark-mode-gamer
+- not corporate SaaS sterile
+- think “high-end college search product”
+
+CARD CSS / STYLE GUIDELINES
+- border-radius: generous
+- subtle shadow
+- slightly brighter background
+- more breathing room
+- avoid clutter
+- stronger typography hierarchy
+- image should do emotional work, text should do decision work
+
+==================================================
+PART 5 — DEEP DIVE IMAGE SECTION
+==================================================
+
+Each deep dive should display 3 images in this order:
+
+1. Hero campus image
+   - largest image
+   - this is THE image for the school
+   - should feel iconic / beautiful / atmospheric
+
+2. Student life image
+   - kids on campus, walking, studying, campus life
+
+3. Swim image
+   - pool, team, swimmers, aquatic center, fun team environment
+
+DEEP DIVE LAYOUT TARGET
+
+Preferred layout:
+- one large hero image across top
+- below it, a two-column row:
+   left = student life
+   right = swim
+
+Mobile / narrow screens:
+- stack vertically in same order
+
+IMAGE STYLE
+- same rounded corners as cards
+- consistent spacing
+- crop cleanly
+- object-fit: cover
+- use lazy loading
+- no distortion
+- no mismatched image sizes
+
+Optional:
+- add tiny labels over lower corner of image:
+  “Campus”
+  “Student Life”
+  “Swimming”
+Only if it looks clean.
+
+==================================================
+PART 6 — PERFORMANCE / UX
+==================================================
+
+Requirements:
+- do not block main page render waiting for images
+- lazy load images where appropriate
+- use loading="lazy" on non-critical images
+- avoid layout shift as much as possible by reserving space
+- use onerror fallback handling for failed image loads
+- keep card rendering smooth
+
+If possible:
+- cache generated image URLs per school so they do not visually change every refresh
+- consistency matters more than novelty
+
+==================================================
+PART 7 — IMPLEMENTATION NOTES
+==================================================
+
+Please inspect the current codebase and implement this in the right places.
+
+I want you to:
+1. identify where school cards are rendered
+2. identify where deep dive content is rendered
+3. add the image helper / URL generation
+4. wire the helper into both card and deep dive UI
+5. improve the card styling so the images actually elevate the product
+
+Do not just paste images in mechanically.
+Make the UI look intentionally designed.
+
+==================================================
+PART 8 — DESIGN TASTE
+==================================================
+
+The product currently feels too drab.
+This upgrade should make it feel:
+- more premium
+- more alive
+- more aspirational
+- more emotionally engaging
+
+But still:
+- trustworthy
+- structured
+- easy to scan
+- parent-friendly
+- athlete-friendly
+
+We are not trying to create a social app or travel magazine.
+We are trying to make schools feel exciting and real.
+
+==================================================
+PART 9 — DELIVERABLE
+==================================================
+
+After implementation, report back with:
+
+1. exact files changed
+2. helper/function names added
+3. where image URLs are generated
+4. where fallback logic lives
+5. what card styling changes were made
+6. confirmation that:
+   - every school card shows one image
+   - every deep dive shows three images
+   - broken images fall back cleanly
+7. show 2–3 example schools with the new presentation
+
+If there is any part of the codebase that makes this awkward, make the cleanest practical implementation without changing our core product logic.
