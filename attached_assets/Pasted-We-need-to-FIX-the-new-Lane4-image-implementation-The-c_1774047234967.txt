@@ -1,0 +1,269 @@
+We need to FIX the new Lane4 image implementation. The current result is not acceptable.
+
+CURRENT PROBLEMS
+1. Many schools are showing the SAME generic campus image over and over
+2. Many schools are showing the SAME generic swimmer / pool image over and over
+3. The images are much too large in the UI and are overpowering the cards/deep dives
+4. The product now feels repetitive and fake instead of school-specific and premium
+
+IMPORTANT
+Do NOT leave the current image behavior in place.
+This is a correction pass.
+
+Do NOT change:
+- admissions logic
+- swim/recruiting logic
+- search logic
+- deep dive narrative logic
+- scoring labels
+- school ranking behavior
+
+==================================================
+PART 1 — ROOT CAUSE TO FIX
+==================================================
+
+The current implementation is likely doing one or more of these bad behaviors:
+- reusing the same fallback image for too many schools
+- using generic query-image endpoints that return similar stock images
+- failing to deduplicate image selections across schools
+- allowing low-confidence image matches to be treated as valid
+- using the hero image as a silent fallback too often for student/swim images
+
+We need to fix this properly.
+
+==================================================
+PART 2 — IMAGE QUALITY RULES
+==================================================
+
+From now on, image selection must follow these rules:
+
+1. SCHOOL-SPECIFIC FIRST
+A school image should only be accepted if it appears meaningfully tied to that school.
+Prefer:
+- official university admissions photos
+- official athletics photos
+- official school pages
+- Wikimedia images clearly associated with the school
+- high-confidence editorial/public images tied to that school
+
+2. NO GENERIC STOCK-LOOKING REPEATS
+Do NOT accept the same generic campus building across many schools.
+Do NOT accept the same generic swimmer / natatorium image across many schools.
+If the pipeline cannot find a good school-specific image, it should use a controlled fallback intentionally — not pretend a generic image is school-specific.
+
+3. DEDUPE AGGRESSIVELY
+If the same image URL, same underlying image, or same asset is being assigned to multiple schools, flag it and prevent mass reuse except for true default placeholders.
+
+4. FALLBACKS MUST BE RARE AND EXPLICIT
+It is okay to use placeholders when needed, but they should be clearly the fallback path, not silently used for large portions of the dataset.
+
+==================================================
+PART 3 — IMAGE MANIFEST AUDIT + REBUILD
+==================================================
+
+Audit the current school image manifest / cached image selections.
+
+Tasks:
+1. inspect the current saved image URLs for all schools
+2. identify duplicate URLs reused across many schools
+3. identify categories where the same generic image is assigned repeatedly
+4. rebuild or replace low-quality repeated assignments
+
+Create a repair script if helpful, for example:
+- scripts/audit_school_images.py
+- scripts/rebuild_school_images.py
+
+The audit should produce:
+- duplicate image counts
+- schools using placeholder/fallback images
+- schools missing category-specific images
+
+==================================================
+PART 4 — NEW SELECTION RULES
+==================================================
+
+When selecting images per school:
+
+HERO IMAGE
+Must strongly favor:
+- official campus/admissions photo
+- iconic campus shot
+- horizontal composition
+- visually attractive but school-specific
+
+STUDENT LIFE IMAGE
+Must favor:
+- students on that campus
+- school-specific admissions/student-life imagery
+- avoid generic smiling stock students if not clearly tied to school
+
+SWIM IMAGE
+Must favor:
+- official athletics/swim team/pool/aquatics image for that school
+- school athletics pages are strongly preferred here
+- do NOT use a random swimmer photo unless it is truly tied to the school
+- if no school-specific swim image exists, use a clearly intentional fallback, not a misleading generic swim image
+
+==================================================
+PART 5 — SOURCE PRIORITY
+==================================================
+
+Use this source priority when selecting images:
+
+For hero/student life:
+1. official school / admissions site
+2. official school news / student life pages
+3. Wikimedia Commons clearly tied to the school
+4. other strong public pages clearly tied to the school
+
+For swim:
+1. official athletics site
+2. official swim/dive roster or facilities page
+3. official athletics Flickr/media gallery if easy to access
+4. only then fallback
+
+The point is:
+hero + student life should come from school-facing pages
+swim should come from athletics-facing pages
+
+==================================================
+PART 6 — DEDUPE LOGIC
+==================================================
+
+Implement dedupe protection in the image pipeline.
+
+Requirements:
+- if the same exact image URL is assigned to more than a small number of schools, inspect and replace it unless it is an approved default placeholder
+- if the same asset fingerprint/hash appears across many schools, inspect and replace it
+- maintain an allowlist only for true placeholders
+
+If helpful, download candidate images temporarily and compare:
+- normalized URL
+- filename patterns
+- or lightweight hashes
+
+We do not need perfection, but we do need to stop obvious repeated-image failure.
+
+==================================================
+PART 7 — FALLBACK STRATEGY (CONTROLLED)
+==================================================
+
+We should have clean fallbacks, but they should behave like honest placeholders.
+
+Rules:
+- one default campus placeholder
+- one default student-life placeholder
+- one default swim placeholder
+
+Use them ONLY when no confident school-specific image is found.
+
+Also:
+- store a flag like image_is_fallback = true/false if useful
+- this helps us know which schools still need better images later
+
+Preferred:
+- hero can fallback to campus placeholder
+- student life can fallback to hero only if necessary, but do not do this silently for most schools
+- swim should fallback to swim placeholder, not generic random swimmer content
+
+==================================================
+PART 8 — UI SIZE FIXES
+==================================================
+
+The images are currently WAY too large. Fix the presentation.
+
+SCHOOL CARDS
+Adjust card hero image so it feels premium but compact.
+
+Target:
+- image height around 140–180px on desktop
+- slightly smaller on dense views if needed
+- fixed aspect ratio, roughly 16:9
+- object-fit: cover
+- rounded top corners only
+- image should support the card, not dominate it
+
+The card should still feel information-dense and easy to scan.
+Do NOT let the image push important content too far down.
+
+DEEP DIVE
+Deep dive images should be reduced as well.
+
+Target layout:
+- hero image: moderate, not giant
+  about 240–320px tall max depending on container width
+- second row:
+  two smaller images side-by-side
+  matching height
+  compact and neat
+- maintain consistent crop and spacing
+
+We want:
+- polished
+- visual
+- not huge
+- not magazine-style oversized
+
+==================================================
+PART 9 — CARD / DEEP DIVE VISUAL BALANCE
+==================================================
+
+Improve visual hierarchy so images enhance the product without overwhelming it.
+
+CARD
+- school name should still be easy to find immediately
+- scores / tags / calls to action should remain above the fold
+- tighten spacing if necessary
+- reduce excessive padding around image blocks if currently too tall
+
+DEEP DIVE
+- hero image should support the deep dive, not become the page
+- secondary images should feel like supporting proof points
+- keep narrative content visible without excessive scrolling
+
+==================================================
+PART 10 — REPAIR PLAN
+==================================================
+
+Please do this in order:
+
+1. inspect current image implementation and identify why repeated generic images are happening
+2. audit current image manifest/cache for duplicates and low-confidence reuse
+3. tighten selection rules to prioritize official school-specific sources
+4. add dedupe checks so the same image cannot silently spread across many schools
+5. rebuild affected image assignments
+6. shrink card and deep dive image sizes
+7. verify with a small test set of known schools
+
+Test with schools we can sanity-check quickly, for example:
+- Emory
+- Williams
+- Johns Hopkins
+- Michigan
+- Pomona
+- Denison
+
+==================================================
+PART 11 — DELIVERABLE
+==================================================
+
+After fixing, report back with:
+
+1. exact files changed
+2. what caused the repeated generic-image problem
+3. what was changed in the selection pipeline
+4. what dedupe logic was added
+5. what fallback rules now apply
+6. what image size/layout changes were made
+7. show 6 example schools with:
+   - hero image URL
+   - student life image URL
+   - swim image URL
+   - whether each is school-specific or fallback
+8. confirm that:
+   - repeated generic image reuse is fixed
+   - card images are much smaller
+   - deep dive images are more compact
+   - placeholders are only used when truly necessary
+
+If the current implementation is too brittle to salvage, replace it with the cleanest practical version that produces school-specific, stable, non-repetitive results.

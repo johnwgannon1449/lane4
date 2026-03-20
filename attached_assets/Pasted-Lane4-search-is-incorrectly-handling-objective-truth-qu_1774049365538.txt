@@ -1,0 +1,167 @@
+Lane4 search is incorrectly handling objective truth queries.
+
+Problem example:
+When searching “best STEM schools,” the app returned Worcester first, then Virginia, Stanford, Georgia Tech, Illinois, Texas A&M.
+That is not a defensible answer to the actual question.
+The system is likely over-applying personalization / fit reranking to a query that should remain objective.
+
+We need to fix this.
+
+IMPORTANT
+This task is ONLY about search-result school selection/ranking.
+Do NOT change:
+- deep dive narratives
+- admissions model
+- swim/recruiting model
+- profile UI
+- image UI
+- card layout
+
+GOAL
+For objective “truth” queries like:
+- best STEM schools
+- top biology schools
+- best engineering colleges
+- top Ivy League schools
+
+the returned school cards should reflect the true top schools for that category, not “best for this kid.”
+
+==================================================
+PART 1 — DEFINE OBJECTIVE QUERY MODE
+==================================================
+
+Add or fix an OBJECTIVE QUERY mode.
+
+A query should be treated as OBJECTIVE when:
+- it asks for “best,” “top,” “strongest,” or similar
+- it does NOT include “for me” or clear personalization language
+- it does NOT ask for schools the student can get into
+- it does NOT ask where the swimmer should go
+- it does NOT include an explicit personal-fit constraint
+
+Examples of OBJECTIVE queries:
+- best STEM schools
+- top biology schools
+- best engineering colleges
+- top pre-med schools
+- best Ivy League schools
+
+==================================================
+PART 2 — OBJECTIVE MODE BEHAVIOR
+==================================================
+
+In OBJECTIVE mode:
+
+1. Generate a candidate pool focused ONLY on the academic/category truth of the query.
+2. Return the best schools for that category.
+3. Do NOT rerank by:
+   - admissions fit
+   - swim relevance
+   - budget
+   - profile preferences
+   - geography preferences
+4. Do NOT let user-fit logic distort the ranking.
+
+This is critical:
+For objective truth queries, Lane4 should answer the actual question, not quietly substitute a personalized answer.
+
+==================================================
+PART 3 — LLM PROMPT FOR OBJECTIVE MODE
+==================================================
+
+Use a dedicated LLM prompt for objective queries.
+
+System prompt:
+
+You are an expert U.S. college counselor.
+
+Your task is to answer a category-ranking question by generating the strongest colleges in the country for that category.
+
+Rules:
+- Focus ONLY on the truth of the category asked
+- Do NOT personalize
+- Do NOT consider admissions chances
+- Do NOT consider athletics or swim fit
+- Do NOT consider finances
+- Do NOT consider user profile data
+- Return the strongest and most defensible schools for the category
+- Return only school names
+- One school per line
+- Return 12 schools
+
+User query:
+{USER_QUERY}
+
+==================================================
+PART 4 — FINAL RETURN LOGIC FOR OBJECTIVE MODE
+==================================================
+
+For OBJECTIVE mode:
+- preserve the LLM’s ranking or lightly normalize it with category metadata if we already have strong academic/category ranking support
+- but do NOT apply Lane4 fit reranking
+
+The top 6 shown should look like a credible “best in the country” answer.
+
+For “best STEM schools,” results should come from the true top STEM universe, for example schools like:
+- MIT
+- Stanford
+- Caltech
+- Carnegie Mellon
+- Georgia Tech
+- UC Berkeley
+- Illinois
+- Michigan
+- Cornell
+etc.
+
+The exact order can vary somewhat, but the result must be broadly defensible.
+
+A school like Worcester should not appear #1 for “best STEM schools.”
+
+==================================================
+PART 5 — KEEP PERSONALIZED MODES SEPARATE
+==================================================
+
+Only apply admissions/swim reranking in personalized or constrained queries such as:
+- best STEM schools for me
+- best biology schools where I can get in
+- where should I swim
+- what schools should I look at
+
+Do NOT let those personalized rules leak into objective mode.
+
+==================================================
+PART 6 — DEBUGGING
+==================================================
+
+Add temporary debug output that shows:
+- detected query mode
+- raw AI candidate list
+- whether personalization/reranking was applied
+- final returned top 6
+
+We need to verify that “best STEM schools” is being classified as OBJECTIVE and not reranked by fit logic.
+
+==================================================
+PART 7 — TEST CASES
+==================================================
+
+Run and show results for:
+1. best STEM schools
+2. top biology schools
+3. best STEM schools for me
+
+Expected behavior:
+- #1 and #2 should be objective, non-personalized, defensible national lists
+- #3 should be personalized and allowed to use admissions/swim reranking
+
+==================================================
+PART 8 — DELIVERABLE
+==================================================
+
+After implementing, report:
+1. exact files/functions changed
+2. how query mode is detected
+3. where objective mode bypasses personalization
+4. raw and final outputs for the three test searches
+5. confirmation that objective queries no longer get distorted by user-fit logic

@@ -187,10 +187,11 @@
     /* ── card hero image ─────────────────────────────────────── */
     .card-img-wrap {
       margin: -1.1rem -1.2rem 1rem;
-      aspect-ratio: 16/9;
+      height: 156px;
       background: linear-gradient(135deg,#E2E8F0 0%,#CBD5E1 100%);
       overflow: hidden;
       flex-shrink: 0;
+      border-radius: 10px 10px 0 0;
     }
     .card-img {
       width: 100%; height: 100%;
@@ -219,13 +220,13 @@
     .dd-images { margin-bottom: 1.25rem; }
     .dd-hero-wrap {
       position: relative; border-radius: 12px; overflow: hidden;
-      aspect-ratio: 16/9; background: linear-gradient(135deg,#E2E8F0 0%,#CBD5E1 100%);
+      height: 240px; background: linear-gradient(135deg,#E2E8F0 0%,#CBD5E1 100%);
       margin-bottom: 0.5rem;
     }
     .dd-secondary-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
     .dd-secondary-wrap {
       position: relative; border-radius: 10px; overflow: hidden;
-      aspect-ratio: 4/3; background: linear-gradient(135deg,#E2E8F0 0%,#CBD5E1 100%);
+      height: 140px; background: linear-gradient(135deg,#E2E8F0 0%,#CBD5E1 100%);
     }
     .dd-img { width: 100%; height: 100%; object-fit: cover; display: block; }
     .dd-img-label {
@@ -802,9 +803,6 @@ let ACTIVE_TAB    = 'explore';
 let SCHOOL_IMAGES = {};   // { "School Name": { hero, student_life, swim } }
 
 // ── stable defaults if manifest unavailable ───────────────────────────────────
-const IMG_DEFAULT_HERO    = 'https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80';
-const IMG_DEFAULT_STUDENT = 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80';
-const IMG_DEFAULT_SWIM    = 'https://images.unsplash.com/photo-1530549387789-4c1017266635?w=1200&q=80';
 
 async function loadSchoolImages() {
   try {
@@ -813,15 +811,9 @@ async function loadSchoolImages() {
   } catch(_) {}
 }
 
-function schoolImgHero(school) {
-  return (SCHOOL_IMAGES[school] || {}).hero || IMG_DEFAULT_HERO;
-}
-function schoolImgStudent(school) {
-  return (SCHOOL_IMAGES[school] || {}).student_life || IMG_DEFAULT_STUDENT;
-}
-function schoolImgSwim(school) {
-  return (SCHOOL_IMAGES[school] || {}).swim || IMG_DEFAULT_SWIM;
-}
+function schoolImgHero(school)    { return (SCHOOL_IMAGES[school] || {}).hero          || null; }
+function schoolImgStudent(school) { return (SCHOOL_IMAGES[school] || {}).student_life  || null; }
+function schoolImgSwim(school)    { return (SCHOOL_IMAGES[school] || {}).swim           || null; }
 let VIBE_STATE    = {};   // { campus, friday, academic, compete, location, career }
 let OPEN_CRM        = null; // currently expanded CRM card
 let LIST_HEALTH_OPEN = false; // list health explanation expanded
@@ -1628,11 +1620,11 @@ function renderResultCards(schools, container, isDirect, answer) {
     const _heroUrl = schoolImgHero(r.school);
     return `
     <div class="result-card" id="rcard-${i}">
-      <div class="card-img-wrap">
+      ${_heroUrl ? `<div class="card-img-wrap">
         <img src="${_heroUrl}" class="card-img" loading="lazy"
           alt="${esc(r.school)} campus"
           onerror="this.closest('.card-img-wrap').style.display='none'">
-      </div>
+      </div>` : ''}
       ${r.aiWhy ? `<div class="ai-why">✦ ${esc(r.aiWhy)}</div>` : ''}
       <div class="result-card-top">
         <div>
@@ -1824,28 +1816,35 @@ async function openDeepDive(school) {
         <button class="btn btn-secondary" onclick='printDeepDive(${JSON.stringify(school)})' style="margin-left:auto;">🖨 Save as PDF</button>
       </div>
 
-      <div class="dd-images">
-        <div class="dd-hero-wrap">
-          <img src="${schoolImgHero(school)}" class="dd-img" loading="eager"
+      ${(() => {
+        const _ddHero    = schoolImgHero(school);
+        const _ddStudent = schoolImgStudent(school);
+        const _ddSwim    = schoolImgSwim(school);
+        const _showStudent = _ddStudent && _ddStudent !== _ddHero;
+        if (!_ddHero && !_ddSwim) return '';
+        return `<div class="dd-images">
+        ${_ddHero ? `<div class="dd-hero-wrap">
+          <img src="${_ddHero}" class="dd-img" loading="eager"
             alt="${esc(school)} campus"
             onerror="this.closest('.dd-hero-wrap').style.display='none'">
           <span class="dd-img-label">Campus</span>
-        </div>
-        <div class="dd-secondary-row">
-          <div class="dd-secondary-wrap">
-            <img src="${schoolImgStudent(school)}" class="dd-img" loading="lazy"
+        </div>` : ''}
+        ${(_showStudent || _ddSwim) ? `<div class="dd-secondary-row">
+          ${_showStudent ? `<div class="dd-secondary-wrap">
+            <img src="${_ddStudent}" class="dd-img" loading="lazy"
               alt="${esc(school)} student life"
               onerror="this.closest('.dd-secondary-wrap').style.display='none'">
             <span class="dd-img-label">Student Life</span>
-          </div>
-          <div class="dd-secondary-wrap">
-            <img src="${schoolImgSwim(school)}" class="dd-img" loading="lazy"
+          </div>` : ''}
+          ${_ddSwim ? `<div class="dd-secondary-wrap">
+            <img src="${_ddSwim}" class="dd-img" loading="lazy"
               alt="${esc(school)} swimming"
               onerror="this.closest('.dd-secondary-wrap').style.display='none'">
             <span class="dd-img-label">Swimming</span>
-          </div>
-        </div>
-      </div>
+          </div>` : ''}
+        </div>` : ''}
+      </div>`;
+      })()}
 
       ${bottomLine ? `
         <div class="bottom-line">
@@ -2973,6 +2972,7 @@ function renderProfile() {
 
 function renderVibeQuestions() {
   const el = document.getElementById('vibe-questions');
+  if (!el) return;
   el.innerHTML = VIBE_QUESTIONS.map(q => {
     const current = VIBE_STATE[q.id] || '';
     const opts = q.options.map(o =>

@@ -4316,41 +4316,35 @@ _IMG_MANIFEST_PATH = os.path.join('static', 'school_images.json')
 _IMG_MANIFEST_LOCK = threading.Lock()
 _IMG_WIKI          = 'https://en.wikipedia.org/w/api.php'
 _IMG_UA            = 'Lane4Recruit/1.0 (college swim recruiting; lane4.app)'
-_IMG_DEF_HERO      = 'https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80'
-_IMG_DEF_STUDENT   = 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80'
-_IMG_DEF_SWIM      = 'https://images.unsplash.com/photo-1530549387789-4c1017266635?w=1200&q=80'
+
+_IMG_BAD_FNAME = [
+    'svg', 'logo', 'seal', 'flag', 'map', 'icon', 'coat', 'shield',
+    'wordmark', 'crest', '.gif', 'placeholder', 'question', 'default',
+    'vector', 'badge', 'insignia', 'monogram', 'mascot', 'patch',
+    'athletics_mark', 'spirit_mark', '_mark.',
+]
 
 
-def _img_wiki_get(params, timeout=10):
+def _img_wiki_get(params, timeout=12):
+    """Wikipedia API call with polite delay and 429 backoff."""
     params['format'] = 'json'
     qs  = urllib.parse.urlencode(params)
     req = urllib.request.Request(f'{_IMG_WIKI}?{qs}', headers={'User-Agent': _IMG_UA})
-    try:
-        with urllib.request.urlopen(req, timeout=timeout) as r:
-            return json.loads(r.read().decode())
-    except Exception:
-        return {}
-
-
-def _img_page_files(title):
-    data  = _img_wiki_get({'action': 'query', 'titles': title,
-                           'prop': 'images', 'imlimit': '50'})
-    pages = data.get('query', {}).get('pages', {})
-    for page in pages.values():
-        return [img['title'] for img in page.get('images', [])]
-    return []
-
-
-def _img_file_url(file_title, width=1200):
-    data  = _img_wiki_get({'action': 'query', 'titles': file_title,
-                           'prop': 'imageinfo', 'iiprop': 'url',
-                           'iiurlwidth': width})
-    pages = data.get('query', {}).get('pages', {})
-    for page in pages.values():
-        info = page.get('imageinfo', [])
-        if info:
-            return info[0].get('thumburl') or info[0].get('url')
-    return None
+    time.sleep(0.4)  # polite delay on EVERY call
+    for attempt in range(3):
+        try:
+            with urllib.request.urlopen(req, timeout=timeout) as r:
+                return json.loads(r.read().decode())
+        except urllib.error.HTTPError as e:
+            if e.code == 429:
+                wait = 30 * (attempt + 1)
+                app.logger.warning(f'[images] 429 rate-limited, backing off {wait}s')
+                time.sleep(wait)
+            else:
+                return {}
+        except Exception:
+            return {}
+    return {}
 
 
 def _img_search_title(query):
@@ -4358,6 +4352,60 @@ def _img_search_title(query):
                              'srsearch': query, 'srlimit': 3})
     results = data.get('query', {}).get('search', [])
     return results[0]['title'] if results else None
+
+
+def _img_all_with_urls(page_title, width=1000):
+    """Fetch all images on a Wikipedia page with their URLs in ONE API call."""
+    data  = _img_wiki_get({
+        'action': 'query', 'titles': page_title,
+        'generator': 'images', 'gimlimit': '50',
+        'prop': 'imageinfo', 'iiprop': 'url',
+        'iiurlwidth': str(width), 'redirects': '',
+    })
+    images = []
+    for page in data.get('query', {}).get('pages', {}).values():
+        info = page.get('imageinfo', [{}])
+        url  = info[0].get('thumburl') or info[0].get('url', '') if info else ''
+        if url:
+            images.append((page.get('title', ''), url))
+    return images
+
+
+def _img_score_campus(fn, tokens):
+    fn = fn.lower()
+    if not (fn.endswith('.jpg') or fn.endswith('.jpeg') or fn.endswith('.png')):
+        return -999
+    if any(b in fn for b in _IMG_BAD_FNAME):
+        return -999
+    s = 0
+    for tok in tokens:
+        if tok and fn.startswith('file:' + tok): s += 15
+        elif tok and tok in fn:                  s += 8
+    for kw in ['campus', 'aerial', 'quad', 'quadrangle', 'grounds',
+                'entrance', 'courtyard', 'panoram']:
+        if kw in fn: s += 10
+    for kw in ['building', 'chapel', 'tower', 'auditorium', 'clocktower',
+                'gymnasium', 'hall', 'center', 'science', 'library']:
+        if kw in fn: s += 5
+    for kw in ['arch', 'gate', 'fountain', 'square', 'green']:
+        if kw in fn: s += 3
+    for kw in ['portrait', 'headshot', 'rally', 'protest', 'game']:
+        if kw in fn: s -= 6
+    return s
+
+
+def _img_score_swim(fn):
+    fn = fn.lower()
+    if not (fn.endswith('.jpg') or fn.endswith('.jpeg') or fn.endswith('.png')):
+        return -999
+    if any(b in fn for b in ['svg', 'logo', '.gif']):
+        return -999
+    s = 0
+    for kw in ['swim', 'pool', 'aquat', 'natator', 'water']:
+        if kw in fn: s += 10
+    for kw in ['athletic', 'sport', 'recreation']:
+        if kw in fn: s += 4
+    return s
 
 
 _IMG_STOP = {'university', 'college', 'of', 'the', 'and', 'at', 'institute',
@@ -4368,93 +4416,56 @@ def _img_tokens(school):
     return [t.lower() for t in school.split() if t.lower() not in _IMG_STOP][:3]
 
 
-def _img_score_campus(fn, tokens):
-    """Score a Wikipedia file title for campus-photo likelihood."""
-    fn = fn.lower()
-    if any(b in fn for b in ['svg', '.svg', 'logo', 'seal', 'flag', 'map', 'icon',
-                              'coat', 'shield', 'wordmark', 'crest', '.gif',
-                              'placeholder', 'question', 'default',
-                              'athletics_mark', 'spirit_mark', '_mark.',
-                              'vector', 'badge', 'insignia']):
-        return -999
-    if not (fn.endswith('.jpg') or fn.endswith('.jpeg') or fn.endswith('.png')):
-        return -999
-    score = 0
-    for tok in tokens:
-        if tok and fn.startswith('file:' + tok): score += 15
-        elif tok and tok in fn:                  score += 8
-    for kw in ['campus', 'aerial', 'quad', 'quadrangle', 'grounds',
-                'entrance', 'courtyard', 'panoram']:
-        if kw in fn: score += 10
-    for kw in ['building', 'chapel', 'tower', 'auditorium', 'clocktower',
-                'gymnasium', 'hall', 'center', 'science']:
-        if kw in fn: score += 5
-    for kw in ['arch', 'gate', 'fountain', 'square']:
-        if kw in fn: score += 3
-    for kw in ['portrait', 'headshot', 'rally', 'protest', 'game']:
-        if kw in fn: score -= 6
-    return score
-
-
-def _img_score_swim(fn):
-    fn = fn.lower()
-    if any(b in fn for b in ['svg', '.svg', 'logo', '.gif']): return -999
-    if not (fn.endswith('.jpg') or fn.endswith('.jpeg') or fn.endswith('.png')):
-        return -999
-    score = 0
-    for kw in ['swim', 'pool', 'aquat', 'natator', 'water']:
-        if kw in fn: score += 10
-    for kw in ['athletic', 'sport', 'recreation']:
-        if kw in fn: score += 4
-    return score
-
-
-def _img_best_from_page(title, score_fn, width=1200):
-    files  = _img_page_files(title)
-    scored = [(score_fn(f), f) for f in files if score_fn(f) > 0]
-    scored.sort(reverse=True)
-    for _, fname in scored[:5]:
-        url = _img_file_url(fname, width=width)
-        if url:
-            return url
-    return None
-
-
 def _img_fetch_one(school):
-    """Fetch and return hero/student_life/swim URLs for one school."""
+    """Fetch hero/student_life/swim URLs for one school.
+    Uses generator=images to get all page images + URLs in one API call."""
     tokens     = _img_tokens(school)
     page_title = _img_search_title(school) or school
 
-    # Hero — best scored campus image from the school's Wikipedia page
-    hero = _img_best_from_page(page_title,
-                               lambda fn: _img_score_campus(fn, tokens))
-    if not hero and page_title != school:
-        hero = _img_best_from_page(school,
-                                   lambda fn: _img_score_campus(fn, tokens))
+    # Hero + student_life — from main school Wikipedia page
+    images = _img_all_with_urls(page_title, width=1000)
+    hero = student_life = None
 
-    # Student life — secondary image from same page (different scene)
-    # Re-score preferring interior/people scenes; fall back to hero
-    student_life = _img_best_from_page(page_title,
-                                       lambda fn: _img_score_campus(fn, tokens),
-                                       width=900)
-    if student_life == hero:
-        student_life = None  # avoid exact duplicate; fall back to default
-
-    # Swim — look for school's dedicated swimming/aquatics Wikipedia article
-    swim = None
-    for q in [f'{school} swimming', f'{school} aquatics', f'{school} swim team']:
-        swim_title = _img_search_title(q)
-        if swim_title and swim_title != page_title:
-            swim = _img_best_from_page(swim_title, _img_score_swim, width=900)
-            if swim:
+    if images:
+        campus_scored = sorted(images,
+                               key=lambda x: _img_score_campus(x[0], tokens),
+                               reverse=True)
+        for title, url in campus_scored:
+            if _img_score_campus(title, tokens) > 0:
+                hero = url
                 break
-    if not swim:
-        swim = _img_best_from_page(page_title, _img_score_swim, width=900)
+        for title, url in campus_scored:
+            if url != hero and _img_score_campus(title, tokens) > 0:
+                student_life = url
+                break
+        if not student_life:
+            student_life = hero
+
+    # Swim — from athletics or swimming Wikipedia page
+    swim = None
+    for q in [f'{school} swimming and diving',
+              f'{school} athletics',
+              f'{school} swim team']:
+        swim_title = _img_search_title(q)
+        if not swim_title or swim_title == page_title:
+            continue
+        swim_images = _img_all_with_urls(swim_title, width=900)
+        if swim_images:
+            sw_scored = sorted(swim_images,
+                               key=lambda x: _img_score_swim(x[0]), reverse=True)
+            for title, url in sw_scored:
+                if _img_score_swim(title) > 0:
+                    swim = url
+                    break
+        if swim:
+            break
 
     return {
-        'hero':         hero         or _IMG_DEF_HERO,
-        'student_life': student_life or _IMG_DEF_STUDENT,
-        'swim':         swim         or _IMG_DEF_SWIM,
+        'hero':             hero,
+        'student_life':     student_life,
+        'swim':             swim,
+        'hero_is_fallback': hero is None,
+        'swim_is_fallback': swim is None,
     }
 
 
@@ -4475,8 +4486,21 @@ def _img_build_manifest_daemon():
     except Exception:
         manifest = {}
 
-    schools   = sorted(SCHOOL_META.keys())
-    to_fetch  = [s for s in schools if s not in manifest]
+    schools = sorted(SCHOOL_META.keys())
+    # Also re-fetch schools that were saved with the old generic Unsplash fallbacks
+    _OLD_FALLBACKS = {
+        'https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80',
+        'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80',
+        'https://images.unsplash.com/photo-1530549387789-4c1017266635?w=1200&q=80',
+    }
+    def _needs_fetch(s):
+        if s not in manifest:
+            return True
+        imgs = manifest[s]
+        return (imgs.get('hero') in _OLD_FALLBACKS or
+                imgs.get('swim') in _OLD_FALLBACKS or
+                imgs.get('hero_is_fallback') is True)  # null from failed run
+    to_fetch = [s for s in schools if _needs_fetch(s)]
 
     if not to_fetch:
         app.logger.info(f'[images] Manifest already complete ({len(manifest)} schools).')
@@ -4489,9 +4513,8 @@ def _img_build_manifest_daemon():
             imgs = _img_fetch_one(school)
         except Exception as e:
             app.logger.warning(f'[images] {school}: {e}')
-            imgs = {'hero': _IMG_DEF_HERO,
-                    'student_life': _IMG_DEF_STUDENT,
-                    'swim': _IMG_DEF_SWIM}
+            imgs = {'hero': None, 'student_life': None, 'swim': None,
+                    'hero_is_fallback': True, 'swim_is_fallback': True}
 
         with _IMG_MANIFEST_LOCK:
             manifest[school] = imgs
@@ -4513,9 +4536,11 @@ def _img_build_manifest_daemon():
     app.logger.info(f'[images] Manifest complete — {len(manifest)} schools.')
 
 
-# Start the background image builder (daemon so it doesn't block shutdown)
-_img_thread = threading.Thread(target=_img_build_manifest_daemon, daemon=True)
-_img_thread.start()
+# Only start the image builder in the actual Werkzeug worker, not the reloader
+# parent process (which would duplicate all API calls in debug mode).
+if os.environ.get('WERKZEUG_RUN_MAIN') == 'true' or not app.debug:
+    _img_thread = threading.Thread(target=_img_build_manifest_daemon, daemon=True)
+    _img_thread.start()
 
 
 if __name__ == '__main__':
