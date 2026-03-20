@@ -363,13 +363,24 @@
     .list-school-meta { font-size: 0.78rem; color: var(--muted); margin-top: 1px; }
     .list-school-right { display: flex; align-items: center; gap: 0.5rem; flex-shrink: 0; flex-wrap: nowrap; }
     .status-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
-    .list-school-badges { display: flex; align-items: center; gap: 0.4rem; margin-top: 7px; flex-wrap: wrap; }
+    .list-school-badges {
+      display: grid;
+      grid-template-columns: 94px 134px minmax(140px,1fr) 44px auto auto;
+      align-items: center;
+      column-gap: 0.4rem;
+      margin-top: 8px;
+      overflow: hidden;
+    }
     .list-badge {
       display: inline-flex; align-items: center; gap: 3px;
       padding: 4px 12px; border-radius: 50px;
       font-size: 0.7rem; font-weight: 700; white-space: nowrap;
       font-family: 'Figtree', sans-serif; letter-spacing: 0.01em;
+      width: 100%; box-sizing: border-box; justify-content: center;
     }
+    .list-badge-slot { display: flex; align-items: center; min-width: 0; }
+    .list-badge-flags { display: flex; align-items: center; gap: 0.3rem; flex-wrap: nowrap; }
+    .list-badge-flags .list-badge { width: auto; }
     .toggle-arrow { font-size: 0.75rem; color: var(--muted); flex-shrink: 0; }
     .list-health-row { display: flex; align-items: center; gap: 0.65rem; margin-bottom: 1rem; flex-wrap: wrap; }
     .list-health-badge { display: inline-flex; align-items: center; padding: 5px 14px; border-radius: 20px; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.01em; font-family: 'Figtree', sans-serif; }
@@ -2257,15 +2268,31 @@ function renderMyList() {
           <span class="toggle-arrow" style="margin-top:2px;">${isOpen ? '▴' : '▾'}</span>
         </div>
         <div class="list-school-badges">
-          ${adm.label ? `<span class="list-badge" style="background:${safeAdmColor(adm)};color:#fff;">${esc(adm.label)}</span>` : ''}
-          ${toRecruitLabel(adjTier) ? `<span class="list-badge" style="background:var(--blue-l);color:var(--blue);">${esc(toRecruitLabel(adjTier))}</span>` : ''}
-          <span class="list-badge" style="background:${costBg};color:${costClr};border:${costBorder};${costStyle}"><span style="opacity:0.75;font-style:normal;">${costPrefix} </span>${esc(costLabel)}</span>
-          ${division ? `<span class="list-badge" style="background:var(--bg);color:var(--slate);border:1px solid var(--border);">${esc(division)}</span>` : ''}
-          ${meta.ivyLeague ? `<span class="list-badge" style="background:#1E3A5F;color:#fff;">Ivy League</span>` : ''}
-          ${meta.hiddenIvy ? `<span class="list-badge" style="background:var(--violet-l);color:var(--violet);">Hidden Ivy</span>` : ''}
-          ${meta.stem ? `<span class="list-badge" style="background:var(--blue-l);color:var(--blue);">STEM</span>` : ''}
+          <!-- slot 1: admission -->
+          <div class="list-badge-slot">
+            ${adm.label ? `<span class="list-badge" style="background:${safeAdmColor(adm)};color:#fff;">${esc(adm.label)}</span>` : ''}
+          </div>
+          <!-- slot 2: recruit level -->
+          <div class="list-badge-slot">
+            ${toRecruitLabel(adjTier) ? `<span class="list-badge" style="background:var(--blue-l);color:var(--blue);">${esc(toRecruitLabel(adjTier))}</span>` : ''}
+          </div>
+          <!-- slot 3: cost estimate -->
+          <div class="list-badge-slot">
+            <span class="list-badge" style="background:${costBg};color:${costClr};border:${costBorder};${costStyle}"><span style="opacity:0.75;font-style:normal;font-weight:400;">${costPrefix}&nbsp;</span>${esc(costLabel)}</span>
+          </div>
+          <!-- slot 4: division -->
+          <div class="list-badge-slot">
+            ${division ? `<span class="list-badge" style="background:var(--bg);color:var(--slate);border:1px solid var(--border);">${esc(division)}</span>` : ''}
+          </div>
+          <!-- slot 5: flags (ivy / hidden ivy / stem) -->
+          <div class="list-badge-flags">
+            ${meta.ivyLeague ? `<span class="list-badge" style="background:#1E3A5F;color:#fff;">Ivy</span>` : ''}
+            ${meta.hiddenIvy ? `<span class="list-badge" style="background:var(--violet-l);color:var(--violet);">H.Ivy</span>` : ''}
+            ${meta.stem ? `<span class="list-badge" style="background:var(--blue-l);color:var(--blue);">STEM</span>` : ''}
+          </div>
+          <!-- slot 6: status button -->
           <div class="status-dd-wrap">
-            <button class="list-badge" style="background:${cfg.color};color:#fff;border:none;cursor:pointer;"
+            <button class="list-badge" style="background:${cfg.color};color:#fff;border:none;cursor:pointer;width:auto;"
               onclick='toggleStatusDD(${JSON.stringify(school)}, event)'>${esc(cfg.label)} <span style="font-size:0.6rem;opacity:0.85;">▾</span></button>
             ${OPEN_STATUS_DD === school ? `
             <div class="status-dropdown">

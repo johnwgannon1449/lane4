@@ -1,0 +1,260 @@
+We are upgrading the Lane4 Profile section to add a new set of personalization questions and make their responses save properly.
+
+IMPORTANT
+This change is about the Profile/preferences experience only.
+Do NOT change:
+- admissions logic
+- swim/recruiting logic
+- search logic (yet)
+- deep dive narrative logic
+- onboarding flow unless needed only to support shared preference state
+- existing swimmer bio / event time save behavior unless required for integration
+
+GOAL
+Add a clean “Preferences” section to the Profile area where users can answer personalization questions that will later support search and deep dives.
+
+Also add a real Save button for this section so users can save/update their responses intentionally.
+
+==================================================
+PART 1 — NEW PROFILE QUESTIONS
+==================================================
+
+Add these questions to the Profile section under a clear heading like:
+
+“Preferences”
+or
+“Personalize Your Lane4 Results”
+
+Subtext can say something like:
+“These answers help Lane4 personalize search results and deep dives.”
+
+Use clean, simple single-select controls (dropdowns, segmented controls, button groups, or radio-style cards — whatever fits the current UI best).
+
+QUESTIONS TO ADD
+
+1. Geography openness
+Label:
+“Where are you open to?”
+
+Options:
+- Anywhere
+- East Coast
+- Midwest
+- South
+- West Coast
+
+Stored key:
+preferred_region
+
+--------------------------------------------------
+
+2. Academic focus
+Label:
+“What’s your academic focus so far?”
+
+Options:
+- STEM
+- Pre-med / Health
+- Business / Economics
+- Humanities / Social Sciences
+- Undecided
+
+Stored key:
+academic_focus
+
+--------------------------------------------------
+
+3. Academic environment
+Label:
+“What kind of academic environment do you want?”
+
+Options:
+- Very rigorous, push me
+- Challenging but balanced
+- More flexible / less pressure
+
+Stored key:
+academic_environment
+
+--------------------------------------------------
+
+4. Swim team level
+Label:
+“What level of team do you want to be on?”
+
+Options:
+- I want to be on one of the fastest teams I can make
+- I want a strong team where I can contribute
+- I want a team where I can score and make an impact
+
+Stored key:
+swim_team_level
+
+--------------------------------------------------
+
+5. Team competition comfort
+Label:
+“How do you feel about competition on your team?”
+
+Options:
+- I want to fight for top spots
+- I’m good being in the mix
+- I want a more supportive / lower-pressure team
+
+Stored key:
+team_competition_comfort
+
+--------------------------------------------------
+
+6. Budget comfort
+Label:
+“What feels realistic to pay per year?”
+
+Options:
+- $0–15K
+- $15K–35K
+- $35K+
+
+Stored key:
+budget_range
+
+--------------------------------------------------
+
+7. Need-based aid expectation
+Label:
+“Do you expect need-based financial aid?”
+
+Options:
+- Yes
+- Not sure
+- No
+
+Stored key:
+need_based_aid_expectation
+
+==================================================
+PART 2 — DATA MODEL / STATE
+==================================================
+
+Create a dedicated preferences object in frontend state and persistence.
+
+Suggested structure:
+
+preferences = {
+  preferred_region: "",
+  academic_focus: "",
+  academic_environment: "",
+  swim_team_level: "",
+  team_competition_comfort: "",
+  budget_range: "",
+  need_based_aid_expectation: ""
+}
+
+If we already have a good place for this in current app state, use that.
+If there is an existing localStorage pattern for swimmer/profile data, integrate cleanly instead of inventing a conflicting structure.
+
+Preferred storage key if local:
+lane4_preferences
+
+If the app is already using server-backed per-user save/load, also wire this preferences object into that same save/load flow so it persists across login sessions.
+
+==================================================
+PART 3 — SAVE BUTTON
+==================================================
+
+Add an explicit save button for this section.
+
+Button label:
+“Save Preferences”
+
+Behavior:
+- saves current preferences selections
+- shows a clear success state like:
+  - “Preferences saved”
+  - or a subtle toast / inline success message
+- should not require saving unrelated profile sections at the same time unless the current architecture makes that cleaner
+
+If there is already a global save pattern in the Profile area:
+- either integrate this section into it cleanly
+- OR add a dedicated save button just for preferences
+
+The key requirement is:
+users must have a clear, obvious way to save these answers.
+
+==================================================
+PART 4 — LOAD + EDIT BEHAVIOR
+==================================================
+
+When the user returns:
+- previously saved answers should load automatically
+- controls should show saved selections
+- users should be able to edit and re-save at any time
+
+If using localStorage:
+- load on app/profile initialization
+
+If using backend persistence:
+- include preferences in existing user data load/save payloads
+
+==================================================
+PART 5 — UI / DESIGN
+==================================================
+
+This section should feel polished and intentional.
+
+Design goals:
+- cleaner than a raw form
+- easy to scan
+- parent-friendly
+- athlete-friendly
+- not cluttered
+
+Recommended layout:
+- section title
+- short helper text
+- stack questions with consistent spacing
+- each question clearly labeled
+- answer control directly below
+- save button at bottom of section
+
+Styling:
+- use existing Lane4 visual language
+- maintain good spacing
+- make the save button obvious but tasteful
+- on desktop, two-column layout is okay if it still reads clearly
+- on mobile, stack cleanly
+
+Do NOT make this feel like a giant survey.
+It should feel lightweight and fast.
+
+==================================================
+PART 6 — INTEGRATION NOTES
+==================================================
+
+This implementation should prepare us for later use in:
+- search personalization
+- deep dive personalization
+
+But DO NOT wire these answers into search logic yet unless it is trivially necessary.
+For now, we are just collecting and saving them properly.
+
+If there is already an unused “About [Name]” or similar personalization section, update/replace it cleanly with this improved Preferences section.
+
+==================================================
+PART 7 — DELIVERABLE
+==================================================
+
+After implementing, report back with:
+
+1. exact files changed
+2. where preferences state is stored
+3. storage key(s) or backend field(s) used
+4. how load/save works
+5. confirmation that:
+   - all 7 questions appear in Profile
+   - answers persist after refresh
+   - answers can be edited and re-saved
+   - there is a visible Save Preferences button
+6. show one example of the saved preferences object shape
+
+If the current codebase makes a dedicated save button awkward, make the cleanest practical implementation — but the user must still have a clear save action for this section.
