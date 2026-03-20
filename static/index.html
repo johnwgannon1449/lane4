@@ -757,6 +757,20 @@
       </div>
     </div>
 
+    <div class="section-label" style="margin-top:1.5rem;">Anything else?
+      <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:0.78rem;color:var(--muted);">— optional, free-form</span>
+    </div>
+    <div class="card" style="margin-bottom:2rem;">
+      <div class="vibe-q">
+        <div class="vibe-q-label" style="margin-bottom:0.6rem;">Tell Lane4 anything else that matters — academics, team culture, geography, coaching style, family factors, anything</div>
+        <textarea id="other-prefs-input" class="other-prefs-ta"
+          placeholder="e.g. I want a school with a strong pre-med track near a city, and a team with a head coach who's invested in individual development…"
+          rows="4"
+          oninput="OTHER_PREFS = this.value; localStorage.setItem('lane4_other_prefs', OTHER_PREFS); schedulePush();"
+          onblur="clearTimeout(_syncTimer); pushToServer();"></textarea>
+      </div>
+    </div>
+
     <div class="danger-zone">
       <div id="profile-account-row" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;padding-bottom:0.9rem;border-bottom:1px solid var(--border);">
         <div>
