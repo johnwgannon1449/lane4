@@ -1,0 +1,374 @@
+We are upgrading Lane4’s visuals with a proper school image pipeline.
+
+IMPORTANT
+This is a visual/UI upgrade only.
+Do NOT change:
+- search logic
+- admissions logic
+- swim/recruiting logic
+- deep dive narrative logic
+- scoring labels
+- school ranking behavior
+
+GOAL
+Add high-quality, school-specific images that are accurate and stable.
+
+We want:
+1. ONE strong hero image on every school card
+2. THREE curated images on every deep dive:
+   - hero campus image (THE main campus shot)
+   - student life image (students / campus vibe)
+   - swim image (pool, swim team, aquatic center, swimmers)
+3. images should be as school-specific as possible, not generic “college-looking” photos
+4. once selected, image URLs should remain stable across refreshes
+
+==================================================
+PART 1 — CORE IMAGE STRATEGY
+==================================================
+
+Do NOT use generic query-image URLs like:
+- source.unsplash.com/featured/?school+campus
+or any similar “random image from a text query” shortcut.
+
+Instead, build a REAL image selection pipeline:
+
+For each school, find actual image search results and select the best matching image for each category:
+- campus hero
+- student life
+- swim
+
+Then STORE those image URLs (or local cached references) so the same school gets the same images every time.
+
+The end result should behave like a curated image system, even if selection is automated initially.
+
+==================================================
+PART 2 — IMAGE CATEGORIES
+==================================================
+
+For each school, collect up to 3 image URLs:
+
+1. image_hero_url
+Purpose:
+- the best, most iconic campus image
+- beautiful, recognizable, aspirational
+- suitable for the top of a school card and top of deep dive
+
+Preferred search intent:
+"{school name} campus"
+"{school name} main quad"
+"{school name} admissions campus"
+"{school name} iconic campus"
+
+2. image_student_life_url
+Purpose:
+- students on campus
+- student vibe
+- campus energy / community
+- avoid stock-photo feel when possible
+
+Preferred search intent:
+"{school name} students campus"
+"{school name} student life"
+"{school name} campus students"
+"{school name} admissions students"
+
+3. image_swim_url
+Purpose:
+- swim team, aquatic center, pool, swimmers, team energy
+- should feel relevant to swimming, not just generic athletics
+
+Preferred search intent:
+"{school name} swim team"
+"{school name} swimming pool"
+"{school name} aquatic center"
+"{school name} swimming athletics"
+
+==================================================
+PART 3 — IMAGE SOURCE / SELECTION PIPELINE
+==================================================
+
+Implement a helper or script that does the following:
+
+For each school:
+1. run image search queries for each image type
+2. inspect a small number of top candidate results
+3. choose the best candidate
+4. save the selected image URL back to the school record (or separate cache file / JSON map)
+
+Possible implementation approaches:
+- use an image search API if one is already available or easy to add
+- or scrape/search carefully if practical in the current environment
+- or use a lightweight library/service that can return actual image result URLs
+
+Whichever method is used, the key requirement is:
+- select from REAL search results
+- not random image query endpoints
+
+Selection priorities:
+- school-specific relevance
+- visual quality
+- horizontal / card-friendly crop potential
+- no broken or tiny thumbnails
+- no obvious logos as the primary image
+- no maps / diagrams / screenshots
+- no irrelevant images
+
+If multiple good candidates exist:
+- prefer official university / admissions / athletics photos
+- then Wikimedia / editorial-quality images
+- then other strong public sources
+
+==================================================
+PART 4 — STABILITY / CACHING
+==================================================
+
+This is important:
+Once an image is selected for a school + category, cache it.
+
+Implement one of these:
+- persist fields in the school dataset
+- or maintain a separate image manifest file like:
+  school_images.json
+
+Example structure:
+{
+  "Emory University": {
+    "hero": "...",
+    "student_life": "...",
+    "swim": "..."
+  },
+  ...
+}
+
+Requirements:
+- same school should load the same chosen image on future refreshes
+- do not re-pick images on every page load
+- allow easy regeneration later if we want to improve the set
+
+==================================================
+PART 5 — FALLBACK LOGIC
+==================================================
+
+If a category cannot find a good school-specific image:
+
+For hero:
+1. retry with simpler school query
+2. retry with official admissions/campus phrasing
+3. fallback to a strong default campus placeholder
+
+For student life:
+1. retry with broader school + student phrasing
+2. fallback to hero image if necessary
+3. otherwise fallback to a default student-life placeholder
+
+For swim:
+1. retry with pool / aquatics / athletics queries
+2. fallback to athletics-related school image if needed
+3. otherwise fallback to a default swim placeholder
+
+Do NOT allow broken image icons in the UI.
+
+Use onerror handlers and safe fallbacks.
+
+==================================================
+PART 6 — DATA MODEL
+==================================================
+
+Add or support these fields per school:
+
+- image_hero_url
+- image_student_life_url
+- image_swim_url
+
+If it is cleaner, these can be dynamically loaded from a separate manifest/cache file rather than hardcoded into the main school dataset.
+
+Also allow optional metadata if useful:
+- image_source_domain
+- image_last_verified
+- image_confidence
+
+Only add metadata if it helps implementation. Do not overcomplicate.
+
+==================================================
+PART 7 — BACKEND / HELPER FUNCTIONS
+==================================================
+
+Please create clean helper functions for this system, such as:
+
+- search_school_images(school_name, category)
+- choose_best_image(candidates, category, school_name)
+- get_school_images(school_name)
+- load_school_image_manifest()
+- save_school_image_manifest()
+
+If a one-time build script makes more sense, create something like:
+- scripts/build_school_images.py
+
+That script can:
+- iterate over all schools
+- fetch/select/store image URLs
+- write the manifest
+
+This would be a good approach.
+
+==================================================
+PART 8 — SCHOOL CARD UI UPGRADE
+==================================================
+
+Every school card should show the hero campus image at the top.
+
+CARD DESIGN GOAL
+Cards should feel:
+- premium
+- warm
+- aspirational
+- real
+- less drab
+- still easy to scan
+
+CARD IMAGE SPECS
+- full width
+- fixed aspect ratio (16:9 preferred)
+- object-fit: cover
+- rounded top corners
+- subtle gradient overlay if useful for readability
+
+CARD LAYOUT
+Top section:
+- large hero image
+
+Header area:
+- school name
+- location
+- preserve existing important tags/scores beneath
+
+Below:
+- existing score / fit / CTA content
+- improve spacing and visual hierarchy if needed
+
+STYLE GUIDELINES
+- modern rounded cards
+- soft shadow
+- clean spacing
+- stronger hierarchy
+- image-first without becoming cluttered
+- text should remain highly readable
+
+Do not redesign the whole product.
+Just make the cards noticeably better.
+
+==================================================
+PART 9 — DEEP DIVE IMAGE LAYOUT
+==================================================
+
+Each deep dive should display 3 images in this order:
+
+1. Hero campus image
+- large, top, dominant
+- this is THE image
+
+2. Student life image
+- secondary
+
+3. Swim image
+- secondary
+
+Preferred layout:
+- hero image full width on top
+- below: a two-column row
+  left = student life
+  right = swim
+
+On smaller screens:
+- stack vertically in the same order
+
+IMAGE STYLE
+- rounded corners
+- consistent spacing
+- object-fit: cover
+- no distortion
+- lazy load secondaries if helpful
+
+Optional:
+Small clean labels:
+- Campus
+- Student Life
+- Swimming
+
+Only add labels if they look polished.
+
+==================================================
+PART 10 — PERFORMANCE / UX
+==================================================
+
+Requirements:
+- do not block initial render more than necessary
+- load from stored/cached selected image URLs
+- lazy load non-critical images
+- reserve space to reduce layout shift
+- use clean fallback handling
+- keep UI smooth
+
+If helpful, build the image manifest once and then serve from it, instead of doing live searches during normal app usage.
+
+That is preferred.
+
+==================================================
+PART 11 — IMPLEMENTATION PRIORITY
+==================================================
+
+Preferred implementation plan:
+
+1. identify all schools in our current dataset
+2. build a one-time or repeatable image-harvesting script
+3. fetch/select/store hero, student life, and swim image URLs
+4. wire stored image URLs into cards and deep dives
+5. improve visual styling so the images actually elevate the product
+6. verify fallbacks for schools where one category is weak
+
+This should be a practical, durable image system we can improve over time.
+
+==================================================
+PART 12 — DESIGN TASTE
+==================================================
+
+The app currently feels too drab.
+This image upgrade should make it feel:
+- premium
+- credible
+- more emotionally engaging
+- like a real college search product families would want to use
+
+But still:
+- trustworthy
+- parent-friendly
+- athlete-friendly
+- organized
+- not flashy
+- not overdesigned
+
+We are not making a travel brochure.
+We are making schools feel real, beautiful, and worth exploring.
+
+==================================================
+PART 13 — DELIVERABLE
+==================================================
+
+After implementation, report back with:
+
+1. exact files changed
+2. new helper/function/script names
+3. where image URLs are stored
+4. how image search/selection works
+5. how caching/stability works
+6. what fallback logic was added
+7. what card styling changes were made
+8. what deep dive layout changes were made
+9. show 3 example schools with their 3 selected image URLs
+10. confirm:
+   - every school card has one hero image
+   - every deep dive has three images
+   - images are stable across refreshes
+   - broken images fall back cleanly
+
+If any part of the current codebase makes this awkward, implement the cleanest practical version without changing core product behavior.
