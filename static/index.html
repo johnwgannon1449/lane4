@@ -842,58 +842,26 @@ function toRecruitLabel(adjTier) {
   return adjTier ? (LABEL[BAND[adjTier] ?? 0] || null) : null;
 }
 
-function costEstimate(meta) {
-  // Mirror Python _estimate_merit_block: COA from accept rate, then reduce by merit award.
-  const merit     = meta.merit  || '';
-  const accept    = meta.accept || 60;
-  const satMedian = meta.satMedian || 1200;
-  const sat       = JAMES.sat || 0;
-  const gpa       = parseFloat(JAMES.gpa) || 0;
-
-  // COA estimate from acceptance rate
-  let coa;
-  if      (accept <= 20) coa = 72000;
-  else if (accept <= 35) coa = 67000;
-  else if (accept <= 55) coa = 61000;
-  else if (accept <= 70) coa = 56000;
-  else                   coa = 51000;
-
-  if (merit === 'none' || !sat) return coa;  // no merit scholarship or no SAT on file
-
-  const maxMerit = merit === 'high' ? 25000 : 15000;
-  const satDiff  = sat - satMedian;
-  const eliteGpa = gpa >= 3.9;
-
-  let loPct, hiPct;
-  if      (satDiff < -50)               { loPct = 0.00; hiPct = 0.00; }
-  else if (satDiff <= 50  && !eliteGpa) { loPct = 0.25; hiPct = 0.40; }
-  else if (satDiff <= 120 && !eliteGpa) { loPct = 0.50; hiPct = 0.65; }
-  else                                  { loPct = 0.65; hiPct = 0.75; }
-
-  if (loPct === 0) return coa;  // below merit threshold
-
-  const lo  = Math.round(maxMerit * loPct / 1000) * 1000;
-  const hi  = Math.round(maxMerit * hiPct / 1000) * 1000;
-  return Math.max(0, Math.round((coa - lo + coa - hi) / 2));  // midpoint of net range
+function _costCOA(accept) {
+  if      (accept <= 20) return 72000;
+  else if (accept <= 35) return 67000;
+  else if (accept <= 55) return 61000;
+  else if (accept <= 70) return 56000;
+  else                   return 51000;
 }
 
 function costEstimateRange(meta) {
-  // Returns {coa, lo, hi, hasMerit} for rich display in deep dive.
+  // Returns {coa, lo, hi, hasMerit} when a real net estimate exists, or null when it doesn't.
+  // Null means: hide the cost badge — don't show a meaningless sticker price.
   const merit     = meta.merit  || '';
   const accept    = meta.accept || 60;
   const satMedian = meta.satMedian || 1200;
-  const sat       = JAMES.sat || 0;
+  const sat       = parseInt(JAMES.sat)   || 0;
   const gpa       = parseFloat(JAMES.gpa) || 0;
+  const coa       = _costCOA(accept);
 
-  let coa;
-  if      (accept <= 20) coa = 72000;
-  else if (accept <= 35) coa = 67000;
-  else if (accept <= 55) coa = 61000;
-  else if (accept <= 70) coa = 56000;
-  else                   coa = 51000;
-
-  if (merit === 'none' || !sat)
-    return { coa, lo: coa, hi: coa, hasMerit: false };
+  // Can't estimate without SAT, or school has no merit scholarships
+  if (!sat || merit === 'none') return null;
 
   const maxMerit = merit === 'high' ? 25000 : 15000;
   const satDiff  = sat - satMedian;
@@ -905,11 +873,19 @@ function costEstimateRange(meta) {
   else if (satDiff <= 120 && !eliteGpa) { loPct = 0.50; hiPct = 0.65; }
   else                                  { loPct = 0.65; hiPct = 0.75; }
 
-  if (loPct === 0) return { coa, lo: coa, hi: coa, hasMerit: false };
+  // Below merit threshold — no award, nothing to show
+  if (loPct === 0) return null;
 
   const lo = Math.round(maxMerit * loPct / 1000) * 1000;
   const hi = Math.round(maxMerit * hiPct / 1000) * 1000;
   return { coa, lo: Math.max(0, coa - hi), hi: Math.max(0, coa - lo), hasMerit: true };
+}
+
+function costEstimate(meta) {
+  // Returns midpoint number for badge display, or null if no real estimate available.
+  const range = costEstimateRange(meta);
+  if (!range) return null;
+  return Math.round((range.lo + range.hi) / 2);
 }
 function formatCost(n) {
   return '$' + Number(n).toLocaleString();
@@ -1990,7 +1966,7 @@ function _buildCardHtml(school) {
   const adjTier = result.adjTier || '';
   const offerVal  = crm.cost?.offer != null ? crm.cost.offer : null;
   const costNum   = offerVal !== null ? offerVal : costEstimate(meta);
-  const costLabel = offerVal !== null ? `${formatCost(costNum)}/yr (Offer)` : `~${formatCost(costNum)}/yr (Est.)`;
+  const costLabel = offerVal !== null ? `${formatCost(costNum)}/yr (Offer)` : (costNum !== null ? `~${formatCost(costNum)}/yr (Est.)` : null);
   const noteCount = (crm.notes || []).length;
   const remCount  = (crm.reminders || []).filter(r => !r.completed).length;
   const noteLine  = [noteCount ? `${noteCount} note${noteCount > 1 ? 's' : ''}` : '', remCount ? `${remCount} open reminder${remCount > 1 ? 's' : ''}` : ''].filter(Boolean).join(' · ');
@@ -2001,7 +1977,7 @@ function _buildCardHtml(school) {
     result.division  ? `<span class="badge" style="background:#F1F5F9;color:#475569;">${result.division}</span>` : '',
     meta.hiddenIvy   ? `<span class="badge" style="background:#1E3A5F;color:#fff;">Hidden Ivy</span>` : '',
     meta.stem        ? `<span class="badge" style="background:#EFF6FF;color:#2563EB;">STEM</span>` : '',
-    `<span class="badge" style="background:transparent;color:#64748B;border:1px solid #CBD5E1;">${costLabel}</span>`,
+    costLabel        ? `<span class="badge" style="background:transparent;color:#64748B;border:1px solid #CBD5E1;">${costLabel}</span>` : '',
   ].filter(Boolean).join('');
   return `<div class="school-card" style="border-left-color:${cfg.color};">
     <div class="school-name">${esc(school)}</div>
@@ -2290,7 +2266,8 @@ function renderMyList() {
     const costFrozen = offerVal !== null;
     const costRange  = costFrozen ? null : costEstimateRange(meta);
     const costNum    = costFrozen ? offerVal : costEstimate(meta);
-    const costLabel  = costFrozen
+    const hasCost    = costFrozen || costNum !== null;
+    const costLabel  = !hasCost ? '' : costFrozen
       ? `${formatCost(costNum)}/yr`
       : (costRange?.hasMerit && costRange.lo !== costRange.hi)
           ? `~${formatCost(costRange.lo)}–${formatCost(costRange.hi)}/yr`
@@ -2321,7 +2298,7 @@ function renderMyList() {
           </div>
           <!-- slot 3: cost estimate -->
           <div class="list-badge-slot">
-            <span class="list-badge" style="background:${costBg};color:${costClr};border:${costBorder};${costStyle}"><span style="opacity:0.75;font-style:normal;font-weight:400;">${costPrefix}&nbsp;</span>${esc(costLabel)}</span>
+            ${hasCost ? `<span class="list-badge" style="background:${costBg};color:${costClr};border:${costBorder};${costStyle}"><span style="opacity:0.75;font-style:normal;font-weight:400;">${costPrefix}&nbsp;</span>${esc(costLabel)}</span>` : ''}
           </div>
           <!-- slot 4: division -->
           <div class="list-badge-slot">
@@ -2384,12 +2361,12 @@ function renderMyList() {
           </div>` : `
           <div style="font-size:0.8rem;color:var(--muted);margin-bottom:0.5rem;">
             <span style="font-style:italic;">Lane4 estimate</span> —
-            sticker price ~${formatCost(costRange?.coa ?? costNum)}/yr
+            sticker price ~${formatCost(costRange?.coa ?? _costCOA(meta.accept || 60))}/yr
             ${costRange?.hasMerit
               ? `, net after merit: <strong>${formatCost(costRange.lo)}–${formatCost(costRange.hi)}/yr</strong>`
               : meta.merit === 'none'
                 ? '(no merit scholarships — aid here is need-based)'
-                : !JAMES.sat ? '(enter your SAT on the Profile tab to see merit estimate)' : ''
+                : !parseInt(JAMES.sat) ? '(enter your SAT on the Profile tab to see merit estimate)' : '(your scores may be below this school\'s merit threshold)'
             }.
             Once you receive an offer, enter it below to replace our guess with the real number.
           </div>
