@@ -3252,6 +3252,228 @@ def _build_school_line(i, r):
         f"vibe=\"{vibe}\""
     )
 
+# ─────────────────────────────────────────────────────────────────────────────
+# AI-FIRST SEARCH PIPELINE — Steps 1-5 helpers
+# ─────────────────────────────────────────────────────────────────────────────
+
+_ADM_LABEL_SCORE: dict = {
+    'Very Strong Chance':       100,
+    'Strong Chance':             80,
+    'Realistic Shot':            60,
+    'Possible':                  40,
+    'Major Reach':               15,
+    'Moonshot':                   5,
+    'Moonshot — Apply for Fun':   2,
+    'Unknown':                   25,
+}
+
+
+def _classify_query_mode(query: str) -> str:
+    """Step 1 — Classify query: GUIDED / CONSTRAINED / OBJECTIVE / EXPLORATORY."""
+    q = query.lower().strip()
+    guided = [
+        'for me', 'for my', 'for a swimmer like',
+        'where should i', 'what should i', 'should i look',
+        'where can i swim', 'best schools for swimming',
+        'good colleges for swimming', 'good schools for swimming',
+        'where i should', 'help me find', 'find me schools',
+        'find schools for me', 'recommend for me',
+    ]
+    if any(s in q for s in guided):
+        return 'GUIDED'
+    constrained = [
+        'where i can', 'i can get in', 'can get into',
+        'i can make', 'near me', 'close to home', 'i could get into',
+    ]
+    if any(c in q for c in constrained):
+        return 'CONSTRAINED'
+    objective = [
+        'best colleges in america', 'top universities in america',
+        'us news', 'nationally ranked', 'world class',
+        'top 10', 'top 20', 'top 50', 'globally ranked',
+        'best universities in the world',
+    ]
+    if any(s in q for s in objective):
+        return 'OBJECTIVE'
+    return 'EXPLORATORY'
+
+
+def _build_student_context(name, gpa, sat, act, times, vibe, other_prefs) -> str:
+    """Build a concise student context string for GUIDED/CONSTRAINED prompts."""
+    parts = [f"Student: {name or 'the swimmer'}"]
+    if gpa:
+        parts.append(f"GPA {gpa:.1f}")
+    if sat:
+        parts.append(f"SAT {sat}")
+    elif act:
+        parts.append(f"ACT {act}")
+    if times:
+        parts.append(f"events: {', '.join(list(times.keys())[:3])}")
+    if vibe:
+        skip = {'Not sure yet', 'Genuinely want to be well-rounded', '', None}
+        prefs = [v for v in vibe.values() if v not in skip]
+        if prefs:
+            parts.append(f"preferences: {'; '.join(prefs[:4])}")
+    if other_prefs and str(other_prefs).strip():
+        parts.append(f"notes: {str(other_prefs).strip()[:200]}")
+    return ', '.join(parts)
+
+
+def _build_candidate_prompt(query: str, mode: str, student_ctx: str) -> tuple:
+    """Step 2 — Build system + user prompts for candidate school generation."""
+    system = (
+        "You are an expert U.S. college counselor generating a candidate list of colleges. "
+        "Your ONLY job is to produce a strong pool of schools relevant to the search query.\n\n"
+        "Rules:\n"
+        "- Focus on academic/program strength and institutional fit to the query\n"
+        "- Do NOT evaluate admissions likelihood, athletic fit, or finances\n"
+        "- Do NOT explain choices or write narratives\n"
+        "- Return ONLY valid JSON — no markdown, no extra text\n"
+        "- 'schools' must contain 12 to 18 full school name strings\n"
+        "- 'answer' is 1-2 plain-English sentences interpreting the query\n"
+        "- Include quality range — not just elite schools\n"
+        "- Honor explicit constraints exactly (Ivy League, NESCAC, Midwest, D3, pre-med, etc.)\n"
+        'Format: {"answer": "...", "schools": ["Full School Name", ...]}'
+    )
+    user_lines = [f'Search: "{query}"']
+    if mode in ('GUIDED', 'CONSTRAINED') and student_ctx:
+        user_lines.append(
+            f"\nStudent context (use only to interpret the question — "
+            f"do NOT filter for admissibility or swim fit):\n{student_ctx}"
+        )
+    else:
+        user_lines.append("\n(General query — do not personalize.)")
+    user_lines.append("\nReturn JSON only.")
+    return system, '\n'.join(user_lines)
+
+
+def _parse_candidate_names(text: str) -> tuple:
+    """Parse LLM JSON → (answer str, list of school name strings)."""
+    text = re.sub(r'```json\s*', '', text)
+    text = re.sub(r'```\s*', '', text).strip()
+    m = re.search(r'\{[\s\S]*\}', text)
+    if not m:
+        raise ValueError('No JSON in candidate response')
+    parsed = json.loads(m.group())
+    answer = str(parsed.get('answer', '')).strip()
+    names  = [str(s).strip() for s in parsed.get('schools', []) if str(s).strip()]
+    if not names:
+        raise ValueError('Empty candidate list returned by AI')
+    return answer, names
+
+
+_CAND_STOP = frozenset({
+    'university', 'college', 'institute', 'school', 'of', 'the', 'at',
+    'and', 'in', 'a', 'tech', 'for',
+})
+
+
+def _cname_norm(s: str) -> str:
+    return re.sub(r'\s+', ' ', re.sub(r'[^a-z0-9 ]', '', s.lower())).strip()
+
+
+def _cname_toks(s: str) -> frozenset:
+    return frozenset(t for t in _cname_norm(s).split()
+                     if t not in _CAND_STOP and len(t) > 1)
+
+
+def _map_to_universe(candidate_names: list, all_results: list) -> list:
+    """
+    Step 3 — Fuzzy-map LLM-generated school names → Lane4 school records.
+
+    Three-tier matching:
+      1. Exact normalized match
+      2. Substring match (normalized name contained in/containing each other)
+      3. Key-token Jaccard similarity ≥ 0.50
+    Ignores candidates that don't match confidently; never fabricates schools.
+    """
+    by_norm = {_cname_norm(r['school']): r for r in all_results}
+    mapped, seen = [], set()
+
+    for cand in candidate_names:
+        cand = cand.strip()
+        if not cand:
+            continue
+        record = None
+
+        # 1. Exact normalized match
+        record = by_norm.get(_cname_norm(cand))
+
+        # 2. Substring match
+        if not record:
+            c_n = _cname_norm(cand)
+            for s_n, r in by_norm.items():
+                if c_n and (c_n in s_n or s_n in c_n):
+                    record = r
+                    break
+
+        # 3. Key-token Jaccard ≥ 0.50
+        if not record:
+            c_t = _cname_toks(cand)
+            best, best_r = 0.0, None
+            for r in all_results:
+                r_t = _cname_toks(r['school'])
+                if not c_t or not r_t:
+                    continue
+                jac = len(c_t & r_t) / len(c_t | r_t)
+                if jac > best:
+                    best, best_r = jac, r
+            if best >= 0.50:
+                record = best_r
+
+        if record and record['school'] not in seen:
+            seen.add(record['school'])
+            mapped.append(record)
+
+    return mapped
+
+
+def _search_rank_score(r: dict, mode: str) -> float:
+    """
+    Step 5 — Composite ranking score (higher = shown first).
+
+    GUIDED / CONSTRAINED: admissions truth dominates (0.60) + swim fit (0.40).
+      Swim fit uses the scorer's actual adjPts when available:
+        adjPts > 0          → swimmer earns points there, use actual score
+        adjPts = 0 + has swim data → swimmer is below the roster bar → swim_n = 0
+        adjPts = 0 + no swim data  → use a soft program-strength proxy (×0.25)
+      → Michigan sinks when the swimmer would not make the roster.
+      → MIT sinks when the student is not admissible.
+
+    OBJECTIVE / EXPLORATORY: program strength leads (0.65) + admissions (0.35).
+      Uses full program-strength proxy so results reflect genuine quality,
+      not personalised fit for this swimmer.
+    """
+    _ADM_S = {
+        'Very Strong Chance': 100, 'Strong Chance': 80,
+        'Realistic Shot': 60,     'Possible': 40,
+        'Major Reach': 15,        'Moonshot': 5,
+        'Moonshot — Apply for Fun': 2, 'Unknown': 25,
+    }
+    adm_s    = _ADM_S.get(r.get('admission', {}).get('label', 'Unknown'), 25)
+    adj      = r.get('adjPts') or 0
+    has_swim = r.get('hasSwimData', False)
+    _PROX    = {'1A': 130, '1B': 100, '2': 72, '3': 46, '4': 22}
+
+    if mode in ('GUIDED', 'CONSTRAINED'):
+        # Only credit swim fit when the scorer has confirmed the swimmer earns
+        # points at this school.  Both "below the bar" (adjPts=0, hasSwimData=True)
+        # and "no data" (hasSwimData=False) get swim_n=0 — if we can't confirm
+        # relevance, we don't reward it.  Ranking falls back to admissions truth.
+        swim_proxy = adj if adj > 0 else 0
+        swim_n = min(swim_proxy / 130.0, 1.0) * 100
+        # Tie-breaker: within the same admissions band, prefer broader-admit
+        # schools (higher accept rate → easier reach → more honest for this kid)
+        accept_bonus = (r.get('meta') or {}).get('accept') or 50
+        accept_bonus = min(accept_bonus / 100.0, 1.0) * 3   # 0-3 pt tiebreak
+        return adm_s * 0.60 + swim_n * 0.40 + accept_bonus
+
+    # OBJECTIVE / EXPLORATORY — program strength, not personalised
+    swim_proxy = adj if adj > 0 else _PROX.get(r.get('confTierShort', ''), 0)
+    swim_n     = min(swim_proxy / 130.0, 1.0) * 100
+    return swim_n * 0.65 + adm_s * 0.35
+
+
 def _parse_search_response(text, sorted_35):
     """
     Parse Claude's JSON search response.
@@ -3467,7 +3689,7 @@ def search():
 
     client = _get_anthropic()
     if not client:
-        fallback = ([{**direct_match, 'directMatch': True}] if direct_match else []) + pool[:6 if not direct_match else 5]
+        fallback = ([{**direct_match, 'directMatch': True}] if direct_match else []) + pool[:5 if direct_match else 6]
         return jsonify({
             'error': 'AI search is not configured',
             'detail': 'ANTHROPIC_API_KEY is missing or invalid',
@@ -3475,6 +3697,87 @@ def search():
             'directMatch': bool(direct_match),
         }), 503
 
+    # ── NON-DIRECT: AI-FIRST PIPELINE (Steps 1-5) ────────────────────────────
+    # Queries that are not a direct school-name lookup use a generative
+    # candidate-pool approach: Claude proposes schools, Lane4 scores & ranks.
+    if not direct_match:
+        vibe_answers  = data.get('vibeAnswers', {}) or {}
+        other_prefs_s = data.get('otherPrefs', '') or ''
+        mode          = _classify_query_mode(query)
+        student_ctx   = (
+            _build_student_context(
+                swimmer_name, gpa, sat, act_score, times,
+                vibe_answers, other_prefs_s,
+            )
+            if mode in ('GUIDED', 'CONSTRAINED') else ''
+        )
+        cand_sys, cand_usr = _build_candidate_prompt(query, mode, student_ctx)
+
+        try:
+            resp = client.messages.create(
+                model='claude-sonnet-4-6',
+                max_tokens=700,
+                system=cand_sys,
+                messages=[{'role': 'user', 'content': cand_usr}],
+            )
+            answer, candidate_names = _parse_candidate_names(resp.content[0].text)
+
+            # Step 3: map to universe
+            excl_set  = set(eliminated) | set(my_list)
+            avail     = [r for r in all_results if r['school'] not in excl_set]
+            candidates = _map_to_universe(candidate_names, avail)
+
+            # Narrow pool fallback: if mapping collapses to < 3, use _pre_sort
+            if len(candidates) < 3:
+                fallback = _pre_sort(all_results, query, eliminated, my_list)[:6]
+                return jsonify({
+                    'error': 'Candidate mapping too narrow',
+                    'fallback': fallback,
+                    'directMatch': False,
+                }), 200
+
+            # Steps 4+5: apply existing scoring (already in each record from
+            # build_school_universe) then rank by admissions + swim fit
+            candidates.sort(key=lambda r: -_search_rank_score(r, mode))
+            want_more = any(w in query.lower() for w in (
+                'more schools', 'more options', 'show me more', 'give me more',
+            ))
+            limit   = 12 if want_more else 6
+            schools = candidates[:limit]
+
+            # Auto-generate aiWhy from existing score labels (no extra Claude call)
+            for r in schools:
+                adm_lbl  = r.get('admission', {}).get('label', '')
+                swim_lbl = r.get('adjTier', '')
+                parts    = [p for p in [adm_lbl, swim_lbl] if p and p not in ('Unknown', '')]
+                r['aiWhy'] = ' · '.join(parts[:2])
+
+            return jsonify({
+                'answer':     answer,
+                'schools':    schools,
+                'directMatch': False,
+                'searchMode': mode,
+            })
+
+        except json.JSONDecodeError as e:
+            fallback = _pre_sort(all_results, query, eliminated, my_list)[:6]
+            return jsonify({
+                'error': 'AI returned malformed JSON',
+                'detail': str(e),
+                'fallback': fallback,
+                'directMatch': False,
+            }), 200
+
+        except (ValueError, Exception) as e:
+            fallback = _pre_sort(all_results, query, eliminated, my_list)[:6]
+            return jsonify({
+                'error': 'Search failed',
+                'detail': str(e),
+                'fallback': fallback,
+                'directMatch': False,
+            }), 200
+
+    # ── DIRECT MATCH PATH — unchanged (similarity sort + Claude picks 5) ─────
     system_prompt = (
         "You are Lane4. Respond ONLY with a valid JSON object. "
         "No markdown. No explanation. Start with { end with }. "
@@ -3482,34 +3785,20 @@ def search():
     )
 
     school_lines = '\n'.join(_build_school_line(i, r) for i, r in enumerate(pool))
-
-    if direct_match:
-        user_prompt = (
-            f'The user searched for "{direct_match["school"]}" '
-            f'({direct_match["conference"] or "independent"}, {direct_match.get("division","")}, '
-            f'program strength: {_program_strength_desc(direct_match)}).\n\n'
-            f"{swimmer_name}: GPA {gpa}, SAT {sat}" + (f", ACT {act_score}" if act_score else "") + ".\n\n"
-            f"This list is already sorted by institutional similarity to {direct_match['school']} "
-            f"(same division, selectivity, and conference tier). "
-            "Pick the 5 schools that are most genuinely similar — consider academic culture, "
-            "school size, mission, and athletic program level. Ignore the swimmer's times when judging similarity. "
-            "Return ONLY JSON.\n\n"
-            f"{school_lines}\n\n"
-            'JSON format:\n{"answer":"1-2 sentences why these schools are similar to '
-            f'{direct_match["school"]}' + '","schools":[{"number":1,"why":"under 15 words"}]}'
-        )
-    else:
-        sorted_35 = _pre_sort(all_results, query, eliminated, my_list)
-        school_lines = '\n'.join(_build_school_line(i, r) for i, r in enumerate(sorted_35))
-        pool = sorted_35  # reassign so _parse_search_response uses the right order
-        top_events = ', '.join(list(times.keys())[:3]) if times else 'multiple events'
-        user_prompt = (
-            f'Question: "{query}"\n\n'
-            f"{swimmer_name}: GPA {gpa}, SAT {sat}" + (f", ACT {act_score}" if act_score else "") + f", events: {top_events}.\n\n"
-            "Pick 6 schools from this numbered list that best answer the question. Return ONLY JSON.\n\n"
-            f"{school_lines}\n\n"
-            'JSON format:\n{"answer":"1-2 sentences max","schools":[{"number":1,"why":"under 15 words"}]}'
-        )
+    user_prompt  = (
+        f'The user searched for "{direct_match["school"]}" '
+        f'({direct_match["conference"] or "independent"}, {direct_match.get("division","")}, '
+        f'program strength: {_program_strength_desc(direct_match)}).\n\n'
+        f"{swimmer_name}: GPA {gpa}, SAT {sat}" + (f", ACT {act_score}" if act_score else "") + ".\n\n"
+        f"This list is already sorted by institutional similarity to {direct_match['school']} "
+        f"(same division, selectivity, and conference tier). "
+        "Pick the 5 schools that are most genuinely similar — consider academic culture, "
+        "school size, mission, and athletic program level. Ignore the swimmer's times when judging similarity. "
+        "Return ONLY JSON.\n\n"
+        f"{school_lines}\n\n"
+        'JSON format:\n{"answer":"1-2 sentences why these schools are similar to '
+        f'{direct_match["school"]}' + '","schools":[{"number":1,"why":"under 15 words"}]}'
+    )
 
     try:
         resp = client.messages.create(
@@ -3521,43 +3810,36 @@ def search():
         raw_text = resp.content[0].text
         answer, ai_schools = _parse_search_response(raw_text, pool)
 
-        if direct_match:
-            _dm_conf = direct_match.get('conference', '')
-            _dm_div  = direct_match.get('division', '')
-            _dm_str  = _program_strength_desc(direct_match)
-            _dm_parts = [p for p in [_dm_conf, _dm_div, _dm_str] if p]
-            _dm_why  = ' · '.join(_dm_parts) if _dm_parts else 'Matched from our database'
-            dm = {**direct_match, 'directMatch': True, 'aiWhy': _dm_why}
-            schools = [dm] + ai_schools
-        else:
-            schools = ai_schools
+        _dm_conf  = direct_match.get('conference', '')
+        _dm_div   = direct_match.get('division', '')
+        _dm_str   = _program_strength_desc(direct_match)
+        _dm_parts = [p for p in [_dm_conf, _dm_div, _dm_str] if p]
+        _dm_why   = ' · '.join(_dm_parts) if _dm_parts else 'Matched from our database'
+        dm        = {**direct_match, 'directMatch': True, 'aiWhy': _dm_why}
+        schools   = [dm] + ai_schools
 
-        return jsonify({'answer': answer, 'schools': schools, 'directMatch': bool(direct_match)})
+        return jsonify({'answer': answer, 'schools': schools, 'directMatch': True})
 
     except json.JSONDecodeError as e:
-        fallback = ([{**direct_match, 'directMatch': True}] if direct_match else []) + pool[:5 if direct_match else 6]
+        fallback = [{**direct_match, 'directMatch': True}] + pool[:5]
         return jsonify({
             'error': 'AI returned malformed JSON',
             'detail': str(e),
             'fallback': fallback[:6],
-            'directMatch': bool(direct_match),
+            'directMatch': True,
         }), 200
 
     except ValueError as e:
-        fallback = ([{**direct_match, 'directMatch': True}] if direct_match else []) + pool[:5 if direct_match else 6]
-        return jsonify({
-            'error': str(e),
-            'fallback': fallback[:6],
-            'directMatch': bool(direct_match),
-        }), 200
+        fallback = [{**direct_match, 'directMatch': True}] + pool[:5]
+        return jsonify({'error': str(e), 'fallback': fallback[:6], 'directMatch': True}), 200
 
     except Exception as e:
-        fallback = ([{**direct_match, 'directMatch': True}] if direct_match else []) + pool[:5 if direct_match else 6]
+        fallback = [{**direct_match, 'directMatch': True}] + pool[:5]
         return jsonify({
             'error': 'Search failed',
             'detail': str(e),
             'fallback': fallback[:6],
-            'directMatch': bool(direct_match),
+            'directMatch': True,
         }), 200
 
 

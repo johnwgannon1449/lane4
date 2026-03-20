@@ -157,13 +157,46 @@ Single-page app at `/` with:
 4. **Filter buttons**: All, Hidden Ivy, STEM, High Merit, Normalized
 5. **Manual calculator** — enter any times at any school for ad-hoc debugging
 
-## Planned (Not Yet Built)
-- React SPA with 4 tabs: Explore, My List (CRM), Reminders, Profile
-- Anthropic Claude integration (Search call + Deep Dive narrative)
-- Coach email template (deterministic)
-- Vibe questions on Profile tab
-- CRM (My List with status, notes, reminders)
-- CAMPUS_PHOTOS
+## Search Architecture — AI-First Pipeline (`/api/search`)
+
+Non-school-name queries use a 5-step generative pipeline (direct school-name
+lookups use the original similarity-sort + Claude-picks-5 path, unchanged).
+
+**Step 1 — Query classification** (`_classify_query_mode`)
+Returns GUIDED / CONSTRAINED / OBJECTIVE / EXPLORATORY based on signal words.
+- GUIDED: "for me", "where should I", "best schools for swimming"
+- CONSTRAINED: "where I can get in", "near me"
+- OBJECTIVE: "best colleges in America", "top 10", "US News"
+- EXPLORATORY (default): broad discovery
+
+**Step 2 — Candidate generation** (`_build_candidate_prompt`)
+Calls Claude with a counselor-mode prompt:
+- Returns 12-18 school name strings + a 1-2 sentence `answer`
+- GUIDED/CONSTRAINED: passes student context (GPA, SAT, events, vibe) but
+  instructs Claude NOT to filter by admissibility or swim fit
+- OBJECTIVE/EXPLORATORY: no student context passed
+
+**Step 3 — Map to universe** (`_map_to_universe`)
+Fuzzy-matches LLM-generated names to Lane4's 324-school dataset via:
+  1. Exact normalized match
+  2. Substring match
+  3. Key-token Jaccard ≥ 0.50
+Ignores candidates that don't map confidently.
+
+**Step 4 — Existing scoring applied**
+School records already carry full scoring from `build_school_universe()`.
+No re-scoring needed; admissions + swim labels are already on each record.
+
+**Step 5 — Rank and return** (`_search_rank_score`)
+- GUIDED/CONSTRAINED: `adm_s × 0.60 + swim_n × 0.40`
+  - swim_n uses adjPts if > 0; 0 if below bar or no data (never inflates)
+  - Acceptance-rate tie-breaker: prefer broader-admit within same adm band
+- OBJECTIVE/EXPLORATORY: `swim_n × 0.65 + adm_s × 0.35` (program strength leads)
+Returns top 6 (up to 12 if user asks for more).
+
+**Fallback**: if candidate mapping collapses to < 3 schools, falls back to
+`_pre_sort()` (the original keyword-based top-35 pool). Direct-match path
+(school name search → similarity sort → Claude picks 5 similar) is untouched.
 
 ---
 
