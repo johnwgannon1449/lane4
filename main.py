@@ -3322,6 +3322,99 @@ def _classify_query_mode(query: str) -> str:
     return 'EXPLORATORY'
 
 
+# Admissions label → numeric score (used for sorting and filtering)
+_ADM_LABEL_SCORE = {
+    'Very Strong Chance': 100,
+    'Strong Chance':       80,
+    'Realistic Shot':      60,
+    'Possible':            40,
+    'Major Reach':         15,
+    'Moonshot':             5,
+    'Moonshot — Apply for Fun': 2,
+    'Unknown':             25,
+}
+
+# adjTier values that mean the swimmer is NOT competitive at this school
+_SWIM_NOT_COMPETITIVE = {'Reach', 'Moonshot'}
+
+# adjTier values that mean swim is literally impossible / should be hidden
+_ADM_IMPOSSIBLE = {'Moonshot', 'Moonshot — Apply for Fun'}
+
+
+def _detect_query_intent(query: str) -> dict:
+    """Detect what filtering rules apply to a personalized query.
+
+    Returns a dict of boolean flags:
+      is_swim     — query is about swimming / contributing in the pool
+      is_adm      — query is about where the student can get in
+      is_personal — query is clearly "for me" / personalized
+    """
+    q = query.lower()
+    is_swim = any(s in q for s in [
+        'swim', 'pool', 'stroke', 'relay', 'contribute', 'compete in',
+        'make the team', 'recruitable', 'roster', 'athletic fit',
+        'where can i swim', 'where should i swim',
+    ])
+    is_adm = any(s in q for s in [
+        'get in', 'admissible', 'realistic', 'where i can get',
+        'where i can apply', 'i could get into', 'can get into',
+        'i can get in', 'where i can',
+    ])
+    is_personal = any(s in q for s in [
+        'for me', 'for my', 'where should i', 'help me',
+        'recommend', 'find me', 'i should', 'my list',
+        'where i', 'i can', 'i could',
+    ])
+    return {'is_swim': is_swim, 'is_adm': is_adm, 'is_personal': is_personal}
+
+
+def _hard_filter(candidates: list, intent: dict) -> tuple:
+    """Step 2 — Remove schools that contradict our scoring labels.
+
+    SWIM queries: keep only schools where the swimmer is competitive
+                  (adjTier not in _SWIM_NOT_COMPETITIVE AND hasSwimData).
+    ADMISSIONS queries: keep only schools that are not impossible
+                        (label not in _ADM_IMPOSSIBLE, i.e. not pure Moonshot).
+    GENERAL 'for me' queries: remove only schools impossible on BOTH axes.
+    No filtering at all for non-personal queries (OBJECTIVE / EXPLORATORY).
+
+    Returns (kept_list, removed_debug_list).
+    """
+    kept, removed = [], []
+
+    for r in candidates:
+        adm_label = r.get('admission', {}).get('label', 'Unknown')
+        adj_tier  = r.get('adjTier', '')
+        has_swim  = r.get('hasSwimData', False)
+
+        adm_bad  = adm_label in _ADM_IMPOSSIBLE
+        swim_bad = (adj_tier in _SWIM_NOT_COMPETITIVE) or (not has_swim)
+
+        reason = None
+
+        if intent['is_swim']:
+            if not has_swim:
+                reason = f'no swim data'
+            elif adj_tier in _SWIM_NOT_COMPETITIVE:
+                reason = f'not competitive — {adj_tier}'
+
+        elif intent['is_adm']:
+            if adm_bad:
+                reason = f'not admissible — {adm_label}'
+
+        elif intent['is_personal']:
+            # General "for me": only cut schools impossible on both axes
+            if adm_bad and swim_bad:
+                reason = f'impossible on both axes ({adm_label} / {adj_tier or "no swim data"})'
+
+        if reason:
+            removed.append({'school': r['school'], 'reason': reason})
+        else:
+            kept.append(r)
+
+    return kept, removed
+
+
 def _build_student_context(name, gpa, sat, act, times, vibe, other_prefs) -> str:
     """Build a concise student context string for GUIDED/CONSTRAINED prompts."""
     parts = [f"Student: {name or 'the swimmer'}"]
@@ -3695,6 +3788,10 @@ def search():
             'suggest','recommend','schools','colleges','programs','like','similar',
             'strong','competitive','academic','research','liberal','division','d3',
             'private','public','small','large','northeast','south','west','midwest',
+            # Question / intent words — prevent "where should I swim" from being
+            # treated as a school name stub
+            'where','should','would','could','can','what','which','how','why',
+            'when','swim','swimming','get','into','for','me','my','i',
         }
         _words = q_lower.split()
         _looks_like_name = (
@@ -3792,27 +3889,35 @@ def search():
                     'directMatch': False,
                 }), 200
 
-            # Debug: capture raw candidate list before any reranking
+            # ── STEP 2: hard filter + sort ─────────────────────────────────
             raw_candidates = [r['school'] for r in candidates]
+            removed_debug  = []
 
-            # Steps 4+5: ranking
-            # OBJECTIVE mode — preserve the LLM's category-truth ordering exactly.
-            # No fit reranking: swim adjPts, admissions label, and preferences must
-            # NOT distort a nationally defensible answer.
-            # All other modes — apply composite fit score (admissions + swim).
-            reranked = False
             if mode == 'OBJECTIVE':
-                # LLM order is preserved; _map_to_universe already maintains it.
-                pass
+                # Preserve LLM category-truth order exactly — no filter, no sort.
+                filtered = candidates
+
             else:
-                candidates.sort(key=lambda r: -_search_rank_score(r, mode))
-                reranked = True
+                # Detect what filtering rules apply based on query wording.
+                intent = _detect_query_intent(query)
+
+                # Hard-remove schools that contradict our labels.
+                filtered, removed_debug = _hard_filter(candidates, intent)
+
+                # Sort remaining schools by admissions fit (strongest first).
+                # Admissions is the primary and only ranking signal — swim is
+                # already enforced via the hard filter above.
+                filtered.sort(
+                    key=lambda r: -_ADM_LABEL_SCORE.get(
+                        r.get('admission', {}).get('label', 'Unknown'), 25
+                    )
+                )
 
             want_more = any(w in query.lower() for w in (
                 'more schools', 'more options', 'show me more', 'give me more',
             ))
             limit   = 12 if want_more else 6
-            schools = candidates[:limit]
+            schools = filtered[:limit]
 
             # Auto-generate aiWhy from existing score labels (no extra Claude call)
             for r in schools:
@@ -3821,17 +3926,30 @@ def search():
                 parts    = [p for p in [adm_lbl, swim_lbl] if p and p not in ('Unknown', '')]
                 r['aiWhy'] = ' · '.join(parts[:2])
 
+            # ── DEBUG (visible in browser DevTools → Network) ──────────────
+            intent_debug = _detect_query_intent(query) if mode != 'OBJECTIVE' else {}
+            debug_kept = [
+                {
+                    'school': r['school'],
+                    'admissions': r.get('admission', {}).get('label', 'Unknown'),
+                    'swimTier':   r.get('adjTier', 'n/a'),
+                    'hasSwimData': r.get('hasSwimData', False),
+                }
+                for r in schools
+            ]
+
             return jsonify({
                 'answer':      answer,
                 'schools':     schools,
                 'directMatch': False,
                 'searchMode':  mode,
-                # Debug fields — visible in browser DevTools / API responses
                 '_debug': {
-                    'queryMode':      mode,
-                    'rawCandidates':  raw_candidates,
-                    'reranked':       reranked,
-                    'finalTop6':      [r['school'] for r in schools[:6]],
+                    'queryMode':     mode,
+                    'intent':        intent_debug,
+                    'rawCandidates': raw_candidates,
+                    'removed':       removed_debug,
+                    'kept':          debug_kept,
+                    'finalTop6':     [r['school'] for r in schools[:6]],
                 },
             })
 
