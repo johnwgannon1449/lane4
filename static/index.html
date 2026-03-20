@@ -1808,14 +1808,6 @@ async function openDeepDive(school) {
         </div>
       </div>
 
-      <div class="deep-dive-actions">
-        ${inList
-          ? `<button class="btn btn-added" disabled>✓ On My List</button>`
-          : `<button class="btn btn-secondary" id="dd-add-btn" onclick='ddAddToList(${JSON.stringify(school)})'>+ Add to List</button>`}
-        <button class="btn btn-secondary" onclick='showCoachEmail(${JSON.stringify(school)})'>Draft Coach Email →</button>
-        <button class="btn btn-secondary" onclick='printDeepDive(${JSON.stringify(school)})' style="margin-left:auto;">🖨 Save as PDF</button>
-      </div>
-
       ${(() => {
         const _ddHero    = schoolImgHero(school);
         const _ddStudent = schoolImgStudent(school);
@@ -1872,6 +1864,14 @@ async function openDeepDive(school) {
           <div class="email-block" id="dd-email-body"></div>
           <button class="btn btn-secondary" style="margin-top:0.75rem;" onclick="copyEmail()">Copy to clipboard</button>
         </div>
+      </div>
+
+      <div class="deep-dive-actions" style="border-top:1px solid var(--border);padding-top:1rem;margin-top:1.25rem;">
+        ${inList
+          ? `<button class="btn btn-added" disabled>✓ On My List</button>`
+          : `<button class="btn btn-secondary" id="dd-add-btn" onclick='ddAddToList(${JSON.stringify(school)})'>+ Add to List</button>`}
+        <button class="btn btn-secondary" onclick='showCoachEmail(${JSON.stringify(school)})'>Draft Coach Email →</button>
+        <button class="btn btn-secondary" onclick='printDeepDive(${JSON.stringify(school)})' style="margin-left:auto;">🖨 Save as PDF</button>
       </div>
     `;
 
