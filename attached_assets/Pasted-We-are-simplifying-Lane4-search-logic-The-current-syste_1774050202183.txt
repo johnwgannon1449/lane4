@@ -1,0 +1,161 @@
+We are simplifying Lane4 search logic. The current system is overcomplicated and producing bad results.
+
+We are resetting to a clean, simple, reliable approach.
+
+IMPORTANT
+This change is ONLY for how school cards are selected and ranked in search.
+Do NOT change:
+- deep dive narratives
+- admissions scoring logic itself
+- swim/recruiting scoring logic itself
+- UI design
+- profile system
+
+==================================================
+GOAL
+==================================================
+
+Search should feel:
+- smart
+- clean
+- obvious
+- defensible
+
+We are returning to a simple 3-step model:
+
+1. AI generates a strong list of schools
+2. We REMOVE bad fits using our existing labels
+3. We SORT by admissions fit
+4. We return the top 6
+
+==================================================
+STEP 1 — AI CANDIDATE GENERATION
+==================================================
+
+Use the LLM to generate ~12–15 relevant schools based on the user query.
+
+Rules:
+- focus on academic/program relevance (STEM, bio, etc.)
+- do NOT filter for admissions
+- do NOT filter for swim
+- do NOT rank for the student
+- just return a strong, reasonable list of schools
+
+Output:
+- school names only
+- one per line
+
+==================================================
+STEP 2 — REMOVE BAD FITS (HARD FILTER)
+==================================================
+
+This is critical.
+
+We must strictly enforce our existing truth labels.
+
+For each candidate school:
+
+SWIM RULE
+If the query involves swimming (examples below), then:
+- REMOVE schools where the swimmer is not competitive
+- REMOVE schools where swim data is missing
+
+Examples of swim queries:
+- where should I swim
+- where can I swim
+- where can I contribute in the pool
+- most elite schools where I can swim
+
+ADMISSIONS RULE
+If the query involves admissibility (examples below), then:
+- REMOVE schools where the student is not admissible
+
+Examples:
+- where can I get in
+- best schools where I’m admissible
+- realistic colleges for me
+
+GENERAL RULE
+If the query is clearly “for me”:
+- REMOVE schools that are clearly impossible on BOTH admissions and swim
+
+ABSOLUTE RULE
+If our system says:
+- “not competitive” → that school cannot appear
+- no swim data (for swim queries) → that school cannot appear
+
+No exceptions.
+
+==================================================
+STEP 3 — SORT (VERY SIMPLE)
+==================================================
+
+After filtering:
+
+Sort remaining schools by:
+→ admissions fit (strongest first)
+
+Admissions fit should be the primary ordering signal.
+
+Swim is already enforced via filtering, not ranking.
+
+==================================================
+STEP 4 — RETURN RESULTS
+==================================================
+
+- Return top 6 schools
+- If fewer than 6 survive filtering, return fewer
+- Do NOT add bad schools just to reach 6
+
+==================================================
+STEP 5 — IMPORTANT BEHAVIOR
+==================================================
+
+This system should feel:
+
+- obvious (results make sense immediately)
+- consistent (no weird surprises)
+- aligned with our labels (no contradictions)
+
+Bad behavior to eliminate:
+- showing schools where the swimmer is not competitive
+- showing schools with missing swim data for swim queries
+- showing unrealistic admissions options for “where can I get in”
+- weird ordering driven by prestige instead of fit
+
+==================================================
+STEP 6 — DEBUG (TEMPORARY)
+==================================================
+
+Add debug output for each result:
+
+For each returned school, log:
+- admissions fit
+- swim fit
+- why it survived filtering
+
+Also log:
+- which schools were removed and why
+
+This helps verify correctness.
+
+==================================================
+DELIVERABLE
+==================================================
+
+After implementing:
+
+1. show updated search flow in code
+2. show 2–3 example searches:
+   - best STEM schools
+   - where should I swim
+   - best bio schools for me
+3. show:
+   - AI candidate list
+   - filtered list
+   - final sorted top 6
+
+Success criteria:
+- no contradictions with swim/admissions labels
+- no obviously wrong schools in results
+- ordering feels clean and intuitive

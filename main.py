@@ -4400,18 +4400,32 @@ _IMG_BAD_FNAME = [
 ]
 
 
+_IMG_429_SENTINEL = {'_ip_blocked': True}   # returned when all retries hit 429
+
+
+class _WikiIPBlocked(Exception):
+    """Raised when Wikipedia returns 429 on all retries — IP-level block."""
+
+
 def _img_wiki_get(params, timeout=12):
-    """Wikipedia API call with polite delay and 429 backoff."""
+    """Wikipedia API call with polite delay and 429 backoff.
+
+    Returns _IMG_429_SENTINEL (contains '_ip_blocked': True) if all retries
+    fail with HTTP 429, signalling an IP-level Wikipedia block to the caller.
+    Returns {} on other errors.  Returns the parsed JSON on success.
+    """
     params['format'] = 'json'
     qs  = urllib.parse.urlencode(params)
     req = urllib.request.Request(f'{_IMG_WIKI}?{qs}', headers={'User-Agent': _IMG_UA})
     time.sleep(0.4)  # polite delay on EVERY call
+    got_429 = False
     for attempt in range(3):
         try:
             with urllib.request.urlopen(req, timeout=timeout) as r:
                 return json.loads(r.read().decode())
         except urllib.error.HTTPError as e:
             if e.code == 429:
+                got_429 = True
                 wait = 30 * (attempt + 1)
                 app.logger.warning(f'[images] 429 rate-limited, backing off {wait}s')
                 time.sleep(wait)
@@ -4419,24 +4433,28 @@ def _img_wiki_get(params, timeout=12):
                 return {}
         except Exception:
             return {}
-    return {}
+    return _IMG_429_SENTINEL if got_429 else {}
 
 
 def _img_search_title(query):
-    data    = _img_wiki_get({'action': 'query', 'list': 'search',
-                             'srsearch': query, 'srlimit': 3})
+    data = _img_wiki_get({'action': 'query', 'list': 'search',
+                          'srsearch': query, 'srlimit': 3})
+    if data.get('_ip_blocked'):
+        raise _WikiIPBlocked('Wikipedia IP block on search')
     results = data.get('query', {}).get('search', [])
     return results[0]['title'] if results else None
 
 
 def _img_all_with_urls(page_title, width=1000):
     """Fetch all images on a Wikipedia page with their URLs in ONE API call."""
-    data  = _img_wiki_get({
+    data = _img_wiki_get({
         'action': 'query', 'titles': page_title,
         'generator': 'images', 'gimlimit': '50',
         'prop': 'imageinfo', 'iiprop': 'url',
         'iiurlwidth': str(width), 'redirects': '',
     })
+    if data.get('_ip_blocked'):
+        raise _WikiIPBlocked('Wikipedia IP block on images fetch')
     images = []
     for page in data.get('query', {}).get('pages', {}).values():
         info = page.get('imageinfo', [{}])
@@ -4544,71 +4562,166 @@ def _img_fetch_one(school):
     }
 
 
+_IMG_LOCK_PATH     = '/tmp/lane4_img_daemon.lock'
+_IMG_COOLDOWN_PATH = '/tmp/lane4_img_cooldown.txt'
+_IMG_COOLDOWN_HOURS = 6   # how long to pause after an IP-level 429 block
+
+
+def _img_cooldown_active() -> bool:
+    """Return True if we are still within the Wikipedia 429 cooldown window."""
+    try:
+        with open(_IMG_COOLDOWN_PATH) as f:
+            until = float(f.read().strip())
+        remaining = until - time.time()
+        if remaining > 0:
+            app.logger.info(
+                f'[images] Wikipedia rate-limit cooldown active — '
+                f'{remaining/3600:.1f} h remaining.  Skipping run.'
+            )
+            return True
+        # Cooldown expired — remove the file
+        os.remove(_IMG_COOLDOWN_PATH)
+    except (FileNotFoundError, ValueError):
+        pass
+    return False
+
+
+def _img_set_cooldown():
+    """Write a cooldown timestamp so future startups skip the Wikipedia run."""
+    until = time.time() + _IMG_COOLDOWN_HOURS * 3600
+    try:
+        with open(_IMG_COOLDOWN_PATH, 'w') as f:
+            f.write(str(until))
+        app.logger.warning(
+            f'[images] IP-level 429 block detected — '
+            f'cooldown set for {_IMG_COOLDOWN_HOURS} h.  Will retry after that.'
+        )
+    except Exception:
+        pass
+
+
 def _img_build_manifest_daemon():
     """
     Background daemon thread — runs once at startup, fills gaps in the
-    image manifest, then exits. Polite: 0.15 s sleep between schools.
+    image manifest, then exits.
+
+    Safety features:
+    • OS file lock prevents two processes from running simultaneously
+      (handles Werkzeug stat-reloader hot-restarts where old + new worker
+      briefly overlap).
+    • Cooldown file: if Wikipedia returns 429 on the very first attempt
+      (IP-level block), the daemon aborts and writes a 6-hour cooldown.
+      Subsequent restarts skip the run until the cooldown expires.
+    • After a successful run (any school fetched without 429), the
+      cooldown file is cleared.
     """
-    # small startup delay so Flask is fully up before we hammer Wikipedia
-    time.sleep(8)
+    import fcntl
 
-    try:
-        if os.path.exists(_IMG_MANIFEST_PATH):
-            with open(_IMG_MANIFEST_PATH) as f:
-                manifest = json.load(f)
-        else:
-            manifest = {}
-    except Exception:
-        manifest = {}
-
-    schools = sorted(SCHOOL_META.keys())
-    # Also re-fetch schools that were saved with the old generic Unsplash fallbacks
-    _OLD_FALLBACKS = {
-        'https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80',
-        'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80',
-        'https://images.unsplash.com/photo-1530549387789-4c1017266635?w=1200&q=80',
-    }
-    def _needs_fetch(s):
-        if s not in manifest:
-            return True
-        imgs = manifest[s]
-        return (imgs.get('hero') in _OLD_FALLBACKS or
-                imgs.get('swim') in _OLD_FALLBACKS or
-                imgs.get('hero_is_fallback') is True)  # null from failed run
-    to_fetch = [s for s in schools if _needs_fetch(s)]
-
-    if not to_fetch:
-        app.logger.info(f'[images] Manifest already complete ({len(manifest)} schools).')
+    # ── 1. Check cooldown (IP-level block from previous run) ──────────────
+    if _img_cooldown_active():
         return
 
-    app.logger.info(f'[images] Building image manifest for {len(to_fetch)} schools …')
+    # ── 2. Acquire exclusive OS file lock (prevents double-run) ──────────
+    try:
+        lock_fd = open(_IMG_LOCK_PATH, 'w')
+        fcntl.flock(lock_fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except (IOError, OSError):
+        app.logger.info('[images] Another daemon instance is running — skipping.')
+        return
 
-    for i, school in enumerate(to_fetch):
+    try:
+        # ── 3. Small startup delay so Flask is fully up ───────────────────
+        time.sleep(8)
+
         try:
-            imgs = _img_fetch_one(school)
-        except Exception as e:
-            app.logger.warning(f'[images] {school}: {e}')
-            imgs = {'hero': None, 'student_life': None, 'swim': None,
-                    'hero_is_fallback': True, 'swim_is_fallback': True}
+            if os.path.exists(_IMG_MANIFEST_PATH):
+                with open(_IMG_MANIFEST_PATH) as f:
+                    manifest = json.load(f)
+            else:
+                manifest = {}
+        except Exception:
+            manifest = {}
 
-        with _IMG_MANIFEST_LOCK:
-            manifest[school] = imgs
+        schools = sorted(SCHOOL_META.keys())
+        _OLD_FALLBACKS = {
+            'https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80',
+            'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80',
+            'https://images.unsplash.com/photo-1530549387789-4c1017266635?w=1200&q=80',
+        }
 
-        # Persist every 5 schools
-        if (i + 1) % 5 == 0 or i == len(to_fetch) - 1:
+        def _needs_fetch(s):
+            if s not in manifest:
+                return True
+            imgs = manifest[s]
+            return (imgs.get('hero') in _OLD_FALLBACKS or
+                    imgs.get('swim') in _OLD_FALLBACKS or
+                    imgs.get('hero_is_fallback') is True)
+
+        to_fetch = [s for s in schools if _needs_fetch(s)]
+
+        if not to_fetch:
+            app.logger.info(f'[images] Manifest complete ({len(manifest)} schools) — nothing to fetch.')
+            return
+
+        app.logger.info(f'[images] Building image manifest for {len(to_fetch)} schools …')
+
+        consecutive_429s = 0   # detect IP-level block on the very first schools
+        fetched_ok       = 0
+
+        for i, school in enumerate(to_fetch):
+
+            # Re-check cooldown each iteration (another thread might have set it)
+            if _img_cooldown_active():
+                break
+
             try:
-                with _IMG_MANIFEST_LOCK:
-                    with open(_IMG_MANIFEST_PATH, 'w') as f:
-                        json.dump(manifest, f)
-            except Exception:
+                imgs = _img_fetch_one(school)
+                consecutive_429s = 0
+                fetched_ok += 1
+            except _WikiIPBlocked:
+                # IP-level block detected — abort the entire run immediately
+                consecutive_429s += 1
+                if consecutive_429s >= 2:
+                    _img_set_cooldown()
+                    break
+                imgs = {'hero': None, 'student_life': None, 'swim': None,
+                        'hero_is_fallback': True, 'swim_is_fallback': True}
+            except Exception as e:
+                app.logger.warning(f'[images] {school}: {e}')
+                imgs = {'hero': None, 'student_life': None, 'swim': None,
+                        'hero_is_fallback': True, 'swim_is_fallback': True}
+
+            with _IMG_MANIFEST_LOCK:
+                manifest[school] = imgs
+
+            if (i + 1) % 5 == 0 or i == len(to_fetch) - 1:
+                try:
+                    with _IMG_MANIFEST_LOCK:
+                        with open(_IMG_MANIFEST_PATH, 'w') as f:
+                            json.dump(manifest, f)
+                except Exception:
+                    pass
+
+            if (i + 1) % 25 == 0:
+                app.logger.info(f'[images] {i+1}/{len(to_fetch)} done ({fetched_ok} with images)')
+
+        if fetched_ok > 0:
+            # At least some schools succeeded — clear any old cooldown
+            try:
+                os.remove(_IMG_COOLDOWN_PATH)
+            except FileNotFoundError:
                 pass
 
-        if (i + 1) % 25 == 0:
-            app.logger.info(f'[images] {i+1}/{len(to_fetch)} done')
+        app.logger.info(f'[images] Run complete — {fetched_ok} schools fetched successfully.')
 
-        time.sleep(0.15)
-
-    app.logger.info(f'[images] Manifest complete — {len(manifest)} schools.')
+    finally:
+        # Always release the file lock so the next startup can acquire it
+        try:
+            import fcntl as _fcntl
+            _fcntl.flock(lock_fd, _fcntl.LOCK_UN)
+            lock_fd.close()
+        except Exception:
+            pass
 
 
 # Only start the image builder in the actual Werkzeug worker, not the reloader
