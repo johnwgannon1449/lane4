@@ -796,10 +796,74 @@ function toRecruitLabel(adjTier) {
   return adjTier ? (LABEL[BAND[adjTier] ?? 0] || null) : null;
 }
 
-function costEstimate(merit) {
-  if (merit === 'high')     return 38000;
-  if (merit === 'moderate') return 52000;
-  return 68000;
+function costEstimate(meta) {
+  // Mirror Python _estimate_merit_block: COA from accept rate, then reduce by merit award.
+  const merit     = meta.merit  || '';
+  const accept    = meta.accept || 60;
+  const satMedian = meta.satMedian || 1200;
+  const sat       = JAMES.sat || 0;
+  const gpa       = parseFloat(JAMES.gpa) || 0;
+
+  // COA estimate from acceptance rate
+  let coa;
+  if      (accept <= 20) coa = 72000;
+  else if (accept <= 35) coa = 67000;
+  else if (accept <= 55) coa = 61000;
+  else if (accept <= 70) coa = 56000;
+  else                   coa = 51000;
+
+  if (merit === 'none' || !sat) return coa;  // no merit scholarship or no SAT on file
+
+  const maxMerit = merit === 'high' ? 25000 : 15000;
+  const satDiff  = sat - satMedian;
+  const eliteGpa = gpa >= 3.9;
+
+  let loPct, hiPct;
+  if      (satDiff < -50)               { loPct = 0.00; hiPct = 0.00; }
+  else if (satDiff <= 50  && !eliteGpa) { loPct = 0.25; hiPct = 0.40; }
+  else if (satDiff <= 120 && !eliteGpa) { loPct = 0.50; hiPct = 0.65; }
+  else                                  { loPct = 0.65; hiPct = 0.75; }
+
+  if (loPct === 0) return coa;  // below merit threshold
+
+  const lo  = Math.round(maxMerit * loPct / 1000) * 1000;
+  const hi  = Math.round(maxMerit * hiPct / 1000) * 1000;
+  return Math.max(0, Math.round((coa - lo + coa - hi) / 2));  // midpoint of net range
+}
+
+function costEstimateRange(meta) {
+  // Returns {coa, lo, hi, hasMerit} for rich display in deep dive.
+  const merit     = meta.merit  || '';
+  const accept    = meta.accept || 60;
+  const satMedian = meta.satMedian || 1200;
+  const sat       = JAMES.sat || 0;
+  const gpa       = parseFloat(JAMES.gpa) || 0;
+
+  let coa;
+  if      (accept <= 20) coa = 72000;
+  else if (accept <= 35) coa = 67000;
+  else if (accept <= 55) coa = 61000;
+  else if (accept <= 70) coa = 56000;
+  else                   coa = 51000;
+
+  if (merit === 'none' || !sat)
+    return { coa, lo: coa, hi: coa, hasMerit: false };
+
+  const maxMerit = merit === 'high' ? 25000 : 15000;
+  const satDiff  = sat - satMedian;
+  const eliteGpa = gpa >= 3.9;
+
+  let loPct, hiPct;
+  if      (satDiff < -50)               { loPct = 0.00; hiPct = 0.00; }
+  else if (satDiff <= 50  && !eliteGpa) { loPct = 0.25; hiPct = 0.40; }
+  else if (satDiff <= 120 && !eliteGpa) { loPct = 0.50; hiPct = 0.65; }
+  else                                  { loPct = 0.65; hiPct = 0.75; }
+
+  if (loPct === 0) return { coa, lo: coa, hi: coa, hasMerit: false };
+
+  const lo = Math.round(maxMerit * loPct / 1000) * 1000;
+  const hi = Math.round(maxMerit * hiPct / 1000) * 1000;
+  return { coa, lo: Math.max(0, coa - hi), hi: Math.max(0, coa - lo), hasMerit: true };
 }
 function formatCost(n) {
   return '$' + Number(n).toLocaleString();
@@ -1871,7 +1935,7 @@ function _buildCardHtml(school) {
   const cfg     = STATUS_CONFIG[crm.status] || STATUS_CONFIG.researching;
   const adjTier = result.adjTier || '';
   const offerVal  = crm.cost?.offer != null ? crm.cost.offer : null;
-  const costNum   = offerVal !== null ? offerVal : costEstimate(meta.merit);
+  const costNum   = offerVal !== null ? offerVal : costEstimate(meta);
   const costLabel = offerVal !== null ? `${formatCost(costNum)}/yr (Offer)` : `~${formatCost(costNum)}/yr (Est.)`;
   const noteCount = (crm.notes || []).length;
   const remCount  = (crm.reminders || []).filter(r => !r.completed).length;
@@ -2168,10 +2232,15 @@ function renderMyList() {
 
     const adjTier   = result?.adjTier  || '';
     const division  = result?.division || '';
-    const offerVal  = crm.cost?.offer != null ? crm.cost.offer : null;
+    const offerVal   = crm.cost?.offer != null ? crm.cost.offer : null;
     const costFrozen = offerVal !== null;
-    const costNum   = costFrozen ? offerVal : costEstimate(meta.merit);
-    const costLabel  = costFrozen ? `${formatCost(costNum)}/yr` : `~${formatCost(costNum)}/yr`;
+    const costRange  = costFrozen ? null : costEstimateRange(meta);
+    const costNum    = costFrozen ? offerVal : costEstimate(meta);
+    const costLabel  = costFrozen
+      ? `${formatCost(costNum)}/yr`
+      : (costRange?.hasMerit && costRange.lo !== costRange.hi)
+          ? `~${formatCost(costRange.lo)}–${formatCost(costRange.hi)}/yr`
+          : `~${formatCost(costNum)}/yr`;
     const costPrefix = costFrozen ? '🔒 Offer' : 'Est.';
     const costBg     = costFrozen ? '#059669'        : 'transparent';
     const costClr    = costFrozen ? '#fff'           : 'var(--muted)';
@@ -2244,7 +2313,14 @@ function renderMyList() {
             <button class="btn btn-ghost" style="font-size:0.75rem;padding:2px 8px;color:var(--muted);" onclick='resetCost(${JSON.stringify(school)})'>Clear &amp; revert to estimate</button>
           </div>` : `
           <div style="font-size:0.8rem;color:var(--muted);margin-bottom:0.5rem;">
-            <span style="font-style:italic;">Lane4 estimate</span> based on merit aid profile: <strong>${formatCost(costNum)}/yr</strong>. 
+            <span style="font-style:italic;">Lane4 estimate</span> —
+            sticker price ~${formatCost(costRange?.coa ?? costNum)}/yr
+            ${costRange?.hasMerit
+              ? `, net after merit: <strong>${formatCost(costRange.lo)}–${formatCost(costRange.hi)}/yr</strong>`
+              : meta.merit === 'none'
+                ? '(no merit scholarships — aid here is need-based)'
+                : !JAMES.sat ? '(enter your SAT on the Profile tab to see merit estimate)' : ''
+            }.
             Once you receive an offer, enter it below to replace our guess with the real number.
           </div>
           <div class="crm-add-row">
