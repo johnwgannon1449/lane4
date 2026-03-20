@@ -700,7 +700,6 @@
 <div class="tab-panel" id="panel-mylist">
   <div class="wrap">
     <div class="page-title">My List</div>
-    <div class="page-sub">Track schools you're serious about. Add notes, set reminders, update your status.</div>
     <div id="mylist-print-bar" style="display:none;gap:0.6rem;flex-wrap:wrap;margin-bottom:1.1rem;padding-bottom:1rem;border-bottom:1px solid var(--border);">
       <button class="btn btn-secondary" onclick="printListCards()" style="font-size:0.82rem;">🖨 Print List (Cards)</button>
       <button class="btn btn-secondary" id="print-with-dives-btn" onclick="printListWithDeepDives()" style="font-size:0.82rem;">🖨 Print with Deep Dives</button>
@@ -2155,13 +2154,16 @@ function evaluateMyList() {
   const moonshotFraction = scorable > 0 ? moonshotCount / scorable : 0;
   const tooManyMoonshots = moonshotFraction >= 0.55;
 
-  let badge, badgeClass;
+  let badge, theme;
   if (realCount < 2 || (realCount < 3 && tooManyMoonshots)) {
-    badge = 'High Risk'; badgeClass = 'lhb-highrisk';
+    badge = 'High Risk';
+    theme = { bg: '#FFFBEB', border: '#FDE68A', accent: '#D97706', label: '#92400E', text: '#78350F' };
   } else if (strongCount >= 2 && realCount >= 3 && !tooManyMoonshots) {
-    badge = 'Very Strong Options'; badgeClass = 'lhb-verystrong';
+    badge = 'Very Strong Options';
+    theme = { bg: '#ECFDF5', border: '#6EE7B7', accent: '#059669', label: '#065F46', text: '#047857' };
   } else {
-    badge = 'Strong List'; badgeClass = 'lhb-strong';
+    badge = 'Strong List';
+    theme = { bg: '#F0FDF4', border: '#BBF7D0', accent: '#22C55E', label: '#15803D', text: '#166534' };
   }
 
   const moonshotLine = tooManyMoonshots
@@ -2187,7 +2189,7 @@ function evaluateMyList() {
     ].filter(Boolean);
   }
 
-  return { badge, badgeClass, explanation };
+  return { badge, theme, explanation };
 }
 
 function toggleListHealth() {
@@ -2212,16 +2214,22 @@ function renderMyList() {
     return;
   }
 
-  // ── List health badge ────────────────────────────────────────────────────
+  // ── List strength box ────────────────────────────────────────────────────
   const _health = evaluateMyList();
-  const _healthHtml = _health ? `
-    <div class="list-health-row">
-      <span class="list-health-badge ${_health.badgeClass}">${esc(_health.badge)}</span>
-      <button class="list-health-why" id="list-health-why-btn" onclick="toggleListHealth()">Why? ▾</button>
-    </div>
-    <div class="list-health-exp" id="list-health-exp" style="display:none;">
-      ${_health.explanation.map(p => `<p>${esc(p)}</p>`).join('')}
-    </div>` : '';
+  const _healthHtml = _health ? (() => {
+    const t = _health.theme;
+    return `<div style="
+        background:${t.bg};
+        border:1.5px solid ${t.border};
+        border-left:4px solid ${t.accent};
+        border-radius:12px;
+        padding:1rem 1.2rem;
+        margin-bottom:1.25rem;
+      ">
+      <div style="font-family:'Figtree',sans-serif;font-weight:800;font-size:0.78rem;letter-spacing:0.07em;text-transform:uppercase;color:${t.label};margin-bottom:0.45rem;">List Strength · ${esc(_health.badge)}</div>
+      ${_health.explanation.map(p => `<p style="margin:0 0 0.45em;font-size:0.84rem;color:${t.text};line-height:1.65;font-family:'Figtree',sans-serif;">${esc(p)}</p>`).join('')}
+    </div>`;
+  })() : '';
 
   el.innerHTML = _healthHtml + MY_LIST.map((school, si) => {
     const crm    = CRM_DATA[school] || { status: 'researching', notes: [], reminders: [] };
@@ -2383,13 +2391,6 @@ function renderMyList() {
     </div>`;
   }).join('');
 
-  // Restore health explanation open state across re-renders
-  if (LIST_HEALTH_OPEN) {
-    const expEl  = document.getElementById('list-health-exp');
-    const btnEl  = document.getElementById('list-health-why-btn');
-    if (expEl)  expEl.style.display = 'block';
-    if (btnEl)  btnEl.textContent   = 'Got it ▴';
-  }
 }
 
 function toggleCRM(school) {
