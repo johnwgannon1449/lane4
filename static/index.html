@@ -671,7 +671,7 @@
       <div id="times-edit-panel" style="display:none;"></div>
     </div>
 
-    <div class="section-label"><span id="prof-about-label">About the swimmer</span> <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:0.78rem;color:var(--muted);">— helps Lane4 personalize your deep dives</span></div>
+    <div class="section-label"><span id="prof-about-label">About the swimmer</span> <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:0.78rem;color:var(--muted);">— helps Lane4 personalize your deep dives</span> <span id="vibe-saved-indicator" style="font-weight:500;text-transform:none;letter-spacing:0;font-size:0.75rem;color:#16A34A;margin-left:0.5rem;opacity:0;transition:opacity 0.3s;">Saved ✓</span></div>
     <div class="card">
       <div id="vibe-questions"></div>
     </div>
@@ -684,7 +684,9 @@
         <div class="vibe-q-label" style="margin-bottom:0.6rem;">Tell Lane4 anything else that matters — academics, team culture, geography, coaching style, family factors, anything</div>
         <textarea id="other-prefs-input" class="other-prefs-ta"
           placeholder="e.g. I want a school with a strong pre-med track near a city, and a team with a head coach who's invested in individual development…"
-          rows="4" oninput="OTHER_PREFS = this.value; saveToStorage()"></textarea>
+          rows="4"
+          oninput="OTHER_PREFS = this.value; localStorage.setItem('lane4_other_prefs', OTHER_PREFS); schedulePush();"
+          onblur="clearTimeout(_syncTimer); pushToServer(); _showVibeSaved();"></textarea>
       </div>
     </div>
 
@@ -1128,6 +1130,8 @@ async function authSubmit() {
 
 async function authLogout() {
   if (!confirm('Sign out? Your data is saved and will be here when you return.')) return;
+  clearTimeout(_syncTimer);
+  await pushToServer();
   try { await fetch('/api/auth/logout', { method: 'POST' }); } catch(_) {}
   CURRENT_USER = null;
   // Clear in-memory state but keep localStorage so data reloads if they log back in
@@ -1174,8 +1178,8 @@ async function loadFromServer() {
     if (d.swimmer    && typeof d.swimmer    === 'object') JAMES      = d.swimmer;
     if (d.my_list    && Array.isArray(d.my_list))         MY_LIST    = d.my_list;
     if (d.crm_data   && typeof d.crm_data   === 'object') CRM_DATA   = d.crm_data;
-    if (d.vibe_state && typeof d.vibe_state === 'object') VIBE_STATE = d.vibe_state;
-    if (typeof d.other_prefs === 'string')                OTHER_PREFS = d.other_prefs;
+    if (d.vibe_state && typeof d.vibe_state === 'object' && Object.keys(d.vibe_state).length > 0) VIBE_STATE = d.vibe_state;
+    if (typeof d.other_prefs === 'string' && d.other_prefs.length > 0)                           OTHER_PREFS = d.other_prefs;
     return true;
   } catch(e) { console.warn('Server load failed', e); return false; }
 }
@@ -1204,9 +1208,9 @@ async function boot() {
 }
 
 async function afterAuthBoot() {
-  // 2. Load data from server (source of truth); fall back to localStorage
-  const serverOk = await loadFromServer();
-  if (!serverOk) loadFromStorage();
+  // 2. Load localStorage as baseline first, then server overlays (server wins per key)
+  loadFromStorage();
+  await loadFromServer();
 
   // 3. If no swimmer profile yet, show onboarding
   if (!JAMES.name) {
@@ -2550,7 +2554,18 @@ function renderVibeQuestions() {
 
 function setVibe(id, value) {
   VIBE_STATE[id] = value || null;
-  saveToStorage();
+  localStorage.setItem(LS_VIBE, JSON.stringify(VIBE_STATE));
+  clearTimeout(_syncTimer);
+  pushToServer();
+  _showVibeSaved();
+}
+
+function _showVibeSaved() {
+  const el = document.getElementById('vibe-saved-indicator');
+  if (!el) return;
+  el.style.opacity = '1';
+  clearTimeout(el._hideTimer);
+  el._hideTimer = setTimeout(() => { el.style.opacity = '0'; }, 1800);
 }
 
 // ════════════════════════════════════════════════════════════════
