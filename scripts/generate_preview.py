@@ -67,15 +67,5 @@ draw.rectangle([LEFT, line_y, LEFT + fyl_w, line_y + 3], fill=BLUE)
 tag_y = line_y + 24
 draw.text((LEFT, tag_y), 'Swim recruiting clarity and honesty', fill=WHITE_DIM, font=fTag)
 
-# lane4.app badge
-badge_text = 'lane4.app'
-b_pad_x, b_pad_y = 14, 8
-badge_bbox = draw.textbbox((0, 0), badge_text, font=fBadge)
-bw = badge_bbox[2] - badge_bbox[0] + b_pad_x * 2
-bh = badge_bbox[3] - badge_bbox[1] + b_pad_y * 2
-bx, by = LEFT, H - 72
-draw.rounded_rectangle([bx, by, bx + bw, by + bh], radius=20, fill=BLUE)
-draw.text((bx + b_pad_x, by + b_pad_y), badge_text, fill=WHITE, font=fBadge)
-
 img.save('static/preview.png', 'PNG')
 print('Saved static/preview.png')
