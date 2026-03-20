@@ -744,24 +744,6 @@
       <div id="times-edit-panel" style="display:none;"></div>
     </div>
 
-    <div class="section-label"><span id="prof-about-label">About the swimmer</span> <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:0.78rem;color:var(--muted);">— helps Lane4 personalize your deep dives</span> <span id="vibe-saved-indicator" style="font-weight:500;text-transform:none;letter-spacing:0;font-size:0.75rem;color:#16A34A;margin-left:0.5rem;opacity:0;transition:opacity 0.3s;">Saved ✓</span></div>
-    <div class="card">
-      <div id="vibe-questions"></div>
-    </div>
-
-    <div class="section-label" style="margin-top:1.5rem;">Anything else?
-      <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:0.78rem;color:var(--muted);">— optional, free-form</span>
-    </div>
-    <div class="card" style="margin-bottom:2rem;">
-      <div class="vibe-q">
-        <div class="vibe-q-label" style="margin-bottom:0.6rem;">Tell Lane4 anything else that matters — academics, team culture, geography, coaching style, family factors, anything</div>
-        <textarea id="other-prefs-input" class="other-prefs-ta"
-          placeholder="e.g. I want a school with a strong pre-med track near a city, and a team with a head coach who's invested in individual development…"
-          rows="4"
-          oninput="OTHER_PREFS = this.value; localStorage.setItem('lane4_other_prefs', OTHER_PREFS); schedulePush();"
-          onblur="clearTimeout(_syncTimer); pushToServer(); _showVibeSaved();"></textarea>
-      </div>
-    </div>
 
     <div class="section-label" style="margin-top:2rem;">
       Preferences
