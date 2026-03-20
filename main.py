@@ -3270,8 +3270,18 @@ _ADM_LABEL_SCORE: dict = {
 
 
 def _classify_query_mode(query: str) -> str:
-    """Step 1 — Classify query: GUIDED / CONSTRAINED / OBJECTIVE / EXPLORATORY."""
+    """Step 1 — Classify query: GUIDED / CONSTRAINED / OBJECTIVE / EXPLORATORY.
+
+    Priority order: GUIDED > CONSTRAINED > OBJECTIVE > EXPLORATORY.
+
+    GUIDED   — explicit personalization ('for me', 'where should I', etc.)
+    CONSTRAINED — personal-fit gate ('where I can get in', 'near me', etc.)
+    OBJECTIVE — category-ranking truth query ('best STEM schools', 'top biology')
+                with no personal qualifiers → LLM order preserved, no fit reranking.
+    EXPLORATORY — open-ended browsing; light LLM + fit-aware ranking.
+    """
     q = query.lower().strip()
+
     guided = [
         'for me', 'for my', 'for a swimmer like',
         'where should i', 'what should i', 'should i look',
@@ -3282,20 +3292,33 @@ def _classify_query_mode(query: str) -> str:
     ]
     if any(s in q for s in guided):
         return 'GUIDED'
+
     constrained = [
         'where i can', 'i can get in', 'can get into',
         'i can make', 'near me', 'close to home', 'i could get into',
     ]
     if any(c in q for c in constrained):
         return 'CONSTRAINED'
-    objective = [
-        'best colleges in america', 'top universities in america',
-        'us news', 'nationally ranked', 'world class',
-        'top 10', 'top 20', 'top 50', 'globally ranked',
-        'best universities in the world',
+
+    # OBJECTIVE: any "best / top / strongest / ..." query that has NO personal
+    # qualifiers.  These must return a nationally defensible category truth.
+    personal_qualifiers = [
+        'for me', 'for my', 'where i', 'near me', 'i can', 'i could',
+        'help me', 'for a swimmer', 'for the swimmer', 'fit for',
     ]
-    if any(s in q for s in objective):
+    obj_triggers = [
+        'best ', 'top ', 'strongest ', 'hardest ', 'most prestigious',
+        'most selective', 'most respected', 'most competitive',
+        'leading ', 'premier ', 'elite ', 'top-tier',
+        'nationally ranked', 'world class', 'globally ranked',
+        'us news', 'top 10', 'top 20', 'top 25', 'top 50',
+        'best colleges in', 'best universities', 'top universities',
+    ]
+    has_obj_trigger = any(s in q for s in obj_triggers)
+    has_personal    = any(s in q for s in personal_qualifiers)
+    if has_obj_trigger and not has_personal:
         return 'OBJECTIVE'
+
     return 'EXPLORATORY'
 
 
@@ -3321,7 +3344,39 @@ def _build_student_context(name, gpa, sat, act, times, vibe, other_prefs) -> str
 
 
 def _build_candidate_prompt(query: str, mode: str, student_ctx: str) -> tuple:
-    """Step 2 — Build system + user prompts for candidate school generation."""
+    """Step 2 — Build system + user prompts for candidate school generation.
+
+    OBJECTIVE mode gets a fully separate prompt that forbids personalization and
+    instructs the model to rank by genuine category truth only.  The resulting
+    list order is preserved exactly in the final response — no fit reranking.
+
+    GUIDED / CONSTRAINED get student context and normal pool-generation rules.
+    EXPLORATORY gets no student context but normal pool-generation rules.
+    """
+    if mode == 'OBJECTIVE':
+        system = (
+            "You are an expert U.S. college counselor answering a category-ranking question.\n\n"
+            "Rules — follow these EXACTLY:\n"
+            "- Rank by the TRUE strength of each school for the asked category\n"
+            "- Do NOT personalize — no student profile exists for this query\n"
+            "- Do NOT consider admissions chances, athletics, swim teams, or finances\n"
+            "- Do NOT consider any fit factors whatsoever\n"
+            "- Return the strongest, most nationally-defensible schools for the category\n"
+            "- Put the genuinely strongest schools FIRST (your order will be preserved)\n"
+            "- Return ONLY valid JSON — no markdown, no extra text\n"
+            "- 'schools' must contain exactly 12 full school name strings, strongest first\n"
+            "- 'answer' is 1-2 sentences describing what makes these schools the best\n"
+            'Format: {"answer": "...", "schools": ["Full School Name", ...]}'
+        )
+        user_lines = [
+            f'Category-ranking query: "{query}"',
+            "\nReturn the 12 strongest U.S. schools for this category, best first.",
+            "Do NOT personalize. Do NOT consider swim teams or admissions fit.",
+            "\nReturn JSON only.",
+        ]
+        return system, '\n'.join(user_lines)
+
+    # GUIDED / CONSTRAINED / EXPLORATORY — pool generation (existing behaviour)
     system = (
         "You are an expert U.S. college counselor generating a candidate list of colleges. "
         "Your ONLY job is to produce a strong pool of schools relevant to the search query.\n\n"
@@ -3737,9 +3792,22 @@ def search():
                     'directMatch': False,
                 }), 200
 
-            # Steps 4+5: apply existing scoring (already in each record from
-            # build_school_universe) then rank by admissions + swim fit
-            candidates.sort(key=lambda r: -_search_rank_score(r, mode))
+            # Debug: capture raw candidate list before any reranking
+            raw_candidates = [r['school'] for r in candidates]
+
+            # Steps 4+5: ranking
+            # OBJECTIVE mode — preserve the LLM's category-truth ordering exactly.
+            # No fit reranking: swim adjPts, admissions label, and preferences must
+            # NOT distort a nationally defensible answer.
+            # All other modes — apply composite fit score (admissions + swim).
+            reranked = False
+            if mode == 'OBJECTIVE':
+                # LLM order is preserved; _map_to_universe already maintains it.
+                pass
+            else:
+                candidates.sort(key=lambda r: -_search_rank_score(r, mode))
+                reranked = True
+
             want_more = any(w in query.lower() for w in (
                 'more schools', 'more options', 'show me more', 'give me more',
             ))
@@ -3754,10 +3822,17 @@ def search():
                 r['aiWhy'] = ' · '.join(parts[:2])
 
             return jsonify({
-                'answer':     answer,
-                'schools':    schools,
+                'answer':      answer,
+                'schools':     schools,
                 'directMatch': False,
-                'searchMode': mode,
+                'searchMode':  mode,
+                # Debug fields — visible in browser DevTools / API responses
+                '_debug': {
+                    'queryMode':      mode,
+                    'rawCandidates':  raw_candidates,
+                    'reranked':       reranked,
+                    'finalTop6':      [r['school'] for r in schools[:6]],
+                },
             })
 
         except json.JSONDecodeError as e:
