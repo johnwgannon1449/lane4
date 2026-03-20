@@ -3724,7 +3724,7 @@ def deep_dive():
     if vibe_lines:
         vibe_block = (
             f"\n{swimmer_name.upper()}'S PERSONALITY & PREFERENCES "
-            f"(use these to personalize every section):\n{vibe_lines}\n"
+            f"(use these to personalize Campus Life and tone):\n{vibe_lines}\n"
         )
 
     hidden_ivy_note = '\nThis is a Hidden Ivy — academically elite, employer-respected, without the brand tax.' if meta.get('hiddenIvy') else ''
@@ -3737,12 +3737,49 @@ def deep_dive():
         sat_detail += (", " if sat_detail else "") + f"ACT {act_score}"
     ap_detail = f", {ap_count} projected APs" if ap_count else ""
 
+    # Determine academic direction for optional section
+    career_raw   = (vibe_answers.get('career')   or '').strip()
+    academic_raw = (vibe_answers.get('academic')  or '').strip()
+    _generic_career   = career_raw   in ('', 'Not sure yet')
+    _generic_academic = academic_raw in ('', 'Genuinely want to be well-rounded')
+    if not _generic_career or not _generic_academic:
+        _parts = [p for p in [career_raw, academic_raw]
+                  if p and p not in ('Not sure yet', 'Genuinely want to be well-rounded')]
+        academic_direction = ' / '.join(_parts) if _parts else None
+    else:
+        academic_direction = None
+
+    # Admission comparison block
+    sat_median   = meta.get('satMedian', 0)
+    sat25        = meta.get('sat25', 0)
+    sat75        = meta.get('sat75', 0)
+    gpa_mean     = meta.get('gpaMean', 0)
+    accept_rate  = meta.get('accept', 0)
+    adm_swimmer  = f"GPA {gpa} unweighted"
+    if sat:
+        adm_swimmer += f", SAT {sat}"
+    if act_score:
+        adm_swimmer += f", ACT {act_score}"
+    adm_school_parts = [f"~{accept_rate}% acceptance rate"]
+    if sat_median:
+        adm_school_parts.append(f"SAT median ~{sat_median}")
+    if sat25 and sat75:
+        adm_school_parts.append(f"SAT range ~{sat25}-{sat75}")
+    if gpa_mean:
+        adm_school_parts.append(f"GPA average ~{gpa_mean}")
+    admission_comparison = (
+        f"ADMISSION COMPARISON (use to write 'Are You Admissible?' — do not invent different numbers):\n"
+        f"Swimmer: {adm_swimmer}\n"
+        f"School: {', '.join(adm_school_parts)}\n"
+        f"Admission outlook: {result['admission']['label']}"
+    )
+
     prog_strength = _program_strength_desc(result)
     conf_tier_short = result.get('confTierShort', '')
     super_powerhouse_note = (
         f"\nIMPORTANT: {result['school']} is a Super Powerhouse — they dominate their conference "
         f"and recruit well above what most peer schools in {result['conference']} can attract. "
-        "In the swim team section, call this out directly and tell the swimmer to look closely "
+        "In 'In the Pool', call this out directly and tell the swimmer to look closely "
         "at the current roster and committed recruits before assuming a spot."
     ) if conf_tier_short == '1A' else ''
 
@@ -3753,12 +3790,27 @@ def deep_dive():
         "'dominant in conference', 'competitive', etc.\n"
         "- 'Hidden Ivy' = academically elite and employer-respected without the Stanford rejection "
         "rate. Use naturally when applicable.\n"
-        "- Never use the words 'profile', 'good school', or 'strong fit'.\n"
+        "- Never use the words 'profile', 'good school', 'strong fit', or 'also'.\n"
+        "- No em dashes anywhere in the output.\n"
         "- Respond using markdown sections starting with ## for each section title.\n"
-        "- Max 2-3 sentences per section."
+        "- 2-3 sentences per section. Short paragraphs. Strong declarative sentences."
     )
 
     ivy_note = '\nThis is an Ivy League school — need-based aid only, no merit scholarships.' if meta.get('ivyLeague') else ''
+
+    # Build optional academic section instruction
+    if academic_direction:
+        acad_section_instr = (
+            f"## If You're Serious About {academic_direction}\n"
+            f"Name the specific program or department at {result['school']}. "
+            "Explain why it's strong there. Be specific — research access, outcomes, reputation. "
+            "Do not write this section generically.\n"
+        )
+    else:
+        acad_section_instr = (
+            "[SKIP the optional academic section — no academic direction provided. "
+            "Do not include any section about majors or academic programs.]\n"
+        )
 
     if is_oou:
         user_prompt = (
@@ -3767,29 +3819,28 @@ def deep_dive():
             f"{sat_detail}{ap_detail}."
             f"{vibe_block}\n"
             f"SCHOOL: {result['school']}\n"
-            f"Admission outlook for this swimmer: {result['admission']['label']}\n"
-            f"Acceptance rate: ~{meta.get('accept', '?')}%\n"
-            f"SAT median: ~{meta.get('satMedian', '?')}\n"
             f"School vibe: {meta.get('vibe', '')}\n"
             f"Location: {meta.get('location', '')}\n"
-            f"{money_block}"
+            f"{admission_comparison}\n"
+            f"{money_block}\n"
             f"{hidden_ivy_note}{ivy_note}{stem_note}\n\n"
-            "NOTE: This school is not in our swim recruiting database. Focus on academic and "
-            "personal fit, not swim recruitment. The swimmer is using Lane4 to compare this school "
-            "against their D3 options — be honest about how it stacks up.\n\n"
-            "Write exactly these sections in this order. Max 2-3 sentences per section.\n\n"
-            "## The Bottom Line\n"
-            "One powerful sentence. Clearly answers: is this a real option, and how strong?\n"
-            "## Your Honest Shot\n"
-            "## What This School Is Actually Like\n"
-            "## Academics & Campus Life\n"
-            "## Getting In — The Real Picture\n"
-            "## The Money Conversation\n"
-            "Use EXACTLY the MONEY DATA figures above. Do not change the numbers. Present them clearly, then add 1–2 lines from the merit note.\n"
+            "NOTE: This school is not in our swim recruiting database. The swimmer is comparing it "
+            "against D3 options — be honest about what choosing this school means for swim.\n\n"
+            "Write exactly these sections in this order. 2-3 sentences per section.\n\n"
+            "## Bottom Line\n"
+            "2-3 sentences. School value + academic/personal fit + overall verdict.\n"
+            "## What {school} Is Known For\n".replace('{school}', result['school'])
+            + f"{acad_section_instr}"
+            "## Are You Admissible?\n"
+            "Use the ADMISSION COMPARISON above. Compare swimmer numbers to school numbers. "
+            "Plain-English read: in range, above, slightly below, or real reach.\n"
+            "## What It Costs\n"
+            "Use EXACTLY the MONEY DATA figures above. Do not change the numbers. "
+            "Cover COA, merit or no merit, net cost, aid philosophy.\n"
+            "## Campus Life\n"
+            "What do four years here actually feel like? Size, energy, setting, social scene.\n"
             "## How It Compares to Your D3 Options\n"
-            "Be honest — what does choosing this school mean for continuing to swim competitively?\n"
-            "## Your Next Three Moves\n"
-            "Three specific, actionable steps this week."
+            "Be honest — what does choosing this school mean for continuing to swim competitively?"
         )
     else:
         user_prompt = (
@@ -3797,37 +3848,46 @@ def deep_dive():
             f"SWIMMER: {swimmer_name}, Class of {grad_year}, GPA {gpa} unweighted, "
             f"{sat_detail}{ap_detail}."
             f"{vibe_block}\n"
-            f"SWIM RESULTS AT {result['school'].upper()} ({result['conference']}):\n"
+            f"SWIM DATA AT {result['school'].upper()} ({result['conference']}):\n"
             f"Top events: {top3_text}\n"
-            f"Program strength: {prog_strength} (PSF {result['psf']})\n"
-            f"Admission outlook: {result['admission']['label']}"
-            f"{hidden_ivy_note}{ivy_note}{stem_note}\n"
-            f"{super_powerhouse_note}"
+            f"Program strength: {prog_strength}\n"
+            f"{super_powerhouse_note}\n"
             f"School vibe: {meta.get('vibe', '')}\n"
             f"Location: {meta.get('location', '')}\n"
-            f"Acceptance rate: ~{meta.get('accept', '?')}%\n"
-            f"SAT median: ~{meta.get('satMedian', '?')}\n"
-            f"{money_block}\n\n"
-            "Write exactly these sections in this order. Never clinical. Weave in what you know "
-            "about their personality — don't just list preferences, speak to them naturally. "
-            "Use 'Hidden Ivy' naturally if applicable. Max 2-3 sentences per section.\n\n"
-            "## The Bottom Line\n"
-            "One powerful sentence. Clearly answers: is this a real option, and how strong?\n"
-            "## Your Honest Shot\n"
-            "## What This School Is Actually Like\n"
-            f"## How {swimmer_name} Fits on the Swim Team\n"
-            "## Why a Coach Would Want to Call\n"
-            "## Getting In — The Real Picture\n"
-            "## The Money Conversation\n"
-            "Use EXACTLY the MONEY DATA figures above. Do not change the numbers. Present them clearly, then add 1–2 lines from the merit note.\n"
-            "## Your Next Three Moves\n"
-            "Three specific, actionable steps this week."
+            f"{admission_comparison}\n"
+            f"{money_block}\n"
+            f"{hidden_ivy_note}{ivy_note}{stem_note}\n\n"
+            "Write exactly these sections in this order. "
+            "Swim fit is explained ONCE in 'In the Pool' — do not repeat it in other sections. "
+            "Weave in personality preferences naturally where relevant. "
+            "Use 'Hidden Ivy' naturally if applicable. 2-3 sentences per section.\n\n"
+            "## Bottom Line\n"
+            "2-3 sentences. Swim reality + school value + overall verdict. No hedging.\n"
+            "## In the Pool\n"
+            "Where this swimmer lands on the team. What that means. Trajectory if they hold or drop time. "
+            "Sound like a coach talking plainly. No internal metrics.\n"
+            "## Coach Interest — What to Expect\n"
+            "Likely level of recruiting engagement. Will they respond quickly? Is this swimmer a priority? "
+            "What moves the needle: time drops, roster gaps, academic strength, event needs.\n"
+            f"## What {result['school']} Is Known For\n"
+            "School identity. Make it feel important and real. Prestige and seriousness when deserved.\n"
+            f"{acad_section_instr}"
+            "## Are You Admissible?\n"
+            "Use the ADMISSION COMPARISON above. Compare swimmer numbers to school numbers directly. "
+            "Plain-English read: in range, above, slightly below, or real reach. "
+            "If highly selective, say so. If swim support helps, mention it briefly.\n"
+            "## What It Costs\n"
+            "Use EXACTLY the MONEY DATA figures above. Do not change the numbers. "
+            "Cover COA, merit or no merit, net cost, aid philosophy. Practical family language.\n"
+            "## Campus Life\n"
+            "What do four years here actually feel like? Size, energy, setting, social scene, "
+            "what kind of student thrives. No brochure copy."
         )
 
     try:
         resp = client.messages.create(
             model='claude-sonnet-4-6',
-            max_tokens=1000,
+            max_tokens=1200,
             system=system_prompt,
             messages=[{'role': 'user', 'content': user_prompt}],
         )

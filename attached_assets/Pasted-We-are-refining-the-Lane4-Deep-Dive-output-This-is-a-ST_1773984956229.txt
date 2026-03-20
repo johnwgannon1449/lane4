@@ -1,0 +1,207 @@
+We are refining the Lane4 Deep Dive output. This is a STRUCTURE + WRITING overhaul only. Do not change backend logic unless needed to support the exact display structure below. Do not touch unrelated UI.
+
+GOAL
+Deep Dives should feel like a sharp college swim recruiter leveling with a family, not an AI summary. The output must be cleaner, less repetitive, more useful for actual college selection, and more exciting when the school is academically elite.
+
+CORE RULES
+
+1. SWIM VOICE
+- Swim sections must sound like pool deck talk.
+- No internal metrics or model language in user-facing output.
+- Never mention PSF, tiers, ratios, percentile systems, model terms, or internal scoring terminology.
+- No analyst phrasing.
+- No consultant voice.
+- No “this indicates,” “this suggests,” “profile,” “projects as,” etc.
+- No AI tells, especially:
+  - em dashes
+  - over-explaining
+  - contrast filler like “this isn’t a place where…”
+  - empty qualifiers
+  - repetitive restatement
+
+2. NO REDUNDANCY
+- Deep Dives currently repeat the swim case 2–3 times.
+- That must stop.
+- Swim fit should be explained ONCE.
+- Every section must do one job only.
+
+3. ACADEMIC PRESTIGE IS GOOD
+- For elite schools, Hidden Ivies, top liberal arts colleges, major research universities, etc., lean into prestige and seriousness.
+- These schools should feel exciting, not like fallback options.
+- It is good to say a school is elite, highly selective, nationally respected, top-tier, etc. when deserved.
+
+4. ONLY TALK ABOUT RELEVANT ACADEMICS
+- If we know the swimmer’s intended academic direction, use it.
+- Example: if the kid is interested in BME, talk specifically about Biomedical Engineering at that school.
+- Name the department/program correctly if possible.
+- Mention what it is known for, research access, professor access, outcomes, etc.
+- If we do NOT know the kid’s intended academic direction, do NOT force a generic academic-fit section.
+- In that case, omit that section entirely.
+
+5. REMOVE GENERIC “NEXT MOVES”
+- Delete the “Next Moves” section entirely.
+- It is too generic and ignores timing / grad year / season.
+
+6. ADMISSIONS SHOULD FEEL EXCITING WHEN DESERVED
+- Rename admissions section to:
+  Are You Admissible?
+- Show a clean comparison table.
+- If the school is highly selective and the swimmer is in range, say that clearly. Families like knowing they are in the hunt at elite schools.
+- If the swimmer is below range, say that clearly too.
+- If possible and safe, comment briefly on rigor relative to school expectations.
+
+7. MONEY SHOULD BE MORE USEFUL
+- Rename money section to:
+  What It Costs
+- Include:
+  - estimated COA
+  - merit vs no merit
+  - estimated net if available
+  - need-based aid philosophy
+  - useful, concrete aid info if publicly available and safe to state, like income bands or strong institutional aid policies
+- Keep it blunt and practical.
+
+NEW DEEP DIVE STRUCTURE
+
+Use this section order:
+
+1. Bottom Line
+2. In the Pool
+3. Coach Interest — What to Expect
+4. What [School Name] Is Known For
+5. [OPTIONAL, ONLY IF RELEVANT ACADEMIC DIRECTION IS KNOWN]
+   Example headings:
+   - If You’re Serious About Biomedical Engineering
+   - If You’re Serious About Computer Science
+   - If You’re Serious About Pre-Med
+   Only include this section if we know enough to make it specific and useful.
+6. Are You Admissible?
+7. What It Costs
+8. Campus Life
+
+SECTION-BY-SECTION RULES
+
+1. Bottom Line
+- This now goes FIRST.
+- 2–3 short sentences max.
+- It should immediately orient the family:
+  - swim reality
+  - school value
+  - overall verdict
+- Example rhythm:
+  - This is a real shot in the pool and a serious academic win.
+  - [School] is one of the best schools on your list.
+  - This is absolutely worth pursuing.
+- No fluff.
+
+2. In the Pool
+- This replaces the old repetitive swim breakdown.
+- Only one swim section.
+- Cover:
+  - where the swimmer lands
+  - what that means on this team
+  - what the trajectory is if the swimmer drops / holds
+- It should sound like a college coach talking plainly.
+- No internal terminology.
+- No repeating the same idea in later sections.
+
+3. Coach Interest — What to Expect
+- This should NOT repeat swim fit.
+- It should explain likely level of recruiting engagement.
+- Examples:
+  - they’ll respond quickly
+  - they’ll keep the conversation going
+  - you’re on the radar but not a priority
+  - if they lean in, it means something
+- Include what could move the needle:
+  - time drops
+  - roster gaps
+  - academic strength
+  - event needs
+- Keep this practical and realistic.
+
+4. What [School Name] Is Known For
+- This is broader school identity.
+- Make the place feel important and real.
+- Can include prestige, institutional identity, strongest broad strengths, reputation, academic seriousness.
+- Avoid random facts.
+- Avoid talking about departments that are irrelevant to the swimmer if we do not know academic direction.
+
+5. Optional Academic-Specific Section
+- Only include if we know the swimmer’s intended academic area.
+- Make it specific.
+- Name the actual department / program if possible.
+- Explain why the school is strong there.
+- This is where the AI should shine.
+- If not enough information, skip this section entirely.
+
+6. Are You Admissible?
+- Heading must be exactly:
+  Are You Admissible?
+- Include a clean table comparing:
+  - GPA
+  - SAT/ACT if available
+  - school range / median / typical range
+- Then add a short plain-English read:
+  - in range
+  - above range
+  - slightly below range
+  - real reach
+- If course rigor is known and can be discussed safely, mention it briefly.
+- If the school is highly selective, say so directly.
+
+7. What It Costs
+- Heading must be exactly:
+  What It Costs
+- Keep it clean and direct.
+- Include aid philosophy.
+- Mention merit only if real.
+- Mention no merit if none.
+- Use practical family language.
+
+8. Campus Life
+- Move this toward the bottom.
+- This should answer what four years there would actually feel like.
+- Include:
+  - size / energy
+  - setting
+  - social feel
+  - what kind of student is happy there
+- No brochure language.
+- No generic positivity.
+
+STYLE RULES
+- Short paragraphs.
+- Strong declarative sentences.
+- Human rhythm.
+- No em dashes.
+- No generic AI transitions.
+- No restating the same swim point in 3 sections.
+- No “What This School Is Actually Like” phrasing if better headings are available.
+- Keep headings sharper and more human.
+
+IMPORTANT HEADING RULES
+Use these exact or near-exact headings:
+- Bottom Line
+- In the Pool
+- Coach Interest — What to Expect
+- What [School Name] Is Known For
+- Are You Admissible?
+- What It Costs
+- Campus Life
+
+Do NOT use:
+- Your Honest Shot
+- How [Name] Fits on the Swim Team
+- Why a Coach Would Want to Call
+- The Money Conversation
+- Getting In — The Real Picture
+- Your Next Three Moves
+
+IMPLEMENTATION TASK
+Update the Deep Dive generation prompt/template and any rendering needed so all future Deep Dives follow this structure and tone. Preserve all existing underlying data inputs, but change the wording, ordering, section inclusion logic, and headings to match the rules above.
+
+After implementation, show me:
+1. the updated Deep Dive template/prompt
+2. one sample Deep Dive rendered in the new format
+3. a short summary of exactly what changed

@@ -226,7 +226,7 @@
     .deep-section-title { font-family: 'Fraunces', serif; font-weight: 700; font-size: 0.95rem; color: var(--navy); margin-bottom: 0.4rem; }
     .deep-section-body { font-size: 0.9rem; line-height: 1.65; color: var(--slate); white-space: pre-wrap; }
     .bottom-line {
-      background: var(--navy); border-radius: 12px; padding: 1.25rem 1.4rem; margin-top: 1.25rem;
+      background: var(--navy); border-radius: 12px; padding: 1.25rem 1.4rem; margin-bottom: 1.25rem;
     }
     .bottom-line-label { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #93C5FD; margin-bottom: 0.4rem; }
     .bottom-line-text { font-family: 'Fraunces', serif; font-weight: 700; font-size: 1.1rem; color: var(--white); line-height: 1.4; }
@@ -1575,17 +1575,17 @@ async function openDeepDive(school) {
         <button class="btn btn-secondary" onclick='showCoachEmail(${JSON.stringify(school)})'>Draft Coach Email →</button>
       </div>
 
+      ${bottomLine ? `
+        <div class="bottom-line">
+          <div class="bottom-line-label">Bottom Line</div>
+          <div class="bottom-line-text">${esc(bottomLine.body)}</div>
+        </div>` : ''}
+
       ${mainSections.map(s => `
         <div class="deep-section">
           <div class="deep-section-title">${esc(s.title)}</div>
           <div class="deep-section-body">${esc(s.body)}</div>
         </div>`).join('')}
-
-      ${bottomLine ? `
-        <div class="bottom-line">
-          <div class="bottom-line-label">The Bottom Line</div>
-          <div class="bottom-line-text">${esc(bottomLine.body)}</div>
-        </div>` : ''}
 
       <div id="dd-email-section" style="display:none;margin-top:1.5rem;">
         <div class="section-label">Coach Email Draft</div>
