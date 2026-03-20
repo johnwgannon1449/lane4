@@ -179,12 +179,28 @@
     .result-card {
       background: var(--white); border: 1.5px solid var(--border);
       border-radius: 14px; padding: 1.1rem 1.2rem; margin-bottom: 0.85rem;
-      transition: border-color 0.15s;
+      transition: border-color 0.18s, box-shadow 0.18s;
+      box-shadow: 0 1px 4px rgba(15,23,42,0.05);
+      overflow: hidden;
     }
-    .result-card:hover { border-color: var(--blue-m); }
+    .result-card:hover { border-color: var(--blue-m); box-shadow: 0 4px 18px rgba(15,23,42,0.09); }
+    /* ── card hero image ─────────────────────────────────────── */
+    .card-img-wrap {
+      margin: -1.1rem -1.2rem 1rem;
+      aspect-ratio: 16/9;
+      background: linear-gradient(135deg,#E2E8F0 0%,#CBD5E1 100%);
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .card-img {
+      width: 100%; height: 100%;
+      object-fit: cover; display: block;
+      transition: opacity 0.4s, transform 0.5s;
+    }
+    .card-img:hover { transform: scale(1.02); }
     .result-card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 0.75rem; margin-bottom: 0.6rem; }
-    .result-school-name { font-family: 'Fraunces', serif; font-weight: 700; font-size: 1.05rem; color: var(--navy); }
-    .result-conference { font-size: 0.78rem; color: var(--muted); margin-top: 1px; }
+    .result-school-name { font-family: 'Fraunces', serif; font-weight: 800; font-size: 1.08rem; color: var(--navy); }
+    .result-conference { font-size: 0.78rem; color: var(--muted); margin-top: 2px; }
     .result-badges { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 0.55rem; }
     .result-vibe { font-size: 0.82rem; color: var(--slate); font-style: italic; margin-bottom: 0.7rem; line-height: 1.45; }
     .ai-why {
@@ -199,6 +215,27 @@
     .event-chip strong { color: var(--navy); }
     .result-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center; }
     .btn-added { background: var(--green-m); color: var(--green); cursor: default; border: 1.5px solid var(--green-m); }
+    /* ── deep dive images ────────────────────────────────────── */
+    .dd-images { margin-bottom: 1.25rem; }
+    .dd-hero-wrap {
+      position: relative; border-radius: 12px; overflow: hidden;
+      aspect-ratio: 16/9; background: linear-gradient(135deg,#E2E8F0 0%,#CBD5E1 100%);
+      margin-bottom: 0.5rem;
+    }
+    .dd-secondary-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+    .dd-secondary-wrap {
+      position: relative; border-radius: 10px; overflow: hidden;
+      aspect-ratio: 4/3; background: linear-gradient(135deg,#E2E8F0 0%,#CBD5E1 100%);
+    }
+    .dd-img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .dd-img-label {
+      position: absolute; bottom: 7px; left: 8px;
+      background: rgba(15,23,42,0.62); color: #fff;
+      font-size: 0.6rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.07em; padding: 2px 7px; border-radius: 4px;
+      pointer-events: none;
+    }
+    @media (max-width: 520px) { .dd-secondary-row { grid-template-columns: 1fr; } }
 
     /* place label colors */
     .pl-contender { background: #FEF3C7; color: #92400E; }
@@ -724,6 +761,29 @@ let ELIMINATED    = [];   // eliminated in current session
 let LAST_RESULTS  = null; // last search result { answer, schools }
 let LAST_QUERY    = '';
 let ACTIVE_TAB    = 'explore';
+let SCHOOL_IMAGES = {};   // { "School Name": { hero, student_life, swim } }
+
+// ── stable defaults if manifest unavailable ───────────────────────────────────
+const IMG_DEFAULT_HERO    = 'https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80';
+const IMG_DEFAULT_STUDENT = 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80';
+const IMG_DEFAULT_SWIM    = 'https://images.unsplash.com/photo-1530549387789-4c1017266635?w=1200&q=80';
+
+async function loadSchoolImages() {
+  try {
+    const r = await fetch('/school_images.json');
+    if (r.ok) SCHOOL_IMAGES = await r.json();
+  } catch(_) {}
+}
+
+function schoolImgHero(school) {
+  return (SCHOOL_IMAGES[school] || {}).hero || IMG_DEFAULT_HERO;
+}
+function schoolImgStudent(school) {
+  return (SCHOOL_IMAGES[school] || {}).student_life || IMG_DEFAULT_STUDENT;
+}
+function schoolImgSwim(school) {
+  return (SCHOOL_IMAGES[school] || {}).swim || IMG_DEFAULT_SWIM;
+}
 let VIBE_STATE    = {};   // { campus, friday, academic, compete, location, career }
 let OPEN_CRM        = null; // currently expanded CRM card
 let LIST_HEALTH_OPEN = false; // list health explanation expanded
@@ -1223,6 +1283,7 @@ async function afterAuthBoot() {
   }
 
   // 4. Load unified school universe and score modeled schools — in parallel
+  // Load images manifest in parallel with school data (non-blocking)
   const [schoolsRes, scoreRes] = await Promise.allSettled([
     fetch('/api/schools'),
     fetch('/api/score-all', {
@@ -1230,6 +1291,7 @@ async function afterAuthBoot() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ times: JAMES.times, sat: JAMES.sat, gpa: JAMES.gpa }),
     }),
+    loadSchoolImages(),
   ]);
 
   if (schoolsRes.status === 'fulfilled' && schoolsRes.value.ok) {
@@ -1476,8 +1538,14 @@ function renderResultCards(schools, container, isDirect, answer) {
     }
     const metaLine = divParts.length ? `<div style="display:flex;align-items:center;gap:5px;margin-top:3px;">${divParts.join('')}</div>` : '';
 
+    const _heroUrl = schoolImgHero(r.school);
     return `
     <div class="result-card" id="rcard-${i}">
+      <div class="card-img-wrap">
+        <img src="${_heroUrl}" class="card-img" loading="lazy"
+          alt="${esc(r.school)} campus"
+          onerror="this.closest('.card-img-wrap').style.display='none'">
+      </div>
       ${r.aiWhy ? `<div class="ai-why">✦ ${esc(r.aiWhy)}</div>` : ''}
       <div class="result-card-top">
         <div>
@@ -1667,6 +1735,29 @@ async function openDeepDive(school) {
           : `<button class="btn btn-secondary" id="dd-add-btn" onclick='ddAddToList(${JSON.stringify(school)})'>+ Add to List</button>`}
         <button class="btn btn-secondary" onclick='showCoachEmail(${JSON.stringify(school)})'>Draft Coach Email →</button>
         <button class="btn btn-secondary" onclick='printDeepDive(${JSON.stringify(school)})' style="margin-left:auto;">🖨 Save as PDF</button>
+      </div>
+
+      <div class="dd-images">
+        <div class="dd-hero-wrap">
+          <img src="${schoolImgHero(school)}" class="dd-img" loading="eager"
+            alt="${esc(school)} campus"
+            onerror="this.closest('.dd-hero-wrap').style.display='none'">
+          <span class="dd-img-label">Campus</span>
+        </div>
+        <div class="dd-secondary-row">
+          <div class="dd-secondary-wrap">
+            <img src="${schoolImgStudent(school)}" class="dd-img" loading="lazy"
+              alt="${esc(school)} student life"
+              onerror="this.closest('.dd-secondary-wrap').style.display='none'">
+            <span class="dd-img-label">Student Life</span>
+          </div>
+          <div class="dd-secondary-wrap">
+            <img src="${schoolImgSwim(school)}" class="dd-img" loading="lazy"
+              alt="${esc(school)} swimming"
+              onerror="this.closest('.dd-secondary-wrap').style.display='none'">
+            <span class="dd-img-label">Swimming</span>
+          </div>
+        </div>
       </div>
 
       ${bottomLine ? `

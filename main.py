@@ -1,4 +1,5 @@
-import os, json, re, time
+import os, json, re, time, threading
+import urllib.request, urllib.parse
 from flask import Flask, request, jsonify, send_from_directory, session
 from dotenv import load_dotenv
 from functools import wraps
@@ -4304,6 +4305,218 @@ def health():
 def download_snapshot():
     """Serve the latest Lane4 team-tier snapshot CSV for download."""
     return send_from_directory('output', 'lane4_snapshot.csv', as_attachment=True)
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# SCHOOL IMAGE MANIFEST — background builder
+# Writes static/school_images.json incrementally from Wikipedia page images.
+# Serves the manifest as a static file so the JS can load it at startup.
+# ═══════════════════════════════════════════════════════════════════════════════
+
+_IMG_MANIFEST_PATH = os.path.join('static', 'school_images.json')
+_IMG_MANIFEST_LOCK = threading.Lock()
+_IMG_WIKI          = 'https://en.wikipedia.org/w/api.php'
+_IMG_UA            = 'Lane4Recruit/1.0 (college swim recruiting; lane4.app)'
+_IMG_DEF_HERO      = 'https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80'
+_IMG_DEF_STUDENT   = 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80'
+_IMG_DEF_SWIM      = 'https://images.unsplash.com/photo-1530549387789-4c1017266635?w=1200&q=80'
+
+
+def _img_wiki_get(params, timeout=10):
+    params['format'] = 'json'
+    qs  = urllib.parse.urlencode(params)
+    req = urllib.request.Request(f'{_IMG_WIKI}?{qs}', headers={'User-Agent': _IMG_UA})
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as r:
+            return json.loads(r.read().decode())
+    except Exception:
+        return {}
+
+
+def _img_page_files(title):
+    data  = _img_wiki_get({'action': 'query', 'titles': title,
+                           'prop': 'images', 'imlimit': '50'})
+    pages = data.get('query', {}).get('pages', {})
+    for page in pages.values():
+        return [img['title'] for img in page.get('images', [])]
+    return []
+
+
+def _img_file_url(file_title, width=1200):
+    data  = _img_wiki_get({'action': 'query', 'titles': file_title,
+                           'prop': 'imageinfo', 'iiprop': 'url',
+                           'iiurlwidth': width})
+    pages = data.get('query', {}).get('pages', {})
+    for page in pages.values():
+        info = page.get('imageinfo', [])
+        if info:
+            return info[0].get('thumburl') or info[0].get('url')
+    return None
+
+
+def _img_search_title(query):
+    data    = _img_wiki_get({'action': 'query', 'list': 'search',
+                             'srsearch': query, 'srlimit': 3})
+    results = data.get('query', {}).get('search', [])
+    return results[0]['title'] if results else None
+
+
+_IMG_STOP = {'university', 'college', 'of', 'the', 'and', 'at', 'institute',
+             'technology', 'polytechnic', 'state', 'a', 'an', 'in', 'for'}
+
+
+def _img_tokens(school):
+    return [t.lower() for t in school.split() if t.lower() not in _IMG_STOP][:3]
+
+
+def _img_score_campus(fn, tokens):
+    """Score a Wikipedia file title for campus-photo likelihood."""
+    fn = fn.lower()
+    if any(b in fn for b in ['svg', '.svg', 'logo', 'seal', 'flag', 'map', 'icon',
+                              'coat', 'shield', 'wordmark', 'crest', '.gif',
+                              'placeholder', 'question', 'default',
+                              'athletics_mark', 'spirit_mark', '_mark.',
+                              'vector', 'badge', 'insignia']):
+        return -999
+    if not (fn.endswith('.jpg') or fn.endswith('.jpeg') or fn.endswith('.png')):
+        return -999
+    score = 0
+    for tok in tokens:
+        if tok and fn.startswith('file:' + tok): score += 15
+        elif tok and tok in fn:                  score += 8
+    for kw in ['campus', 'aerial', 'quad', 'quadrangle', 'grounds',
+                'entrance', 'courtyard', 'panoram']:
+        if kw in fn: score += 10
+    for kw in ['building', 'chapel', 'tower', 'auditorium', 'clocktower',
+                'gymnasium', 'hall', 'center', 'science']:
+        if kw in fn: score += 5
+    for kw in ['arch', 'gate', 'fountain', 'square']:
+        if kw in fn: score += 3
+    for kw in ['portrait', 'headshot', 'rally', 'protest', 'game']:
+        if kw in fn: score -= 6
+    return score
+
+
+def _img_score_swim(fn):
+    fn = fn.lower()
+    if any(b in fn for b in ['svg', '.svg', 'logo', '.gif']): return -999
+    if not (fn.endswith('.jpg') or fn.endswith('.jpeg') or fn.endswith('.png')):
+        return -999
+    score = 0
+    for kw in ['swim', 'pool', 'aquat', 'natator', 'water']:
+        if kw in fn: score += 10
+    for kw in ['athletic', 'sport', 'recreation']:
+        if kw in fn: score += 4
+    return score
+
+
+def _img_best_from_page(title, score_fn, width=1200):
+    files  = _img_page_files(title)
+    scored = [(score_fn(f), f) for f in files if score_fn(f) > 0]
+    scored.sort(reverse=True)
+    for _, fname in scored[:5]:
+        url = _img_file_url(fname, width=width)
+        if url:
+            return url
+    return None
+
+
+def _img_fetch_one(school):
+    """Fetch and return hero/student_life/swim URLs for one school."""
+    tokens     = _img_tokens(school)
+    page_title = _img_search_title(school) or school
+
+    # Hero — best scored campus image from the school's Wikipedia page
+    hero = _img_best_from_page(page_title,
+                               lambda fn: _img_score_campus(fn, tokens))
+    if not hero and page_title != school:
+        hero = _img_best_from_page(school,
+                                   lambda fn: _img_score_campus(fn, tokens))
+
+    # Student life — secondary image from same page (different scene)
+    # Re-score preferring interior/people scenes; fall back to hero
+    student_life = _img_best_from_page(page_title,
+                                       lambda fn: _img_score_campus(fn, tokens),
+                                       width=900)
+    if student_life == hero:
+        student_life = None  # avoid exact duplicate; fall back to default
+
+    # Swim — look for school's dedicated swimming/aquatics Wikipedia article
+    swim = None
+    for q in [f'{school} swimming', f'{school} aquatics', f'{school} swim team']:
+        swim_title = _img_search_title(q)
+        if swim_title and swim_title != page_title:
+            swim = _img_best_from_page(swim_title, _img_score_swim, width=900)
+            if swim:
+                break
+    if not swim:
+        swim = _img_best_from_page(page_title, _img_score_swim, width=900)
+
+    return {
+        'hero':         hero         or _IMG_DEF_HERO,
+        'student_life': student_life or _IMG_DEF_STUDENT,
+        'swim':         swim         or _IMG_DEF_SWIM,
+    }
+
+
+def _img_build_manifest_daemon():
+    """
+    Background daemon thread — runs once at startup, fills gaps in the
+    image manifest, then exits. Polite: 0.15 s sleep between schools.
+    """
+    # small startup delay so Flask is fully up before we hammer Wikipedia
+    time.sleep(8)
+
+    try:
+        if os.path.exists(_IMG_MANIFEST_PATH):
+            with open(_IMG_MANIFEST_PATH) as f:
+                manifest = json.load(f)
+        else:
+            manifest = {}
+    except Exception:
+        manifest = {}
+
+    schools   = sorted(SCHOOL_META.keys())
+    to_fetch  = [s for s in schools if s not in manifest]
+
+    if not to_fetch:
+        app.logger.info(f'[images] Manifest already complete ({len(manifest)} schools).')
+        return
+
+    app.logger.info(f'[images] Building image manifest for {len(to_fetch)} schools …')
+
+    for i, school in enumerate(to_fetch):
+        try:
+            imgs = _img_fetch_one(school)
+        except Exception as e:
+            app.logger.warning(f'[images] {school}: {e}')
+            imgs = {'hero': _IMG_DEF_HERO,
+                    'student_life': _IMG_DEF_STUDENT,
+                    'swim': _IMG_DEF_SWIM}
+
+        with _IMG_MANIFEST_LOCK:
+            manifest[school] = imgs
+
+        # Persist every 5 schools
+        if (i + 1) % 5 == 0 or i == len(to_fetch) - 1:
+            try:
+                with _IMG_MANIFEST_LOCK:
+                    with open(_IMG_MANIFEST_PATH, 'w') as f:
+                        json.dump(manifest, f)
+            except Exception:
+                pass
+
+        if (i + 1) % 25 == 0:
+            app.logger.info(f'[images] {i+1}/{len(to_fetch)} done')
+
+        time.sleep(0.15)
+
+    app.logger.info(f'[images] Manifest complete — {len(manifest)} schools.')
+
+
+# Start the background image builder (daemon so it doesn't block shutdown)
+_img_thread = threading.Thread(target=_img_build_manifest_daemon, daemon=True)
+_img_thread.start()
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
