@@ -331,6 +331,28 @@
     .other-prefs-ta:focus { outline: none; border-color: var(--blue); box-shadow: 0 0 0 3px rgba(37,99,235,.09); }
     .other-prefs-ta::placeholder { color: var(--muted); }
 
+    /* ── PREFERENCES SECTION ─────────────────────────────────── */
+    .pref-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.1rem 1.75rem; }
+    .pref-q {}
+    .pref-q-wide { grid-column: 1 / -1; }
+    .pref-label { font-size: 0.84rem; font-weight: 600; color: var(--navy); margin-bottom: 0.55rem; line-height: 1.4; }
+    .pref-group { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+    .pref-btn {
+      display: inline-flex; align-items: center;
+      padding: 5px 13px; border-radius: 50px;
+      font-size: 0.76rem; font-weight: 600;
+      border: 1.5px solid var(--border);
+      background: var(--white); color: var(--slate);
+      cursor: pointer; font-family: inherit;
+      transition: border-color 0.12s, background 0.12s, color 0.12s;
+      line-height: 1.4;
+    }
+    .pref-btn:hover { border-color: var(--blue); color: var(--blue); }
+    .pref-btn.active { background: var(--blue); border-color: var(--blue); color: #fff; }
+    .pref-save-row { margin-top: 1.4rem; display: flex; align-items: center; gap: 1rem; padding-top: 1rem; border-top: 1px solid var(--border); }
+    .pref-saved-msg { font-size: 0.82rem; font-weight: 600; color: #16A34A; opacity: 0; transition: opacity 0.3s; }
+    @media (max-width: 600px) { .pref-grid { grid-template-columns: 1fr; } .pref-q-wide { grid-column: 1; } }
+
     /* ── PROFILE EDITING ─────────────────────────────────────── */
     .btn-edit-link { background: none; border: none; color: var(--blue); font-size: 0.8rem; font-weight: 600; cursor: pointer; padding: 3px 8px; border-radius: 6px; letter-spacing: normal; text-transform: none; }
     .btn-edit-link:hover { background: var(--blue-l); }
@@ -742,6 +764,18 @@
       </div>
     </div>
 
+    <div class="section-label" style="margin-top:2rem;">
+      Preferences
+      <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:0.78rem;color:var(--muted);">— personalizes your search results and deep dives</span>
+    </div>
+    <div class="card" style="margin-bottom:2rem;">
+      <div class="pref-grid" id="pref-questions"></div>
+      <div class="pref-save-row">
+        <button class="btn" onclick="savePreferences()">Save Preferences</button>
+        <span class="pref-saved-msg" id="pref-saved-msg">Preferences saved ✓</span>
+      </div>
+    </div>
+
     <div class="danger-zone">
       <div id="profile-account-row" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;padding-bottom:0.9rem;border-bottom:1px solid var(--border);">
         <div>
@@ -799,6 +833,7 @@ let VIBE_STATE    = {};   // { campus, friday, academic, compete, location, care
 let OPEN_CRM        = null; // currently expanded CRM card
 let LIST_HEALTH_OPEN = false; // list health explanation expanded
 let OTHER_PREFS   = '';   // free-form additional preferences from Profile tab
+let PREFERENCES   = {};   // structured preference answers (region, focus, budget, etc.)
 
 // Maps adjTier string → recruiting label (same band logic as buildCard)
 function toRecruitLabel(adjTier) {
@@ -950,6 +985,7 @@ const LS_MYLIST     = 'lane4_mylist';
 const LS_CRM        = 'lane4_crm';
 const LS_VIBE       = 'lane4_vibe';
 const LS_OTHERPREFS = 'lane4_other_prefs';
+const LS_PREFS      = 'lane4_preferences';
 
 function saveToStorage() {
   try {
@@ -958,6 +994,7 @@ function saveToStorage() {
     localStorage.setItem(LS_CRM,        JSON.stringify(CRM_DATA));
     localStorage.setItem(LS_VIBE,       JSON.stringify(VIBE_STATE));
     localStorage.setItem(LS_OTHERPREFS, OTHER_PREFS);
+    localStorage.setItem(LS_PREFS,      JSON.stringify(PREFERENCES));
   } catch(e) { console.warn('Storage save failed', e); }
   schedulePush();
 }
@@ -974,11 +1011,13 @@ function loadFromStorage() {
     if (vibe) VIBE_STATE = JSON.parse(vibe);
     const op = localStorage.getItem(LS_OTHERPREFS);
     if (op !== null) OTHER_PREFS = op;
+    const prefs = localStorage.getItem(LS_PREFS);
+    if (prefs) PREFERENCES = JSON.parse(prefs);
   } catch(e) { console.warn('Storage load failed', e); }
 }
 
 function clearStorage() {
-  [LS_SWIMMER, LS_MYLIST, LS_CRM, LS_VIBE, LS_OTHERPREFS].forEach(k => localStorage.removeItem(k));
+  [LS_SWIMMER, LS_MYLIST, LS_CRM, LS_VIBE, LS_OTHERPREFS, LS_PREFS].forEach(k => localStorage.removeItem(k));
 }
 
 // ════════════════════════════════════════════════════════════════
@@ -1095,10 +1134,11 @@ async function submitOnboarding() {
   ACT_SCORE  = act || null;
   SCORE_MODE = (act && !sat) ? 'ACT' : 'SAT';
   ACT_PROJ = null;
-  VIBE_STATE = {};
-  MY_LIST    = [];
-  CRM_DATA   = {};
+  VIBE_STATE  = {};
+  MY_LIST     = [];
+  CRM_DATA    = {};
   OTHER_PREFS = '';
+  PREFERENCES = {};
 
   saveToStorage();
 
@@ -1155,6 +1195,7 @@ function startNewSwimmer() {
   CRM_DATA     = {};
   VIBE_STATE   = {};
   OTHER_PREFS  = '';
+  PREFERENCES  = {};
   ALL_RESULTS  = [];
   ELIMINATED   = [];
   LAST_RESULTS = null;
@@ -1274,7 +1315,7 @@ async function authLogout() {
   try { await fetch('/api/auth/logout', { method: 'POST' }); } catch(_) {}
   CURRENT_USER = null;
   // Clear in-memory state but keep localStorage so data reloads if they log back in
-  JAMES = {}; MY_LIST = []; CRM_DATA = {}; VIBE_STATE = {}; OTHER_PREFS = '';
+  JAMES = {}; MY_LIST = []; CRM_DATA = {}; VIBE_STATE = {}; OTHER_PREFS = ''; PREFERENCES = {};
   ALL_RESULTS = []; ELIMINATED = []; LAST_RESULTS = null; LAST_QUERY = '';
   clearStorage();
   window.location.reload();
@@ -1303,6 +1344,7 @@ async function pushToServer() {
         crm_data:    CRM_DATA,
         vibe_state:  VIBE_STATE,
         other_prefs: OTHER_PREFS,
+        preferences: PREFERENCES,
       }),
     });
   } catch(e) { console.warn('Server sync failed', e); }
@@ -1319,6 +1361,7 @@ async function loadFromServer() {
     if (d.crm_data   && typeof d.crm_data   === 'object') CRM_DATA   = d.crm_data;
     if (d.vibe_state && typeof d.vibe_state === 'object' && Object.keys(d.vibe_state).length > 0) VIBE_STATE = d.vibe_state;
     if (typeof d.other_prefs === 'string' && d.other_prefs.length > 0)                           OTHER_PREFS = d.other_prefs;
+    if (d.preferences && typeof d.preferences === 'object' && Object.keys(d.preferences).length > 0) PREFERENCES = d.preferences;
     return true;
   } catch(e) { console.warn('Server load failed', e); return false; }
 }
@@ -2904,6 +2947,7 @@ function renderProfile() {
   renderStats();
   renderTimes();
   renderVibeQuestions();
+  renderPreferences();
 }
 
 function renderVibeQuestions() {
@@ -2938,6 +2982,89 @@ function _showVibeSaved() {
   el.style.opacity = '1';
   clearTimeout(el._hideTimer);
   el._hideTimer = setTimeout(() => { el.style.opacity = '0'; }, 1800);
+}
+
+// ════════════════════════════════════════════════════════════════
+// PREFERENCES — 7 structured preference questions
+// ════════════════════════════════════════════════════════════════
+const PREF_QUESTIONS = [
+  {
+    key: 'preferred_region',
+    label: 'Where are you open to?',
+    options: ['Anywhere', 'East Coast', 'Midwest', 'South', 'West Coast'],
+  },
+  {
+    key: 'academic_focus',
+    label: "What's your academic focus so far?",
+    options: ['STEM', 'Pre-med / Health', 'Business / Economics', 'Humanities / Social Sciences', 'Undecided'],
+  },
+  {
+    key: 'academic_environment',
+    label: 'What kind of academic environment do you want?',
+    options: ['Very rigorous, push me', 'Challenging but balanced', 'More flexible / less pressure'],
+  },
+  {
+    key: 'swim_team_level',
+    label: 'What level of team do you want to be on?',
+    options: [
+      'I want to be on one of the fastest teams I can make',
+      'I want a strong team where I can contribute',
+      'I want a team where I can score and make an impact',
+    ],
+    wide: true,
+  },
+  {
+    key: 'team_competition_comfort',
+    label: 'How do you feel about competition on your team?',
+    options: ['I want to fight for top spots', "I'm good being in the mix", 'I want a more supportive / lower-pressure team'],
+  },
+  {
+    key: 'budget_range',
+    label: 'What feels realistic to pay per year?',
+    options: ['$0–15K', '$15K–35K', '$35K+'],
+  },
+  {
+    key: 'need_based_aid_expectation',
+    label: 'Do you expect need-based financial aid?',
+    options: ['Yes', 'Not sure', 'No'],
+  },
+];
+
+function renderPreferences() {
+  const el = document.getElementById('pref-questions');
+  if (!el) return;
+  el.innerHTML = PREF_QUESTIONS.map(q => {
+    const current = PREFERENCES[q.key] || '';
+    const buttons = q.options.map(opt =>
+      `<button class="pref-btn${current === opt ? ' active' : ''}"
+        data-pref-key="${esc(q.key)}" data-pref-val="${esc(opt)}"
+        onclick="setPreference(this.dataset.prefKey, this.dataset.prefVal)">${esc(opt)}</button>`
+    ).join('');
+    return `<div class="pref-q${q.wide ? ' pref-q-wide' : ''}">
+      <div class="pref-label">${esc(q.label)}</div>
+      <div class="pref-group">${buttons}</div>
+    </div>`;
+  }).join('');
+}
+
+function setPreference(key, value) {
+  // Toggle: clicking an active button clears the selection
+  PREFERENCES[key] = (PREFERENCES[key] === value) ? '' : value;
+  // Update button states without full re-render
+  document.querySelectorAll(`[data-pref-key="${key}"]`).forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.prefVal === PREFERENCES[key]);
+  });
+}
+
+async function savePreferences() {
+  localStorage.setItem(LS_PREFS, JSON.stringify(PREFERENCES));
+  await pushToServer();
+  const msg = document.getElementById('pref-saved-msg');
+  if (msg) {
+    msg.style.opacity = '1';
+    clearTimeout(msg._hideTimer);
+    msg._hideTimer = setTimeout(() => { msg.style.opacity = '0'; }, 2200);
+  }
 }
 
 // ════════════════════════════════════════════════════════════════

@@ -134,7 +134,7 @@ def auth_me():
 # ---------------------------------------------------------------------------
 # DATA SYNC ENDPOINTS
 # ---------------------------------------------------------------------------
-_ALLOWED_KEYS = {'swimmer', 'my_list', 'crm_data', 'vibe_state', 'other_prefs'}
+_ALLOWED_KEYS = {'swimmer', 'my_list', 'crm_data', 'vibe_state', 'other_prefs', 'preferences'}
 
 @app.route('/api/data/load', methods=['GET'])
 @login_required
