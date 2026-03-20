@@ -2065,7 +2065,7 @@ function printDeepDive(school) {
   const content = document.getElementById('dd-content');
   if (!content) return;
   const clone = content.cloneNode(true);
-  clone.querySelectorAll('.deep-dive-actions, #dd-email-section').forEach(el => el.remove());
+  clone.querySelectorAll('.deep-dive-actions, #dd-email-section, .deep-dive-header').forEach(el => el.remove());
   const result  = ALL_RESULTS.find(r => r.school === school) || {};
   const now     = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
   const w = window.open('', '_blank');
