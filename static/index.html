@@ -389,7 +389,7 @@
     .status-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
     .list-school-badges {
       display: grid;
-      grid-template-columns: minmax(0,1fr) minmax(0,1.45fr) minmax(0,1.85fr) minmax(0,0.55fr) minmax(0,0.85fr) minmax(0,0.95fr);
+      grid-template-columns: minmax(0,1.5fr) minmax(0,1.5fr) minmax(0,0.6fr) minmax(0,0.7fr) minmax(0,1.2fr);
       align-items: center;
       column-gap: 0.35rem;
       margin-top: 8px;
@@ -2312,21 +2312,17 @@ function renderMyList() {
           <div class="list-badge-slot">
             ${toRecruitLabel(adjTier) ? `<span class="list-badge" style="background:var(--blue-l);color:var(--blue);">${esc(toRecruitLabel(adjTier))}</span>` : ''}
           </div>
-          <!-- slot 3: cost estimate -->
-          <div class="list-badge-slot">
-            ${hasCost ? `<span class="list-badge" style="background:${costBg};color:${costClr};border:${costBorder};${costStyle}"><span style="opacity:0.75;font-style:normal;font-weight:400;">${costPrefix}&nbsp;</span>${esc(costLabel)}</span>` : ''}
-          </div>
-          <!-- slot 4: division -->
+          <!-- slot 3: division -->
           <div class="list-badge-slot">
             ${division ? `<span class="list-badge" style="background:var(--bg);color:var(--slate);border:1px solid var(--border);">${esc(division)}</span>` : ''}
           </div>
-          <!-- slot 5: flags (ivy / hidden ivy / stem) -->
+          <!-- slot 4: flags (ivy / hidden ivy / stem) -->
           <div class="list-badge-flags">
             ${meta.ivyLeague ? `<span class="list-badge" style="background:#1E3A5F;color:#fff;">Ivy</span>` : ''}
             ${meta.hiddenIvy ? `<span class="list-badge" style="background:var(--violet-l);color:var(--violet);">H.Ivy</span>` : ''}
             ${meta.stem ? `<span class="list-badge" style="background:var(--blue-l);color:var(--blue);">STEM</span>` : ''}
           </div>
-          <!-- slot 6: status button -->
+          <!-- slot 5: status button -->
           <div class="status-dd-wrap">
             <button class="list-badge" style="background:${cfg.color};color:#fff;border:none;cursor:pointer;width:auto;"
               onclick='toggleStatusDD(${JSON.stringify(school)}, event)'>${esc(cfg.label)} <span style="font-size:0.6rem;opacity:0.85;">▾</span></button>
