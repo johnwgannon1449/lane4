@@ -1933,9 +1933,22 @@ function buildPrintWindow(title, subtitle, bodyHtml) {
   .deep-section{margin-top:1rem;page-break-inside:avoid;}
   .deep-section-title{font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#64748B;border-top:1px solid #E2E8F0;padding-top:0.6rem;margin-bottom:0.35rem;}
   .deep-section-body,.adm-prose{font-size:0.85rem;line-height:1.65;color:#334155;}
-  .adm-table{width:100%;border-collapse:collapse;margin-bottom:0.75rem;font-size:0.8rem;}
-  .adm-table th{background:#F1F5F9;padding:4px 8px;text-align:left;border:1px solid #E2E8F0;font-weight:600;}
-  .adm-table td{padding:4px 8px;border:1px solid #E2E8F0;}
+  /* ── admissions comparison table (mirrors main app CSS Grid layout) ── */
+  .adm-card{background:#fff;border-radius:10px;border:1px solid #E2E8F0;padding:0.85rem 1rem;margin-bottom:0.75rem;page-break-inside:avoid;}
+  .adm-header{display:grid;grid-template-columns:1.6fr 1fr 1.6fr;padding-bottom:0.4rem;border-bottom:1.5px solid #F1F5F9;margin-bottom:0.1rem;}
+  .adm-col-label{font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:#94A3B8;}
+  .adm-col-label.adm-center{text-align:center;}
+  .adm-row{display:grid;grid-template-columns:1.6fr 1fr 1.6fr;align-items:center;padding:0.4rem 0;border-bottom:1px solid #F8FAFC;}
+  .adm-row:last-child{border-bottom:none;}
+  .adm-metric{font-size:0.8rem;font-weight:500;color:#334155;}
+  .adm-you{font-size:0.85rem;font-weight:700;color:#1E3A5F;text-align:center;background:#EFF6FF;border-radius:5px;padding:2px 7px;display:flex;align-items:center;justify-content:center;gap:4px;}
+  .adm-you-na{font-size:0.8rem;color:#94A3B8;text-align:center;}
+  .adm-school{font-size:0.79rem;color:#334155;text-align:center;padding-left:0.4rem;}
+  .adm-dot{font-size:0.45rem;line-height:1;}
+  .adm-green{color:#16A34A;}
+  .adm-yellow{color:#CA8A04;}
+  .adm-red{color:#DC2626;}
+  .adm-prose{font-size:0.83rem;color:#64748B;line-height:1.6;margin-top:0.5rem;padding-top:0.5rem;border-top:1px solid #F1F5F9;white-space:pre-wrap;}
   #dd-email-section{display:none!important;}
   @media print{body{padding:0;}.school-card,.deep-section{page-break-inside:avoid;}}
 </style></head>
