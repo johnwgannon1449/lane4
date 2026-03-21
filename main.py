@@ -193,6 +193,17 @@ TEAM_NAME_MAP = {
     "California Institute of Techno": ("Caltech",                           "truncated — schema uses 'Caltech'"),
     "Saint Johns University":          ("Saint John's University",           "missing apostrophe"),
     "Harvard Men's Swimming":          ("Harvard University",                 "gendered PDF team name artifact"),
+    # UAA schools — snapshot uses full institutional names; SCHOOL_META uses short forms
+    "Brandeis University":             ("Brandeis",                          "SCHOOL_META uses short name"),
+    "Carnegie Mellon University":      ("Carnegie Mellon",                   "SCHOOL_META drops University"),
+    "Case Western Reserve Universit":  ("Case Western",                      "truncated + SCHOOL_META short name"),
+    "Case Western Reserve University": ("Case Western",                      "SCHOOL_META uses short name"),
+    "Emory University":                ("Emory",                             "SCHOOL_META drops University"),
+    "New York University":             ("NYU",                               "SCHOOL_META uses abbreviation"),
+    "University of Chicago":           ("Chicago",                           "SCHOOL_META uses city name"),
+    "University of Rochester":         ("Rochester",                         "SCHOOL_META uses city name"),
+    "Washington University St Louis":  ("Washington (Mo)",                   "SCHOOL_META uses location suffix"),
+    "Washington University in St. Lou":("Washington (Mo)",                   "SCHOOL_META uses location suffix"),
 }
 
 # ---------------------------------------------------------------------------
