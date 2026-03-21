@@ -4535,8 +4535,10 @@ def _img_save_entry(school, entry):
         try:
             manifest = _img_load_manifest()
             manifest[school] = entry
-            with open(_IMG_MANIFEST_PATH, 'w') as f:
+            tmp = _IMG_MANIFEST_PATH + '.tmp'
+            with open(tmp, 'w') as f:
                 json.dump(manifest, f)
+            os.replace(tmp, _IMG_MANIFEST_PATH)   # atomic on Linux
         except Exception:
             pass
 
@@ -4620,56 +4622,129 @@ def _img_score(file_title, tokens):
     return s
 
 
+def _img_normalize_name(school_name):
+    """
+    Convert inverted school names to standard Wikipedia titles.
+    e.g. 'California, University of, Berkeley' → 'University of California Berkeley'
+         'Georgia, University of'              → 'University of Georgia'
+    """
+    import re
+    # "X, University of[, subname]" → "University of X subname"
+    m = re.match(r'^(.+?),\s*University of(?:,\s*(.+))?$', school_name, re.I)
+    if m:
+        place = m.group(1).strip()
+        sub   = (' ' + m.group(2).strip()) if m.group(2) else ''
+        return f'University of {place}{sub}'
+    # "X, College of" → "College of X"
+    m2 = re.match(r'^(.+?),\s*College of(.*)$', school_name, re.I)
+    if m2:
+        return f'College of {m2.group(1).strip()}{m2.group(2)}'.strip()
+    # Drop trailing ", The"
+    return re.sub(r',\s*The\s*$', '', school_name, flags=re.I).strip()
+
+
 def _img_wiki_rest(school_name):
     """
     Fetch a campus photo for one school.
     Strategy:
-      1. Wikipedia REST summary → check thumbnail/originalimage.
-         If it is a good campus photo, use it.
-      2. If REST gives a seal/logo, resolve the page title and pull ALL page
-         images via generator=images, score them, pick best campus photo.
+      1. Wikipedia REST summary using normalised name → check thumbnail/originalimage.
+      2. If REST gives a seal/logo or returns 404, search Wikipedia for the page.
+      3. Scan all page images via generator=images, score, pick best campus photo.
+      4. Optional: retry with 'university' appended for schools with short names.
     Returns a URL string or None (→ caller uses fallback).
     """
     stop = {'university', 'college', 'of', 'the', 'and', 'at', 'institute',
             'technology', 'polytechnic', 'state', 'a', 'an', 'in', 'for'}
-    tokens = [t.lower() for t in school_name.split() if t.lower() not in stop][:3]
+    clean   = school_name.replace(',', '').replace('-', ' ')
+    tokens  = [t.lower() for t in clean.split() if t.lower() not in stop and len(t) > 2][:5]
+    norm    = _img_normalize_name(school_name)
 
-    # ── Step 1: REST summary (fast, one call) ─────────────────────────────
-    rest_title = school_name.replace(', University of', ' University') \
-                            .replace(', College of', ' College')
-    safe   = urllib.parse.quote(rest_title.replace(' ', '_'), safe='():')
-    rest_url = f'https://en.wikipedia.org/api/rest_v1/page/summary/{safe}'
-    req    = urllib.request.Request(rest_url, headers={'User-Agent': _IMG_UA})
     page_title = None
-    try:
-        with urllib.request.urlopen(req, timeout=8) as r:
-            data  = json.loads(r.read().decode())
-            page_title = data.get('title')
-            orig  = data.get('originalimage', {}).get('source', '')
-            thumb = data.get('thumbnail', {}).get('source', '')
-            for candidate in [orig, thumb]:
-                if candidate and not _img_is_bad(candidate):
-                    return candidate   # ← good photo found immediately
-    except urllib.error.HTTPError as e:
-        if e.code == 429:
-            return None   # still IP-blocked
-    except Exception:
-        pass
 
-    # ── Step 2: Full page image scan (one extra API call) ─────────────────
-    # Resolve title if REST didn't give us one
+    # ── Step 1: REST summary (try normalised name, then original) ──────────
+    for attempt in [norm, school_name]:
+        safe     = urllib.parse.quote(attempt.replace(' ', '_'), safe='():,')
+        rest_url = f'https://en.wikipedia.org/api/rest_v1/page/summary/{safe}'
+        req      = urllib.request.Request(rest_url, headers={'User-Agent': _IMG_UA})
+        try:
+            with urllib.request.urlopen(req, timeout=8) as r:
+                data  = json.loads(r.read().decode())
+                page_title = data.get('title')
+                for key in ['originalimage', 'thumbnail']:
+                    candidate = data.get(key, {}).get('source', '')
+                    if candidate and not _img_is_bad(candidate):
+                        return candidate   # ← good photo found immediately
+                break  # found the page, just no good thumbnail
+        except urllib.error.HTTPError as e:
+            if e.code == 429:
+                return None   # rate-limited — abort
+        except Exception:
+            pass
+
+    # ── Step 2: Search API if REST gave nothing useful ─────────────────────
     if not page_title:
-        page_title = _img_wiki_title(school_name) or school_name
+        page_title = _img_wiki_title(norm) or _img_wiki_title(school_name) or norm
+        time.sleep(0.3)
 
-    time.sleep(0.3)   # polite gap
-    images = _img_wiki_page_images(page_title, width=1000)
+    # ── Step 3: Full page image scan ───────────────────────────────────────
+    images = _img_wiki_page_images(page_title, width=1200)
     if images:
-        best = max(images, key=lambda x: _img_score(x[0], tokens))
-        title, url = best
-        if _img_score(title, tokens) > 0:
-            return url
+        candidates = [(t, u) for t, u in images if not _img_is_bad(u)]
+        if candidates:
+            best_t, best_u = max(candidates, key=lambda x: _img_score(x[0], tokens))
+            if _img_score(best_t, tokens) > 0:
+                return best_u
+
+    # ── Step 4: Retry with 'University' appended (for short names) ─────────
+    lname = school_name.lower()
+    if 'university' not in lname and 'college' not in lname and 'institute' not in lname:
+        alt = _img_wiki_title(school_name + ' university')
+        if alt and alt != page_title:
+            time.sleep(0.3)
+            images = _img_wiki_page_images(alt, width=1200)
+            if images:
+                candidates = [(t, u) for t, u in images if not _img_is_bad(u)]
+                if candidates:
+                    best_t, best_u = max(candidates, key=lambda x: _img_score(x[0], tokens))
+                    if _img_score(best_t, tokens) > 0:
+                        return best_u
 
     return None
+
+
+def _img_harvest_background():
+    """
+    Background thread: fetch real campus photos for all schools still on fallback.
+    Runs once at startup, one school every ~1s, saves atomically after each hit.
+    """
+    time.sleep(15)   # let the app fully start before hitting Wikipedia
+    manifest = _img_load_manifest()
+    to_fetch = [s for s in sorted(SCHOOL_META.keys())
+                if manifest.get(s, {}).get('hero_is_fallback', True)]
+    print(f'[img-harvest] Starting: {len(to_fetch)} schools need real photos', flush=True)
+    ok = fail = 0
+    for school in to_fetch:
+        try:
+            url = _img_wiki_rest(school)
+            if url:
+                ex = manifest.get(school, {})
+                entry = {
+                    'hero': url, 'student_life': url,
+                    'swim': ex.get('swim') or _IMG_SWIM_FB,
+                    'hero_is_fallback': False,
+                    'swim_is_fallback': ex.get('swim_is_fallback', True),
+                }
+                _img_save_entry(school, entry)
+                manifest[school] = entry   # keep local copy in sync
+                ok += 1
+                print(f'[img-harvest] ✓ {school}', flush=True)
+            else:
+                fail += 1
+        except Exception as exc:
+            print(f'[img-harvest] error {school}: {exc}', flush=True)
+            fail += 1
+        time.sleep(1.0)   # polite — ~1 req/sec
+    print(f'[img-harvest] Done. ok={ok} fail={fail}', flush=True)
 
 
 @app.route('/api/school_image/<path:school_name>')
@@ -4713,4 +4788,7 @@ def api_school_image(school_name):
 
 
 if __name__ == '__main__':
+    # Background image harvest — fills in real campus photos for all fallback schools
+    _harvest_thread = threading.Thread(target=_img_harvest_background, daemon=True)
+    _harvest_thread.start()
     app.run(host='0.0.0.0', port=5000, debug=True)
