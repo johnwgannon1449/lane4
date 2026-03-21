@@ -184,21 +184,6 @@
       overflow: hidden;
     }
     .result-card:hover { border-color: var(--blue-m); box-shadow: 0 4px 18px rgba(15,23,42,0.09); }
-    /* ── card hero image ─────────────────────────────────────── */
-    .card-img-wrap {
-      margin: -1.1rem -1.2rem 1rem;
-      height: 156px;
-      background: linear-gradient(135deg,#E2E8F0 0%,#CBD5E1 100%);
-      overflow: hidden;
-      flex-shrink: 0;
-      border-radius: 10px 10px 0 0;
-    }
-    .card-img {
-      width: 100%; height: 100%;
-      object-fit: cover; display: block;
-      transition: opacity 0.4s, transform 0.5s;
-    }
-    .card-img:hover { transform: scale(1.02); }
     .result-card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 0.75rem; margin-bottom: 0.6rem; }
     .result-school-name { font-family: 'Fraunces', serif; font-weight: 800; font-size: 1.08rem; color: var(--navy); }
     .result-conference { font-size: 0.78rem; color: var(--muted); margin-top: 2px; }
@@ -216,27 +201,6 @@
     .event-chip strong { color: var(--navy); }
     .result-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center; }
     .btn-added { background: var(--green-m); color: var(--green); cursor: default; border: 1.5px solid var(--green-m); }
-    /* ── deep dive images ────────────────────────────────────── */
-    .dd-images { margin-bottom: 1.25rem; }
-    .dd-hero-wrap {
-      position: relative; border-radius: 12px; overflow: hidden;
-      height: 240px; background: linear-gradient(135deg,#E2E8F0 0%,#CBD5E1 100%);
-      margin-bottom: 0.5rem;
-    }
-    .dd-secondary-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
-    .dd-secondary-wrap {
-      position: relative; border-radius: 10px; overflow: hidden;
-      height: 140px; background: linear-gradient(135deg,#E2E8F0 0%,#CBD5E1 100%);
-    }
-    .dd-img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .dd-img-label {
-      position: absolute; bottom: 7px; left: 8px;
-      background: rgba(15,23,42,0.62); color: #fff;
-      font-size: 0.6rem; font-weight: 700; text-transform: uppercase;
-      letter-spacing: 0.07em; padding: 2px 7px; border-radius: 4px;
-      pointer-events: none;
-    }
-    @media (max-width: 520px) { .dd-secondary-row { grid-template-columns: 1fr; } }
 
     /* place label colors */
     .pl-contender { background: #FEF3C7; color: #92400E; }
@@ -802,20 +766,6 @@ let ELIMINATED    = [];   // eliminated in current session
 let LAST_RESULTS  = null; // last search result { answer, schools }
 let LAST_QUERY    = '';
 let ACTIVE_TAB    = 'explore';
-let SCHOOL_IMAGES = {};   // { "School Name": { hero, student_life, swim } }
-
-// ── stable defaults if manifest unavailable ───────────────────────────────────
-
-async function loadSchoolImages() {
-  try {
-    const r = await fetch('/school_images.json');
-    if (r.ok) SCHOOL_IMAGES = await r.json();
-  } catch(_) {}
-}
-
-function schoolImgHero(school)    { const e = SCHOOL_IMAGES[school] || {}; return (!e.hero_is_fallback && e.hero) ? e.hero : ''; }
-function schoolImgStudent(school) { const e = SCHOOL_IMAGES[school] || {}; return (!e.hero_is_fallback && e.student_life) ? e.student_life : ''; }
-function schoolImgSwim(school)    { const e = SCHOOL_IMAGES[school] || {}; return e.swim || ''; }
 let VIBE_STATE    = {};   // { campus, friday, academic, compete, location, career }
 let OPEN_CRM        = null; // currently expanded CRM card
 let LIST_HEALTH_OPEN = false; // list health explanation expanded
@@ -1372,7 +1322,6 @@ async function afterAuthBoot() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ times: JAMES.times, sat: JAMES.sat, gpa: JAMES.gpa }),
     }),
-    loadSchoolImages(),
   ]);
 
   if (schoolsRes.status === 'fulfilled' && schoolsRes.value.ok) {
@@ -1619,15 +1568,8 @@ function renderResultCards(schools, container, isDirect, answer) {
     }
     const metaLine = divParts.length ? `<div style="display:flex;align-items:center;gap:5px;margin-top:3px;">${divParts.join('')}</div>` : '';
 
-    const _heroUrl = schoolImgHero(r.school);
     return `
     <div class="result-card" id="rcard-${i}">
-      <div class="card-img-wrap">
-        <img src="${_heroUrl}" class="card-img" loading="lazy"
-          data-school="${esc(r.school)}"
-          alt="${esc(r.school)} campus"
-          onerror="this.closest('.card-img-wrap').style.display='none'">
-      </div>
       ${r.aiWhy ? `<div class="ai-why">✦ ${esc(r.aiWhy)}</div>` : ''}
       <div class="result-card-top">
         <div>
@@ -1811,35 +1753,6 @@ async function openDeepDive(school) {
         </div>
       </div>
 
-      ${(() => {
-        const _ddHero    = schoolImgHero(school);
-        const _ddStudent = schoolImgStudent(school);
-        const _ddSwim    = schoolImgSwim(school);
-        const _showStudent = _ddStudent && _ddStudent !== _ddHero;
-        if (!_ddHero && !_ddSwim) return '';
-        return `<div class="dd-images">
-        ${_ddHero ? `<div class="dd-hero-wrap">
-          <img src="${_ddHero}" class="dd-img" loading="eager"
-            alt="${esc(school)} campus"
-            onerror="this.closest('.dd-hero-wrap').style.display='none'">
-          <span class="dd-img-label">Campus</span>
-        </div>` : ''}
-        ${(_showStudent || _ddSwim) ? `<div class="dd-secondary-row">
-          ${_showStudent ? `<div class="dd-secondary-wrap">
-            <img src="${_ddStudent}" class="dd-img" loading="lazy"
-              alt="${esc(school)} student life"
-              onerror="this.closest('.dd-secondary-wrap').style.display='none'">
-            <span class="dd-img-label">Student Life</span>
-          </div>` : ''}
-          ${_ddSwim ? `<div class="dd-secondary-wrap">
-            <img src="${_ddSwim}" class="dd-img" loading="lazy"
-              alt="${esc(school)} swimming"
-              onerror="this.closest('.dd-secondary-wrap').style.display='none'">
-            <span class="dd-img-label">Swimming</span>
-          </div>` : ''}
-        </div>` : ''}
-      </div>`;
-      })()}
 
       ${bottomLine ? `
         <div class="bottom-line">
