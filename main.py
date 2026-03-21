@@ -4500,10 +4500,217 @@ def download_snapshot():
     return send_from_directory('output', 'lane4_snapshot.csv', as_attachment=True)
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# SCHOOL IMAGE MANIFEST — static file served at /school_images.json
-# Populated offline via scripts/build_school_images.py.
-# No live daemon; no runtime scraping.
+# SCHOOL IMAGE MANIFEST — on-demand lazy fetch
+# static/school_images.json is a persistent cache.
+# /api/school_image/<school> fetches one school at a time (Wikipedia REST API)
+# and caches the result so the next render is instant.
 # ═══════════════════════════════════════════════════════════════════════════════
+
+_IMG_MANIFEST_PATH = os.path.join('static', 'school_images.json')
+_IMG_MANIFEST_LOCK = threading.Lock()
+
+# Filename fragments that mean the image is a logo/seal, not a campus photo
+_IMG_BAD_TOKENS = [
+    'seal', 'logo', 'coat_of_arms', 'arms_of', 'crest', 'flag_of',
+    'wordmark', 'insignia', 'monogram', 'mascot', 'badge', 'shield',
+    'patch', '_mark.', 'icon', 'vector',
+]
+
+# Unsplash fallback images (stable, no API key required)
+_IMG_HERO_FB = 'https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80'
+_IMG_SL_FB   = 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80'
+_IMG_SWIM_FB = 'https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80'
+
+
+def _img_load_manifest():
+    try:
+        with open(_IMG_MANIFEST_PATH) as f:
+            return json.load(f)
+    except Exception:
+        return {}
+
+
+def _img_save_entry(school, entry):
+    with _IMG_MANIFEST_LOCK:
+        try:
+            manifest = _img_load_manifest()
+            manifest[school] = entry
+            with open(_IMG_MANIFEST_PATH, 'w') as f:
+                json.dump(manifest, f)
+        except Exception:
+            pass
+
+
+def _img_is_bad(url):
+    """Return True if the URL looks like a logo, seal, or SVG — not a campus photo."""
+    low = (url or '').lower()
+    if low.endswith('.svg') or '.svg.' in low:
+        return True
+    fn = low.split('/')[-1]
+    return any(tok in fn for tok in _IMG_BAD_TOKENS)
+
+
+_IMG_UA = 'Lane4Recruit/1.0 (lane4.app; on-demand image fetch)'
+_IMG_WIKI_API = 'https://en.wikipedia.org/w/api.php'
+
+
+def _img_wiki_title(school_name):
+    """Resolve school name → Wikipedia page title via search."""
+    params = {
+        'action': 'query', 'list': 'search',
+        'srsearch': school_name, 'srlimit': 3, 'format': 'json',
+    }
+    qs  = urllib.parse.urlencode(params)
+    req = urllib.request.Request(f'{_IMG_WIKI_API}?{qs}', headers={'User-Agent': _IMG_UA})
+    try:
+        with urllib.request.urlopen(req, timeout=8) as r:
+            data    = json.loads(r.read().decode())
+            results = data.get('query', {}).get('search', [])
+            return results[0]['title'] if results else None
+    except Exception:
+        return None
+
+
+def _img_wiki_page_images(page_title, width=1000):
+    """
+    Fetch up to 20 images from a Wikipedia page (generator=images).
+    Returns list of (file_title, url) tuples.
+    Uses a single API call (no per-image URL resolution needed — iiprop=url).
+    """
+    params = {
+        'action': 'query', 'titles': page_title,
+        'generator': 'images', 'gimlimit': '30',
+        'prop': 'imageinfo', 'iiprop': 'url',
+        'iiurlwidth': str(width), 'redirects': '', 'format': 'json',
+    }
+    qs  = urllib.parse.urlencode(params)
+    req = urllib.request.Request(f'{_IMG_WIKI_API}?{qs}', headers={'User-Agent': _IMG_UA})
+    try:
+        with urllib.request.urlopen(req, timeout=10) as r:
+            data   = json.loads(r.read().decode())
+            images = []
+            for page in data.get('query', {}).get('pages', {}).values():
+                info = page.get('imageinfo', [{}])
+                url  = (info[0].get('thumburl') or info[0].get('url', '')) if info else ''
+                if url:
+                    images.append((page.get('title', ''), url))
+            return images
+    except Exception:
+        return []
+
+
+def _img_score(file_title, tokens):
+    """Score a Wikipedia file title for campus-photo quality. Returns -999 if disqualified."""
+    fn = file_title.lower()
+    # Must be jpg/png
+    if not (fn.endswith('.jpg') or fn.endswith('.jpeg') or fn.endswith('.png')):
+        return -999
+    # Disqualify logos, seals, SVGs
+    if any(tok in fn for tok in _IMG_BAD_TOKENS):
+        return -999
+    s = 0
+    for tok in tokens:
+        if tok and tok in fn: s += 8
+    for kw in ['campus', 'aerial', 'quad', 'quadrangle', 'grounds', 'entrance',
+               'courtyard', 'panoram', 'building', 'chapel', 'tower', 'hall',
+               'library', 'fountain', 'arch', 'gate', 'square', 'green']:
+        if kw in fn: s += 5
+    for kw in ['portrait', 'headshot', 'rally', 'game', 'protest']:
+        if kw in fn: s -= 8
+    return s
+
+
+def _img_wiki_rest(school_name):
+    """
+    Fetch a campus photo for one school.
+    Strategy:
+      1. Wikipedia REST summary → check thumbnail/originalimage.
+         If it is a good campus photo, use it.
+      2. If REST gives a seal/logo, resolve the page title and pull ALL page
+         images via generator=images, score them, pick best campus photo.
+    Returns a URL string or None (→ caller uses fallback).
+    """
+    stop = {'university', 'college', 'of', 'the', 'and', 'at', 'institute',
+            'technology', 'polytechnic', 'state', 'a', 'an', 'in', 'for'}
+    tokens = [t.lower() for t in school_name.split() if t.lower() not in stop][:3]
+
+    # ── Step 1: REST summary (fast, one call) ─────────────────────────────
+    rest_title = school_name.replace(', University of', ' University') \
+                            .replace(', College of', ' College')
+    safe   = urllib.parse.quote(rest_title.replace(' ', '_'), safe='():')
+    rest_url = f'https://en.wikipedia.org/api/rest_v1/page/summary/{safe}'
+    req    = urllib.request.Request(rest_url, headers={'User-Agent': _IMG_UA})
+    page_title = None
+    try:
+        with urllib.request.urlopen(req, timeout=8) as r:
+            data  = json.loads(r.read().decode())
+            page_title = data.get('title')
+            orig  = data.get('originalimage', {}).get('source', '')
+            thumb = data.get('thumbnail', {}).get('source', '')
+            for candidate in [orig, thumb]:
+                if candidate and not _img_is_bad(candidate):
+                    return candidate   # ← good photo found immediately
+    except urllib.error.HTTPError as e:
+        if e.code == 429:
+            return None   # still IP-blocked
+    except Exception:
+        pass
+
+    # ── Step 2: Full page image scan (one extra API call) ─────────────────
+    # Resolve title if REST didn't give us one
+    if not page_title:
+        page_title = _img_wiki_title(school_name) or school_name
+
+    time.sleep(0.3)   # polite gap
+    images = _img_wiki_page_images(page_title, width=1000)
+    if images:
+        best = max(images, key=lambda x: _img_score(x[0], tokens))
+        title, url = best
+        if _img_score(title, tokens) > 0:
+            return url
+
+    return None
+
+
+@app.route('/api/school_image/<path:school_name>')
+def api_school_image(school_name):
+    """
+    On-demand image lookup for one school.
+    1. Return cached real image instantly if we already have one.
+    2. Otherwise hit Wikipedia REST API (one lightweight call).
+    3. Cache result (hit or miss) so repeat renders are instant.
+    4. Always return a URL — never an error.
+    """
+    manifest = _img_load_manifest()
+    entry    = manifest.get(school_name, {})
+
+    # Already have a real (non-fallback) image cached
+    if entry.get('hero') and not entry.get('hero_is_fallback'):
+        return jsonify({'url': entry['hero'], 'is_fallback': False})
+
+    # Try Wikipedia REST API
+    hero_url = _img_wiki_rest(school_name)
+
+    if hero_url:
+        new_entry = {
+            'hero':             hero_url,
+            'student_life':     hero_url,
+            'swim':             entry.get('swim') or _IMG_SWIM_FB,
+            'hero_is_fallback': False,
+            'swim_is_fallback': entry.get('swim_is_fallback', True),
+        }
+        _img_save_entry(school_name, new_entry)
+        return jsonify({'url': hero_url, 'is_fallback': False})
+
+    # Mark as failed so we don't retry on every page load (retry after 24h via timestamp)
+    failed_entry = {**entry,
+                    'hero':             _IMG_HERO_FB,
+                    'student_life':     _IMG_SL_FB,
+                    'hero_is_fallback': True,
+                    'fetch_failed_at':  time.time()}
+    _img_save_entry(school_name, failed_entry)
+    return jsonify({'url': _IMG_HERO_FB, 'is_fallback': True})
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

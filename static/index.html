@@ -820,6 +820,55 @@ const _IMG_SWIM_FB  = 'https://images.unsplash.com/photo-1519315901367-f34ff9154
 function schoolImgHero(school)    { return (SCHOOL_IMAGES[school] || {}).hero         || _IMG_HERO_FB; }
 function schoolImgStudent(school) { return (SCHOOL_IMAGES[school] || {}).student_life || _IMG_SL_FB;   }
 function schoolImgSwim(school)    { return (SCHOOL_IMAGES[school] || {}).swim          || _IMG_SWIM_FB; }
+
+// ── On-demand lazy image fetch ────────────────────────────────────────────────
+// Fires one /api/school_image call per school (only for schools still on the
+// generic fallback), caches the result in SCHOOL_IMAGES so subsequent renders
+// are instant, and updates any visible img elements in the DOM.
+
+const _IMG_FETCHED  = new Set();   // schools already fetched this session
+let   _IMG_QUEUE    = [];          // pending school names
+let   _IMG_FETCHING = false;       // drain loop active
+
+async function _imgDrainQueue() {
+  if (_IMG_FETCHING || !_IMG_QUEUE.length) return;
+  _IMG_FETCHING = true;
+  while (_IMG_QUEUE.length) {
+    const school = _IMG_QUEUE.shift();
+    if (_IMG_FETCHED.has(school)) continue;
+    _IMG_FETCHED.add(school);
+    try {
+      const r = await fetch('/api/school_image/' + encodeURIComponent(school));
+      if (!r.ok) continue;
+      const d = await r.json();
+      if (!d.is_fallback && d.url) {
+        // Update in-memory manifest so future renders use the real image
+        if (!SCHOOL_IMAGES[school]) SCHOOL_IMAGES[school] = {};
+        SCHOOL_IMAGES[school].hero         = d.url;
+        SCHOOL_IMAGES[school].student_life = d.url;
+        // Swap src on any card img already in the DOM
+        document.querySelectorAll(`img[data-school="${CSS.escape(school)}"]`).forEach(img => {
+          img.src = d.url;
+        });
+      }
+    } catch(_) {}
+    // Polite gap between Wikipedia REST calls (300ms → ~3 req/sec max)
+    await new Promise(res => setTimeout(res, 300));
+  }
+  _IMG_FETCHING = false;
+}
+
+function lazyLoadImages(schools) {
+  // Enqueue schools that are currently on the generic hero fallback
+  schools.forEach(school => {
+    const entry = SCHOOL_IMAGES[school] || {};
+    const isFallback = !entry.hero || entry.hero === _IMG_HERO_FB || entry.hero_is_fallback;
+    if (isFallback && !_IMG_FETCHED.has(school)) {
+      _IMG_QUEUE.push(school);
+    }
+  });
+  _imgDrainQueue();
+}
 let VIBE_STATE    = {};   // { campus, friday, academic, compete, location, career }
 let OPEN_CRM        = null; // currently expanded CRM card
 let LIST_HEALTH_OPEN = false; // list health explanation expanded
@@ -1626,11 +1675,12 @@ function renderResultCards(schools, container, isDirect, answer) {
     const _heroUrl = schoolImgHero(r.school);
     return `
     <div class="result-card" id="rcard-${i}">
-      ${_heroUrl ? `<div class="card-img-wrap">
+      <div class="card-img-wrap">
         <img src="${_heroUrl}" class="card-img" loading="lazy"
+          data-school="${esc(r.school)}"
           alt="${esc(r.school)} campus"
           onerror="this.closest('.card-img-wrap').style.display='none'">
-      </div>` : ''}
+      </div>
       ${r.aiWhy ? `<div class="ai-why">✦ ${esc(r.aiWhy)}</div>` : ''}
       <div class="result-card-top">
         <div>
@@ -1676,6 +1726,8 @@ function renderResultCards(schools, container, isDirect, answer) {
   } else {
     container.innerHTML = schools.map((r, i) => cardHtml(r, i)).join('');
   }
+  // Lazy-load real images for any card still showing the generic fallback
+  lazyLoadImages(schools.map(r => r.school));
 }
 
 function eliminate(school, idx) {
