@@ -1,4 +1,3 @@
 Bundle_ID,Conference,Files_In_Bundle,Detected_Gender,Events_Detected,Events_Mapped,Events_Output,Men_Events_Output,Women_Events_Output,Events_Missing,Men_Missing,Women_Missing,Events_Recovered_Pass2,Missing_Event_List,Team_Scores_Found,Team_Score_Strategy,Notes
-miac_2026,MIAC,2,men/women,13,26,26,13,13,0,0,0,0,,10,full_scan:2026 MIAC TEAM SCORES.pdf,
-nescac_2026,NESCAC,2,men/women,14,28,28,14,14,0,0,0,0,,0,not_found,
-uaa_2026,UAA,1,men/women,13,26,26,13,13,0,0,0,0,,0,not_found,
+odac_2026,ODAC,1,men/women,13,26,26,13,13,0,0,0,0,,0,not_found,
+patriot_2026,Patriot,1,men/women,13,26,26,13,13,0,0,0,0,,0,not_found,
