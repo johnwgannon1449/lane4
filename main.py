@@ -4527,10 +4527,6 @@ _IMG_BAD_TOKENS = [
     'patch', '_mark.', 'icon', 'vector',
 ]
 
-# Unsplash fallback images (stable, no API key required)
-_IMG_HERO_FB = 'https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80'
-_IMG_SL_FB   = 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80'
-_IMG_SWIM_FB = 'https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80'
 
 
 def _img_load_manifest():
@@ -4741,12 +4737,11 @@ def _img_harvest_background():
                 ex = manifest.get(school, {})
                 entry = {
                     'hero': url, 'student_life': url,
-                    'swim': ex.get('swim') or _IMG_SWIM_FB,
+                    'swim': ex.get('swim') or '',
                     'hero_is_fallback': False,
-                    'swim_is_fallback': ex.get('swim_is_fallback', True),
                 }
                 _img_save_entry(school, entry)
-                manifest[school] = entry   # keep local copy in sync
+                manifest[school] = entry
                 ok += 1
                 print(f'[img-harvest] ✓ {school}', flush=True)
             else:
@@ -4781,21 +4776,13 @@ def api_school_image(school_name):
         new_entry = {
             'hero':             hero_url,
             'student_life':     hero_url,
-            'swim':             entry.get('swim') or _IMG_SWIM_FB,
+            'swim':             entry.get('swim') or '',
             'hero_is_fallback': False,
-            'swim_is_fallback': entry.get('swim_is_fallback', True),
         }
         _img_save_entry(school_name, new_entry)
         return jsonify({'url': hero_url, 'is_fallback': False})
 
-    # Mark as failed so we don't retry on every page load (retry after 24h via timestamp)
-    failed_entry = {**entry,
-                    'hero':             _IMG_HERO_FB,
-                    'student_life':     _IMG_SL_FB,
-                    'hero_is_fallback': True,
-                    'fetch_failed_at':  time.time()}
-    _img_save_entry(school_name, failed_entry)
-    return jsonify({'url': _IMG_HERO_FB, 'is_fallback': True})
+    return jsonify({'url': None, 'is_fallback': True})
 
 
 if __name__ == '__main__':
