@@ -813,13 +813,55 @@ async function loadSchoolImages() {
   } catch(_) {}
 }
 
-const _IMG_HERO_FB  = 'https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80';
-const _IMG_SL_FB    = 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80';
-const _IMG_SWIM_FB  = 'https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80';
+// Pool of 21 curated campus/collegiate Unsplash photos.
+// Each school is deterministically assigned one based on name hash,
+// so every school always shows the same unique photo.
+const _IMG_POOL = [
+  'photo-1562774053-701939374585', // brick campus path
+  'photo-1541339907198-e08756dedf3f', // campus quad aerial
+  'photo-1498243691581-b145c3f54a5a', // lecture hall exterior
+  'photo-1607237138185-eedd9c632b0b', // campus green
+  'photo-1580582932707-520aed937b7b', // modern campus building
+  'photo-1571260899304-425eee4c7efc', // college steps/columns
+  'photo-1509062522246-3755977927d7', // library building
+  'photo-1546410531-bb4caa6b424d', // campus at sunset
+  'photo-1612831455359-970e23a1e4e9', // quad with fountain
+  'photo-1594312915251-48db9280c8f1', // campus courtyard
+  'photo-1513077202514-c511b41bd4c7', // historic academic building
+  'photo-1504711434969-e33886168f5c', // green campus lawns
+  'photo-1519389950473-47ba0277781c', // students on campus
+  'photo-1567168544813-cc03465b4fa8', // campus bell tower
+  'photo-1573164574511-73c773193279', // modern university hall
+  'photo-1501504905252-473c47e087f8', // outdoor study area
+  'photo-1544717305-2782549b5136', // campus in autumn
+  'photo-1466611653911-95081537e5b7', // campus sunrise
+  'photo-1497633762265-9d179a990aa6', // books and campus
+  'photo-1558618666-fcd25c85cd64', // athletic campus
+  'photo-1534447677768-be436bb09401', // evening campus lights
+];
+const _IMG_SWIM_FB = 'https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80';
 
-function schoolImgHero(school)    { return (SCHOOL_IMAGES[school] || {}).hero         || _IMG_HERO_FB; }
-function schoolImgStudent(school) { return (SCHOOL_IMAGES[school] || {}).student_life || _IMG_SL_FB;   }
-function schoolImgSwim(school)    { return (SCHOOL_IMAGES[school] || {}).swim          || _IMG_SWIM_FB; }
+// Simple djb2-style hash → stable index into pool
+function _schoolHash(name) {
+  let h = 5381;
+  for (let i = 0; i < name.length; i++) h = ((h << 5) + h) ^ name.charCodeAt(i);
+  return Math.abs(h) % _IMG_POOL.length;
+}
+function _schoolFallback(school) {
+  return `https://images.unsplash.com/${_IMG_POOL[_schoolHash(school)]}?w=1200&q=80`;
+}
+
+function schoolImgHero(school) {
+  const entry = SCHOOL_IMAGES[school] || {};
+  if (entry.hero && !entry.hero_is_fallback) return entry.hero;
+  return _schoolFallback(school);
+}
+function schoolImgStudent(school) {
+  const entry = SCHOOL_IMAGES[school] || {};
+  if (entry.student_life && !entry.hero_is_fallback) return entry.student_life;
+  return _schoolFallback(school);
+}
+function schoolImgSwim(school)    { return (SCHOOL_IMAGES[school] || {}).swim || _IMG_SWIM_FB; }
 
 // ── On-demand lazy image fetch ────────────────────────────────────────────────
 // Fires one /api/school_image call per school (only for schools still on the
@@ -844,8 +886,9 @@ async function _imgDrainQueue() {
       if (!d.is_fallback && d.url) {
         // Update in-memory manifest so future renders use the real image
         if (!SCHOOL_IMAGES[school]) SCHOOL_IMAGES[school] = {};
-        SCHOOL_IMAGES[school].hero         = d.url;
-        SCHOOL_IMAGES[school].student_life = d.url;
+        SCHOOL_IMAGES[school].hero           = d.url;
+        SCHOOL_IMAGES[school].student_life   = d.url;
+        SCHOOL_IMAGES[school].hero_is_fallback = false;
         // Swap src on any card img already in the DOM
         document.querySelectorAll(`img[data-school="${CSS.escape(school)}"]`).forEach(img => {
           img.src = d.url;
@@ -859,10 +902,10 @@ async function _imgDrainQueue() {
 }
 
 function lazyLoadImages(schools) {
-  // Enqueue schools that are currently on the generic hero fallback
+  // Enqueue schools that are on a fallback (no real Wikipedia image yet)
   schools.forEach(school => {
     const entry = SCHOOL_IMAGES[school] || {};
-    const isFallback = !entry.hero || entry.hero === _IMG_HERO_FB || entry.hero_is_fallback;
+    const isFallback = !entry.hero || entry.hero_is_fallback;
     if (isFallback && !_IMG_FETCHED.has(school)) {
       _IMG_QUEUE.push(school);
     }
