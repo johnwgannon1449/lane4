@@ -813,9 +813,13 @@ async function loadSchoolImages() {
   } catch(_) {}
 }
 
-function schoolImgHero(school)    { return (SCHOOL_IMAGES[school] || {}).hero          || null; }
-function schoolImgStudent(school) { return (SCHOOL_IMAGES[school] || {}).student_life  || null; }
-function schoolImgSwim(school)    { return (SCHOOL_IMAGES[school] || {}).swim           || null; }
+const _IMG_HERO_FB  = 'https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80';
+const _IMG_SL_FB    = 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80';
+const _IMG_SWIM_FB  = 'https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80';
+
+function schoolImgHero(school)    { return (SCHOOL_IMAGES[school] || {}).hero         || _IMG_HERO_FB; }
+function schoolImgStudent(school) { return (SCHOOL_IMAGES[school] || {}).student_life || _IMG_SL_FB;   }
+function schoolImgSwim(school)    { return (SCHOOL_IMAGES[school] || {}).swim          || _IMG_SWIM_FB; }
 let VIBE_STATE    = {};   // { campus, friday, academic, compete, location, career }
 let OPEN_CRM        = null; // currently expanded CRM card
 let LIST_HEALTH_OPEN = false; // list health explanation expanded

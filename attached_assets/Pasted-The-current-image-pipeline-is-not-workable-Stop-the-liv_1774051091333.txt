@@ -1,0 +1,63 @@
+The current image pipeline is not workable. Stop the live image daemon / cooldown / Wikipedia harvesting approach.
+
+Problem:
+- only 5 real images out of 331 schools
+- daemon is blocked by cooldowns and likely IP throttling
+- image generation is too fragile and too slow
+- live fetching during runtime is the wrong architecture
+
+We need to replace this with a simple, reliable system.
+
+GOAL
+Remove the live daemon-based harvesting approach and replace it with a static, cached image-manifest system.
+
+NEW PLAN
+
+1. Disable the current live image daemon and cooldown-driven harvesting logic.
+2. Stop depending on Wikipedia scraping as the primary source.
+3. Create a static manifest file for school images, for example:
+   data/school_images.json
+
+Structure:
+{
+  "Emory University": {
+    "hero": "...",
+    "student_life": "...",
+    "swim": "..."
+  }
+}
+
+4. For now, implement a practical fallback-first system:
+   - hero image: use a school-specific campus image if already known
+   - otherwise use a high-quality default campus placeholder
+   - student_life: school-specific if known, else default student-life placeholder
+   - swim: school-specific if known, else default swim placeholder
+
+5. The UI must always render from the manifest/fallbacks only.
+   No background daemon.
+   No runtime scraping.
+   No cooldown logic.
+
+6. Create a clean helper:
+   get_school_images(school_name)
+   which:
+   - checks the manifest
+   - fills missing categories with defaults
+   - never returns broken URLs
+
+7. Remove or bypass all logic that waits for image harvesting to complete.
+
+8. Keep the image layout compact:
+   - school cards: hero image only, around 140–170px tall
+   - deep dives: one moderate hero image plus two smaller images below
+
+9. Report back with:
+   - exact files changed
+   - daemon/cooldown code disabled or removed
+   - manifest file location
+   - fallback image locations
+   - confirmation that every card now shows an image immediately, even if many are placeholders
+
+IMPORTANT
+A stable placeholder-based system is much better than a broken “real image later” system.
+We can improve the manifest over time, but the app must look complete now.

@@ -1,1 +1,2313 @@
-{"Air Force": {"hero": "https://upload.wikimedia.org/wikipedia/commons/4/40/Air_Force_Operational_Test_and_Evaluation_Center.png", "student_life": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/Air_Force_Operational_Test_and_Evaluation_Center.png/960px-Air_Force_Operational_Test_and_Evaluation_Center.png", "swim": "https://upload.wikimedia.org/wikipedia/commons/a/a2/Adult_Swim_creators.jpg"}, "American University": {"hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Eric_Freidheim_Quadrangle.jpg/1280px-Eric_Freidheim_Quadrangle.jpg", "student_life": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Eric_Freidheim_Quadrangle.jpg/960px-Eric_Freidheim_Quadrangle.jpg", "swim": "https://upload.wikimedia.org/wikipedia/commons/a/a2/Adult_Swim_creators.jpg"}, "Amherst College": {"hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Amherst_College_Main_Quad.jpg/1280px-Amherst_College_Main_Quad.jpg", "student_life": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Amherst_College_Main_Quad.jpg/960px-Amherst_College_Main_Quad.jpg", "swim": "https://upload.wikimedia.org/wikipedia/en/e/ef/KellyMaryFreemanOlympicSwimmer.JPG"}, "Arcadia University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Arizona Christian University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Arizona State University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Auburn University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Augsburg University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Augustana College": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Augustana University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Azusa Pacific University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Babson College": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Bard College": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Bates College": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Bellarmine University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Binghamton University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Biola University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Bloomsburg University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Boston College": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Boston University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Bowdoin College": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Brandeis": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Bridgewater College": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Brigham Young University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Brown University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Bryant University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Bryn Mawr College Owls": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Bucknell University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Butler University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Cal Baptist University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Cal Lutheran University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Cal State Bakersfield": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "California Baptist": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "California State University, E": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "California, University of, Ber": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Caltech": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Campbell University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Canisius University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Carleton College": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Carnegie Mellon": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Carroll University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Carson-Newman University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Carthage College": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Case Western": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Catawba College": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Catholic University of America": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Chapman University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Chicago": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Claremont-Mudd-Scripps": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Clark University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Clarkson University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Cleveland State University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Colby College": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Colgate University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "College of Idaho": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "College of Saint Benedict": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "College of Wooster": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "College of the Holy Cross": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Columbia University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Concordia College": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Concordia University Irvine": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Connecticut College": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Connecticut, University of": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Cornell University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Dartmouth College": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Davenport University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Davidson College": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "DePauw University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Delaware": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Denison University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Dickinson College": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Drew University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Drexel University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Duke University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Duquesne University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "East Stroudsburg University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Eastern Illinois University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Elizabethtown College": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Emory": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Fairfield University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Fairleigh Dickinson University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Florida Atlantic University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Florida Gulf Coast University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Florida State University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Fordham University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Franklin & Marshall College": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Fresno Pacific University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Gannon University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Gardner-Webb University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "George Fox University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "George Mason University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "George Washington University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Georgetown University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Georgia Institute of Technolog": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Georgia Southern University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Georgia, University of": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Gettysburg College": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Goucher College": {"hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Goucher_College_Haebler_Memorial_Chapel.jpg/1280px-Goucher_College_Haebler_Memorial_Chapel.jpg", "student_life": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Goucher_College_Haebler_Memorial_Chapel.jpg/1280px-Goucher_College_Haebler_Memorial_Chapel.jpg", "swim": null, "hero_is_fallback": false, "swim_is_fallback": true}, "Grand Canyon": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Grand Canyon University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Grand Valley State University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Green Bay Phoenix": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Greensboro College": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Gustavus Adolphus College": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Hamilton College": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Hamline University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Hampden-Sydney College": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Harvard University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Hobart and William Smith": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Hollins University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Hood College Swimming": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "IU Indianapolis": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Idaho": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Idaho, University of": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Illinois Wesleyan University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Indiana University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Indiana University of PA": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Iona University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Iowa State University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Iowa, University of": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Ithaca College": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "John Carroll University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Johns Hopkins University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Juniata College": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Kentucky, University of": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Kenyon College": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "King's College": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Kutztown University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "La Salle University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Lafayette College": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Lake Superior State University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Lebanon Valley College": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Lehigh University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Lenoir-Rhyne University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Lewis & Clark College": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Linfield University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Lock Haven University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Louisiana State University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Louisville, University of": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Loyola University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Lycoming College": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "MIT": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Macalester College": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Maine, University of": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Manhattan University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Marist University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Mars Hill University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "McDaniel College": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Merrimack College": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Messiah University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Michigan, University of": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Middlebury College": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Millersville University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Millikin University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Misericordia University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Missouri": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Monmouth University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Moravian University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Mount Holyoke College": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Mount Saint Mary's University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "NYU": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "New Hampshire, University of": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "New Jersey Institute of Techno": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "New Mexico State": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "New Mexico State University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Niagara University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "North Carolina State Universit": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "North Carolina, University of": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "North Central College": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Northeastern University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Northern Arizona": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Northern Arizona University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Northern Colorado": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Northern Colorado, University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Northern Kentucky University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Northern Michigan University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Northwestern University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Notre Dame, University of": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Oakland University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Oberlin College": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Occidental College": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Ohio State University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Ohio Wesleyan University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Old Dominion University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Ottawa University of Arizona": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Pacific Lutheran University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "PennWest Edinboro University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "PennWest University Clarion": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "PennWest University,California": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Pennsylvania State University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Pepperdine University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Pittsburgh, University of": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Pomona-Pitzer": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Princeton University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Providence College": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Purdue University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Queens University of Charlotte": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Randolph College": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Randolph-Macon College": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Rensselaer Polytechnic Institute": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Rider University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Roanoke College Swimming Maroo": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Rochester": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Rochester Institute of Technology": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Rutgers University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Sacred Heart University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Saginaw Valley State Universit": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Saint Catherine University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Saint John's University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Saint Louis University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Saint Olaf College": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Saint Peter's University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Seattle": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Seattle U": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Seton Hall University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Shippensburg University of PA": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Siena University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Simpson University": {"hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Simpson_University_%28cropped%29.jpg/1280px-Simpson_University_%28cropped%29.jpg", "student_life": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Simpson_University_%28cropped%29.jpg/1280px-Simpson_University_%28cropped%29.jpg", "swim": null, "hero_is_fallback": false, "swim_is_fallback": true}, "Skidmore College": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Smith College": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Soka University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "South Carolina, University of": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "South Dakota State University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Southern Methodist University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Springfield College": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "St Bonaventure University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "St Cloud State University (M)": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "St. Lawrence University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Stanford University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Stevens Institute of Technolog": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Stevenson University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Stony Brook University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Susquehanna University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Swarthmore College": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Sweet Briar College": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Texas A&M University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Texas Christian University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "The Master's University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Towson University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Trinity College": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Tufts University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "U.S. Coast Guard Academy": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "UC Davis": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "UC San Diego": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "UC Santa Barbara": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "US Air Force Academy": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Union College": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "United States Military Academy": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "United States Navy Academy": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Univ North Carolina Asheville": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Univ Texas Rio Grande Valley": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "University of Alabama": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "University of Alaska Fairbanks": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "University of Arizona": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "University of Arkansas": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "University of California, Los": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "University of California, Sant": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "University of Cincinnati": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "University of Denver": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "University of Florida": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "University of Hawaii": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "University of Houston": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "University of Illinois": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "University of Incarnate Word": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "University of Kansas": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "University of La Verne": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "University of Lynchburg": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "University of Maryland Baltimo": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "University of Miami (Florida)": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "University of Minnesota": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "University of Nebraska Omaha": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "University of Nebraska-Lincoln": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "University of Nevada Las Vegas": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "University of North Carolina W": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "University of North Florida": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "University of Pennsylvania": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "University of Puget Sound": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "University of Redlands": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "University of Rhode Island": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "University of Richmond": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "University of San Diego": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "University of Scranton": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "University of South Dakota": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "University of Southern Califor": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "University of Southern Indiana": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "University of St. Thomas MN": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "University of Tennessee": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "University of Texas": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "University of Texas Rio Grande": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "University of Utah": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "University of Wisconsin-Milwau": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "University of Wyoming": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "University of the Pacific": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Ursinus College": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Utah Tech University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "VA Tech": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Vanderbilt University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Vassar College": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Vermont, University of": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Villanova University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Virginia Military Institute": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Virginia Wesleyan University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Virginia, University of": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Wabash College": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Washington (Mo)": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Washington College": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Washington and Lee University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Wayne State University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Wellesley College": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Wesleyan University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "West Chester University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "West Virginia University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Westmont College": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Wheaton College": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Wheaton College (MA)": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Whitman College": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Whittier College": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Whitworth University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Widener University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Wilkes University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Willamette University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "William and Mary": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Williams College": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Wingate University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Wisconsin, University of, Madi": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Wittenberg University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Worcester Polytechnic Institute": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Xavier University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Yale University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "York College of Pennsylvania": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}, "Youngstown State University": {"hero": null, "student_life": null, "swim": null, "hero_is_fallback": true, "swim_is_fallback": true}}
+{
+  "Air Force": {
+    "hero": "https://upload.wikimedia.org/wikipedia/commons/4/40/Air_Force_Operational_Test_and_Evaluation_Center.png",
+    "student_life": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/Air_Force_Operational_Test_and_Evaluation_Center.png/960px-Air_Force_Operational_Test_and_Evaluation_Center.png",
+    "swim": "https://upload.wikimedia.org/wikipedia/commons/a/a2/Adult_Swim_creators.jpg"
+  },
+  "American University": {
+    "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Eric_Freidheim_Quadrangle.jpg/1280px-Eric_Freidheim_Quadrangle.jpg",
+    "student_life": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Eric_Freidheim_Quadrangle.jpg/960px-Eric_Freidheim_Quadrangle.jpg",
+    "swim": "https://upload.wikimedia.org/wikipedia/commons/a/a2/Adult_Swim_creators.jpg"
+  },
+  "Amherst College": {
+    "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Amherst_College_Main_Quad.jpg/1280px-Amherst_College_Main_Quad.jpg",
+    "student_life": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Amherst_College_Main_Quad.jpg/960px-Amherst_College_Main_Quad.jpg",
+    "swim": "https://upload.wikimedia.org/wikipedia/en/e/ef/KellyMaryFreemanOlympicSwimmer.JPG"
+  },
+  "Arcadia University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Arizona Christian University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Arizona State University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Auburn University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Augsburg University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Augustana College": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Augustana University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Azusa Pacific University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Babson College": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Bard College": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Bates College": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Bellarmine University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Binghamton University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Biola University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Bloomsburg University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Boston College": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Boston University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Bowdoin College": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Brandeis": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Bridgewater College": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Brigham Young University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Brown University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Bryant University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Bryn Mawr College Owls": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Bucknell University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Butler University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Cal Baptist University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Cal Lutheran University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Cal State Bakersfield": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "California Baptist": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "California State University, E": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "California, University of, Ber": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Caltech": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Campbell University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Canisius University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Carleton College": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Carnegie Mellon": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Carroll University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Carson-Newman University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Carthage College": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Case Western": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Catawba College": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Catholic University of America": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Chapman University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Chicago": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Claremont-Mudd-Scripps": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Clark University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Clarkson University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Cleveland State University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Colby College": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Colgate University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "College of Idaho": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "College of Saint Benedict": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "College of Wooster": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "College of the Holy Cross": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Columbia University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Concordia College": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Concordia University Irvine": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Connecticut College": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Connecticut, University of": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Cornell University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Dartmouth College": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Davenport University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Davidson College": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "DePauw University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Delaware": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Denison University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Dickinson College": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Drew University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Drexel University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Duke University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Duquesne University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "East Stroudsburg University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Eastern Illinois University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Elizabethtown College": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Emory": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Fairfield University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Fairleigh Dickinson University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Florida Atlantic University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Florida Gulf Coast University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Florida State University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Fordham University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Franklin & Marshall College": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Fresno Pacific University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Gannon University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Gardner-Webb University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "George Fox University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "George Mason University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "George Washington University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Georgetown University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Georgia Institute of Technolog": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Georgia Southern University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Georgia, University of": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Gettysburg College": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Goucher College": {
+    "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Goucher_College_Haebler_Memorial_Chapel.jpg/1280px-Goucher_College_Haebler_Memorial_Chapel.jpg",
+    "student_life": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Goucher_College_Haebler_Memorial_Chapel.jpg/1280px-Goucher_College_Haebler_Memorial_Chapel.jpg",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": false,
+    "swim_is_fallback": true
+  },
+  "Grand Canyon": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Grand Canyon University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Grand Valley State University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Green Bay Phoenix": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Greensboro College": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Gustavus Adolphus College": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Hamilton College": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Hamline University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Hampden-Sydney College": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Harvard University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Hobart and William Smith": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Hollins University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Hood College Swimming": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "IU Indianapolis": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Idaho": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Idaho, University of": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Illinois Wesleyan University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Indiana University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Indiana University of PA": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Iona University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Iowa State University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Iowa, University of": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Ithaca College": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "John Carroll University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Johns Hopkins University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Juniata College": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Kentucky, University of": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Kenyon College": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "King's College": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Kutztown University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "La Salle University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Lafayette College": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Lake Superior State University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Lebanon Valley College": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Lehigh University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Lenoir-Rhyne University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Lewis & Clark College": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Linfield University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Lock Haven University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Louisiana State University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Louisville, University of": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Loyola University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Lycoming College": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "MIT": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Macalester College": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Maine, University of": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Manhattan University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Marist University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Mars Hill University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "McDaniel College": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Merrimack College": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Messiah University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Michigan, University of": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Middlebury College": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Millersville University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Millikin University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Misericordia University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Missouri": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Monmouth University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Moravian University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Mount Holyoke College": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Mount Saint Mary's University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "NYU": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "New Hampshire, University of": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "New Jersey Institute of Techno": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "New Mexico State": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "New Mexico State University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Niagara University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "North Carolina State Universit": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "North Carolina, University of": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "North Central College": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Northeastern University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Northern Arizona": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Northern Arizona University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Northern Colorado": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Northern Colorado, University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Northern Kentucky University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Northern Michigan University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Northwestern University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Notre Dame, University of": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Oakland University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Oberlin College": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Occidental College": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Ohio State University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Ohio Wesleyan University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Old Dominion University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Ottawa University of Arizona": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Pacific Lutheran University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "PennWest Edinboro University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "PennWest University Clarion": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "PennWest University,California": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Pennsylvania State University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Pepperdine University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Pittsburgh, University of": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Pomona-Pitzer": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Princeton University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Providence College": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Purdue University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Queens University of Charlotte": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Randolph College": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Randolph-Macon College": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Rensselaer Polytechnic Institute": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Rider University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Roanoke College Swimming Maroo": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Rochester": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Rochester Institute of Technology": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Rutgers University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Sacred Heart University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Saginaw Valley State Universit": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Saint Catherine University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Saint John's University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Saint Louis University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Saint Olaf College": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Saint Peter's University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Seattle": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Seattle U": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Seton Hall University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Shippensburg University of PA": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Siena University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Simpson University": {
+    "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Simpson_University_%28cropped%29.jpg/1280px-Simpson_University_%28cropped%29.jpg",
+    "student_life": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Simpson_University_%28cropped%29.jpg/1280px-Simpson_University_%28cropped%29.jpg",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": false,
+    "swim_is_fallback": true
+  },
+  "Skidmore College": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Smith College": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Soka University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "South Carolina, University of": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "South Dakota State University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Southern Methodist University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Springfield College": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "St Bonaventure University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "St Cloud State University (M)": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "St. Lawrence University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Stanford University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Stevens Institute of Technolog": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Stevenson University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Stony Brook University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Susquehanna University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Swarthmore College": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Sweet Briar College": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Texas A&M University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Texas Christian University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "The Master's University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Towson University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Trinity College": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Tufts University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "U.S. Coast Guard Academy": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "UC Davis": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "UC San Diego": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "UC Santa Barbara": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "US Air Force Academy": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Union College": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "United States Military Academy": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "United States Navy Academy": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Univ North Carolina Asheville": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Univ Texas Rio Grande Valley": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "University of Alabama": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "University of Alaska Fairbanks": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "University of Arizona": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "University of Arkansas": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "University of California, Los": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "University of California, Sant": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "University of Cincinnati": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "University of Denver": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "University of Florida": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "University of Hawaii": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "University of Houston": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "University of Illinois": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "University of Incarnate Word": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "University of Kansas": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "University of La Verne": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "University of Lynchburg": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "University of Maryland Baltimo": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "University of Miami (Florida)": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "University of Minnesota": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "University of Nebraska Omaha": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "University of Nebraska-Lincoln": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "University of Nevada Las Vegas": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "University of North Carolina W": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "University of North Florida": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "University of Pennsylvania": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "University of Puget Sound": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "University of Redlands": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "University of Rhode Island": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "University of Richmond": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "University of San Diego": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "University of Scranton": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "University of South Dakota": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "University of Southern Califor": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "University of Southern Indiana": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "University of St. Thomas MN": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "University of Tennessee": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "University of Texas": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "University of Texas Rio Grande": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "University of Utah": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "University of Wisconsin-Milwau": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "University of Wyoming": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "University of the Pacific": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Ursinus College": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Utah Tech University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "VA Tech": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Vanderbilt University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Vassar College": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Vermont, University of": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Villanova University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Virginia Military Institute": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Virginia Wesleyan University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Virginia, University of": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Wabash College": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Washington (Mo)": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Washington College": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Washington and Lee University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Wayne State University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Wellesley College": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Wesleyan University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "West Chester University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "West Virginia University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Westmont College": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Wheaton College": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Wheaton College (MA)": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Whitman College": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Whittier College": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Whitworth University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Widener University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Wilkes University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Willamette University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "William and Mary": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Williams College": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Wingate University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Wisconsin, University of, Madi": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Wittenberg University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Worcester Polytechnic Institute": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Xavier University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Yale University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "York College of Pennsylvania": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  },
+  "Youngstown State University": {
+    "hero": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&q=80",
+    "student_life": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
+    "swim": "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=1200&q=80",
+    "hero_is_fallback": true,
+    "swim_is_fallback": true
+  }
+}
