@@ -3280,57 +3280,6 @@ _ADM_LABEL_SCORE: dict = {
 }
 
 
-def _classify_query_mode(query: str) -> str:
-    """Step 1 — Classify query: GUIDED / CONSTRAINED / OBJECTIVE / EXPLORATORY.
-
-    Priority order: GUIDED > CONSTRAINED > OBJECTIVE > EXPLORATORY.
-
-    GUIDED   — explicit personalization ('for me', 'where should I', etc.)
-    CONSTRAINED — personal-fit gate ('where I can get in', 'near me', etc.)
-    OBJECTIVE — category-ranking truth query ('best STEM schools', 'top biology')
-                with no personal qualifiers → LLM order preserved, no fit reranking.
-    EXPLORATORY — open-ended browsing; light LLM + fit-aware ranking.
-    """
-    q = query.lower().strip()
-
-    guided = [
-        'for me', 'for my', 'for a swimmer like',
-        'where should i', 'what should i', 'should i look',
-        'where can i swim', 'best schools for swimming',
-        'good colleges for swimming', 'good schools for swimming',
-        'where i should', 'help me find', 'find me schools',
-        'find schools for me', 'recommend for me',
-    ]
-    if any(s in q for s in guided):
-        return 'GUIDED'
-
-    constrained = [
-        'where i can', 'i can get in', 'can get into',
-        'i can make', 'near me', 'close to home', 'i could get into',
-    ]
-    if any(c in q for c in constrained):
-        return 'CONSTRAINED'
-
-    # OBJECTIVE: any "best / top / strongest / ..." query that has NO personal
-    # qualifiers.  These must return a nationally defensible category truth.
-    personal_qualifiers = [
-        'for me', 'for my', 'where i', 'near me', 'i can', 'i could',
-        'help me', 'for a swimmer', 'for the swimmer', 'fit for',
-    ]
-    obj_triggers = [
-        'best ', 'top ', 'strongest ', 'hardest ', 'most prestigious',
-        'most selective', 'most respected', 'most competitive',
-        'leading ', 'premier ', 'elite ', 'top-tier',
-        'nationally ranked', 'world class', 'globally ranked',
-        'us news', 'top 10', 'top 20', 'top 25', 'top 50',
-        'best colleges in', 'best universities', 'top universities',
-    ]
-    has_obj_trigger = any(s in q for s in obj_triggers)
-    has_personal    = any(s in q for s in personal_qualifiers)
-    if has_obj_trigger and not has_personal:
-        return 'OBJECTIVE'
-
-    return 'EXPLORATORY'
 
 
 # Admissions label → numeric score (used for sorting and filtering)
@@ -3447,62 +3396,36 @@ def _build_student_context(name, gpa, sat, act, times, vibe, other_prefs) -> str
     return ', '.join(parts)
 
 
-def _build_candidate_prompt(query: str, mode: str, student_ctx: str) -> tuple:
-    """Step 2 — Build system + user prompts for candidate school generation.
+def _build_candidate_prompt(query: str, student_ctx: str) -> tuple:
+    """Build system + user prompts for candidate school generation.
 
-    OBJECTIVE mode gets a fully separate prompt that forbids personalization and
-    instructs the model to rank by genuine category truth only.  The resulting
-    list order is preserved exactly in the final response — no fit reranking.
-
-    GUIDED / CONSTRAINED get student context and normal pool-generation rules.
-    EXPLORATORY gets no student context but normal pool-generation rules.
+    Single path — always generates a strong pool of 12–15 relevant schools.
+    Focus is purely on academic/program relevance to the query.
+    Admissions and swim filtering are handled downstream, not here.
+    Student context is always included so the LLM can interpret the query
+    correctly (e.g. 'best bio schools for me'), but must NOT be used to
+    pre-filter for fit.
     """
-    if mode == 'OBJECTIVE':
-        system = (
-            "You are an expert U.S. college counselor answering a category-ranking question.\n\n"
-            "Rules — follow these EXACTLY:\n"
-            "- Rank by the TRUE strength of each school for the asked category\n"
-            "- Do NOT personalize — no student profile exists for this query\n"
-            "- Do NOT consider admissions chances, athletics, swim teams, or finances\n"
-            "- Do NOT consider any fit factors whatsoever\n"
-            "- Return the strongest, most nationally-defensible schools for the category\n"
-            "- Put the genuinely strongest schools FIRST (your order will be preserved)\n"
-            "- Return ONLY valid JSON — no markdown, no extra text\n"
-            "- 'schools' must contain exactly 12 full school name strings, strongest first\n"
-            "- 'answer' is 1-2 sentences describing what makes these schools the best\n"
-            'Format: {"answer": "...", "schools": ["Full School Name", ...]}'
-        )
-        user_lines = [
-            f'Category-ranking query: "{query}"',
-            "\nReturn the 12 strongest U.S. schools for this category, best first.",
-            "Do NOT personalize. Do NOT consider swim teams or admissions fit.",
-            "\nReturn JSON only.",
-        ]
-        return system, '\n'.join(user_lines)
-
-    # GUIDED / CONSTRAINED / EXPLORATORY — pool generation (existing behaviour)
     system = (
-        "You are an expert U.S. college counselor generating a candidate list of colleges. "
-        "Your ONLY job is to produce a strong pool of schools relevant to the search query.\n\n"
-        "Rules:\n"
-        "- Focus on academic/program strength and institutional fit to the query\n"
-        "- Do NOT evaluate admissions likelihood, athletic fit, or finances\n"
-        "- Do NOT explain choices or write narratives\n"
+        "You are an expert U.S. college counselor generating a candidate list of colleges.\n\n"
+        "Rules — follow EXACTLY:\n"
+        "- Focus on academic and program relevance to the query\n"
+        "- Do NOT filter for admissions likelihood\n"
+        "- Do NOT filter for swim/athletic fit\n"
+        "- Do NOT rank for the student — just return a strong, relevant pool\n"
+        "- Include a quality range — not just elite schools\n"
+        "- Honor explicit constraints exactly (NESCAC, Midwest, D3, pre-med, STEM, etc.)\n"
         "- Return ONLY valid JSON — no markdown, no extra text\n"
-        "- 'schools' must contain 12 to 18 full school name strings\n"
-        "- 'answer' is 1-2 plain-English sentences interpreting the query\n"
-        "- Include quality range — not just elite schools\n"
-        "- Honor explicit constraints exactly (Ivy League, NESCAC, Midwest, D3, pre-med, etc.)\n"
+        "- 'schools' must contain 12 to 15 full school name strings\n"
+        "- 'answer' is 1-2 plain-English sentences describing the search\n"
         'Format: {"answer": "...", "schools": ["Full School Name", ...]}'
     )
     user_lines = [f'Search: "{query}"']
-    if mode in ('GUIDED', 'CONSTRAINED') and student_ctx:
+    if student_ctx:
         user_lines.append(
-            f"\nStudent context (use only to interpret the question — "
-            f"do NOT filter for admissibility or swim fit):\n{student_ctx}"
+            f"\nStudent context (use only to understand the query — "
+            f"do NOT pre-filter for admissibility or swim fit):\n{student_ctx}"
         )
-    else:
-        user_lines.append("\n(General query — do not personalize.)")
     user_lines.append("\nReturn JSON only.")
     return system, '\n'.join(user_lines)
 
