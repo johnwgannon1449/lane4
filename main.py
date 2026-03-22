@@ -3784,23 +3784,24 @@ def search():
             'directMatch': bool(direct_match),
         }), 503
 
-    # ── NON-DIRECT: AI-FIRST PIPELINE (Steps 1-5) ────────────────────────────
-    # Queries that are not a direct school-name lookup use a generative
-    # candidate-pool approach: Claude proposes schools, Lane4 scores & ranks.
+    # ── NON-DIRECT: 4-STEP PIPELINE ──────────────────────────────────────────
+    # Step 1 — AI generates candidate pool
+    # Step 2 — Hard filter using our truth labels
+    # Step 3 — Sort by admissions fit
+    # Step 4 — Return top 6
     if not direct_match:
         vibe_answers  = data.get('vibeAnswers', {}) or {}
         other_prefs_s = data.get('otherPrefs', '') or ''
-        mode          = _classify_query_mode(query)
-        student_ctx   = (
-            _build_student_context(
-                swimmer_name, gpa, sat, act_score, times,
-                vibe_answers, other_prefs_s,
-            )
-            if mode in ('GUIDED', 'CONSTRAINED') else ''
+
+        # Always build student context — LLM uses it to interpret the query,
+        # NOT to pre-filter for fit.
+        student_ctx = _build_student_context(
+            swimmer_name, gpa, sat, act_score, times, vibe_answers, other_prefs_s,
         )
-        cand_sys, cand_usr = _build_candidate_prompt(query, mode, student_ctx)
+        cand_sys, cand_usr = _build_candidate_prompt(query, student_ctx)
 
         try:
+            # ── STEP 1: AI generates ~12–15 relevant schools ───────────────
             resp = client.messages.create(
                 model='claude-sonnet-4-6',
                 max_tokens=700,
@@ -3809,12 +3810,12 @@ def search():
             )
             answer, candidate_names = _parse_candidate_names(resp.content[0].text)
 
-            # Step 3: map to universe
-            excl_set  = set(eliminated) | set(my_list)
-            avail     = [r for r in all_results if r['school'] not in excl_set]
+            # Map LLM names → scored universe records (fuzzy match)
+            excl_set   = set(eliminated) | set(my_list)
+            avail      = [r for r in all_results if r['school'] not in excl_set]
             candidates = _map_to_universe(candidate_names, avail)
 
-            # Narrow pool fallback: if mapping collapses to < 3, use _pre_sort
+            # Fallback if mapping collapses entirely
             if len(candidates) < 3:
                 fallback = _pre_sort(all_results, query, eliminated, my_list)[:6]
                 return jsonify({
@@ -3823,51 +3824,41 @@ def search():
                     'directMatch': False,
                 }), 200
 
-            # ── STEP 2: hard filter + sort ─────────────────────────────────
-            raw_candidates = [r['school'] for r in candidates]
-            removed_debug  = []
+            # ── STEP 2: Hard filter — remove contradictions ─────────────────
+            # Detect what filter rules apply: swim query? admissions query? personal?
+            intent = _detect_query_intent(query)
+            filtered, removed_debug = _hard_filter(candidates, intent)
 
-            if mode == 'OBJECTIVE':
-                # Preserve LLM category-truth order exactly — no filter, no sort.
-                filtered = candidates
-
-            else:
-                # Detect what filtering rules apply based on query wording.
-                intent = _detect_query_intent(query)
-
-                # Hard-remove schools that contradict our labels.
-                filtered, removed_debug = _hard_filter(candidates, intent)
-
-                # Sort remaining schools by admissions fit (strongest first).
-                # Admissions is the primary and only ranking signal — swim is
-                # already enforced via the hard filter above.
-                filtered.sort(
-                    key=lambda r: -_ADM_LABEL_SCORE.get(
-                        r.get('admission', {}).get('label', 'Unknown'), 25
-                    )
+            # ── STEP 3: Sort by admissions fit (strongest first) ────────────
+            # Swim competitiveness is already enforced by the filter above.
+            filtered.sort(
+                key=lambda r: -_ADM_LABEL_SCORE.get(
+                    r.get('admission', {}).get('label', 'Unknown'), 25
                 )
+            )
 
+            # ── STEP 4: Return top 6 (or fewer if not enough survive) ───────
             want_more = any(w in query.lower() for w in (
                 'more schools', 'more options', 'show me more', 'give me more',
             ))
             limit   = 12 if want_more else 6
             schools = filtered[:limit]
 
-            # Auto-generate aiWhy from existing score labels (no extra Claude call)
+            # Attach a brief fit label to each card (no extra AI call)
             for r in schools:
                 adm_lbl  = r.get('admission', {}).get('label', '')
                 swim_lbl = r.get('adjTier', '')
                 parts    = [p for p in [adm_lbl, swim_lbl] if p and p not in ('Unknown', '')]
                 r['aiWhy'] = ' · '.join(parts[:2])
 
-            # ── DEBUG (visible in browser DevTools → Network) ──────────────
-            intent_debug = _detect_query_intent(query) if mode != 'OBJECTIVE' else {}
+            # ── DEBUG — visible in DevTools → Network tab ───────────────────
             debug_kept = [
                 {
-                    'school': r['school'],
-                    'admissions': r.get('admission', {}).get('label', 'Unknown'),
-                    'swimTier':   r.get('adjTier', 'n/a'),
+                    'school':      r['school'],
+                    'admissions':  r.get('admission', {}).get('label', 'Unknown'),
+                    'swimTier':    r.get('adjTier', 'n/a'),
                     'hasSwimData': r.get('hasSwimData', False),
+                    'survived':    'passed all filter rules, sorted by admissions fit',
                 }
                 for r in schools
             ]
@@ -3876,11 +3867,10 @@ def search():
                 'answer':      answer,
                 'schools':     schools,
                 'directMatch': False,
-                'searchMode':  mode,
                 '_debug': {
-                    'queryMode':     mode,
-                    'intent':        intent_debug,
-                    'rawCandidates': raw_candidates,
+                    'intent':        intent,
+                    'aiCandidates':  candidate_names,
+                    'mapped':        [r['school'] for r in candidates],
                     'removed':       removed_debug,
                     'kept':          debug_kept,
                     'finalTop6':     [r['school'] for r in schools[:6]],
