@@ -3302,73 +3302,99 @@ _ADM_IMPOSSIBLE = {'Moonshot', 'Moonshot — Apply for Fun'}
 
 
 def _detect_query_intent(query: str) -> dict:
-    """Detect what filtering rules apply to a personalized query.
+    """Detect what filtering rules apply to a query.
 
-    Returns a dict of boolean flags:
-      is_swim     — query is about swimming / contributing in the pool
-      is_adm      — query is about where the student can get in
-      is_personal — query is clearly "for me" / personalized
+    Returns:
+      is_personal   — query has a personal qualifier ("for me", "I can", etc.)
+                      If False the query is objective — return AI's list as-is.
+      is_swim       — query is about swimming / contributing in the pool
+      adm_threshold — minimum admissions label score required to survive filter.
+                      None  = no admissions filter (general "for me" queries)
+                      80    = Strong Chance or better  ("definitely get in", "safety")
+                      60    = Realistic Shot or better ("can get in", "admissible")
     """
     q = query.lower()
+
     is_swim = any(s in q for s in [
         'swim', 'pool', 'stroke', 'relay', 'contribute', 'compete in',
         'make the team', 'recruitable', 'roster', 'athletic fit',
         'where can i swim', 'where should i swim',
     ])
-    is_adm = any(s in q for s in [
-        'get in', 'admissible', 'realistic', 'where i can get',
-        'where i can apply', 'i could get into', 'can get into',
-        'i can get in', 'where i can',
-    ])
+
     is_personal = any(s in q for s in [
         'for me', 'for my', 'where should i', 'help me',
         'recommend', 'find me', 'i should', 'my list',
-        'where i', 'i can', 'i could',
+        'where i', 'i can', 'i could', 'i want', 'i need',
     ])
-    return {'is_swim': is_swim, 'is_adm': is_adm, 'is_personal': is_personal}
+
+    # Admissions threshold — only meaningful when is_personal is True.
+    # Strong Chance or better (80): explicit certainty language.
+    # Realistic Shot or better (60): any "can get in" / admissibility language.
+    high_bar = any(s in q for s in [
+        'definitely get', 'certain to get', 'guaranteed', 'can definitely',
+        'easy to get', 'safety', 'sure thing', 'will get in',
+    ])
+    std_bar = any(s in q for s in [
+        'get in', 'get into', 'admissible', 'realistic',
+        'where i can get', 'i could get into', 'can get into', 'i can get in',
+    ])
+
+    if high_bar:
+        adm_threshold = 80   # Strong Chance or better
+    elif std_bar:
+        adm_threshold = 60   # Realistic Shot or better
+    else:
+        adm_threshold = None  # General "for me" — no admissions filter
+
+    return {
+        'is_personal':   is_personal,
+        'is_swim':       is_swim,
+        'adm_threshold': adm_threshold,
+    }
 
 
 def _hard_filter(candidates: list, intent: dict) -> tuple:
-    """Step 2 — Remove schools that contradict our scoring labels.
+    """Remove schools that contradict our scoring labels for personal queries.
 
-    SWIM queries: keep only schools where the swimmer is competitive
-                  (adjTier not in _SWIM_NOT_COMPETITIVE AND hasSwimData).
-    ADMISSIONS queries: keep only schools that are not impossible
-                        (label not in _ADM_IMPOSSIBLE, i.e. not pure Moonshot).
-    GENERAL 'for me' queries: remove only schools impossible on BOTH axes.
-    No filtering at all for non-personal queries (OBJECTIVE / EXPLORATORY).
+    Only called when intent['is_personal'] is True. Two independent checks:
 
+    SWIM filter (is_swim=True):
+      Remove schools missing swim data OR where the swimmer is not competitive.
+
+    ADMISSIONS threshold filter (adm_threshold is not None):
+      Remove schools whose admissions label score falls below the threshold.
+        80 → Strong Chance or better  ("definitely get in")
+        60 → Realistic Shot or better ("can get in")
+      Threshold is None for general "for me" queries — no admissions filter.
+
+    Both filters can apply simultaneously (e.g. swim query + "I can get into").
     Returns (kept_list, removed_debug_list).
     """
     kept, removed = [], []
+    threshold = intent.get('adm_threshold')  # int or None
 
     for r in candidates:
         adm_label = r.get('admission', {}).get('label', 'Unknown')
         adj_tier  = r.get('adjTier', '')
         has_swim  = r.get('hasSwimData', False)
+        reasons   = []
 
-        adm_bad  = adm_label in _ADM_IMPOSSIBLE
-        swim_bad = (adj_tier in _SWIM_NOT_COMPETITIVE) or (not has_swim)
-
-        reason = None
-
+        # Swim filter
         if intent['is_swim']:
             if not has_swim:
-                reason = f'no swim data'
+                reasons.append('no swim data')
             elif adj_tier in _SWIM_NOT_COMPETITIVE:
-                reason = f'not competitive — {adj_tier}'
+                reasons.append(f'not competitive — {adj_tier}')
 
-        elif intent['is_adm']:
-            if adm_bad:
-                reason = f'not admissible — {adm_label}'
+        # Admissions threshold filter
+        if threshold is not None:
+            score = _ADM_LABEL_SCORE.get(adm_label, 25)
+            if score < threshold:
+                label_needed = 'Strong Chance' if threshold >= 80 else 'Realistic Shot'
+                reasons.append(f'below threshold ({adm_label}, need {label_needed}+)')
 
-        elif intent['is_personal']:
-            # General "for me": only cut schools impossible on both axes
-            if adm_bad and swim_bad:
-                reason = f'impossible on both axes ({adm_label} / {adj_tier or "no swim data"})'
-
-        if reason:
-            removed.append({'school': r['school'], 'reason': reason})
+        if reasons:
+            removed.append({'school': r['school'], 'reason': '; '.join(reasons)})
         else:
             kept.append(r)
 
@@ -3849,25 +3875,25 @@ def search():
                     'directMatch': False,
                 }), 200
 
-            # ── STEP 2: Hard filter — remove contradictions ─────────────────
-            # Detect what filter rules apply: swim query? admissions query? personal?
+            # ── STEP 2: Detect intent → objective or personal ───────────────
             intent = _detect_query_intent(query)
-            filtered, removed_debug = _hard_filter(candidates, intent)
-
-            # ── STEP 3: Sort by admissions fit (strongest first) ────────────
-            # Swim competitiveness is already enforced by the filter above.
-            filtered.sort(
-                key=lambda r: -_ADM_LABEL_SCORE.get(
-                    r.get('admission', {}).get('label', 'Unknown'), 25
-                )
-            )
-
-            # ── STEP 4: Return top 6 (or fewer if not enough survive) ───────
             want_more = any(w in query.lower() for w in (
                 'more schools', 'more options', 'show me more', 'give me more',
             ))
-            limit   = 12 if want_more else 6
-            schools = filtered[:limit]
+            limit = 12 if want_more else 6
+
+            if not intent['is_personal']:
+                # ── OBJECTIVE query ("best STEM schools", "fastest teams") ──
+                # Return Claude's list in its exact order. No Lane4 filtering,
+                # no admissions re-sort. We only use our data for display.
+                schools       = candidates[:limit]
+                removed_debug = []
+            else:
+                # ── PERSONAL query ("fastest schools I can get into") ───────
+                # Filter by admissions threshold and/or swim competitiveness.
+                # Preserve Claude's order among survivors — do NOT re-sort.
+                filtered, removed_debug = _hard_filter(candidates, intent)
+                schools = filtered[:limit]
 
             # Attach a brief fit label to each card (no extra AI call)
             for r in schools:
@@ -3877,13 +3903,18 @@ def search():
                 r['aiWhy'] = ' · '.join(parts[:2])
 
             # ── DEBUG — visible in DevTools → Network tab ───────────────────
+            survived_reason = (
+                'objective query — AI order preserved, no filtering'
+                if not intent['is_personal']
+                else 'passed admissions/swim filters, AI order preserved'
+            )
             debug_kept = [
                 {
                     'school':      r['school'],
                     'admissions':  r.get('admission', {}).get('label', 'Unknown'),
                     'swimTier':    r.get('adjTier', 'n/a'),
                     'hasSwimData': r.get('hasSwimData', False),
-                    'survived':    'passed all filter rules, sorted by admissions fit',
+                    'survived':    survived_reason,
                 }
                 for r in schools
             ]
@@ -3893,12 +3924,12 @@ def search():
                 'schools':     schools,
                 'directMatch': False,
                 '_debug': {
-                    'intent':        intent,
-                    'aiCandidates':  candidate_names,
-                    'mapped':        [r['school'] for r in candidates],
-                    'removed':       removed_debug,
-                    'kept':          debug_kept,
-                    'finalTop6':     [r['school'] for r in schools[:6]],
+                    'intent':       intent,
+                    'aiCandidates': candidate_names,
+                    'mapped':       [r['school'] for r in candidates],
+                    'removed':      removed_debug,
+                    'kept':         debug_kept,
+                    'finalTop6':    [r['school'] for r in schools[:6]],
                 },
             })
 
