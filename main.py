@@ -3460,18 +3460,37 @@ def _cname_toks(s: str) -> frozenset:
                      if t not in _CAND_STOP and len(t) > 1)
 
 
+# Full names Claude commonly returns → canonical short names used in our universe.
+# Required because the universe stores these as acronyms/short-forms that the
+# three-tier fuzzy matcher cannot bridge from the full official name.
+_UNIVERSE_ALIASES: dict[str, str] = {
+    'massachusetts institute of technology': 'mit',
+    'california institute of technology':    'caltech',
+    'new york university':                   'nyu',
+    'university of chicago':                 'chicago',
+    'emory university':                      'emory',
+    'virginia tech':                         'va tech',
+    'virginia polytechnic institute':        'va tech',
+    'virginia polytechnic institute and state university': 'va tech',
+    'university of idaho':                   'idaho',
+    'seattle university':                    'seattle',
+}
+
+
 def _map_to_universe(candidate_names: list, all_results: list) -> list:
     """
-    Step 3 — Fuzzy-map LLM-generated school names → Lane4 school records.
+    Fuzzy-map LLM-generated school names → Lane4 school records.
 
-    Three-tier matching:
+    Matching priority:
+      0. Alias map  — handles acronyms/short-forms (MIT, Caltech, NYU, etc.)
       1. Exact normalized match
       2. Substring match (normalized name contained in/containing each other)
       3. Key-token Jaccard similarity ≥ 0.50
     Ignores candidates that don't match confidently; never fabricates schools.
     """
-    by_norm = {_cname_norm(r['school']): r for r in all_results}
-    mapped, seen = [], set()
+    by_norm       = {_cname_norm(r['school']): r for r in all_results}
+    by_canon_norm = {_cname_norm(r['school']): r for r in all_results}
+    mapped, seen  = [], set()
 
     for cand in candidate_names:
         cand = cand.strip()
@@ -3479,8 +3498,14 @@ def _map_to_universe(candidate_names: list, all_results: list) -> list:
             continue
         record = None
 
+        # 0. Alias map — full official name → known short-form in universe
+        alias_target = _UNIVERSE_ALIASES.get(_cname_norm(cand))
+        if alias_target:
+            record = by_canon_norm.get(_cname_norm(alias_target))
+
         # 1. Exact normalized match
-        record = by_norm.get(_cname_norm(cand))
+        if not record:
+            record = by_norm.get(_cname_norm(cand))
 
         # 2. Substring match
         if not record:
