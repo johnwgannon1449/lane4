@@ -1,0 +1,120 @@
+We need to repair the NESCAC hero image selection. The current results include:
+- wrong school images (Amherst, Connecticut College)
+- black-and-white / historical photos
+- unclear or low-signal shots
+
+We are NOT switching to manual filenames yet. We are improving the selection system and re-running only the weak schools.
+
+==================================================
+GOAL
+==================================================
+
+Re-run hero image selection ONLY for schools with poor results and produce high-quality, school-accurate, modern images.
+
+==================================================
+INPUT
+==================================================
+
+Use:
+- nescac_hero_manifest.json
+
+Focus ONLY on schools with weak images:
+- Amherst College
+- Connecticut College
+- any others previously flagged as poor (historical, unclear, wrong)
+
+==================================================
+STEP 1 — FETCH CANDIDATES
+==================================================
+
+For each target school:
+1. Use the `hero_query`
+2. Retrieve 5–10 candidate image URLs
+3. Include:
+   - official school/admissions pages (highest priority)
+   - athletics or news pages (secondary)
+   - Wikimedia (allowed but lower priority)
+
+==================================================
+STEP 2 — APPLY STRICT FILTERING
+==================================================
+
+Reject any candidate that:
+- is black-and-white
+- appears historical/archival
+- is low resolution
+- is an aerial unless clearly iconic
+- is too zoomed out / unclear subject
+- does not clearly match the school
+- looks like a generic campus not tied to the school
+
+==================================================
+STEP 3 — PRIORITY RULES
+==================================================
+
+Rank candidates by:
+
+1. Official school (.edu) source with clear campus shot
+2. Recognizable landmark tied to the school
+3. Strong composition (clear, centered subject, good lighting)
+4. Modern color image
+5. Horizontal orientation preferred
+
+==================================================
+STEP 4 — SCHOOL-SPECIFIC ANCHORS
+==================================================
+
+Apply these constraints:
+
+Amherst College:
+- strongly prefer Johnson Chapel / main quad (Academic Quad)
+- must clearly look like Amherst’s campus
+
+Connecticut College:
+- prefer arboretum, coastal feel, or main campus green
+- must NOT look generic or like another school
+
+==================================================
+STEP 5 — SELECTION RULE
+==================================================
+
+From filtered candidates:
+- select the single best image
+- if NO candidate meets quality standards, SKIP the school (do not assign a bad image)
+
+==================================================
+STEP 6 — OUTPUT
+==================================================
+
+Update or create:
+data/school_images.json
+
+Format:
+{
+  "Amherst College": {
+    "hero": "FINAL_URL"
+  }
+}
+
+==================================================
+STEP 7 — DEBUG OUTPUT (REQUIRED)
+==================================================
+
+For EACH processed school, show:
+
+- candidate URLs considered (list)
+- which ones were rejected and why
+- final selected image URL
+- explanation of why it was chosen
+
+Also list any skipped schools.
+
+==================================================
+SUCCESS CRITERIA
+==================================================
+
+- Amherst image clearly shows Johnson Chapel / main quad
+- Connecticut College image clearly represents that campus (not generic)
+- no black-and-white or historical images
+- no obviously wrong schools
+- images feel modern, clear, and recognizable
