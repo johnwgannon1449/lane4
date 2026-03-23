@@ -3335,6 +3335,8 @@ def _detect_query_intent(query: str) -> dict:
         '100 fly', '200 fly', '200 im', '400 im',
         'backstroke', 'breaststroke', 'butterfly', 'individual medley',
         'distance swimmer', 'sprinter',
+        # composite swim-fit phrases
+        'swim fit', 'event profile', 'distance free',
     ])
 
     # ── Personal-fit intent ──────────────────────────────────────────────────
@@ -3356,12 +3358,13 @@ def _detect_query_intent(query: str) -> dict:
         # fit / chance signals
         'shot at', 'have a shot', 'have a chance', 'a chance at',
         'chance of being', 'realistically', 'realistic', 'able to',
-        'good fit', 'best fit', 'right fit', 'in range',
+        'good fit', 'best fit', 'right fit', 'fit best', 'in range',
         # possessive / proximity signals
         'my ',          # "my 1650", "my 500 free", "my times", "my chances"
         'like me',      # "distance swimmers like me"
         'recruitable',  # "recruitable schools" implies "schools that recruit me"
         'pipe dream',   # "not pipe dreams" = "realistic for me"
+        'swim fit',     # "swim fits" / "swim fit" — inherently personal (fit for me)
     ])
 
     # ── Explicit-reach override ──────────────────────────────────────────────
@@ -3374,6 +3377,9 @@ def _detect_query_intent(query: str) -> dict:
         'aspiration', 'long-shot',
         'not fast enough', 'too fast for', 'too slow', "can't make",
         "wouldn't be competitive", 'out of my league',
+        # negative-fit / eliminate intent — user is asking about schools to avoid
+        'below roster level', 'stop considering', 'no shot', 'have no shot',
+        'wasting my time', 'not competitive', 'not in range', 'too far out',
     ])
 
     # Admissions threshold — only meaningful when is_personal is True.
