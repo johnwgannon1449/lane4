@@ -3325,10 +3325,16 @@ def _detect_query_intent(query: str) -> dict:
     # queries idiomatic to swim recruiting. 'score' covers swim points queries.
     # 'in range' covers "schools in range for me" (swim-level range).
     is_swim = any(s in q for s in [
-        'swim', 'pool', 'stroke', 'relay', 'contribute', 'compete in',
+        'swim', 'pool', 'stroke', 'relay', 'contribute', 'compete',
         'make the team', 'recruit', 'roster', 'athletic fit',
         'lineup', 'cuts', 'finals', 'time trial',
         'team', 'score', 'in range', 'fast enough', 'fastest',
+        # event names
+        '50 free', '100 free', '200 free', '500 free', '1000 free', '1650',
+        '100 back', '200 back', '100 breast', '200 breast',
+        '100 fly', '200 fly', '200 im', '400 im',
+        'backstroke', 'breaststroke', 'butterfly', 'individual medley',
+        'distance swimmer', 'sprinter',
     ])
 
     # ── Personal-fit intent ──────────────────────────────────────────────────
@@ -3351,6 +3357,11 @@ def _detect_query_intent(query: str) -> dict:
         'shot at', 'have a shot', 'have a chance', 'a chance at',
         'chance of being', 'realistically', 'realistic', 'able to',
         'good fit', 'best fit', 'right fit', 'in range',
+        # possessive / proximity signals
+        'my ',          # "my 1650", "my 500 free", "my times", "my chances"
+        'like me',      # "distance swimmers like me"
+        'recruitable',  # "recruitable schools" implies "schools that recruit me"
+        'pipe dream',   # "not pipe dreams" = "realistic for me"
     ])
 
     # ── Explicit-reach override ──────────────────────────────────────────────

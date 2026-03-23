@@ -1,0 +1,279 @@
+We are doing a full search robustness stress test for Lane4.
+
+IMPORTANT:
+Do not change logic yet unless a test reveals a failure.
+This pass is about exposing weak spots in search behavior, ranking, intent detection, and filtering.
+
+We want to hit the search from as many realistic user angles as possible.
+
+The user is not a power user.
+Assume these are the kinds of natural searches a smart parent or swimmer would actually type and expect a real answer to.
+
+Use this swimmer for all tests:
+- 200 Free: 1:43.00
+- 500 Free: 4:37.00
+- 1650 Free: 16:06.00
+
+==================================================
+GOAL
+==================================================
+
+We need to verify that search is tight across:
+- realistic swim-fit searches
+- academic-first searches
+- swim-first searches
+- mixed swim + academic searches
+- school-life / vibe style searches
+- event-specific searches
+- reach / dream / long-shot searches
+- searches that do NOT explicitly mention swim but still clearly imply personal fit
+- searches that mention neither grades nor swim directly but still should return sensible results
+
+We are looking for:
+1. bad intent detection
+2. viability filtering failures
+3. unrealistic schools leaking into realistic searches
+4. ranking the wrong thing
+5. contradictions between returned schools and recruiting labels
+6. weak handling of natural-language phrasing
+
+==================================================
+REQUIRED OUTPUT FORMAT
+==================================================
+
+For EACH query, return:
+- swim intent: yes/no
+- personal intent: yes/no
+- reach override: yes/no
+- realistic-fit hard filter applied: yes/no
+- top 5 returned schools
+- recruiting label for each returned school
+
+Then, after all results:
+- list any query that returned a school labeled:
+  - Not Competitive
+  - Below Roster Level
+- explain why it happened
+- say whether that result is acceptable or a bug
+
+Do not just summarize.
+Actually run the queries.
+
+==================================================
+TEST GROUP A — REALISTIC SWIM-FIT / DIRECT
+==================================================
+
+1. where can I swim
+2. where can I realistically swim
+3. what schools can I swim for
+4. where do I have a shot to swim
+5. where could I be recruited
+6. what are the best schools I can swim for
+7. what are the fastest schools I can swim for
+8. strongest teams I can realistically swim for
+9. where can I make the team
+10. schools where I’m recruitable
+11. schools where I could contribute
+12. where could I score
+13. where could I help the team
+14. where do I fit best in swimming
+15. what are my best swim options
+
+==================================================
+TEST GROUP B — ACADEMIC-FIRST BUT STILL REALISTIC
+==================================================
+
+16. best academic schools where I can swim
+17. strongest engineering schools where I can swim
+18. best STEM schools for me to swim at
+19. highest ranked colleges where I have a chance to swim
+20. hardest school I can realistically swim for
+21. best colleges where I’m a legit swim fit
+22. strongest academics where I could get recruited
+23. top schools for me academically and in swimming
+24. smartest schools where I could make the team
+25. elite schools where I still have a real swim shot
+
+==================================================
+TEST GROUP C — SWIM-PROGRAM-FIRST
+==================================================
+
+26. strongest swim programs I can realistically swim for
+27. fastest teams where I’d have a shot
+28. best swim schools for me
+29. teams where I could score right away
+30. best conferences for me in swimming
+31. strongest teams where I could contribute
+32. where could I score the most points
+33. what teams actually fit my times
+34. best roster fit for me
+35. where could I matter most on a team
+
+==================================================
+TEST GROUP D — EVENT-SPECIFIC
+==================================================
+
+36. best schools for my 200 free
+37. best schools for my 500 free
+38. best schools for my 1650
+39. where would my 500 free score
+40. where would my 1650 score
+41. where could I get recruited with my 200 free
+42. strongest teams for a distance swimmer like me
+43. best colleges for my event profile
+44. where does my distance free fit best
+45. schools where my 500 and 1650 really help
+
+==================================================
+TEST GROUP E — NATURAL PARENT / FAMILY LANGUAGE
+==================================================
+
+46. what are the best real options for my son
+47. where does he actually have a chance
+48. what are the best colleges that are truly realistic
+49. not dream schools, real ones
+50. give me the best schools where he could really swim
+51. where is he actually in range
+52. what are the strongest realistic options
+53. what are the best real swim fits
+54. where would he not be wasting his time
+55. what schools should we actually be looking at
+
+==================================================
+TEST GROUP F — VIBE / SCHOOL-LIFE / GENERAL-FIT LANGUAGE
+==================================================
+
+56. best overall fits for me
+57. good all-around schools for me
+58. schools I’d probably like and could swim at
+59. best places for me overall
+60. good campus + swim fit schools
+61. schools with a good balance for me
+62. where would I fit best overall
+63. schools that make sense for me
+64. best college experience where I can also swim
+65. schools I’d actually enjoy and could swim for
+
+==================================================
+TEST GROUP G — SHORT / MESSY / CASUAL
+==================================================
+
+66. realistic options
+67. best fits
+68. swim fits
+69. top options
+70. strongest realistic
+71. good fits for me
+72. where do I fit
+73. real options
+74. best realistic schools
+75. where can I actually go
+
+==================================================
+TEST GROUP H — REACH / DREAM / LONG SHOT
+==================================================
+
+76. dream schools for me
+77. fastest reach schools for me
+78. biggest reaches where I’m not totally dead
+79. long-shot schools for me
+80. schools where I’d be a stretch
+81. ambitious options for me
+82. schools that are a reach but maybe possible
+83. best dream schools where I’m not completely crazy
+84. unrealistic swim reaches for me
+85. what are my highest-upside reaches
+
+==================================================
+TEST GROUP I — NEGATIVE / EXCLUSION / WARNING QUERIES
+==================================================
+
+86. schools I’m not fast enough for
+87. where wouldn’t I be competitive
+88. what schools are too fast for me
+89. where I probably can’t swim
+90. schools where I’m below roster level
+91. places I should stop considering for swim
+92. who is out of my league
+93. where I’d have no shot
+94. schools that are too fast for my times
+95. where swimming is unrealistic for me
+
+==================================================
+TEST GROUP J — QUESTIONS THAT DO NOT EXPLICITLY SAY SWIM BUT SHOULD STILL BE SMART
+==================================================
+
+96. best schools for me
+97. top schools for me
+98. strongest options for me
+99. best overall options for me
+100. what schools make the most sense for me
+101. where should I focus
+102. what are the smartest options for me
+103. best realistic colleges for me
+104. what are my top choices
+105. where do I have the best shot
+
+==================================================
+TEST GROUP K — MIXED / MESSY / HUMAN
+==================================================
+
+106. I want the best school where I can really swim
+107. fastest schools that aren’t total pipe dreams
+108. what are my best real options, not dream schools
+109. where do I have a legit shot both academically and in swimming
+110. what are the best schools where I could really contribute
+111. where could I go and actually matter
+112. best combination of academics and swim fit for me
+113. what are the best schools that are still realistic
+114. where could I really belong as a swimmer
+115. what schools feel like the right level for me
+
+==================================================
+TEST GROUP L — PARENT WHO ISN’T USING SWIM JARGON
+==================================================
+
+116. where could he actually do this
+117. where is he a real fit
+118. what schools would really want him
+119. where should we spend our time
+120. what colleges are actually worth pursuing
+121. where would coaches have interest
+122. where is he in the mix
+123. what schools are a genuine possibility
+124. what’s a realistic level for him
+125. where should we be optimistic
+
+==================================================
+CRITICAL VALIDATION RULES
+==================================================
+
+1. For queries that clearly imply REALISTIC FIT, print whether the hard filter fired.
+2. If a realistic-fit query returns a school with:
+   - Not Competitive
+   - Below Roster Level
+   mark it as a BUG unless there is an explicit reach/dream/long-shot override.
+3. For reach/dream queries, it is acceptable for harder schools to appear, but say that explicitly.
+4. For queries that do not mention swim directly, evaluate whether the current behavior is sensible or whether they need special handling.
+5. Explicitly note any query where Texas appears, and whether that appearance is correct or a bug.
+
+==================================================
+FINAL REPORT
+==================================================
+
+After running all queries, group failures into categories:
+
+- intent detection failures
+- personal-fit detection failures
+- reach override failures
+- realistic-fit filter failures
+- ranking failures
+- ambiguous-query behavior problems
+
+Then recommend:
+- which bugs are urgent to fix before launch
+- which are acceptable for now
+- which queries should maybe be routed to a safer default behavior
+
+Do not just say “looks good.”
+Beat it up and show where it still breaks.
