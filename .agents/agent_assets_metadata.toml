@@ -1,8 +1,3 @@
 uploads = []
 generated = []
-
-[[outputs]]
-id = "O7OwytpPT6nQm0NGIctPS"
-uri = "file://output/all_event_anchors.csv"
-type = "table"
-title = "all_event_anchors.csv"
+outputs = []
