@@ -1,0 +1,126 @@
+{
+  "Air Force": {
+    "school": "Air Force",
+    "base_url": "https://www.usafa.edu",
+    "pages": [
+      {
+        "type": "homepage",
+        "url": "https://www.usafa.edu/",
+        "fetched": true,
+        "candidates": 17
+      },
+      {
+        "type": "admissions",
+        "url": "https://www.usafa.edu/admissions",
+        "fetched": true,
+        "candidates": 4
+      },
+      {
+        "type": "student_life",
+        "url": "https://www.usafa.edu/student-life",
+        "fetched": true,
+        "candidates": 2
+      },
+      {
+        "type": "athletics",
+        "url": "https://www.usafa.edu/athletics",
+        "fetched": true,
+        "candidates": 2
+      }
+    ],
+    "total_candidates": 25,
+    "chosen": {
+      "hero": {
+        "url": "https://www.usafa.edu/app/uploads/54859840375_e7e4fc8630_o.jpg",
+        "page": "homepage",
+        "fallback": false
+      },
+      "student_life": {
+        "url": "https://www.usafa.edu/app/uploads/54520130904_05fda2031f_o.jpg",
+        "page": "student_life",
+        "fallback": false
+      },
+      "swim": {
+        "url": "https://www.usafa.edu/app/uploads/CCD_Banner_05.jpg",
+        "page": "athletics",
+        "fallback": false
+      }
+    }
+  },
+  "American University": {
+    "school": "American University",
+    "base_url": "https://www.american.edu",
+    "pages": [
+      {
+        "type": "homepage",
+        "url": "https://www.american.edu/",
+        "fetched": false
+      }
+    ],
+    "total_candidates": 0,
+    "chosen": {
+      "hero": {
+        "url": null,
+        "page": null,
+        "fallback": true
+      },
+      "student_life": {
+        "url": null,
+        "page": null,
+        "fallback": true
+      },
+      "swim": {
+        "url": null,
+        "page": null,
+        "fallback": true
+      }
+    }
+  },
+  "Amherst College": {
+    "school": "Amherst College",
+    "base_url": "https://www.amherst.edu",
+    "pages": [
+      {
+        "type": "homepage",
+        "url": "https://www.amherst.edu/",
+        "fetched": true,
+        "candidates": 5
+      },
+      {
+        "type": "admissions",
+        "url": "https://www.amherst.edu/admissions",
+        "fetched": true,
+        "candidates": 17
+      },
+      {
+        "type": "athletics",
+        "url": "https://www.amherst.edu/athletics",
+        "fetched": true,
+        "candidates": 2
+      },
+      {
+        "type": "swim",
+        "url": "https://www.amherst.edu/sports/mswim",
+        "fetched": false
+      }
+    ],
+    "total_candidates": 24,
+    "chosen": {
+      "hero": {
+        "url": "https://www.amherst.edu/system/files/styles/fs_440_248/private/2025_0422_April-Break_EC-21-1840x1400_0.jpg",
+        "page": "homepage",
+        "fallback": false
+      },
+      "student_life": {
+        "url": "https://www.amherst.edu/system/files/styles/fs_100_100/private/2020_0227_Intro%20to%20Economics_072_0.jpg",
+        "page": "admissions",
+        "fallback": false
+      },
+      "swim": {
+        "url": "https://images.sidearmdev.com/convert",
+        "page": "athletics",
+        "fallback": false
+      }
+    }
+  }
+}
