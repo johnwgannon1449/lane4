@@ -3326,7 +3326,7 @@ def _detect_query_intent(query: str) -> dict:
         'for me', 'for my', 'where should i', 'help me',
         'recommend', 'find me', 'i should', 'my list',
         'where i', 'i can', 'i could', 'i want', 'i need',
-        'i have', 'shot at', 'have a shot', 'have a chance',
+        'i have', 'i would', "i'd", 'shot at', 'have a shot', 'have a chance',
         'a chance at', 'chance of being',
     ])
 
