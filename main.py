@@ -3321,10 +3321,14 @@ def _detect_query_intent(query: str) -> dict:
 
     # ── Swim intent ─────────────────────────────────────────────────────────
     # 'recruit' root catches recruited / recruiting / recruitable / recruitment.
+    # 'team' catches "teams" (substring). 'fastest'/'fast enough' cover speed
+    # queries idiomatic to swim recruiting. 'score' covers swim points queries.
+    # 'in range' covers "schools in range for me" (swim-level range).
     is_swim = any(s in q for s in [
         'swim', 'pool', 'stroke', 'relay', 'contribute', 'compete in',
         'make the team', 'recruit', 'roster', 'athletic fit',
         'lineup', 'cuts', 'finals', 'time trial',
+        'team', 'score', 'in range', 'fast enough', 'fastest',
     ])
 
     # ── Personal-fit intent ──────────────────────────────────────────────────
@@ -3333,20 +3337,20 @@ def _detect_query_intent(query: str) -> dict:
     is_personal = any(s in q for s in [
         # first-person pronouns / possessives
         'for me', 'for my', 'help me', 'find me', 'my list', 'my fit',
-        'my shot', 'my chance',
+        'my shot', 'my chance', 'my best', 'my options', 'my realistic',
         # "I <verb>" constructions
         'i should', 'i can', 'i could', 'i want', 'i need',
         'i have', 'i would', "i'm", 'i am',
-        # inverted-order constructions ("where could I", "where can I")
-        'can i', 'could i', 'would i', 'should i',
+        # inverted-order constructions ("where am I", "where could I", "where can I")
+        'am i', 'can i', 'could i', 'would i', 'should i',
         # contraction
         "i'd",
         # directive phrases
         'where should i', 'where i', 'recommend', 'find me',
         # fit / chance signals
         'shot at', 'have a shot', 'have a chance', 'a chance at',
-        'chance of being', 'realistically', 'able to',
-        'good fit', 'best fit', 'right fit',
+        'chance of being', 'realistically', 'realistic', 'able to',
+        'good fit', 'best fit', 'right fit', 'in range',
     ])
 
     # ── Explicit-reach override ──────────────────────────────────────────────
