@@ -1,0 +1,137 @@
+We are cleaning up the Lane4 swim benchmark pipeline. Read this carefully and do exactly what is requested. Do not improvise, do not preserve legacy behavior, and do not leave fallback paths in place unless explicitly told to.
+
+OBJECTIVE
+We have replaced the old mixed benchmark system with a single curated CSV that is now the canonical source of truth.
+
+The file now in the project is:
+
+all_event_anchors.csv
+
+This file is already curated and includes:
+- parsed 2026 championship anchors
+- Patriot corrections
+- manual fixes for bad monotonic rows
+- any one-time legacy backfills already materialized into the CSV itself
+
+There should be NO runtime dependence on the old Excel workbook anymore.
+
+==================================================
+REQUIRED CHANGES
+==================================================
+
+1. REMOVE ALL LEGACY EXCEL DEPENDENCE
+Find every place in the codebase that loads, reads, references, supplements from, merges from, or falls back to the old Excel benchmark workbook (the old seed file / d3_conference_swim_master.xlsx or equivalent legacy benchmark source).
+
+Delete that behavior completely.
+
+This includes:
+- any pandas read_excel calls for benchmark loading
+- any benchmark supplement logic that merges Excel + CSV
+- any priority rules like “if key in BENCHMARKS: continue”
+- any path checks for the Excel benchmark source
+- any silent fallback to legacy benchmark rows
+- any comments describing Excel as a source of benchmark truth
+
+The old Excel file is no longer part of the runtime pipeline.
+
+2. MAKE all_event_anchors.csv THE ONLY BENCHMARK SOURCE
+Refactor benchmark loading so that the app/pipeline uses only:
+
+all_event_anchors.csv
+
+This CSV is now the canonical master dataset.
+
+No merging.
+No supplementing.
+No secondary source.
+No hidden override path.
+
+3. FAIL LOUDLY IF THE CSV IS MISSING
+If all_event_anchors.csv is missing, unreadable, malformed, or missing required columns, raise a clear error.
+
+Do NOT silently continue with empty benchmarks.
+Do NOT silently reconstruct from any legacy file.
+Do NOT fabricate defaults.
+
+4. VALIDATE THE CSV ON LOAD
+When loading all_event_anchors.csv, validate at minimum:
+
+Required columns exist:
+- conference
+- gender
+- event
+- 1st
+- 8th
+- 16th
+
+Normalize whitespace/casing only if needed for matching logic, but do not mutate benchmark values casually.
+
+Run monotonic validation for timed events:
+- 1st must be <= 8th
+- 8th must be <= 16th
+- 1st must be <= 16th
+
+If invalid rows are found, do NOT silently “fix” them in code.
+Instead:
+- log or raise a clear data-integrity warning/error with conference/gender/event info
+- tell me exactly how many invalid rows were found
+
+This file should already be clean, so if invalid rows appear, surface them.
+
+5. REMOVE ANY “SUPPLEMENT BENCHMARKS” CONCEPT
+If there is a helper/function/module whose purpose is to:
+- enrich benchmarks
+- supplement benchmarks
+- merge benchmark sources
+- patch benchmarks at runtime
+
+remove or simplify it so benchmark loading is a single straightforward read of all_event_anchors.csv.
+
+We do not want benchmark precedence logic anymore.
+We do not want source arbitration anymore.
+We do not want legacy patch behavior anymore.
+
+6. PRESERVE EXISTING DOWNSTREAM CONSUMERS
+Do NOT break the app’s downstream logic if other code expects a BENCHMARKS dict or similar structure.
+You may keep the final in-memory structure shape the same if useful, but it must be built only from all_event_anchors.csv.
+
+In other words:
+- change the loader, not the product behavior
+- preserve the interface where practical
+- remove only the legacy source complexity
+
+7. ADD CLEAR SOURCE-OF-TRUTH COMMENTS
+Where the benchmark loader now lives, add a short code comment making this explicit:
+
+all_event_anchors.csv is the canonical benchmark source.
+Legacy Excel benchmark loading has been retired.
+If benchmark gaps exist, they must be fixed in the master CSV — not patched at runtime.
+
+==================================================
+DELIVERABLES
+==================================================
+
+After making the changes, report back with:
+
+1. Every file changed
+2. What legacy Excel logic was removed
+3. What the new benchmark load path is
+4. Whether all_event_anchors.csv loaded successfully
+5. Whether validation passed
+6. Whether any invalid benchmark rows were found
+7. Any remaining code paths that still mention the old workbook, even if dead/commented
+
+==================================================
+IMPORTANT RULES
+==================================================
+
+- Do not reintroduce the old Excel as fallback
+- Do not leave commented-out legacy code unless necessary
+- Do not create a second hidden source of truth
+- Do not silently ignore missing benchmark data
+- Do not silently correct benchmark rows in runtime logic
+- Keep the implementation simple and explicit
+
+This is a cleanup and hardening task, not a redesign.
+
+Proceed now.

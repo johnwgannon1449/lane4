@@ -3,7 +3,6 @@ import urllib.request, urllib.parse
 from flask import Flask, request, jsonify, send_from_directory, session
 from dotenv import load_dotenv
 from functools import wraps
-import openpyxl
 import psycopg2
 import psycopg2.extras
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -1972,12 +1971,11 @@ SCHOOL_META = {
 EXPLORE_SCHOOLS = []   # [{school, conference, conf_tier_short, meta, hasSwimData, …}]
 
 # ── ENRICHMENT SOURCES (read-only, merged into EXPLORE_SCHOOLS at startup) ──
-# lane4_swim_model.xlsx provides:
-#   BENCHMARKS  — event × conference benchmarks (needed for swim scoring)
-#   TEAMS/TEAMS_LIST — PSF + tier values for the 68 schools in both sources
-#   CONFERENCES — used only by score_one_school (manual calculator)
-# These dictionaries are never used as a school universe.  They enrich values.
-EXCEL_PATH = os.path.join(os.path.dirname(__file__), 'data', 'lane4_swim_model.xlsx')
+# all_event_anchors.csv is the canonical benchmark source.
+# Legacy Excel benchmark loading has been retired.
+# If benchmark gaps exist, they must be fixed in the master CSV — not patched at runtime.
+CSV_BENCH_PATH = os.path.join(os.path.dirname(__file__), 'output', 'all_event_anchors.csv')
+CSV_SNAP_PATH  = os.path.join(os.path.dirname(__file__), 'output', 'lane4_snapshot_compatible.csv')
 BENCHMARKS = {}    # "Conference|Event" -> {first, eighth, sixteenth, sec_per_place}
 TEAMS = {}         # "Conference|School" -> enrichment record (PSF, tier, finish)
 TEAMS_LIST = []    # flat list of TEAMS records — enrichment only, not the universe
@@ -2051,184 +2049,155 @@ _UAA_SHORT = {
 }
 
 def load_data():
-    wb = openpyxl.load_workbook(EXCEL_PATH, data_only=True)
+    # all_event_anchors.csv is the canonical benchmark source.
+    # Legacy Excel benchmark loading has been retired.
+    # If benchmark gaps exist, they must be fixed in the master CSV — not patched at runtime.
+    _load_benchmarks()
+    _load_teams_from_csv()
+    _load_conf_tier_lookup()
 
-    # ── Sheet1: BENCHMARKS ──────────────────────────────────────────────────
-    ws = wb['Sheet1']
-    h1 = [ws.cell(1, c).value for c in range(1, ws.max_column + 1)]
-    col1 = {v: i + 1 for i, v in enumerate(h1) if v}
 
-    for r in range(2, ws.max_row + 1):
-        conf  = ws.cell(r, col1['Conference']).value
-        event = ws.cell(r, col1['Event']).value
+def _load_benchmarks():
+    """
+    Load BENCHMARKS from output/all_event_anchors.csv — the single canonical source.
+    Fails loudly if the file is missing, malformed, or contains non-monotonic rows.
+    Men's rows only; BENCHMARKS keys carry no gender suffix.
+    """
+    import csv as _csv
+
+    _REQUIRED_COLS = {'Conference', 'Gender', 'Event', '1st', '8th', '16th'}
+
+    if not os.path.exists(CSV_BENCH_PATH):
+        raise FileNotFoundError(
+            f"FATAL: Benchmark CSV not found: {CSV_BENCH_PATH}\n"
+            "output/all_event_anchors.csv is the canonical benchmark source.\n"
+            "Do not attempt to reconstruct from any legacy file."
+        )
+
+    with open(CSV_BENCH_PATH, newline='', encoding='utf-8') as f:
+        reader = _csv.DictReader(f)
+        actual_cols = set(reader.fieldnames or [])
+        missing = _REQUIRED_COLS - actual_cols
+        if missing:
+            raise ValueError(
+                f"FATAL: output/all_event_anchors.csv is missing required columns: {missing}\n"
+                f"Found columns: {sorted(actual_cols)}"
+            )
+        rows = list(reader)
+
+    invalid_count = 0
+    loaded_count = 0
+    for row in rows:
+        if (row.get('Gender') or '').strip().lower() != 'men':
+            continue
+        conf  = (row.get('Conference') or '').strip()
+        event = (row.get('Event') or '').strip()
         if not conf or not event:
             continue
+
+        # Use pre-converted *_seconds columns when available; fall back to raw columns
+        first     = _float(row.get('1st_seconds') or row.get('1st'))
+        eighth    = _float(row.get('8th_seconds') or row.get('8th'))
+        sixteenth = _float(row.get('16th_seconds') or row.get('16th'))
+        spp       = _float(row.get('Sec_per_place'))
+
+        if first is None and eighth is None:
+            continue  # no usable benchmark data
+
+        # Monotonic validation: 1st ≤ 8th ≤ 16th
+        if first is not None and eighth is not None and sixteenth is not None:
+            if not (first <= eighth <= sixteenth):
+                print(
+                    f"[WARN] Benchmark monotonicity violation: "
+                    f"{conf} | {event} | 1st={first} 8th={eighth} 16th={sixteenth}"
+                )
+                invalid_count += 1
+
         BENCHMARKS[f"{conf}|{event}"] = {
-            'first':         _float(ws.cell(r, col1['1st_sec']).value),
-            'eighth':        _float(ws.cell(r, col1['8th_sec']).value),
-            'sixteenth':     _float(ws.cell(r, col1['16th_sec']).value),
-            'sec_per_place': _float(ws.cell(r, col1['Sec_per_place']).value),
+            'first':         first,
+            'eighth':        eighth,
+            'sixteenth':     sixteenth,
+            'sec_per_place': spp,
         }
+        loaded_count += 1
 
-    # ── Team_Tiers: TEAMS ────────────────────────────────────────────────────
-    ws2 = wb['Team_Tiers']
-    h2 = [ws2.cell(1, c).value for c in range(1, ws2.max_column + 1)]
-    col2 = {}
-    for i, v in enumerate(h2):
-        if v and v not in col2:   # first-occurrence wins — sheet has duplicate headers at col 14
-            col2[v] = i + 1
+    if invalid_count:
+        print(f"[WARN] {invalid_count} benchmark row(s) failed monotonic validation — see above.")
+    print(f"[benchmarks] Loaded {loaded_count} rows from output/all_event_anchors.csv "
+          f"({invalid_count} invalid).")
 
-    for r in range(2, ws2.max_row + 1):
-        conf   = ws2.cell(r, col2['Conference']).value
-        raw    = ws2.cell(r, col2['Team']).value
-        psf    = ws2.cell(r, col2['PSF']).value
-        tier   = ws2.cell(r, col2['Tier']).value
-        finish = ws2.cell(r, col2['Finish']).value
-        pts    = ws2.cell(r, col2['MenPoints']).value
-        if not conf or not raw:
-            continue
 
-        # Apply name normalization
-        normalized = False
-        canonical = raw
-        if raw in TEAM_NAME_MAP:
-            canonical, reason = TEAM_NAME_MAP[raw]
-            normalized = True
-            NORMALIZATION_LOG.append({
-                'raw': raw, 'canonical': canonical,
-                'reason': reason, 'conference': conf, 'finish': finish,
-            })
+def _load_teams_from_csv():
+    """
+    Load TEAMS, TEAMS_LIST, and CONFERENCES from output/lane4_snapshot_compatible.csv.
+    Men's rows only. Fails loudly if the file is missing.
+    """
+    import csv as _csv
 
-        team_rec = {
-            'conference':  conf,
-            'school':      canonical,
-            'raw_name':    raw,
-            'psf':         _float(psf) if psf is not None else 1.0,
-            'tier':        tier or '',
-            'finish':      finish,
-            'men_points':  _float(pts),
-            'normalized':  normalized,
-        }
-        key = f"{conf}|{canonical}"
-        TEAMS[key] = team_rec
-        TEAMS_LIST.append(team_rec)
+    if not os.path.exists(CSV_SNAP_PATH):
+        raise FileNotFoundError(
+            f"FATAL: Snapshot CSV not found: {CSV_SNAP_PATH}"
+        )
 
-        if conf not in CONFERENCES:
-            CONFERENCES[conf] = []
-        if canonical not in CONFERENCES[conf]:
-            CONFERENCES[conf].append(canonical)
+    loaded_count = 0
+    with open(CSV_SNAP_PATH, newline='', encoding='utf-8') as f:
+        for row in _csv.DictReader(f):
+            if (row.get('gender') or '').lower() != 'men':
+                continue
+            conf = (row.get('Conference') or '').strip()
+            raw  = (row.get('Team') or '').strip()
+            if not conf or not raw or conf == 'Unknown':
+                continue
+
+            canonical = raw
+            normalized = False
+            if raw in TEAM_NAME_MAP:
+                canonical, reason = TEAM_NAME_MAP[raw]
+                normalized = True
+                NORMALIZATION_LOG.append({
+                    'raw': raw, 'canonical': canonical,
+                    'reason': reason, 'conference': conf,
+                })
+
+            key = f"{conf}|{canonical}"
+            if key in TEAMS:
+                continue  # deduplicate
+
+            try:
+                finish = int(row.get('Finish') or 0) or None
+            except (ValueError, TypeError):
+                finish = None
+
+            team_rec = {
+                'conference':       conf,
+                'school':           canonical,
+                'raw_name':         raw,
+                'psf':              _float(row.get('PSF')) or 1.0,
+                'tier':             row.get('Tier') or '',
+                'finish':           finish,
+                'men_points':       _float(row.get('MenPoints')),
+                'normalized':       normalized,
+                'conf_tier_short':  row.get('tier_short') or '',
+                'conf_tier':        row.get('final_tier') or '',
+                'conf_finish_2026': finish,
+                'conf_score_2026':  row.get('MenPoints') or '',
+                'conf_power_class': row.get('PowerClass') or '',
+            }
+            TEAMS[key] = team_rec
+            TEAMS_LIST.append(team_rec)
+
+            if conf not in CONFERENCES:
+                CONFERENCES[conf] = []
+            if canonical not in CONFERENCES[conf]:
+                CONFERENCES[conf].append(canonical)
+            loaded_count += 1
 
     # Sort teams within each conference by finish position
     for conf in CONFERENCES:
         CONFERENCES[conf].sort(
             key=lambda s: TEAMS.get(f"{conf}|{s}", {}).get('finish') or 99
         )
-
-    _supplement_from_csv()
-    _load_conf_tier_lookup()
-
-
-def _supplement_from_csv():
-    """
-    Extends BENCHMARKS and TEAMS_LIST from CSV outputs for all conferences
-    not already covered by the Excel model file.
-
-    - output/all_event_anchors.csv  → adds benchmark rows to BENCHMARKS
-    - output/lane4_snapshot_compatible.csv → adds team_recs to TEAMS_LIST
-
-    Excel data always takes priority; this function never overwrites existing keys.
-    Must be called after load_data() Excel loading and before _load_conf_tier_lookup().
-    """
-    import csv as _csv
-
-    excel_confs = set(k.split('|')[0] for k in BENCHMARKS)
-
-    # ── 1. Supplement BENCHMARKS from all_event_anchors.csv ─────────────────
-    # CSV comes from actual championship PDFs and is authoritative.
-    # Men's-only rows are used (BENCHMARKS keys are gender-agnostic).
-    # CSV overrides Excel for any conference it covers; Excel-only conferences
-    # are untouched (CSV has no rows for them).
-    anchors_path = os.path.join(os.path.dirname(__file__), 'output', 'all_event_anchors.csv')
-    if os.path.exists(anchors_path):
-        new_bench = 0
-        ovr_bench = 0
-        with open(anchors_path, newline='', encoding='utf-8') as f:
-            for row in _csv.DictReader(f):
-                # Men's benchmarks only — BENCHMARKS keys carry no gender suffix
-                if (row.get('Gender') or '').strip().lower() != 'men':
-                    continue
-                conf  = (row.get('Conference') or '').strip()
-                event = (row.get('Event') or '').strip()
-                if not conf or not event:
-                    continue
-                first     = _float(row.get('1st_seconds'))
-                eighth    = _float(row.get('8th_seconds'))
-                sixteenth = _float(row.get('16th_seconds'))
-                spp       = _float(row.get('Sec_per_place'))
-                if first is None and eighth is None:
-                    continue  # no usable benchmark data
-                key = f"{conf}|{event}"
-                already = key in BENCHMARKS
-                BENCHMARKS[key] = {
-                    'first':         first,
-                    'eighth':        eighth,
-                    'sixteenth':     sixteenth,
-                    'sec_per_place': spp,
-                }
-                if already:
-                    ovr_bench += 1
-                else:
-                    new_bench += 1
-        print(f"[supplement] Added {new_bench} new + {ovr_bench} corrected benchmark rows from all_event_anchors.csv")
-
-    # ── 2. Supplement TEAMS_LIST from lane4_snapshot_compatible.csv ─────────
-    snap_path = os.path.join(os.path.dirname(__file__), 'output', 'lane4_snapshot_compatible.csv')
-    if os.path.exists(snap_path):
-        excel_team_keys = set(TEAMS.keys())
-        new_teams = 0
-        with open(snap_path, newline='', encoding='utf-8') as f:
-            for row in _csv.DictReader(f):
-                if (row.get('gender') or '').lower() != 'men':
-                    continue
-                conf = (row.get('Conference') or '').strip()
-                raw  = (row.get('Team') or '').strip()
-                if not conf or not raw or conf == 'Unknown':
-                    continue  # 'Unknown' conference has no benchmarks — useless and harmful
-                # Apply name normalization
-                canonical = raw
-                if raw in TEAM_NAME_MAP:
-                    canonical, _ = TEAM_NAME_MAP[raw]
-                key = f"{conf}|{canonical}"
-                if key in excel_team_keys:
-                    continue  # Excel entry takes priority
-                try:
-                    finish = int(row.get('Finish') or 0) or None
-                except (ValueError, TypeError):
-                    finish = None
-                team_rec = {
-                    'conference':      conf,
-                    'school':          canonical,
-                    'raw_name':        raw,
-                    'psf':             _float(row.get('PSF')) or 1.0,
-                    'tier':            row.get('Tier') or '',
-                    'finish':          finish,
-                    'men_points':      _float(row.get('MenPoints')),
-                    'normalized':      raw != canonical,
-                    'conf_tier_short': row.get('tier_short') or '',
-                    'conf_tier':       row.get('final_tier') or '',
-                    'conf_finish_2026': finish,
-                    'conf_score_2026': row.get('MenPoints') or '',
-                    'conf_power_class': row.get('PowerClass') or '',
-                }
-                TEAMS[key] = team_rec
-                TEAMS_LIST.append(team_rec)
-                excel_team_keys.add(key)
-                if conf not in CONFERENCES:
-                    CONFERENCES[conf] = []
-                if canonical not in CONFERENCES[conf]:
-                    CONFERENCES[conf].append(canonical)
-                new_teams += 1
-        print(f"[supplement] Added {new_teams} team records from snapshot CSV")
+    print(f"[teams] Loaded {loaded_count} team records from output/lane4_snapshot_compatible.csv")
 
 
 def _norm_key(s):
@@ -4582,7 +4551,7 @@ def health():
         'schoolsWithSwimData': swim_data_schools,
         'conferenceOnlySchools': len(EXPLORE_SCHOOLS) - swim_data_schools,
         # ── Enrichment sources ────────────────────
-        'enrichmentSource':    'data/lane4_swim_model.xlsx',
+        'enrichmentSource':    'output/all_event_anchors.csv',
         'benchmarks':          len(BENCHMARKS),
         'enrichmentRecords':   len(TEAMS_LIST),
         'admissionRecords':    len(SCHOOL_META),
