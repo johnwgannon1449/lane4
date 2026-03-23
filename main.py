@@ -3318,7 +3318,7 @@ def _detect_query_intent(query: str) -> dict:
 
     is_swim = any(s in q for s in [
         'swim', 'pool', 'stroke', 'relay', 'contribute', 'compete in',
-        'make the team', 'recruitable', 'roster', 'athletic fit',
+        'make the team', 'recruit', 'roster', 'athletic fit',
         'where can i swim', 'where should i swim',
     ])
 
@@ -3326,6 +3326,8 @@ def _detect_query_intent(query: str) -> dict:
         'for me', 'for my', 'where should i', 'help me',
         'recommend', 'find me', 'i should', 'my list',
         'where i', 'i can', 'i could', 'i want', 'i need',
+        'i have', 'shot at', 'have a shot', 'have a chance',
+        'a chance at', 'chance of being',
     ])
 
     # Admissions threshold — only meaningful when is_personal is True.
