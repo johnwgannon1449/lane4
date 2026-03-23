@@ -833,7 +833,7 @@ let PREFERENCES   = {};   // structured preference answers (region, focus, budge
 
 // Maps adjTier string → recruiting label (same band logic as buildCard)
 function toRecruitLabel(adjTier) {
-  const BAND = {'High-Point Contender':4,'Conference Star':4,'Priority Recruit':3,'Top Recruit':3,'Recruitable':2,'Reach':1,'Moonshot':0};
+  const BAND = {'High-Point Contender':4,'Conference Star':4,'Priority Recruit':3,'Top Recruit':3,'Recruitable':2,'Below Roster Level':1,'Not Competitive':0};
   const LABEL = {4:'Impact Recruit',3:'Serious Recruit',2:'Roster-Level',1:'Below Roster Level',0:'Not Competitive'};
   return adjTier ? (LABEL[BAND[adjTier] ?? 0] || null) : null;
 }
@@ -1600,8 +1600,8 @@ function renderResultCards(schools, container, isDirect, answer) {
       'High-Point Contender': 4, 'Conference Star': 4,
       'Priority Recruit': 3,     'Top Recruit': 3,
       'Recruitable': 2,
-      'Reach': 1,
-      'Moonshot': 0
+      'Below Roster Level': 1,
+      'Not Competitive': 0
     };
     const swimBand = r.adjTier ? (_ADJ_TIER_BAND[r.adjTier] ?? 0) : (r.hasSwimData ? 0 : -1);
 
@@ -2123,7 +2123,7 @@ function evaluateMyList() {
   const SWIM_BAND = {
     'High-Point Contender': 4, 'Conference Star': 4,
     'Top Recruit': 3, 'Priority Recruit': 3,
-    'Recruitable': 2, 'Reach': 1, 'Moonshot': 0
+    'Recruitable': 2, 'Below Roster Level': 1, 'Not Competitive': 0
   };
 
   const schools = MY_LIST

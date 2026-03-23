@@ -2538,9 +2538,10 @@ def tier_label(pts):
     """
     Swim tier from adjPts — workbook thresholds (authoritative over spec).
     Called with rawPts for display and adjPts for the canonical tier.
+    NOTE: bottom two tiers use recruiting label names, not admissions label names.
     """
-    if pts < 1:   return 'Moonshot'
-    if pts < 4:   return 'Reach'
+    if pts < 1:   return 'Not Competitive'
+    if pts < 4:   return 'Below Roster Level'
     if pts < 10:  return 'Recruitable'
     if pts < 18:  return 'Priority Recruit'
     if pts < 35:  return 'Top Recruit'
@@ -2720,8 +2721,8 @@ _SWIM_BASE_BAND = {
     'Priority Recruit':     3,
     'Top Recruit':          3,
     'Recruitable':          2,
-    'Reach':                1,
-    'Moonshot':             0,
+    'Below Roster Level':   1,
+    'Not Competitive':      0,
 }
 
 
@@ -3295,10 +3296,10 @@ _ADM_LABEL_SCORE = {
 }
 
 # adjTier values that mean the swimmer is NOT competitive at this school
-_SWIM_NOT_COMPETITIVE = {'Reach', 'Moonshot'}
+_SWIM_NOT_COMPETITIVE = {'Below Roster Level', 'Not Competitive'}
 
 # adjTier values that mean swim is literally impossible / should be hidden
-_ADM_IMPOSSIBLE = {'Moonshot', 'Moonshot — Apply for Fun'}
+_ADM_IMPOSSIBLE = {'Not Competitive'}
 
 
 def _detect_query_intent(query: str) -> dict:
