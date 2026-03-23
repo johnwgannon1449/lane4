@@ -3361,6 +3361,8 @@ def _detect_query_intent(query: str) -> dict:
         'dream school', 'reach school', 'long shot', 'longshot',
         'unrealistic', "probably can't", "can't swim", 'stretch school',
         'aspiration', 'long-shot',
+        'not fast enough', 'too fast for', 'too slow', "can't make",
+        "wouldn't be competitive", 'out of my league',
     ])
 
     # Admissions threshold — only meaningful when is_personal is True.
