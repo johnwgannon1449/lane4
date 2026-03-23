@@ -3373,6 +3373,8 @@ def _hard_filter(candidates: list, intent: dict) -> tuple:
     kept, removed = [], []
     threshold = intent.get('adm_threshold')  # int or None
 
+    has_any_times = intent.get('has_any_times', True)   # False → student entered no times
+
     for r in candidates:
         adm_label = r.get('admission', {}).get('label', 'Unknown')
         adj_tier  = r.get('adjTier', '')
@@ -3383,6 +3385,13 @@ def _hard_filter(candidates: list, intent: dict) -> tuple:
         if intent['is_swim']:
             if not has_swim:
                 reasons.append('no swim data')
+            elif not adj_tier and has_any_times:
+                # School has benchmark data but none of this swimmer's events
+                # are benchmarked for that conference → cannot evaluate fit.
+                # Only filter when the student has actually entered times —
+                # if they haven't, adj_tier is empty for every school and we
+                # fall back to admissions-only filtering rather than removing all.
+                reasons.append('no scorable events at this school')
             elif adj_tier in _SWIM_NOT_COMPETITIVE:
                 reasons.append(f'not competitive — {adj_tier}')
 
@@ -3877,6 +3886,7 @@ def search():
 
             # ── STEP 2: Detect intent → objective or personal ───────────────
             intent = _detect_query_intent(query)
+            intent['has_any_times'] = bool(times)   # False → no swim scoring possible
             want_more = any(w in query.lower() for w in (
                 'more schools', 'more options', 'show me more', 'give me more',
             ))
@@ -3912,7 +3922,7 @@ def search():
                 {
                     'school':      r['school'],
                     'admissions':  r.get('admission', {}).get('label', 'Unknown'),
-                    'swimTier':    r.get('adjTier', 'n/a'),
+                    'swimTier':    r.get('adjTier', 'n/a') or '(empty — no scorable events)',
                     'hasSwimData': r.get('hasSwimData', False),
                     'survived':    survived_reason,
                 }
