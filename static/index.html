@@ -349,9 +349,20 @@
       line-height: 1.4;
     }
     .pref-btn:hover { border-color: var(--blue); color: var(--blue); }
-    .pref-btn.active { background: var(--blue); border-color: var(--blue); color: #fff; }
+    .pref-btn.active {
+      background: var(--blue); border-color: var(--blue); color: #fff;
+      font-weight: 700; box-shadow: 0 1px 5px rgba(37,99,235,.22);
+    }
     .pref-save-row { margin-top: 1.4rem; display: flex; align-items: center; gap: 1rem; padding-top: 1rem; border-top: 1px solid var(--border); }
     .pref-saved-msg { font-size: 0.82rem; font-weight: 600; color: #16A34A; opacity: 0; transition: opacity 0.3s; }
+    .pref-status-bar {
+      display: flex; align-items: center; gap: 0.5rem;
+      font-size: 0.8rem; font-weight: 600;
+      border-radius: 8px; padding: 7px 13px; margin-bottom: 1.3rem;
+    }
+    .pref-status-bar.psb-all     { color: #15803D; background: #F0FDF4; border: 1px solid #BBF7D0; }
+    .pref-status-bar.psb-partial { color: #92400E; background: #FFFBEB; border: 1px solid #FDE68A; }
+    .pref-status-bar.psb-none    { color: var(--muted); background: var(--bg); border: 1px solid var(--border); }
     @media (max-width: 600px) { .pref-grid { grid-template-columns: 1fr; } .pref-q-wide { grid-column: 1; } }
 
     /* ── PROFILE EDITING ─────────────────────────────────────── */
@@ -752,7 +763,7 @@
       <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:0.78rem;color:var(--muted);">— personalizes your search results and deep dives</span>
     </div>
     <div class="card" style="margin-bottom:2rem;">
-      <div class="pref-grid" id="pref-questions"></div>
+      <div id="pref-questions"></div>
       <div class="pref-save-row">
         <button class="btn" onclick="savePreferences()">Save Preferences</button>
         <span class="pref-saved-msg" id="pref-saved-msg">Preferences saved ✓</span>
@@ -3043,40 +3054,62 @@ const PREF_QUESTIONS = [
   },
 ];
 
+function _prefRelTime(iso) {
+  if (!iso) return null;
+  const diff = Math.round((Date.now() - new Date(iso)) / 60000);
+  if (diff < 1)  return 'just now';
+  if (diff < 60) return `${diff}m ago`;
+  const hrs = Math.round(diff / 60);
+  if (hrs < 24)  return `${hrs}h ago`;
+  return new Date(iso).toLocaleDateString();
+}
+
+function _prefStatusHtml() {
+  const answered = PREF_QUESTIONS.filter(q => PREFERENCES[q.key]).length;
+  const total    = PREF_QUESTIONS.length;
+  const savedAt  = localStorage.getItem('lane4_prefs_saved_at');
+  const timeStr  = savedAt ? ` · Saved ${_prefRelTime(savedAt)}` : ' · Not yet saved';
+  if (answered === 0)
+    return `<div class="pref-status-bar psb-none">No preferences set yet — select your answers below and tap Save</div>`;
+  if (answered < total)
+    return `<div class="pref-status-bar psb-partial">⚡ ${answered} of ${total} answered${timeStr} — finish the rest and save</div>`;
+  return `<div class="pref-status-bar psb-all">✓ All ${total} preferences saved${timeStr}</div>`;
+}
+
 function renderPreferences() {
   const el = document.getElementById('pref-questions');
   if (!el) return;
-  el.innerHTML = PREF_QUESTIONS.map(q => {
+  const questions = PREF_QUESTIONS.map(q => {
     const current = PREFERENCES[q.key] || '';
-    const buttons = q.options.map(opt =>
-      `<button class="pref-btn${current === opt ? ' active' : ''}"
+    const buttons = q.options.map(opt => {
+      const isActive = current === opt;
+      return `<button class="pref-btn${isActive ? ' active' : ''}"
         data-pref-key="${esc(q.key)}" data-pref-val="${esc(opt)}"
-        onclick="setPreference(this.dataset.prefKey, this.dataset.prefVal)">${esc(opt)}</button>`
-    ).join('');
+        onclick="setPreference(this.dataset.prefKey, this.dataset.prefVal)">${isActive ? '✓ ' : ''}${esc(opt)}</button>`;
+    }).join('');
     return `<div class="pref-q${q.wide ? ' pref-q-wide' : ''}">
       <div class="pref-label">${esc(q.label)}</div>
       <div class="pref-group">${buttons}</div>
     </div>`;
   }).join('');
+  el.innerHTML = _prefStatusHtml() + `<div class="pref-grid">${questions}</div>`;
 }
 
 function setPreference(key, value) {
-  // Toggle: clicking an active button clears the selection
   PREFERENCES[key] = (PREFERENCES[key] === value) ? '' : value;
-  // Update button states without full re-render
-  document.querySelectorAll(`[data-pref-key="${key}"]`).forEach(btn => {
-    btn.classList.toggle('active', btn.dataset.prefVal === PREFERENCES[key]);
-  });
+  renderPreferences();
 }
 
 async function savePreferences() {
   localStorage.setItem(LS_PREFS, JSON.stringify(PREFERENCES));
+  localStorage.setItem('lane4_prefs_saved_at', new Date().toISOString());
   await pushToServer();
+  renderPreferences();   // refresh status bar with new timestamp
   const msg = document.getElementById('pref-saved-msg');
   if (msg) {
     msg.style.opacity = '1';
     clearTimeout(msg._hideTimer);
-    msg._hideTimer = setTimeout(() => { msg.style.opacity = '0'; }, 2200);
+    msg._hideTimer = setTimeout(() => { msg.style.opacity = '0'; }, 2500);
   }
 }
 
