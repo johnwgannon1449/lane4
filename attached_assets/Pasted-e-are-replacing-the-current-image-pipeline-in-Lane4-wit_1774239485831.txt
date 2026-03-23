@@ -1,0 +1,661 @@
+e are replacing the current image pipeline in Lane4 with a new build-time image sourcing system based primarily on official school websites and official athletics pages.
+
+The current image system (Google search / scraping) is producing poor results:
+- duplicate images
+- generic marketing images
+- wrong subject matter
+- instability
+- weak swim-specific selection
+
+We want a cleaner, more premium, more school-specific solution.
+
+IMPORTANT
+This task is ONLY about image sourcing, curation, manifest generation, and image display.
+Do NOT change:
+- search logic
+- admissions logic
+- swim logic
+- deep dive narrative
+- ranking
+- profile system
+- card ranking behavior
+- recommendation logic
+- any admissions or recruiting calculations
+
+==================================================
+CORE GOAL
+==================================================
+
+For each school, automatically produce exactly 3 curated images:
+
+1. hero campus image
+2. student life image
+3. swim image
+
+Primary source priority:
+1. official school website (.edu or official institutional domain)
+2. official athletics website for that school
+3. official subdomains controlled by the school
+
+Do NOT use Google Images.
+Do NOT use random third-party image sites.
+Do NOT scrape the open web broadly.
+Do NOT run live image fetching during user requests.
+
+This must be a stable build-time / batch pipeline.
+
+==================================================
+HIGH-LEVEL APPROACH
+==================================================
+
+Create a script:
+
+scripts/build_school_images.py
+
+This script should:
+1. resolve each school’s official base website if missing
+2. fetch a small, fixed set of likely pages
+3. extract image candidates
+4. score and rank candidates per image role
+5. de-duplicate aggressively
+6. write a stable manifest:
+   data/school_images.json
+
+The UI must use ONLY this manifest.
+No live scraping in the request path.
+
+==================================================
+STEP 1 — SCHOOL WEBSITE RESOLUTION
+==================================================
+
+Each school record should support:
+
+school.website
+
+If already present, use it.
+If missing, derive and cache it.
+
+Resolution logic:
+- search query: "{school name} official website"
+- prefer first valid institutional domain
+- strongly prefer:
+  - .edu
+  - official university-owned domains
+- reject:
+  - Wikipedia
+  - US News
+  - Niche
+  - social media
+  - news sites
+  - recruiting sites
+  - aggregator pages
+
+Store the resolved website so it is not searched repeatedly.
+
+If a school already has a cached website, do not re-resolve unless forced.
+
+==================================================
+STEP 2 — PAGE FETCHING (LIMITED, NOT FULL-CRAWL)
+==================================================
+
+Do NOT crawl the whole site.
+
+For each school, fetch only a small controlled list of pages.
+
+Required targets:
+1. homepage
+2. admissions-related page
+3. student-life-related page
+4. athletics-related page
+5. swimming-related athletics page if discoverable
+
+Try these likely paths relative to school.website:
+
+Homepage:
+- /
+
+Admissions candidates:
+- /admissions
+- /admission
+- /apply
+- /undergraduate-admission
+- /undergraduate-admissions
+
+Student life candidates:
+- /student-life
+- /campus-life
+- /life-at-{school}
+- /campus
+- /student-experience
+
+Athletics candidates:
+- /athletics
+- /sports
+- athletics subdomain if known
+
+Swimming candidates:
+- /sports/mens-swimming
+- /sports/womens-swimming
+- /sports/swimming
+- /sports/swim-and-dive
+- swim team roster / facility / aquatic-center pages if linked from athletics landing page
+
+You may inspect links from the fetched athletics page to discover 1–3 likely swim-related child pages, but do NOT do a broad crawl.
+
+Hard cap page fetches per school:
+- default max 8 HTML pages
+- absolute max 10
+- timeout and continue gracefully if pages fail
+
+==================================================
+STEP 3 — IMAGE EXTRACTION
+==================================================
+
+From each fetched page, extract image candidates from:
+- <img src=...>
+- srcset best variant if available
+- data-src / lazy-loaded image attributes if present
+- Open Graph image tags ONLY as a last-resort candidate, not automatic winner
+
+For each candidate, record metadata:
+- absolute image URL
+- source page URL
+- source page type:
+  - homepage
+  - admissions
+  - student_life
+  - athletics
+  - swim
+- alt text
+- filename
+- path
+- width / height if detectable
+- aspect ratio if detectable
+- surrounding heading / nearby text if practical
+- content type / extension
+- whether it appears to be from srcset hero media
+- whether it is repeated on multiple fetched pages for same school
+
+Ignore:
+- svg
+- gif unless explicitly needed and high-quality
+- base64 inline assets
+- icons / logos / seals / sprites / badges / social icons
+- tiny thumbnails
+- blank placeholders / tracking pixels
+
+Minimum quality filters:
+- width >= 300px if detectable
+- prefer width >= 800px
+- reject extreme tiny crops
+- reject aspect ratios likely to be logos / strips / buttons
+- accept jpg/jpeg/png/webp
+- ignore svg
+
+Reject candidates if URL, filename, alt text, or nearby text contains likely junk terms:
+- logo
+- seal
+- crest
+- icon
+- sprite
+- badge
+- wordmark
+- social
+- avatar
+- thumbnail
+- thumb
+- placeholder
+- loading
+- ad
+- promo-tile
+- banner-ad
+- donor
+- calendar
+- map
+- chart
+- graphic
+- lockup
+
+Also penalize heavily, and usually reject:
+- stock CDN patterns
+- image filenames that clearly look like generic CMS assets
+- repeated “hero” image reused sitewide with generic branding only
+- collages/mosaics
+- text-heavy marketing banners
+
+==================================================
+STEP 4 — DOWNLOAD LIGHTWEIGHT METADATA FOR BETTER CULLING
+==================================================
+
+For top candidates only, download enough to inspect dimensions and compute a lightweight image fingerprint.
+
+Do NOT fully archive all images.
+Do enough to:
+- confirm dimensions
+- compute hash / fingerprint for duplicate detection
+- optionally inspect file size
+
+Use this for:
+- exact duplicate detection
+- near-duplicate detection within school
+- near-duplicate detection across schools
+- avoiding the same image appearing in multiple roles
+
+Implement at least:
+- normalized URL duplicate detection
+- content hash if downloadable
+- perceptual hash or similar lightweight fingerprint if feasible
+
+==================================================
+STEP 5 — SCORING SYSTEM (CRITICAL)
+==================================================
+
+Do NOT simply take the first acceptable image.
+Create a scoring system and select the best candidate per role.
+
+Each candidate should receive:
+- base quality score
+- role-specific relevance score
+- penalties
+- final total score
+
+==================================================
+STEP 5A — GLOBAL QUALITY SCORE
+==================================================
+
+Score positives:
+- large width / resolution
+- clear landscape or balanced aspect ratio
+- appears in prominent page area
+- appears only once or twice in a meaningful context
+- image URL path suggests official photography / campus / athletics media
+- alt text is descriptive
+- image is not overly generic
+
+Score negatives:
+- tiny or low-res
+- heavily repeated sitewide utility asset
+- obvious stock/generic asset naming
+- text-overlay banner
+- collage / tile grid / mosaic
+- weird crop
+- portrait crop for hero unless exceptionally strong
+- overly dark / blurry if detectable
+- image repeated across many schools via same URL/hash
+- same image already chosen for another slot
+
+Suggested scoring dimensions:
+- resolution bonus
+- page-role bonus
+- semantic keyword bonus
+- uniqueness bonus
+- duplication penalty
+- junk pattern penalty
+
+==================================================
+STEP 5B — HERO IMAGE SELECTION
+==================================================
+
+Goal:
+premium campus-defining image
+
+Preferred source pages:
+1. homepage
+2. admissions
+3. campus/student life
+4. fallback to best non-junk official page image
+
+Prefer:
+- campus exterior
+- buildings
+- quad
+- iconic architecture
+- broad scenic shot
+- strong, clean landscape
+- aspirational but school-specific image
+
+Prefer keywords in URL / alt / nearby text:
+- campus
+- quad
+- hall
+- library
+- commons
+- academic
+- chapel
+- center
+- lawn
+- view
+- aerial
+
+Penalize:
+- too many close-up faces
+- generic handshake brochure image
+- indoor classroom unless clearly beautiful
+- event posters
+- text-overlay homepage rotator banners
+- athletics action
+- repeated generic marketing stock shot
+
+Hero should usually be:
+- landscape
+- wide
+- clean
+- visually strong at card size
+
+==================================================
+STEP 5C — STUDENT LIFE IMAGE SELECTION
+==================================================
+
+Goal:
+students actually living / interacting / studying / walking / socializing
+
+Preferred source pages:
+1. student life
+2. campus life
+3. admissions
+4. homepage fallback
+
+Prefer:
+- visible students / people
+- authentic candid student scenes
+- campus activity
+- small groups
+- studying / collaborating
+- outdoor life
+- residence or campus experience context
+
+Prefer keywords:
+- student
+- life
+- campus-life
+- residential
+- community
+- club
+- study
+- activity
+- campus experience
+
+Penalize:
+- empty buildings
+- athletics action
+- staged podium / admin photos
+- commencement only
+- faculty headshots
+- generic diversity collage tiles
+- images that are too similar to hero
+
+IMPORTANT:
+student_life image should feel distinct from hero.
+Do NOT use the same or near-same image for both roles.
+
+==================================================
+STEP 5D — SWIM IMAGE SELECTION (VERY STRICT)
+==================================================
+
+Goal:
+actually swim-related image, not just any athletics image
+
+Allowed primary source pages:
+- athletics
+- official swim team pages
+- aquatic center / natatorium / pool facility pages
+- roster / schedule / facilities / recruiting pages inside athletics
+
+Strong positive keywords in URL / alt / nearby text:
+- swim
+- swimming
+- diving
+- swim-dive
+- natatorium
+- aquatic
+- aquatics
+- pool
+- championship pool
+
+Very strong preference for:
+- pool deck
+- natatorium interior
+- team in pool setting
+- swim competition image
+- aquatic center facility shot
+
+Selection rules:
+1. If swim-specific candidates exist, choose ONLY from those.
+2. If no swim-specific candidates exist, allow pool/aquatic/facility candidates from athletics pages.
+3. If still none, allow best athletics image BUT mark fallback true.
+4. If no credible athletics image exists, use default_swim.jpg and mark fallback true.
+
+Do NOT choose:
+- football
+- basketball
+- mascot
+- general athletics building exterior unless absolutely necessary fallback
+- random athlete portrait
+- unrelated team image
+
+If candidate does not appear swim-related by URL, alt, filename, surrounding text, or source page context, it should not beat a genuinely swim-related candidate.
+
+==================================================
+STEP 6 — HARD DE-DUPLICATION RULES
+==================================================
+
+This is one of the biggest problems. Fix it aggressively.
+
+Within a school:
+- hero, student_life, and swim must be different images
+- reject exact duplicates
+- reject near-duplicates
+- reject same source asset with resized params
+- reject two crops/variants of the same photo if fingerprint is near-match
+
+Across schools:
+- prevent one generic shared institutional image from being assigned to many schools
+- if an image hash or normalized URL appears across multiple schools, penalize heavily or reject unless clearly school-unique and correctly branded to one school
+- maintain a cross-school used-image index during build
+
+If the same image appears for multiple schools because of shared CMS/vendor hosting, use school-specific context and filename matching to choose only where it truly belongs.
+
+==================================================
+STEP 7 — SELECTION STRATEGY
+==================================================
+
+For each school:
+1. gather all candidates
+2. compute metadata
+3. compute quality score
+4. compute role-specific score
+5. sort candidates per role
+6. choose hero first
+7. choose student_life second, excluding hero and near-duplicates
+8. choose swim third, excluding hero/student_life and near-duplicates
+9. apply fallback rules only when needed
+
+Important:
+A “valid but mediocre” image should not automatically win.
+It should only be used if no stronger candidate exists.
+
+Also:
+If all candidates are weak, prefer stable official fallback image over bad junk.
+
+==================================================
+STEP 8 — MANIFEST FORMAT
+==================================================
+
+Save results to:
+
+data/school_images.json
+
+Format:
+
+{
+  "Emory University": {
+    "hero": "https://...",
+    "student_life": "https://...",
+    "swim": "https://...",
+    "is_fallback": {
+      "hero": false,
+      "student_life": false,
+      "swim": true
+    },
+    "source_pages": {
+      "hero": "homepage",
+      "student_life": "student_life",
+      "swim": "athletics"
+    }
+  }
+}
+
+Also store optional debug metadata in a separate file for review, such as:
+data/school_images_debug.json
+
+Include:
+- top 5 candidates per role
+- scores
+- rejection reasons
+- duplicate/fingerprint notes
+- fallback reason
+
+==================================================
+STEP 9 — CACHING / STABILITY
+==================================================
+
+This must NOT re-fetch everything every run.
+
+Implement caching for:
+- resolved school website
+- fetched HTML
+- candidate extraction results
+- image metadata / dimensions / fingerprint if already computed
+
+Rules:
+- if manifest already has a complete non-fallback set for a school, do not overwrite unless forced
+- if one slot is missing, only fill the missing slot
+- support a force-refresh mode for one school or all schools
+- network failures should not destroy existing manifest entries
+
+This is a build-time batch script, not a request-time feature.
+
+==================================================
+STEP 10 — DEFAULT FALLBACKS
+==================================================
+
+Provide stable local fallbacks:
+- default_campus.jpg
+- default_students.jpg
+- default_swim.jpg
+
+Use fallback only when no credible official image is available.
+
+Do not overuse fallbacks if good official images exist.
+But fallback is better than junk.
+
+==================================================
+STEP 11 — UI INTEGRATION
+==================================================
+
+Use ONLY the manifest for image display.
+
+No live image search.
+No live scraping.
+No runtime page fetching.
+
+SCHOOL CARD
+- show hero image only
+- 16:9 ratio
+- height about 150px
+- object-fit: cover
+- subtle rounding
+- no oversized containers
+
+DEEP DIVE
+- top hero image:
+  - max height about 280px
+  - object-fit: cover
+  - clean, premium feel
+- below hero:
+  - two-up row
+  - student life | swim
+  - same aspect ratio
+  - tight spacing
+  - readable layout
+- never allow giant uncontrolled image blocks
+
+If image missing from manifest, use fallback asset immediately.
+
+==================================================
+STEP 12 — IMPLEMENTATION DETAILS
+==================================================
+
+Please implement with clean, maintainable code.
+
+Suggested modules/helpers:
+- resolve_school_website(...)
+- fetch_candidate_pages(...)
+- extract_image_candidates(...)
+- normalize_image_url(...)
+- compute_image_metadata(...)
+- compute_image_fingerprint(...)
+- score_candidate_for_role(...)
+- select_school_images(...)
+- write_manifest(...)
+
+Prefer deterministic behavior.
+Log why an image won.
+
+==================================================
+STEP 13 — REPORTING / DELIVERABLES
+==================================================
+
+After implementation, show:
+
+1. the script used
+2. sample output for 5 schools
+3. for each of those 5 schools:
+   - chosen hero image
+   - chosen student life image
+   - chosen swim image
+   - whether fallback was used
+   - brief explanation of why each won
+4. confirmation that the script prevents duplicate use within a school
+5. confirmation that cross-school duplicate checking exists
+6. confirmation that UI uses only manifest images
+7. confirmation that school cards and deep dive layouts are not oversized
+
+==================================================
+SUCCESS CRITERIA
+==================================================
+
+The finished system should produce images that feel:
+- official
+- school-specific
+- premium
+- stable
+- visually distinct by role
+
+Specifically:
+- hero images look like the campus
+- student life images actually feel like student life
+- swim images are actually swim/pool/aquatics related whenever possible
+- no repeated generic junk
+- no live scraping during user requests
+- no oversized ugly layouts
+- no drift into other Lane4 systems
+
+==================================================
+IMPORTANT GUARDRAILS
+==================================================
+
+Do NOT touch:
+- school selection logic
+- ranking logic
+- admissions calculations
+- swimmer evaluation
+- swim fit calculations
+- deep dive narrative generation
+- profile/account logic
+- any non-image-related UI logic
+
+Keep the work tightly scoped to:
+- image sourcing
+- image curation
+- caching
