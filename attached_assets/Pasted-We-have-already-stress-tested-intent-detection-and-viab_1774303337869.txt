@@ -1,0 +1,139 @@
+We have already stress-tested intent detection and viable-pool filtering.
+
+This next pass is NOT mainly about leakage.
+It is about ranking sanity, edge-school behavior, prestige traps, and whether results feel right for the swimmer.
+
+Use this swimmer:
+- 200 Free: 1:43.00
+- 500 Free: 4:37.00
+- 1650 Free: 16:06.00
+
+==================================================
+GOAL
+==================================================
+
+Run a ranking sanity + edge-school audit.
+
+We want to know whether search returns the RIGHT KIND of schools, not just whether it avoids obviously wrong ones.
+
+Specifically test:
+1. edge-fit schools
+2. prestige trap schools
+3. swim/admissions mismatch schools
+4. whether watched schools appear or stay out for the right reasons
+
+==================================================
+WATCHLIST
+==================================================
+
+Track these schools explicitly if they are in the dataset:
+- UCSB
+- MIT
+- Dartmouth
+
+Also include any other schools in the dataset that behave like:
+- prestige magnets
+- edge-fit schools
+- high-academic / hard-admit schools
+- schools users might over-assume are realistic
+
+For every query, explicitly note whether any watchlist school appears in the top 10, and why.
+
+==================================================
+QUERY SET
+==================================================
+
+EDGE / BORDERLINE
+1. hardest schools I can realistically swim for
+2. fastest schools still in range for me
+3. schools right on the edge for me
+4. best borderline-fit schools for me
+5. strongest academics where I’m still a swim fit
+6. best schools where I’m close but not crazy
+7. realistic high-end options for me
+8. strongest schools that are still plausible
+9. fastest schools where I’m an edge fit
+10. hardest realistic swim options
+
+PRESTIGE / BRAND TRAPS
+11. best schools for me
+12. top colleges for me
+13. smartest schools where I can swim
+14. elite schools where I have a real shot
+15. highest ranked realistic schools for me
+16. hardest schools where I could actually swim
+17. strongest-name schools that are still realistic
+18. best known schools that fit me
+19. top-tier schools I could actually pursue
+20. big-name schools where I’m not wasting my time
+
+SWIM + ADMISSIONS COMBO
+21. best schools where I can get in and swim
+22. where do I have a real shot both academically and in the pool
+23. strongest academics that are truly in play for me
+24. realistic high-academic swim fits
+25. best overall options balancing school and swim
+26. schools where both admissions and swim make sense
+27. best all-around realistic schools for me
+28. top colleges where I’m viable in both ways
+29. strongest schools where I’m not just a swim long shot
+30. smartest realistic options for me
+
+EVENT / PROFILE SHAPE
+31. best schools for a 500/1650 swimmer like me
+32. best colleges for my distance profile
+33. strongest schools where my distance helps
+34. where does my profile fit best at the high end
+35. schools that really fit my event mix
+36. strongest programs where my 500 and 1650 matter
+37. good schools for my distance free profile
+38. edge schools for a distance swimmer like me
+39. best higher-end schools for my event mix
+40. where my profile is competitive at the highest level possible
+
+NATURAL / HUMAN
+41. what are the best real options for someone like me
+42. not dream schools, but high-end real ones
+43. where should I be aiming high but not stupid
+44. what schools feel ambitious but realistic
+45. best schools that are not pipe dreams
+46. where am I actually in the mix at a high level
+47. best real schools for me, not fantasy ones
+48. what are the nicest schools I should seriously look at
+49. where am I a real contender at a strong school
+50. what are my best serious options
+
+Repeat or expand this style until you have roughly 130 total queries, keeping the same spirit and variety.
+
+==================================================
+REQUIRED OUTPUT
+==================================================
+
+For each query, return:
+- top 10 schools
+- recruiting label for each
+- brief reason for the top 3
+- whether any watchlist school appeared
+- if UCSB, MIT, or Dartmouth appeared:
+  - explain exactly why
+  - say whether that appearance is sensible, borderline, or wrong
+
+==================================================
+FINAL REPORT
+==================================================
+
+At the end, group findings into:
+- ranking feels right
+- ranking technically clean but psychologically wrong
+- prestige leaks
+- edge-school surprises
+- schools that appear too often
+- schools that never appear but maybe should
+
+Then recommend whether search is:
+- launch ready
+- launch ready with caveats
+- or still needs ranking correction
+
+Do not just report leakage.
+Judge whether the results feel genuinely correct for this swimmer.
