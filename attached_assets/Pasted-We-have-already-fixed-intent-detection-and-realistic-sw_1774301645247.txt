@@ -1,0 +1,115 @@
+We have already fixed intent detection and realistic swim-fit filtering.
+
+This is a FINAL robustness validation pass. Do not change logic unless a test fails.
+
+Use this swimmer:
+- 200 Free: 1:43.00
+- 500 Free: 4:37.00
+- 1650 Free: 16:06.00
+
+==================================================
+GOAL
+==================================================
+
+Verify that realistic swim-fit queries NEVER return:
+- Not Competitive
+- Below Roster Level
+- Schools with no scorable events
+
+And that intent detection holds across messy real-world phrasing.
+
+==================================================
+TEST SET
+==================================================
+
+Run ALL of these queries:
+
+SHORT / CASUAL
+1. where can I swim
+2. realistic options
+3. best fits
+4. recruitable schools
+5. fastest realistic
+
+SYNONYM / NATURAL LANGUAGE
+6. where could I compete
+7. where could I contribute
+8. where could I score
+9. where could I make finals
+10. where could I help the team
+
+ACADEMIC + SWIM
+11. best academic schools where I can swim
+12. strongest academics where I’m recruitable
+13. highest ranked colleges where I could score
+14. best STEM schools where I can make the team
+
+EVENT-SPECIFIC
+15. best schools for my 500 free
+16. fastest schools where my 1650 would score
+17. where can I get recruited with my 200 free
+18. strongest teams for distance swimmers like me
+
+NATURAL / MESSY USER LANGUAGE
+19. I want the best school where I can really swim
+20. fastest schools that aren’t total pipe dreams
+21. what are my best real options not dream schools
+22. where do I have a legit shot both academically and in swimming
+
+SORT WORD STRESS
+23. fastest schools I can swim for
+24. best schools I can swim for
+25. top schools I can swim for
+26. highest ranked schools I can swim for
+27. strongest teams I can swim for
+
+NEGATIVE / EDGE CASES
+28. schools I’m not fast enough for
+29. where wouldn’t I be competitive
+30. what schools are too fast for me
+
+==================================================
+REQUIRED OUTPUT
+==================================================
+
+For EACH query return:
+
+- swim intent (yes/no)
+- personal intent (yes/no)
+- reach override (yes/no)
+- hard filter applied (yes/no)
+- top 5 results (school + recruiting label)
+
+==================================================
+CRITICAL VALIDATION
+==================================================
+
+1. For queries 1–27 (realistic-fit queries):
+   - NO returned school may have:
+     - Not Competitive
+     - Below Roster Level
+
+2. If ANY violation occurs, print:
+   - query
+   - school
+   - recruiting label
+   - why it was returned
+   - which logic failed
+
+3. For queries 28–30 (negative phrasing):
+   - behavior can differ, but must be consistent and logical
+   - explain how they are handled
+
+4. Confirm explicitly:
+   - Texas does NOT appear in queries 1–27
+
+==================================================
+SUCCESS CRITERIA
+==================================================
+
+All realistic-fit queries must:
+- trigger the hard filter
+- return only viable swim-fit schools
+- have zero contradictions between result and recruiting label
+
+Do not summarize. Show actual results.
