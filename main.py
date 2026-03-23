@@ -3218,7 +3218,11 @@ def _pre_sort(results, query, eliminated, my_list):
 
     if geo_states:
         pool.sort(key=lambda r: (0 if _state(r) in geo_states else 1, -_strength(r)))
-    elif any(k in q for k in ('prestig', 'best school', 'academic', 'selective')):
+    elif any(k in q for k in (
+        'prestig', 'best school', 'academic', 'selective',
+        'hardest', 'toughest', 'elite', 'smartest', 'most impressive',
+        'highest ranked', 'highest-ranked', 'strongest academic',
+    )):
         pool.sort(key=lambda r: (r['meta'].get('accept') or 999))
     elif any(k in q for k in ('stem', 'engineer', 'tech', 'med', 'science')):
         pool.sort(key=lambda r: (0 if r['meta'].get('stem') else 1, -_strength(r)))
@@ -3401,11 +3405,28 @@ def _detect_query_intent(query: str) -> dict:
     else:
         adm_threshold = None  # General "for me" — no admissions filter
 
+    # ── Prestige / ceiling sort ───────────────────────────────────────────────
+    # When True, viable survivors are re-ranked by academic selectivity
+    # (lowest admissions-label score = hardest to get into = first), instead of
+    # preserving Claude's ordering or defaulting to adjPts-descending.
+    # Only applies when is_personal=True so the swim gate fires first.
+    # "hardest" / "strongest academic" / "elite" / "most selective" language.
+    is_prestige_sort = is_personal and any(s in q for s in [
+        'hardest', 'toughest',
+        'most selective', 'most prestigious', 'most impressive',
+        'highest ranked', 'highest-ranked', 'best ranked', 'top ranked',
+        'strongest academic', 'strongest academics', 'most academically',
+        'smartest school', 'smartest schools', 'smartest college',
+        'elite school', 'elite schools', 'elite college', 'elite program',
+        'most well-known', 'most well known', 'best known',
+    ])
+
     return {
-        'is_personal':      is_personal,
-        'is_swim':          is_swim,
+        'is_personal':       is_personal,
+        'is_swim':           is_swim,
         'is_explicit_reach': is_explicit_reach,
-        'adm_threshold':    adm_threshold,
+        'adm_threshold':     adm_threshold,
+        'is_prestige_sort':  is_prestige_sort,
     }
 
 
@@ -3959,8 +3980,25 @@ def search():
             else:
                 # ── PERSONAL query ("fastest schools I can get into") ───────
                 # Filter by admissions threshold and/or swim competitiveness.
-                # Preserve Claude's order among survivors — do NOT re-sort.
                 filtered, removed_debug = _hard_filter(candidates, intent)
+
+                # Prestige / ceiling sort: re-rank survivors by academic
+                # selectivity when the user asked for "hardest / strongest
+                # academic / most selective / elite" options.
+                # Ranking: lowest _ADM_LABEL_SCORE = hardest to get into = first.
+                # Ties (same label) broken by adjPts descending — better swim
+                # fit wins within the same academic difficulty band.
+                if intent.get('is_prestige_sort') and filtered:
+                    filtered = sorted(
+                        filtered,
+                        key=lambda r: (
+                            _ADM_LABEL_SCORE.get(
+                                r.get('admission', {}).get('label', 'Unknown'), 25
+                            ),
+                            -r.get('adjPts', 0),
+                        ),
+                    )
+
                 schools = filtered[:limit]
 
             # Attach a brief fit label to each card (no extra AI call)
