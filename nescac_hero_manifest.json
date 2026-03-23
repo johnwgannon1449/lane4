@@ -1,0 +1,57 @@
+{
+  "Amherst College": {
+    "hero_query": "Amherst College Johnson Chapel main quad fall",
+    "anchor": "Johnson Chapel / Academic Quad",
+    "notes": "Most iconic Amherst image, instantly recognizable"
+  },
+  "Williams College": {
+    "hero_query": "Williams College Hopkins Hall main quad mountains",
+    "anchor": "Hopkins Hall & Chapin Hall",
+    "notes": "Classic Purple Valley view"
+  },
+  "Middlebury College": {
+    "hero_query": "Middlebury College Old Chapel Old Stone Row mountains",
+    "anchor": "Old Chapel / Old Stone Row",
+    "notes": "Signature Middlebury look with mountains"
+  },
+  "Bowdoin College": {
+    "hero_query": "Bowdoin College main quad Maine Brunswick",
+    "anchor": "Bowdoin Quad",
+    "notes": "Clean, classic New England quad"
+  },
+  "Colby College": {
+    "hero_query": "Colby College Miller Library Mayflower Hill campus",
+    "anchor": "Miller Library on Mayflower Hill",
+    "notes": "Bright, elevated campus signature view"
+  },
+  "Bates College": {
+    "hero_query": "Bates College quad Hathorn Hall autumn",
+    "anchor": "Hathorn Hall",
+    "notes": "Warm, intimate campus feel"
+  },
+  "Hamilton College": {
+    "hero_query": "Hamilton College campus hilltop Kirkland Hall",
+    "anchor": "Kirkland Hall hilltop view",
+    "notes": "Elevated, open campus identity"
+  },
+  "Tufts University": {
+    "hero_query": "Tufts University Tisch Library cannon hill view",
+    "anchor": "Tisch Library / Cannon hill",
+    "notes": "Urban + campus blend, very Tufts"
+  },
+  "Wesleyan University": {
+    "hero_query": "Wesleyan University Andrus Field Foss Hill sunset",
+    "anchor": "Foss Hill / Andrus Field",
+    "notes": "Most emotionally resonant Wesleyan view"
+  },
+  "Connecticut College": {
+    "hero_query": "Connecticut College arboretum campus view water",
+    "anchor": "Arboretum / coastal feel",
+    "notes": "Nature-forward identity"
+  },
+  "Trinity College (CT)": {
+    "hero_query": "Trinity College Long Walk Hartford gothic campus",
+    "anchor": "The Long Walk",
+    "notes": "Strongest architectural identity in NESCAC"
+  }
+}
