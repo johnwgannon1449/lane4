@@ -3306,28 +3306,57 @@ def _detect_query_intent(query: str) -> dict:
     """Detect what filtering rules apply to a query.
 
     Returns:
-      is_personal   — query has a personal qualifier ("for me", "I can", etc.)
-                      If False the query is objective — return AI's list as-is.
-      is_swim       — query is about swimming / contributing in the pool
-      adm_threshold — minimum admissions label score required to survive filter.
-                      None  = no admissions filter (general "for me" queries)
-                      80    = Strong Chance or better  ("definitely get in", "safety")
-                      60    = Realistic Shot or better ("can get in", "admissible")
+      is_personal      — query is about THIS swimmer's realistic options.
+                         If False the query is objective — return AI's list as-is.
+      is_swim          — query is about swimming / being recruited / contributing.
+      is_explicit_reach — user explicitly asked for reaches / dream / long-shot
+                         schools. When True the swim hard-filter is bypassed even
+                         if is_swim and is_personal are both True.
+      adm_threshold    — minimum admissions label score required to survive filter.
+                         None = no admissions filter (general "for me" queries)
+                         80   = Strong Chance or better  ("definitely get in")
+                         60   = Realistic Shot or better ("can get in")
     """
     q = query.lower()
 
+    # ── Swim intent ─────────────────────────────────────────────────────────
+    # 'recruit' root catches recruited / recruiting / recruitable / recruitment.
     is_swim = any(s in q for s in [
         'swim', 'pool', 'stroke', 'relay', 'contribute', 'compete in',
         'make the team', 'recruit', 'roster', 'athletic fit',
-        'where can i swim', 'where should i swim',
+        'lineup', 'cuts', 'finals', 'time trial',
     ])
 
+    # ── Personal-fit intent ──────────────────────────────────────────────────
+    # Covers first-person constructions in both normal and inverted word order
+    # (e.g. "I could" AND "could I"), plus fit/chance signal words.
     is_personal = any(s in q for s in [
-        'for me', 'for my', 'where should i', 'help me',
-        'recommend', 'find me', 'i should', 'my list',
-        'where i', 'i can', 'i could', 'i want', 'i need',
-        'i have', 'i would', "i'd", 'shot at', 'have a shot', 'have a chance',
-        'a chance at', 'chance of being',
+        # first-person pronouns / possessives
+        'for me', 'for my', 'help me', 'find me', 'my list', 'my fit',
+        'my shot', 'my chance',
+        # "I <verb>" constructions
+        'i should', 'i can', 'i could', 'i want', 'i need',
+        'i have', 'i would', "i'm", 'i am',
+        # inverted-order constructions ("where could I", "where can I")
+        'can i', 'could i', 'would i', 'should i',
+        # contraction
+        "i'd",
+        # directive phrases
+        'where should i', 'where i', 'recommend', 'find me',
+        # fit / chance signals
+        'shot at', 'have a shot', 'have a chance', 'a chance at',
+        'chance of being', 'realistically', 'able to',
+        'good fit', 'best fit', 'right fit',
+    ])
+
+    # ── Explicit-reach override ──────────────────────────────────────────────
+    # User intentionally wants schools beyond their realistic level.
+    # When True, the swim hard-filter is bypassed so dream/long-shot schools
+    # can appear even if the swimmer's recruiting label there is non-competitive.
+    is_explicit_reach = any(s in q for s in [
+        'dream school', 'reach school', 'long shot', 'longshot',
+        'unrealistic', "probably can't", "can't swim", 'stretch school',
+        'aspiration', 'long-shot',
     ])
 
     # Admissions threshold — only meaningful when is_personal is True.
@@ -3350,9 +3379,10 @@ def _detect_query_intent(query: str) -> dict:
         adm_threshold = None  # General "for me" — no admissions filter
 
     return {
-        'is_personal':   is_personal,
-        'is_swim':       is_swim,
-        'adm_threshold': adm_threshold,
+        'is_personal':      is_personal,
+        'is_swim':          is_swim,
+        'is_explicit_reach': is_explicit_reach,
+        'adm_threshold':    adm_threshold,
     }
 
 
@@ -3361,8 +3391,10 @@ def _hard_filter(candidates: list, intent: dict) -> tuple:
 
     Only called when intent['is_personal'] is True. Two independent checks:
 
-    SWIM filter (is_swim=True):
+    SWIM filter (is_swim=True, is_explicit_reach=False):
       Remove schools missing swim data OR where the swimmer is not competitive.
+      Bypassed entirely when is_explicit_reach=True — user asked for dream /
+      long-shot / reach schools and wants non-competitive options shown.
 
     ADMISSIONS threshold filter (adm_threshold is not None):
       Remove schools whose admissions label score falls below the threshold.
@@ -3374,9 +3406,9 @@ def _hard_filter(candidates: list, intent: dict) -> tuple:
     Returns (kept_list, removed_debug_list).
     """
     kept, removed = [], []
-    threshold = intent.get('adm_threshold')  # int or None
-
-    has_any_times = intent.get('has_any_times', True)   # False → student entered no times
+    threshold       = intent.get('adm_threshold')    # int or None
+    has_any_times   = intent.get('has_any_times', True)
+    explicit_reach  = intent.get('is_explicit_reach', False)
 
     for r in candidates:
         adm_label = r.get('admission', {}).get('label', 'Unknown')
@@ -3384,8 +3416,8 @@ def _hard_filter(candidates: list, intent: dict) -> tuple:
         has_swim  = r.get('hasSwimData', False)
         reasons   = []
 
-        # Swim filter
-        if intent['is_swim']:
+        # Swim filter — skipped when user explicitly asked for reaches/dream schools
+        if intent['is_swim'] and not explicit_reach:
             if not has_swim:
                 reasons.append('no swim data')
             elif not adj_tier and has_any_times:

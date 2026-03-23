@@ -1,0 +1,198 @@
+We are debugging Lane4 query-intent and swim-fit filtering.
+
+IMPORTANT:
+Do not change ranking philosophy, admissions logic, deep dive logic, school profiles, or swim data.
+This task is ONLY about query intent detection and hard filtering for user-specific swim-fit searches.
+
+==================================================
+GOAL
+==================================================
+
+We need to make sure that when a user asks a question that clearly means:
+
+- where can I actually swim
+- where could I be recruited
+- what are the fastest / best / highest-ranked schools I have a real swim shot at
+
+…the search ALWAYS applies the recruiting-fit hard filter before ranking results.
+
+Right now, some phrasing misses intent detection and returns schools where the recruiting label is:
+- Not Competitive
+- Below Roster Level
+
+That is unacceptable for personal swim-fit queries.
+
+Example bug:
+"fastest schools I have a shot at being recruited for"
+was returning Texas for a swimmer whose recruiting label there is Not Competitive.
+
+==================================================
+LOCKED PRODUCT RULE
+==================================================
+
+For user-specific swim-fit queries, recruiting likelihood is a GATE, not just a label.
+
+If a query is clearly asking where the swimmer can realistically swim / be recruited / make the team / have a shot, then before ranking results:
+
+EXCLUDE schools with recruiting labels:
+- Not Competitive
+- Below Roster Level
+
+Only allow those schools if the user EXPLICITLY asks for:
+- reaches
+- dream schools
+- long shots
+- unrealistic options
+- schools I probably can’t swim for
+
+==================================================
+SWIMMER PROFILE FOR TESTING
+==================================================
+
+Use this swimmer for test validation:
+
+- 200 Free: 1:43.00
+- 500 Free: 4:37.00
+- 1650 Free: 16:06.00
+
+We want to verify that obviously out-of-range schools like Texas do NOT appear in realistic swim-fit queries for this swimmer.
+
+==================================================
+REQUIRED LOGIC CHANGES
+==================================================
+
+1. Strengthen swim intent detection
+
+Do not rely on brittle exact phrase hits like "recruitable".
+
+Use root-level matching where appropriate:
+- recruit -> should catch recruit, recruited, recruiting, recruitable, recruitment
+- swim
+- roster
+- team
+- score
+- finals
+- conference
+- cut / cuts
+- lineup
+- points
+
+2. Strengthen personal-fit detection
+
+Queries should count as personal/user-specific if they contain meaning like:
+- i
+- me
+- my
+- for me
+- i can
+- i could
+- i would
+- i'd
+- i have
+- i have a shot
+- i have a chance
+- have a shot
+- have a chance
+- shot at
+- chance at
+- chance of being
+- able to
+- good fit for me
+- where I fit
+- where I could swim
+- where I can swim
+- where I’d be recruited
+- where I could get recruited
+- where I can make the team
+
+Do not require one exact phrase.
+Use broader semantic / substring logic so obvious variants trigger correctly.
+
+3. Add a safety-net rule
+
+Even if phrase detection is imperfect:
+If the query is BOTH:
+- swim-related
+AND
+- clearly asking about the user’s realistic options
+
+then force the recruiting hard filter.
+
+In plain English:
+Queries about “where I can swim” should not return unrealistic schools just because wording was slightly different.
+
+==================================================
+DO NOT CHANGE
+==================================================
+
+Do not change:
+- search ranking beyond applying the proper hard filter first
+- admissions logic
+- narrative generation
+- school data
+- swim scoring formulas
+
+We are only fixing intent detection and when the realistic-swim-fit hard filter fires.
+
+==================================================
+TEST SUITE TO RUN
+==================================================
+
+After implementing the fix, run and report the results for ALL of these queries using the swimmer above.
+
+These should all trigger the hard realistic-swim-fit filter:
+1. fastest schools I have a shot at being recruited for
+2. fastest schools I would be able to swim for
+3. best schools where I can swim
+4. top academic schools I could get recruited by
+5. highest ranked colleges where I have a chance to swim
+6. best swim fits for me
+7. schools where I can make the team
+8. schools where I’m recruitable
+9. where could I realistically swim
+10. what are the best colleges I can swim for
+11. fastest schools I could swim for
+12. best academic schools where I would be able to swim
+13. good colleges for me to swim at
+14. where do I have a chance to be recruited
+15. what are the strongest teams I can realistically swim for
+
+These should be allowed to include harder reaches / unrealistic options IF your current product supports explicit-reach behavior:
+16. fastest reach schools for me
+17. dream schools for me
+18. schools where I’d be a long shot
+19. schools I probably can’t swim for
+20. unrealistic swim reaches for me
+
+==================================================
+REQUIRED OUTPUT
+==================================================
+
+Return:
+
+1. The exact code changes made
+2. A plain-English explanation of why the bug happened
+3. A table showing for each test query:
+   - detected swim intent? yes/no
+   - detected personal-fit intent? yes/no
+   - hard recruiting filter applied? yes/no
+   - top 5 results returned
+4. Explicit confirmation for the realistic-fit queries above that:
+   - no returned school has recruiting label Not Competitive
+   - no returned school has recruiting label Below Roster Level
+
+5. Explicitly call out whether Texas appears for any of queries 1–15.
+It should not.
+
+==================================================
+SUCCESS CRITERIA
+==================================================
+
+This task is only successful if ALL realistic-fit queries (1–15):
+- trigger the realistic swim-fit hard filter
+- exclude Not Competitive schools
+- exclude Below Roster Level schools
+- do not surface Texas for this swimmer
+
+Be careful and do not stop after patching one phrase.
+We need broad, robust intent handling, not a single-query bandaid.
