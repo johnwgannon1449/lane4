@@ -2,7 +2,7 @@ Conference,Year,Gender,Bundle_ID,Event,1st,8th,16th,1st_seconds,8th_seconds,16th
 ACC,2026,men,acc_2026,50 Free,18.63,19.10,19.43,18.63,19.1,19.43,0.0533,2026_acc_championship_full_meet_results.pdf,prelim_fallback,,,
 ACC,2026,men,acc_2026,100 Free,40.93,41.88,42.40,40.93,41.88,42.4,0.098,2026_acc_championship_full_meet_results.pdf,prelim_fallback,,,
 ACC,2026,men,acc_2026,200 Free,1:31.05,1:33.61,1:35.62,91.05,93.61,95.62,0.3047,2026_acc_championship_full_meet_results.pdf,prelim_fallback,,,
-ACC,2026,men,acc_2026,500 Free,4:09.44,4:14.19,4:21.31,249.44,263.12,261.31,0.7913,2026_acc_championship_full_meet_results.pdf,prelim_fallback,,,
+ACC,2026,men,acc_2026,500 Free,4:09.44,4:14.19,4:21.31,249.44,254.19,261.31,0.7913,2026_acc_championship_full_meet_results.pdf,prelim_fallback,,,
 ACC,2026,men,acc_2026,1650 Free,14:32.68,14:57.35,15:07.09,872.68,897.35,907.09,2.294,2026_acc_championship_full_meet_results.pdf,prelim_fallback,,,
 ACC,2026,men,acc_2026,100 Back,44.21,45.06,47.98,44.21,45.06,47.98,0.2513,2026_acc_championship_full_meet_results.pdf,prelim_fallback,,,
 ACC,2026,men,acc_2026,200 Back,1:39.08,1:40.03,1:40.72,99.08,100.03,100.72,0.1093,2026_acc_championship_full_meet_results.pdf,prelim_fallback,,,
@@ -44,7 +44,7 @@ America East,2026,women,americaeast_2026,200 Free,1:47.80,1:53.65,1:54.64,107.8,
 America East,2026,women,americaeast_2026,500 Free,4:45.90,5:01.25,5:11.03,285.9,301.25,311.03,1.6753,america east 2026_meet_results.pdf,prelim_fallback,,,
 America East,2026,women,americaeast_2026,1650 Free,16:28.27,17:16.90,17:42.85,988.27,1036.9,1062.85,4.972,america east 2026_meet_results.pdf,prelim_fallback,,,
 America East,2026,women,americaeast_2026,100 Back,54.86,56.80,59.79,54.86,56.8,59.79,0.3287,america east 2026_meet_results.pdf,prelim_fallback,,,
-America East,2026,women,americaeast_2026,200 Back,1:58.94,2:02.29,2:07.31,118.94,127.33,127.31,0.558,america east 2026_meet_results.pdf,prelim_fallback,,,
+America East,2026,women,americaeast_2026,200 Back,1:58.94,2:02.29,2:07.31,118.94,122.29,127.31,0.558,america east 2026_meet_results.pdf,prelim_fallback,,,
 America East,2026,women,americaeast_2026,100 Breast,1:01.58,1:04.90,1:07.37,61.58,64.9,67.37,0.386,america east 2026_meet_results.pdf,prelim_fallback,,,
 America East,2026,women,americaeast_2026,200 Breast,2:15.57,2:22.96,2:29.63,135.57,142.96,149.63,0.9373,america east 2026_meet_results.pdf,prelim_fallback,,,
 America East,2026,women,americaeast_2026,100 Fly,53.10,57.50,58.02,53.1,57.5,58.02,0.328,america east 2026_meet_results.pdf,prelim_fallback,,,
@@ -74,7 +74,7 @@ ASUN,2026,women,asun_2026,200 Back,1:56.82,2:00.90,2:05.89,116.82,120.9,125.89,0
 ASUN,2026,women,asun_2026,100 Breast,1:00.90,1:04.08,1:05.47,60.9,64.08,65.47,0.3047,2026 ASUN full_meet_results.pdf,prelim_fallback,,,
 ASUN,2026,women,asun_2026,200 Breast,2:11.40,2:20.55,2:23.72,131.4,140.55,143.72,0.8213,2026 ASUN full_meet_results.pdf,prelim_fallback,,,
 ASUN,2026,women,asun_2026,100 Fly,51.92,55.25,57.46,51.92,55.25,57.46,0.3693,2026 ASUN full_meet_results.pdf,prelim_fallback,,,
-ASUN,2026,women,asun_2026,200 Fly,1:55.65,2:00.18,2:06.98,115.65,127.95,126.98,0.7553,2026 ASUN full_meet_results.pdf,prelim_fallback,,,
+ASUN,2026,women,asun_2026,200 Fly,1:55.65,2:00.18,2:06.98,115.65,120.18,126.98,0.7553,2026 ASUN full_meet_results.pdf,prelim_fallback,,,
 ASUN,2026,women,asun_2026,200 IM,1:59.84,2:03.53,2:07.20,119.84,123.525,127.2,0.4907,2026 ASUN full_meet_results.pdf,prelim_fallback,,,
 ASUN,2026,women,asun_2026,400 IM,4:15.97,4:26.35,4:40.80,255.97,266.35,280.8,1.6553,2026 ASUN full_meet_results.pdf,prelim_fallback,,,
 Atlantic 10,2026,men,atlantic10_2026,50 Free,19.18,20.46,20.60,19.18,20.46,20.6,0.0947,2026_A_10_Swimming_Diving_Championships_Final_Results.pdf,finals,,,
@@ -82,7 +82,7 @@ Atlantic 10,2026,men,atlantic10_2026,200 Free,1:33.46,1:39.53,1:40.02,93.46,99.5
 Atlantic 10,2026,men,atlantic10_2026,500 Free,4:19.28,4:28.10,4:39.77,259.28,268.1,279.77,1.366,2026_A_10_Swimming_Diving_Championships_Final_Results.pdf,finals,,,
 Atlantic 10,2026,men,atlantic10_2026,1650 Free,15:09.61,15:41.24,16:18.82,909.61,941.24,978.82,4.614,2026_A_10_Swimming_Diving_Championships_Final_Results.pdf,finals,,,
 Atlantic 10,2026,men,atlantic10_2026,100 Back,46.24,48.95,50.05,46.24,48.95,50.05,0.254,2026_A_10_Swimming_Diving_Championships_Final_Results.pdf,finals,,,
-Atlantic 10,2026,men,atlantic10_2026,200 Back,1:43.53,1:46.39,1:50.67,103.53,111.65,110.67,0.476,2026_A_10_Swimming_Diving_Championships_Final_Results.pdf,finals,,,
+Atlantic 10,2026,men,atlantic10_2026,200 Back,1:43.53,1:46.39,1:50.67,103.53,106.39,110.67,0.476,2026_A_10_Swimming_Diving_Championships_Final_Results.pdf,finals,,,
 Atlantic 10,2026,men,atlantic10_2026,100 Breast,53.08,55.12,55.90,53.08,55.12,55.9,0.188,2026_A_10_Swimming_Diving_Championships_Final_Results.pdf,finals,,,
 Atlantic 10,2026,men,atlantic10_2026,200 Breast,1:57.02,2:01.43,2:03.60,117.02,121.43,123.6,0.4387,2026_A_10_Swimming_Diving_Championships_Final_Results.pdf,finals,,,
 Atlantic 10,2026,men,atlantic10_2026,200 Fly,1:41.72,1:49.77,1:51.35,101.72,109.77,111.35,0.642,2026_A_10_Swimming_Diving_Championships_Final_Results.pdf,finals,,,
@@ -122,13 +122,13 @@ Big 12,unknown,women,big12_unknown,1650 Free,16:06.04,16:41.32,16:52.54,966.04,1
 Big 12,unknown,women,big12_unknown,100 Back,52.31,54.06,54.86,52.31,54.06,54.86,0.17,Big_12_S_D_Champ_Results_pdf.pdf,finals,,,
 Big 12,unknown,women,big12_unknown,200 Back,1:52.44,1:56.97,1:59.77,112.44,116.97,119.77,0.4887,Big_12_S_D_Champ_Results_pdf.pdf,finals,,,
 Big 12,unknown,women,big12_unknown,100 Breast,58.02,1:00.44,1:01.59,58.02,60.44,61.59,0.238,Big_12_S_D_Champ_Results_pdf.pdf,finals,,,
-Big 12,unknown,women,big12_unknown,200 Breast,2:08.11,2:10.72,2:14.64,128.11,138.92,134.64,0.4353,Big_12_S_D_Champ_Results_pdf.pdf,finals,,,
+Big 12,unknown,women,big12_unknown,200 Breast,2:08.11,2:10.72,2:14.64,128.11,130.72,134.64,0.4353,Big_12_S_D_Champ_Results_pdf.pdf,finals,,,
 Big 12,unknown,women,big12_unknown,100 Fly,51.97,53.78,55.13,51.97,53.78,55.13,0.2107,Big_12_S_D_Champ_Results_pdf.pdf,finals,,,
 Big 12,unknown,women,big12_unknown,200 Fly,1:56.31,2:01.13,2:02.79,116.31,121.13,122.79,0.432,Big_12_S_D_Champ_Results_pdf.pdf,finals,,,
 Big 12,unknown,women,big12_unknown,200 IM,1:57.16,2:03.74,2:03.74,117.16,123.74,123.74,0.4387,Big_12_S_D_Champ_Results_pdf.pdf,finals,,,
 Big 12,unknown,women,big12_unknown,400 IM,4:09.22,4:22.50,4:23.38,249.22,262.5,263.38,0.944,Big_12_S_D_Champ_Results_pdf.pdf,finals,,,
 Big East,2026,men,bigeast_2026,50 Free,19.21,20.76,21.23,19.21,20.76,21.23,0.1347,big east 2026_full_results.pdf,prelim_fallback,,,
-Big East,2026,men,bigeast_2026,100 Free,46.29,44.86,46.86,46.29,44.86,46.86,0.038,big east 2026_full_results.pdf,prelim_fallback,,,
+Big East,2026,men,bigeast_2026,100 Free,43.21,45.08,46.86,43.21,45.08,46.86,0.2433,big east 2026_full_results.pdf,prelim_fallback,,,
 Big East,2026,men,bigeast_2026,200 Free,1:36.23,1:39.24,1:42.86,96.23,99.24,102.86,0.442,big east 2026_full_results.pdf,prelim_fallback,,,
 Big East,2026,men,bigeast_2026,500 Free,4:26.25,4:32.56,4:38.04,266.25,272.56,278.04,0.786,big east 2026_full_results.pdf,prelim_fallback,,,
 Big East,2026,men,bigeast_2026,1650 Free,15:28.25,15:52.98,16:24.96,928.25,952.98,984.96,3.7807,big east 2026_full_results.pdf,prelim_fallback,,,
@@ -165,7 +165,7 @@ Big Ten,2026,men,bigten_2026,200 Breast,1:49.34,1:54.11,1:55.29,109.34,114.11,11
 Big Ten,2026,men,bigten_2026,100 Fly,43.83,45.04,46.75,43.83,45.04,46.75,0.1947,mens 2026_Big 10 _Thursday_Results.pdf,finals,,,
 Big Ten,2026,men,bigten_2026,200 Fly,1:38.82,1:42.67,1:44.80,98.82,102.67,104.8,0.3987,mens 2026 Big 10 saturday_results_-_all__1_.pdf,finals,,,
 Big Ten,2026,men,bigten_2026,200 IM,1:40.11,1:42.90,1:47.09,100.11,102.9,107.09,0.4653,mens 2026 Big 10 saturday_results_-_all__1_.pdf,finals,,,
-Big Ten,2026,men,bigten_2026,400 IM,3:34.90,3:38.70,3:44.40,214.9,225.99,224.4,0.6333,mens 2026_Big 10 _Thursday_Results.pdf,finals,,,
+Big Ten,2026,men,bigten_2026,400 IM,3:34.90,3:38.70,3:44.40,214.9,218.7,224.4,0.6333,mens 2026_Big 10 _Thursday_Results.pdf,finals,,,
 Big Ten,2026,women,bigten_2026,50 Free,21.09,22.15,22.52,21.09,22.15,22.52,0.0953,2026_women_s_b10_swim_meet_results.pdf,prelim_fallback,,,
 Big Ten,2026,women,bigten_2026,100 Free,46.22,48.28,49.22,46.22,48.28,49.22,0.2,2026_women_s_b10_swim_meet_results.pdf,prelim_fallback,,,
 Big Ten,2026,women,bigten_2026,200 Free,1:40.84,1:46.16,1:47.37,100.84,106.16,107.37,0.4353,2026_women_s_b10_swim_meet_results.pdf,prelim_fallback,,,
@@ -185,7 +185,7 @@ Big West,2026,men,bigwest_2026,200 Free,1:34.77,1:38.09,1:40.44,94.77,98.09,100.
 Big West,2026,men,bigwest_2026,500 Free,4:20.98,4:27.92,4:34.25,260.98,267.92,274.25,0.8847,2026_big_west_thursday_final_results_men.pdf,finals,,,
 Big West,2026,men,bigwest_2026,1650 Free,15:17.54,15:45.13,16:46.49,917.54,945.13,1006.49,5.93,2026_big_west_saturday_final_results.pdf,finals,,,
 Big West,2026,men,bigwest_2026,100 Back,46.16,48.21,49.36,46.16,48.21,49.36,0.2133,2026_big_west_friday_final_results_men.pdf,finals,,,
-Big West,2026,men,bigwest_2026,200 Back,1:43.19,1:46.59,1:51.68,103.19,111.92,111.68,0.566,2026_big_west_saturday_final_results.pdf,finals,,,
+Big West,2026,men,bigwest_2026,200 Back,1:43.19,1:46.59,1:51.68,103.19,106.59,111.68,0.566,2026_big_west_saturday_final_results.pdf,finals,,,
 Big West,2026,men,bigwest_2026,100 Breast,52.69,54.87,55.30,52.69,54.87,55.3,0.174,2026_big_west_friday_final_results_men.pdf,finals,,,
 Big West,2026,men,bigwest_2026,200 Breast,1:54.56,2:01.07,2:02.13,114.56,121.07,122.13,0.5047,2026_big_west_saturday_final_results.pdf,finals,,,
 Big West,2026,men,bigwest_2026,100 Fly,45.91,47.66,48.69,45.91,47.66,48.69,0.1853,2026_big_west_friday_final_results_men.pdf,finals,,,
@@ -198,7 +198,7 @@ Big West,2026,women,bigwest_2026,200 Free,1:45.52,1:51.07,1:52.88,105.52,111.07,
 Big West,2026,women,bigwest_2026,500 Free,4:45.65,4:58.50,5:01.35,285.65,298.5,301.35,1.0467,2026_big_west_thursday_final_results_women.pdf,finals,,,
 Big West,2026,women,bigwest_2026,1650 Free,16:36.45,17:16.01,17:44.68,996.45,1036.01,1064.68,4.5487,2026_big_west_saturday_final_results.pdf,finals,,,
 Big West,2026,women,bigwest_2026,100 Back,53.81,55.76,57.20,53.81,55.76,57.2,0.226,2026_big_west_friday_final_results_women.pdf,finals,,,
-Big West,2026,women,bigwest_2026,200 Back,1:56.37,1:58.97,2:02.87,116.37,123.68,122.87,0.4333,2026_big_west_saturday_final_results.pdf,finals,,,
+Big West,2026,women,bigwest_2026,200 Back,1:56.37,1:58.97,2:02.87,116.37,118.97,122.87,0.4333,2026_big_west_saturday_final_results.pdf,finals,,,
 Big West,2026,women,bigwest_2026,100 Breast,58.95,1:02.66,1:06.41,58.95,62.66,66.41,0.4973,2026_big_west_friday_final_results_women.pdf,finals,,,
 Big West,2026,women,bigwest_2026,200 Breast,2:12.19,2:19.10,2:23.99,132.19,139.1,143.99,0.7867,2026_big_west_saturday_final_results.pdf,finals,,,
 Big West,2026,women,bigwest_2026,100 Fly,52.79,54.80,56.19,52.79,54.8,56.19,0.2267,2026_big_west_friday_final_results_women.pdf,finals,,,
@@ -214,7 +214,7 @@ CAA,2026,men,caa_2026,100 Back,46.83,48.19,50.94,46.83,48.19,50.94,0.274,caa 202
 CAA,2026,men,caa_2026,200 Back,1:42.00,1:48.07,1:48.97,102,108.07,108.97,0.4647,caa 2026 saturday results.pdf,finals,,,
 CAA,2026,men,caa_2026,100 Breast,52.12,54.07,57.09,52.12,54.07,57.09,0.3313,caa 2026 friday results.pdf,finals,,,
 CAA,2026,men,caa_2026,200 Breast,1:52.45,2:00.75,2:04.11,112.45,120.75,124.11,0.7773,caa 2026 saturday results.pdf,finals,,,
-CAA,2026,men,caa_2026,200 Fly,4:40.45,3:33.52,1:53.13,280.45,226.75,113.13,-11.1547,caa 2026 saturday results.pdf,finals,,,
+CAA,2026,men,caa_2026,200 Fly,1:43.52,1:48.34,1:53.13,103.52,108.34,113.13,0.6407,caa 2026 saturday results.pdf,finals,,,
 CAA,2026,men,caa_2026,200 IM,1:42.09,1:47.95,1:51.22,102.09,107.95,111.22,0.6087,caa 2026 thursday results.pdf,finals,,,
 CAA,2026,men,caa_2026,400 IM,3:42.15,3:55.79,4:05.09,222.15,235.79,245.09,1.5293,caa 2026 friday results.pdf,finals,,,
 CAA,2026,women,caa_2026,50 Free,22.39,23.45,23.66,22.39,23.45,23.66,0.0847,caa 2026 thursday results.pdf,finals,,,
@@ -293,7 +293,7 @@ GLIAC,2026,men,gliac_2026,100 Breast,53.51,55.84,56.61,53.51,55.84,56.61,0.2067,
 GLIAC,2026,men,gliac_2026,200 Breast,1:58.11,2:03.60,2:05.75,118.11,123.6,125.75,0.5093,GLIAC_2026_Final_Results.pdf,finals,,,
 GLIAC,2026,men,gliac_2026,100 Fly,47.23,48.98,49.40,47.23,48.98,49.4,0.1447,GLIAC_2026_Final_Results.pdf,finals,,,
 GLIAC,2026,men,gliac_2026,200 Fly,1:44.63,1:51.94,1:53.42,104.63,111.94,113.42,0.586,GLIAC_2026_Final_Results.pdf,finals,,,
-GLIAC,2026,men,gliac_2026,200 IM,1:45.74,1:48.28,1:52.09,105.74,112.89,112.09,0.4233,GLIAC_2026_Final_Results.pdf,finals,,,
+GLIAC,2026,men,gliac_2026,200 IM,1:45.74,1:48.28,1:52.09,105.74,108.28,112.09,0.4233,GLIAC_2026_Final_Results.pdf,finals,,,
 GLIAC,2026,men,gliac_2026,400 IM,3:47.46,4:00.88,4:07.26,227.46,240.88,247.26,1.32,GLIAC_2026_Final_Results.pdf,finals,,,
 GLIAC,2026,women,gliac_2026,50 Free,22.72,23.90,24.61,22.72,23.9,24.61,0.126,GLIAC_2026_Final_Results.pdf,finals,,,
 GLIAC,2026,women,gliac_2026,100 Free,49.72,52.80,53.84,49.72,52.8,53.84,0.2747,GLIAC_2026_Final_Results.pdf,finals,,,
@@ -314,7 +314,7 @@ Horizon League,2026,men,horizonleague_2026,100 Free,42.28,44.42,45.42,42.28,44.4
 Horizon League,2026,men,horizonleague_2026,200 Free,1:34.12,1:38.27,1:39.85,94.12,98.27,99.85,0.382,full_meet_results_horizon_league_2026.pdf,finals,,,
 Horizon League,2026,men,horizonleague_2026,500 Free,4:20.78,4:26.08,4:41.04,260.78,266.08,281.04,1.3507,full_meet_results_horizon_league_2026.pdf,finals,,,
 Horizon League,2026,men,horizonleague_2026,1650 Free,15:16.32,15:41.15,16:11.42,916.32,941.15,971.42,3.6733,full_meet_results_horizon_league_2026.pdf,finals,,,
-Horizon League,2026,men,horizonleague_2026,100 Back,4:54.35,3:16.97,50.90,294.35,209.85,50.9,-16.23,full_meet_results_horizon_league_2026.pdf,finals,,,
+Horizon League,2026,men,horizonleague_2026,100 Back,45.81,49.53,50.90,45.81,49.53,50.9,0.3393,full_meet_results_horizon_league_2026.pdf,finals,,,
 Horizon League,2026,men,horizonleague_2026,200 Back,1:42.42,1:47.96,1:51.10,102.42,107.96,111.1,0.5787,full_meet_results_horizon_league_2026.pdf,finals,,,
 Horizon League,2026,men,horizonleague_2026,100 Breast,52.20,54.07,56.62,52.2,54.07,56.62,0.2947,full_meet_results_horizon_league_2026.pdf,finals,,,
 Horizon League,2026,men,horizonleague_2026,200 Breast,1:52.21,2:01.34,2:05.44,112.21,121.34,125.44,0.882,full_meet_results_horizon_league_2026.pdf,finals,,,
@@ -334,7 +334,7 @@ Horizon League,2026,women,horizonleague_2026,200 Breast,2:17.61,2:23.14,2:28.48,
 Horizon League,2026,women,horizonleague_2026,100 Fly,54.88,56.93,58.84,54.88,56.93,58.84,0.264,full_meet_results_horizon_league_2026.pdf,finals,,,
 Horizon League,2026,women,horizonleague_2026,200 Fly,2:01.71,2:09.08,2:13.59,121.71,129.08,133.59,0.792,full_meet_results_horizon_league_2026.pdf,finals,,,
 Horizon League,2026,women,horizonleague_2026,200 IM,2:01.68,2:08.64,2:10.31,121.68,128.64,130.31,0.5753,full_meet_results_horizon_league_2026.pdf,finals,,,
-Horizon League,2026,women,horizonleague_2026,400 IM,4:22.11,4:28.96,4:39.23,262.11,281.38,279.23,1.1413,full_meet_results_horizon_league_2026.pdf,finals,,,
+Horizon League,2026,women,horizonleague_2026,400 IM,4:22.11,4:28.96,4:39.23,262.11,268.96,279.23,1.1413,full_meet_results_horizon_league_2026.pdf,finals,,,
 Ivy League,2026,men,ivyleague_2026,50 Free,18.82,19.62,19.88,18.82,19.62,19.88,0.0707,2026 Ivy Mens Conf.pdf,pdf_repaired,pdf_verified,pdf_verified,pdf_verified
 Ivy League,2026,men,ivyleague_2026,100 Free,41.36,43.17,43.67,41.36,43.17,43.67,0.154,2026 Ivy Mens Conf.pdf,pdf_repaired,pdf_verified,pdf_verified,pdf_verified
 Ivy League,2026,men,ivyleague_2026,200 Free,1:31.52,1:35.64,1:36.72,91.52,95.64,96.72,0.3467,2026 Ivy Mens Conf.pdf,pdf_repaired,pdf_verified,pdf_verified,pdf_verified
@@ -346,17 +346,17 @@ Ivy League,2026,men,ivyleague_2026,200 Back,1:39.60,1:44.82,1:45.36,99.6,104.82,
 Ivy League,2026,men,ivyleague_2026,100 Breast,51.18,53.22,54.67,51.18,53.22,54.67,0.2327,2026 Ivy Mens Conf.pdf,pdf_repaired,pdf_verified,pdf_verified,pdf_verified
 Ivy League,2026,men,ivyleague_2026,200 Breast,1:52.03,1:57.82,1:58.62,112.03,117.82,118.62,0.4393,2026 Ivy Mens Conf.pdf,pdf_repaired,pdf_verified,pdf_verified,pdf_verified
 Ivy League,2026,men,ivyleague_2026,100 Fly,44.34,47.00,47.39,44.34,47,47.39,0.2033,2026 Ivy Mens Conf.pdf,pdf_repaired,pdf_verified,pdf_verified,pdf_verified
-Ivy League,2026,men,ivyleague_2026,200 Fly,1:39.05,1:41.64,1:45.53,99.05,107.13,105.53,0.432,2026 Ivy Mens Conf.pdf,pdf_repaired,pdf_verified,pdf_verified,pdf_verified
+Ivy League,2026,men,ivyleague_2026,200 Fly,1:39.05,1:41.64,1:45.53,99.05,101.64,105.53,0.432,2026 Ivy Mens Conf.pdf,pdf_repaired,pdf_verified,pdf_verified,pdf_verified
 Ivy League,2026,men,ivyleague_2026,200 IM,1:40.93,1:44.79,1:46.63,100.93,104.79,106.63,0.38,2026 Ivy Mens Conf.pdf,pdf_repaired,pdf_verified,pdf_verified,pdf_verified
 Ivy League,2026,men,ivyleague_2026,400 IM,3:41.89,3:49.87,3:53.16,221.89,229.87,233.16,0.7513,2026 Ivy Mens Conf.pdf,pdf_repaired,pdf_verified,pdf_verified,pdf_verified
-Ivy League,2026,women,ivyleague_2026,50 Free,22.07,22.43,22.98,22.07,23.01,22.98,0.0607,2026 Ivy Womens Conf.pdf,pdf_repaired,pdf_verified,pdf_verified,pdf_verified
+Ivy League,2026,women,ivyleague_2026,50 Free,22.07,22.43,22.98,22.07,22.43,22.98,0.0607,2026 Ivy Womens Conf.pdf,pdf_repaired,pdf_verified,pdf_verified,pdf_verified
 Ivy League,2026,women,ivyleague_2026,100 Free,48.29,49.54,50.39,48.29,49.54,50.39,0.14,2026 Ivy Womens Conf.pdf,pdf_repaired,pdf_verified,pdf_verified,pdf_verified
 Ivy League,2026,women,ivyleague_2026,200 Free,1:44.20,1:48.03,1:50.13,104.2,108.03,110.13,0.3953,2026 Ivy Womens Conf.pdf,pdf_repaired,pdf_verified,pdf_verified,pdf_verified
 Ivy League,2026,women,ivyleague_2026,1650 Free,16:02.63,16:28.86,16:55.80,962.63,988.86,1015.8,3.5447,2026 Ivy Womens Conf.pdf,pdf_repaired,pdf_verified,pdf_verified,pdf_verified
 Ivy League,2026,women,ivyleague_2026,100 Back,51.31,54.79,55.05,51.31,54.79,55.05,0.2493,2026 Ivy Womens Conf.pdf,pdf_repaired,pdf_verified,pdf_verified,pdf_verified
 Ivy League,2026,women,ivyleague_2026,100 Breast,1:00.55,1:02.37,1:03.23,60.55,62.37,63.23,0.1787,2026 Ivy Womens Conf.pdf,pdf_repaired,pdf_verified,pdf_verified,pdf_verified
 Ivy League,2026,women,ivyleague_2026,100 Fly,51.97,53.94,54.65,51.97,53.94,54.65,0.1787,2026 Ivy Womens Conf.pdf,pdf_repaired,pdf_verified,pdf_verified,pdf_verified
-Ivy League,2026,women,ivyleague_2026,200 Fly,1:54.78,1:57.84,2:02.42,114.78,123.61,122.42,0.5093,2026 Ivy Womens Conf.pdf,pdf_repaired,pdf_verified,pdf_verified,pdf_verified
+Ivy League,2026,women,ivyleague_2026,200 Fly,1:54.78,1:57.84,2:02.42,114.78,117.84,122.42,0.5093,2026 Ivy Womens Conf.pdf,pdf_repaired,pdf_verified,pdf_verified,pdf_verified
 Landmark,2026,men,landmark_2026,50 Free,20.72,21.55,22.04,20.72,21.55,22.04,0.088,landmark_champs_2026_final_full_results.pdf,finals,,,
 Landmark,2026,men,landmark_2026,100 Free,44.99,48.03,50.32,44.99,48.03,50.32,0.3553,landmark_champs_2026_final_full_results.pdf,finals,,,
 Landmark,2026,men,landmark_2026,200 Free,1:42.56,1:46.24,1:52.65,102.56,106.24,112.65,0.6727,landmark_champs_2026_final_full_results.pdf,finals,,,
@@ -393,7 +393,7 @@ MAAC,2026,men,maac_2026,200 Back,1:43.74,1:48.80,1:53.45,103.74,108.8,113.45,0.6
 MAAC,2026,men,maac_2026,100 Breast,53.87,55.64,57.08,53.87,55.64,57.08,0.214,2026_MAAC_S_D_Championships_Day_3_finals_results.pdf,finals,,,
 MAAC,2026,men,maac_2026,200 Breast,1:57.31,2:02.12,2:05.21,117.31,122.12,125.21,0.5267,2026_MAAC_S_D_Championships_Day_4_finals_results (1).pdf,finals,,,
 MAAC,2026,men,maac_2026,100 Fly,48.01,49.58,50.30,48.01,49.58,50.3,0.1527,2026_MAAC_S_D_Championships_Day_3_finals_results.pdf,finals,,,
-MAAC,2026,men,maac_2026,200 Fly,1:49.87,1:51.28,1:53.40,109.87,113.6,113.4,0.2353,2026_MAAC_S_D_Championships_Day_4_finals_results (1).pdf,finals,,,
+MAAC,2026,men,maac_2026,200 Fly,1:49.87,1:51.28,1:53.40,109.87,111.28,113.4,0.2353,2026_MAAC_S_D_Championships_Day_4_finals_results (1).pdf,finals,,,
 MAAC,2026,men,maac_2026,200 IM,1:47.73,1:50.39,1:52.36,107.73,110.39,112.36,0.3087,2026_MAAC_S_D_Championships_Day_2_finals_results.pdf,finals,,,
 MAAC,2026,men,maac_2026,400 IM,3:51.32,4:01.48,4:05.62,231.32,241.48,245.62,0.9533,2026_MAAC_S_D_Championships_Day_3_finals_results.pdf,finals,,,
 MAAC,2026,women,maac_2026,50 Free,23.27,23.85,24.23,23.27,23.85,24.23,0.064,2026_MAAC_S_D_Championships_Day_2_finals_results.pdf,finals,,,
@@ -406,7 +406,7 @@ MAAC,2026,women,maac_2026,100 Breast,1:00.32,1:05.15,1:07.64,60.32,65.15,67.64,0
 MAAC,2026,women,maac_2026,200 Breast,2:13.98,2:22.73,2:28.10,133.98,142.73,148.1,0.9413,2026_MAAC_S_D_Championships_Day_4_finals_results (1).pdf,finals,,,
 MAAC,2026,women,maac_2026,100 Fly,55.17,56.63,58.38,55.17,56.63,58.38,0.214,2026_MAAC_S_D_Championships_Day_3_finals_results.pdf,finals,,,
 MAAC,2026,women,maac_2026,200 Fly,2:02.03,2:08.98,2:11.72,122.03,128.98,131.72,0.646,2026_MAAC_S_D_Championships_Day_4_finals_results (1).pdf,finals,,,
-MAAC,2026,women,maac_2026,200 IM,2:00.99,2:03.53,2:07.34,120.99,127.61,127.34,0.4233,2026_MAAC_S_D_Championships_Day_2_finals_results.pdf,finals,,,
+MAAC,2026,women,maac_2026,200 IM,2:00.99,2:03.53,2:07.34,120.99,123.53,127.34,0.4233,2026_MAAC_S_D_Championships_Day_2_finals_results.pdf,finals,,,
 MAAC,2026,women,maac_2026,400 IM,4:25.46,4:31.06,4:39.79,265.46,271.06,279.79,0.9553,2026_MAAC_S_D_Championships_Day_3_finals_results.pdf,finals,,,
 MAC,2026,men,mac_2026,50 Free,20.49,21.82,22.65,20.49,21.82,22.65,0.144,2026 MAC MENS full_meet_results.pdf,prelim_fallback,,,
 MAC,2026,men,mac_2026,100 Free,45.84,48.97,50.38,45.84,48.97,50.38,0.3027,2026 MAC MENS full_meet_results.pdf,prelim_fallback,,,
@@ -422,7 +422,7 @@ MAC,2026,men,mac_2026,200 Fly,1:56.03,2:06.00,2:14.34,116.03,126,134.34,1.2207,2
 MAC,2026,men,mac_2026,200 IM,1:53.79,2:02.16,2:10.74,113.79,122.16,130.74,1.13,2026 MAC MENS full_meet_results.pdf,prelim_fallback,,,
 MAC,2026,men,mac_2026,400 IM,4:08.48,4:28.40,4:35.30,248.48,268.4,275.3,1.788,2026 MAC MENS full_meet_results.pdf,prelim_fallback,,,
 MAC,2026,women,mac_2026,50 Free,21.88,23.07,23.31,21.88,23.07,23.31,0.0953,2026 MAC WOMENS Complete_Results.pdf,prelim_fallback,,,
-MAC,2026,women,mac_2026,100 Free,47.59,48.92,50.91,47.59,51.25,50.91,0.2213,2026 MAC WOMENS Complete_Results.pdf,prelim_fallback,,,
+MAC,2026,women,mac_2026,100 Free,47.59,48.92,50.91,47.59,48.92,50.91,0.2213,2026 MAC WOMENS Complete_Results.pdf,prelim_fallback,,,
 MAC,2026,women,mac_2026,200 Free,1:44.82,1:50.26,1:50.80,104.82,110.26,110.8,0.3987,2026 MAC WOMENS Complete_Results.pdf,prelim_fallback,,,
 MAC,2026,women,mac_2026,500 Free,4:47.76,4:58.44,4:58.63,287.76,298.44,298.63,0.7247,2026 MAC WOMENS Complete_Results.pdf,prelim_fallback,,,
 MAC,2026,women,mac_2026,1650 Free,16:39.00,17:02.74,17:14.43,999,1022.74,1034.43,2.362,2026 MAC WOMENS Complete_Results.pdf,prelim_fallback,,,
@@ -443,7 +443,7 @@ NEWMAC,2026,men,newmac_2026,200 Back,1:49.41,1:54.83,2:01.53,109.41,114.83,121.5
 NEWMAC,2026,men,newmac_2026,100 Breast,54.36,56.33,58.09,54.36,56.33,58.09,0.2487,2026_newmac_championships_full_results.pdf,finals,,,
 NEWMAC,2026,men,newmac_2026,200 Breast,2:01.71,2:06.47,2:10.01,121.71,126.47,130.01,0.5533,2026_newmac_championships_full_results.pdf,finals,,,
 NEWMAC,2026,men,newmac_2026,100 Fly,46.94,49.85,51.99,46.94,49.85,51.99,0.3367,2026_newmac_championships_full_results.pdf,finals,,,
-NEWMAC,2026,men,newmac_2026,200 Fly,8:19.45,5:47.39,1:59.31,499.45,401.8,119.31,-25.3427,2026_newmac_championships_full_results.pdf,finals,,,
+NEWMAC,2026,men,newmac_2026,200 Fly,1:47.68,1:54.66,1:59.31,107.68,114.66,119.31,0.7753,2026_newmac_championships_full_results.pdf,finals,,,
 NEWMAC,2026,men,newmac_2026,200 IM,1:48.61,1:54.23,1:55.94,108.61,114.23,115.94,0.4887,2026_newmac_championships_full_results.pdf,finals,,,
 NEWMAC,2026,men,newmac_2026,400 IM,3:55.55,4:11.15,4:22.17,235.55,251.15,262.17,1.7747,2026_newmac_championships_full_results.pdf,finals,,,
 NEWMAC,2026,women,newmac_2026,50 Free,23.15,24.25,25.13,23.15,24.25,25.13,0.132,2026_newmac_championships_full_results.pdf,finals,,,
@@ -491,7 +491,7 @@ MPSF,2026,men,mpsf_2026,200 Free,1:33.80,1:38.25,1:40.40,93.8,98.25,100.4,0.44,M
 MPSF,2026,men,mpsf_2026,500 Free,4:16.20,4:26.73,4:32.56,256.2,266.73,272.56,1.0907,MPSF 2026 RESULTS.pdf,pdf_repaired,pdf_verified,pdf_verified,pdf_verified
 MPSF,2026,men,mpsf_2026,1650 Free,14:48.77,15:36.93,16:10.28,888.77,936.93,970.28,5.434,MPSF 2026 RESULTS.pdf,pdf_repaired,pdf_verified,pdf_verified,pdf_verified
 MPSF,2026,men,mpsf_2026,100 Back,46.32,49.29,49.85,46.32,49.29,49.85,0.2353,MPSF 2026 RESULTS.pdf,pdf_repaired,pdf_verified,pdf_verified,pdf_verified
-MPSF,2026,men,mpsf_2026,200 Back,1:41.55,1:44.58,1:49.12,101.55,109.96,109.12,0.5047,MPSF 2026 RESULTS.pdf,pdf_repaired,pdf_verified,pdf_verified,pdf_verified
+MPSF,2026,men,mpsf_2026,200 Back,1:41.55,1:44.58,1:49.12,101.55,104.58,109.12,0.5047,MPSF 2026 RESULTS.pdf,pdf_repaired,pdf_verified,pdf_verified,pdf_verified
 MPSF,2026,men,mpsf_2026,100 Breast,52.19,54.50,55.39,52.19,54.5,55.39,0.2133,MPSF 2026 RESULTS.pdf,finals,,,
 MPSF,2026,men,mpsf_2026,200 Breast,1:54.28,1:58.76,2:01.40,114.28,118.76,121.4,0.4747,MPSF 2026 RESULTS.pdf,pdf_repaired,pdf_verified,pdf_verified,pdf_verified
 MPSF,2026,men,mpsf_2026,100 Fly,46.06,47.75,48.82,46.06,47.75,48.82,0.184,MPSF 2026 RESULTS.pdf,pdf_repaired,pdf_verified,pdf_verified,pdf_verified
@@ -501,7 +501,7 @@ MPSF,2026,men,mpsf_2026,400 IM,3:44.10,3:54.21,4:02.05,224.1,234.21,242.05,1.196
 MPSF,2026,women,mpsf_2026,50 Free,22.70,23.37,23.52,22.7,23.37,23.52,0.0547,MPSF 2026 RESULTS.pdf,pdf_repaired,pdf_verified,pdf_verified,pdf_verified
 MPSF,2026,women,mpsf_2026,100 Free,49.29,50.64,51.61,49.29,50.64,51.61,0.1547,MPSF 2026 RESULTS.pdf,pdf_repaired,pdf_verified,pdf_verified,pdf_verified
 MPSF,2026,women,mpsf_2026,200 Free,1:47.58,1:51.05,1:52.85,107.58,111.05,112.85,0.3513,MPSF 2026 RESULTS.pdf,pdf_repaired,pdf_verified,pdf_verified,pdf_verified
-MPSF,2026,women,mpsf_2026,500 Free,4:48.57,4:53.84,5:01.74,288.57,301.85,301.74,0.878,MPSF 2026 RESULTS.pdf,pdf_repaired,pdf_verified,pdf_verified,pdf_verified
+MPSF,2026,women,mpsf_2026,500 Free,4:48.57,4:53.84,5:01.74,288.57,293.84,301.74,0.878,MPSF 2026 RESULTS.pdf,pdf_repaired,pdf_verified,pdf_verified,pdf_verified
 MPSF,2026,women,mpsf_2026,1650 Free,16:35.33,17:01.74,17:21.70,995.33,1021.74,1041.7,3.0913,MPSF 2026 RESULTS.pdf,finals,,,
 MPSF,2026,women,mpsf_2026,100 Back,54.37,56.00,56.50,54.37,56,56.5,0.142,MPSF 2026 RESULTS.pdf,pdf_repaired,pdf_verified,pdf_verified,pdf_verified
 MPSF,2026,women,mpsf_2026,200 Back,1:57.18,2:02.80,2:03.93,117.18,122.8,123.93,0.45,MPSF 2026 RESULTS.pdf,pdf_repaired,pdf_verified,pdf_verified,pdf_verified
@@ -518,12 +518,12 @@ NESCAC,2026,men,nescac_2026,500 Free,4:24.25,4:35.81,4:42.31,264.25,275.81,282.3
 NESCAC,2026,men,nescac_2026,1000 Free,9:10.55,9:23.19,9:43.72,550.55,563.19,583.72,2.2113,2026 NESCAC MENS RESULTS.pdf,finals,,,
 NESCAC,2026,men,nescac_2026,1650 Free,15:29.51,16:04.09,16:24.18,929.51,964.09,984.18,3.6447,2026 NESCAC MENS RESULTS.pdf,finals,,,
 NESCAC,2026,men,nescac_2026,100 Back,48.07,49.91,52.98,48.07,49.91,52.98,0.3273,2026 NESCAC MENS RESULTS.pdf,finals,,,
-NESCAC,2026,men,nescac_2026,200 Back,1:46.11,1:49.01,1:53.35,106.11,114.11,113.35,0.4827,2026 NESCAC MENS RESULTS.pdf,finals,,,
+NESCAC,2026,men,nescac_2026,200 Back,1:46.11,1:49.01,1:53.35,106.11,109.01,113.35,0.4827,2026 NESCAC MENS RESULTS.pdf,finals,,,
 NESCAC,2026,men,nescac_2026,100 Breast,51.85,56.06,57.61,51.85,56.06,57.61,0.384,2026 NESCAC MENS RESULTS.pdf,finals,,,
 NESCAC,2026,men,nescac_2026,200 Breast,1:55.12,2:01.40,2:06.20,115.12,121.4,126.2,0.7387,2026 NESCAC MENS RESULTS.pdf,finals,,,
 NESCAC,2026,men,nescac_2026,100 Fly,48.23,49.50,50.00,48.23,49.5,50,0.118,2026 NESCAC MENS RESULTS.pdf,finals,,,
 NESCAC,2026,men,nescac_2026,200 Fly,1:46.19,1:51.21,1:53.73,106.19,111.21,113.73,0.5027,2026 NESCAC MENS RESULTS.pdf,finals,,,
-NESCAC,2026,men,nescac_2026,200 IM,1:47.17,1:49.14,1:52.09,107.17,113.49,112.09,0.328,2026 NESCAC MENS RESULTS.pdf,finals,,,
+NESCAC,2026,men,nescac_2026,200 IM,1:47.17,1:49.14,1:52.09,107.17,109.14,112.09,0.328,2026 NESCAC MENS RESULTS.pdf,finals,,,
 NESCAC,2026,men,nescac_2026,400 IM,3:50.78,4:02.73,4:06.09,230.78,242.73,246.09,1.0207,2026 NESCAC MENS RESULTS.pdf,finals,,,
 NESCAC,2026,women,nescac_2026,50 Free,22.73,23.81,24.30,22.73,23.81,24.3,0.1047,2026 NESCAC WOMENS Final_Results.pdf,finals,,,
 NESCAC,2026,women,nescac_2026,100 Free,50.22,51.50,52.53,50.22,51.5,52.53,0.154,2026 NESCAC WOMENS Final_Results.pdf,finals,,,
@@ -535,7 +535,7 @@ NESCAC,2026,women,nescac_2026,100 Back,55.42,56.93,58.51,55.42,56.93,58.51,0.206
 NESCAC,2026,women,nescac_2026,200 Back,2:00.38,2:06.45,2:10.38,120.38,126.45,130.38,0.6667,2026 NESCAC WOMENS Final_Results.pdf,finals,,,
 NESCAC,2026,women,nescac_2026,100 Breast,1:02.50,1:05.25,1:07.91,62.5,65.25,67.91,0.3607,2026 NESCAC WOMENS Final_Results.pdf,finals,,,
 NESCAC,2026,women,nescac_2026,200 Breast,2:15.96,2:24.21,2:29.43,135.96,144.21,149.43,0.898,2026 NESCAC WOMENS Final_Results.pdf,finals,,,
-NESCAC,2026,women,nescac_2026,100 Fly,54.66,55.56,56.90,54.66,57.66,56.9,0.1493,2026 NESCAC WOMENS Final_Results.pdf,finals,,,
+NESCAC,2026,women,nescac_2026,100 Fly,54.66,55.56,56.90,54.66,55.56,56.9,0.1493,2026 NESCAC WOMENS Final_Results.pdf,finals,,,
 NESCAC,2026,women,nescac_2026,200 Fly,2:01.10,2:05.98,2:09.17,121.1,125.98,129.17,0.538,2026 NESCAC WOMENS Final_Results.pdf,finals,,,
 NESCAC,2026,women,nescac_2026,200 IM,2:01.39,2:08.52,2:10.26,121.39,128.52,130.26,0.5913,2026 NESCAC WOMENS Final_Results.pdf,finals,,,
 NESCAC,2026,women,nescac_2026,400 IM,4:20.58,4:38.56,4:39.91,260.58,278.56,279.91,1.2887,2026 NESCAC WOMENS Final_Results.pdf,finals,,,
@@ -548,7 +548,6 @@ NEWMAC,2026,men,newmac_2026,200 Back,1:49.41,1:54.83,2:01.53,109.41,114.83,121.5
 NEWMAC,2026,men,newmac_2026,100 Breast,54.36,56.33,58.09,54.36,56.33,58.09,0.2487,2026_newmac_championships_full_results.pdf,finals,,,
 NEWMAC,2026,men,newmac_2026,200 Breast,2:01.71,2:06.47,2:10.01,121.71,126.47,130.01,0.5533,2026_newmac_championships_full_results.pdf,finals,,,
 NEWMAC,2026,men,newmac_2026,100 Fly,46.94,49.85,51.99,46.94,49.85,51.99,0.3367,2026_newmac_championships_full_results.pdf,finals,,,
-NEWMAC,2026,men,newmac_2026,200 Fly,8:19.45,5:47.39,1:59.31,499.45,401.8,119.31,-25.3427,2026_newmac_championships_full_results.pdf,finals,,,
 NEWMAC,2026,men,newmac_2026,200 IM,1:48.61,1:54.23,1:55.94,108.61,114.23,115.94,0.4887,2026_newmac_championships_full_results.pdf,finals,,,
 NEWMAC,2026,men,newmac_2026,400 IM,3:55.55,4:11.15,4:22.17,235.55,251.15,262.17,1.7747,2026_newmac_championships_full_results.pdf,finals,,,
 NEWMAC,2026,women,newmac_2026,50 Free,23.15,24.25,25.13,23.15,24.25,25.13,0.132,2026_newmac_championships_full_results.pdf,finals,,,
@@ -606,7 +605,7 @@ Patriot,2026,men,patriot_2026,400 IM,3:47.66,3:52.54,4:01.19,227.66,232.54,241.1
 Patriot,2026,women,patriot_2026,50 Free,22.56,23.41,23.76,22.56,23.41,23.76,0.08,Patriot League 2026 results.pdf,prelim_fallback,,,
 Patriot,2026,women,patriot_2026,100 Free,49.43,50.88,51.56,49.43,50.88,51.56,0.142,Patriot League 2026 results.pdf,prelim_fallback,,,
 Patriot,2026,women,patriot_2026,200 Free,1:46.38,1:50.70,1:54.73,106.38,110.7,114.73,0.5567,Patriot League 2026 results.pdf,prelim_fallback,,,
-Patriot,2026,women,patriot_2026,500 Free,4:42.07,4:49.85,5:01.51,282.07,302.85,301.51,1.296,Patriot League 2026 results.pdf,prelim_fallback,,,
+Patriot,2026,women,patriot_2026,500 Free,4:42.07,4:49.85,5:01.51,282.07,289.85,301.51,1.296,Patriot League 2026 results.pdf,prelim_fallback,,,
 Patriot,2026,women,patriot_2026,1650 Free,16:31.72,17:07.90,17:25.30,991.72,1027.9,1045.3,3.572,Patriot League 2026 results.pdf,prelim_fallback,,,
 Patriot,2026,women,patriot_2026,100 Back,52.83,56.04,56.31,52.83,56.04,56.31,0.232,Patriot League 2026 results.pdf,prelim_fallback,,,
 Patriot,2026,women,patriot_2026,200 Back,1:56.51,2:01.59,2:04.58,116.51,121.59,124.58,0.538,Patriot League 2026 results.pdf,prelim_fallback,,,
@@ -636,7 +635,7 @@ PCSC,2026,women,pcsc_2026,200 Free,1:51.52,1:55.18,1:56.61,111.52,115.18,116.61,
 PCSC,2026,women,pcsc_2026,500 Free,4:57.58,5:09.69,5:17.34,297.58,309.69,317.34,1.3173,PCSC 2026 Results.pdf,prelim_fallback,,,
 PCSC,2026,women,pcsc_2026,1000 Free,10:06.84,10:37.11,10:48.23,606.84,637.11,648.23,2.7593,PCSC 2026 Results.pdf,prelim_fallback,,,
 PCSC,2026,women,pcsc_2026,1650 Free,16:57.28,18:03.15,18:21.78,1017.28,1083.15,1101.78,5.6333,PCSC 2026 Results.pdf,prelim_fallback,,,
-PCSC,2026,women,pcsc_2026,100 Back,55.62,56.85,58.69,55.62,58.79,58.69,0.2047,PCSC 2026 Results.pdf,prelim_fallback,,,
+PCSC,2026,women,pcsc_2026,100 Back,55.62,56.85,58.69,55.62,56.85,58.69,0.2047,PCSC 2026 Results.pdf,prelim_fallback,,,
 PCSC,2026,women,pcsc_2026,200 Back,2:01.82,2:07.10,2:09.48,121.82,127.1,129.48,0.5107,PCSC 2026 Results.pdf,prelim_fallback,,,
 PCSC,2026,women,pcsc_2026,100 Breast,1:04.07,1:05.20,1:07.82,64.07,65.2,67.82,0.25,PCSC 2026 Results.pdf,prelim_fallback,,,
 PCSC,2026,women,pcsc_2026,200 Breast,2:16.81,2:22.92,2:27.70,136.81,142.92,147.7,0.726,PCSC 2026 Results.pdf,prelim_fallback,,,
@@ -661,7 +660,7 @@ PSAC,2026,men,psac_2026,400 IM,3:53.46,4:10.48,4:14.59,233.46,250.48,254.59,1.40
 PSAC,2026,women,psac_2026,50 Free,23.03,23.99,24.51,23.03,23.99,24.51,0.0987,PSAC 2026 RESULTS.pdf,finals,,,
 PSAC,2026,women,psac_2026,100 Free,50.58,53.29,53.37,50.58,53.29,53.37,0.186,PSAC 2026 RESULTS.pdf,finals,,,
 PSAC,2026,women,psac_2026,200 Free,1:51.61,1:54.95,2:00.73,111.61,114.95,120.73,0.608,PSAC 2026 RESULTS.pdf,finals,,,
-PSAC,2026,women,psac_2026,500 Free,4:58.33,5:04.89,5:14.73,298.33,317.59,314.73,1.0933,PSAC 2026 RESULTS.pdf,finals,,,
+PSAC,2026,women,psac_2026,500 Free,4:58.33,5:04.89,5:14.73,298.33,304.89,314.73,1.0933,PSAC 2026 RESULTS.pdf,finals,,,
 PSAC,2026,women,psac_2026,1000 Free,10:13.47,10:35.17,10:52.83,613.47,635.17,652.83,2.624,PSAC 2026 RESULTS.pdf,finals,,,
 PSAC,2026,women,psac_2026,1650 Free,17:00.37,17:48.85,18:17.75,1020.37,1068.85,1097.75,5.1587,PSAC 2026 RESULTS.pdf,finals,,,
 PSAC,2026,women,psac_2026,100 Back,55.34,58.35,1:00.62,55.34,58.35,60.62,0.352,PSAC 2026 RESULTS.pdf,finals,,,
@@ -689,7 +688,6 @@ PSAC,2026,men,psac_2026,400 IM,3:53.46,4:10.48,4:14.59,233.46,250.48,254.59,1.40
 PSAC,2026,women,psac_2026,50 Free,23.03,23.99,24.51,23.03,23.99,24.51,0.0987,PSAC 2026 RESULTS.pdf,finals,,,
 PSAC,2026,women,psac_2026,100 Free,50.58,53.29,53.37,50.58,53.29,53.37,0.186,PSAC 2026 RESULTS.pdf,finals,,,
 PSAC,2026,women,psac_2026,200 Free,1:51.61,1:54.95,2:00.73,111.61,114.95,120.73,0.608,PSAC 2026 RESULTS.pdf,finals,,,
-PSAC,2026,women,psac_2026,500 Free,4:58.33,5:04.89,5:14.73,298.33,317.59,314.73,1.0933,PSAC 2026 RESULTS.pdf,finals,,,
 PSAC,2026,women,psac_2026,1000 Free,10:13.47,10:35.17,10:52.83,613.47,635.17,652.83,2.624,PSAC 2026 RESULTS.pdf,finals,,,
 PSAC,2026,women,psac_2026,1650 Free,17:00.37,17:48.85,18:17.75,1020.37,1068.85,1097.75,5.1587,PSAC 2026 RESULTS.pdf,finals,,,
 PSAC,2026,women,psac_2026,100 Back,55.34,58.35,1:00.62,55.34,58.35,60.62,0.352,PSAC 2026 RESULTS.pdf,finals,,,
@@ -726,7 +724,7 @@ SAC,2026,women,sac_2026,100 Breast,1:01.89,1:05.56,1:09.29,61.89,65.56,69.29,0.4
 SAC,2026,women,sac_2026,200 Breast,2:15.29,2:23.99,2:36.08,135.29,143.99,156.08,1.386,SAC 2026 sat_final_results.pdf,finals,,,
 SAC,2026,women,sac_2026,100 Fly,54.65,56.87,58.95,54.65,56.87,58.95,0.2867,SAC 2026 thu_final_results.pdf,finals,,,
 SAC,2026,women,sac_2026,200 Fly,2:01.35,2:10.24,2:38.43,121.35,130.24,158.43,2.472,SAC 2026 fri_final_results.pdf,finals,,,
-SAC,2026,women,sac_2026,200 IM,2:03.41,2:06.68,2:11.59,123.41,131.78,131.59,0.5453,SAC 2026 wed_final_results.pdf,finals,,,
+SAC,2026,women,sac_2026,200 IM,2:03.41,2:06.68,2:11.59,123.41,126.68,131.59,0.5453,SAC 2026 wed_final_results.pdf,finals,,,
 SAC,2026,women,sac_2026,400 IM,4:26.90,4:35.91,4:44.86,266.9,275.91,284.86,1.1973,SAC 2026 thu_final_results.pdf,finals,,,
 SCIAC,2026,men,sciac_2026,50 Free,20.36,21.03,21.57,20.36,21.03,21.57,0.0807,2026_sciac_conference_results.pdf,finals,,,
 SCIAC,2026,men,sciac_2026,100 Free,45.16,45.74,48.19,45.16,45.74,48.19,0.202,2026_sciac_conference_results.pdf,finals,,,
@@ -756,7 +754,7 @@ SCIAC,2026,women,sciac_2026,200 IM,2:04.44,2:09.07,2:12.70,124.44,129.07,132.7,0
 SCIAC,2026,women,sciac_2026,400 IM,4:25.90,4:38.51,4:53.77,265.9,278.51,293.77,1.858,2026_sciac_conference_results.pdf,finals,,,
 SEC,2026,men,sec_2026,50 Free,18.42,18.94,19.51,18.42,18.94,19.51,0.0727,2026-SEC-Complete-Results.pdf,finals,,,
 SEC,2026,men,sec_2026,100 Free,40.42,42.03,43.41,40.42,42.03,43.41,0.1993,2026-SEC-Complete-Results.pdf,finals,,,
-SEC,2026,men,sec_2026,200 Free,1:31.53,1:32.59,1:34.17,91.53,95.1,94.17,0.176,2026-SEC-Complete-Results.pdf,finals,,,
+SEC,2026,men,sec_2026,200 Free,1:31.53,1:32.59,1:34.17,91.53,92.59,94.17,0.176,2026-SEC-Complete-Results.pdf,finals,,,
 SEC,2026,men,sec_2026,500 Free,4:08.46,4:13.02,4:17.73,248.46,253.02,257.73,0.618,2026-SEC-Complete-Results.pdf,finals,,,
 SEC,2026,men,sec_2026,1650 Free,14:25.14,14:47.85,15:03.96,865.14,887.85,903.96,2.588,2026-SEC-Complete-Results.pdf,finals,,,
 SEC,2026,men,sec_2026,100 Back,43.86,45.23,48.99,43.86,45.23,48.99,0.342,2026-SEC-Complete-Results.pdf,finals,,,
@@ -770,7 +768,7 @@ SEC,2026,men,sec_2026,400 IM,3:35.75,3:44.87,3:45.94,215.75,224.87,225.94,0.6793
 SEC,2026,women,sec_2026,50 Free,20.87,22.03,22.58,20.87,22.03,22.58,0.114,2026-SEC-Complete-Results.pdf,finals,,,
 SEC,2026,women,sec_2026,100 Free,46.01,48.42,49.03,46.01,48.42,49.03,0.2013,2026-SEC-Complete-Results.pdf,finals,,,
 SEC,2026,women,sec_2026,200 Free,1:41.71,1:44.25,1:46.62,101.71,104.25,106.62,0.3273,2026-SEC-Complete-Results.pdf,finals,,,
-SEC,2026,women,sec_2026,500 Free,4:30.53,4:36.35,4:45.09,270.53,285.5,285.09,0.9707,2026-SEC-Complete-Results.pdf,finals,,,
+SEC,2026,women,sec_2026,500 Free,4:30.53,4:36.35,4:45.09,270.53,276.35,285.09,0.9707,2026-SEC-Complete-Results.pdf,finals,,,
 SEC,2026,women,sec_2026,1650 Free,15:32.75,16:15.59,16:29.03,932.75,975.59,989.03,3.752,2026-SEC-Complete-Results.pdf,finals,,,
 SEC,2026,women,sec_2026,100 Back,50.50,51.99,52.83,50.5,51.99,52.83,0.1553,2026-SEC-Complete-Results.pdf,finals,,,
 SEC,2026,women,sec_2026,200 Back,1:49.94,1:55.36,1:57.26,109.94,115.36,117.26,0.488,2026-SEC-Complete-Results.pdf,finals,,,
@@ -785,7 +783,7 @@ Summit League,2026,men,summitleague_2026,100 Free,42.98,45.18,47.49,42.98,45.18,
 Summit League,2026,men,summitleague_2026,200 Free,1:37.69,1:40.35,1:41.80,97.69,100.35,101.8,0.274,SUMMIT LEAGUE 2026 RESULTS.pdf,finals,,,
 Summit League,2026,men,summitleague_2026,500 Free,4:22.31,4:36.93,4:37.16,262.31,276.93,277.16,0.99,SUMMIT LEAGUE 2026 RESULTS.pdf,finals,,,
 Summit League,2026,men,summitleague_2026,1650 Free,15:04.40,15:53.50,16:53.90,904.4,953.5,1013.9,7.3,SUMMIT LEAGUE 2026 RESULTS.pdf,finals,,,
-Summit League,2026,men,summitleague_2026,100 Back,5:35.00,3:41.12,50.31,335,267.2,50.31,-18.9793,SUMMIT LEAGUE 2026 RESULTS.pdf,finals,,,
+Summit League,2026,men,summitleague_2026,100 Back,45.21,49.38,50.26,45.21,49.38,50.26,0.3367,SUMMIT LEAGUE 2026 RESULTS.pdf,finals,,,
 Summit League,2026,men,summitleague_2026,200 Back,1:42.68,1:51.26,1:55.11,102.68,111.26,115.11,0.8287,SUMMIT LEAGUE 2026 RESULTS.pdf,finals,,,
 Summit League,2026,men,summitleague_2026,100 Breast,52.61,55.99,56.98,52.61,55.99,56.98,0.2913,SUMMIT LEAGUE 2026 RESULTS.pdf,finals,,,
 Summit League,2026,men,summitleague_2026,200 Breast,1:58.50,2:02.04,2:05.48,118.5,122.04,125.48,0.4653,SUMMIT LEAGUE 2026 RESULTS.pdf,finals,,,
@@ -816,7 +814,7 @@ UAA,2026,men,uaa_2026,200 Back,1:42.74,1:48.60,1:52.02,102.74,108.6,112.02,0.618
 UAA,2026,men,uaa_2026,100 Breast,53.71,55.64,56.69,53.71,55.64,56.69,0.1987,2026 UAA Championships-FullSWIMResults.pdf,finals,,,
 UAA,2026,men,uaa_2026,200 Breast,1:57.25,2:01.74,2:05.49,117.25,121.74,125.49,0.5493,2026 UAA Championships-FullSWIMResults.pdf,finals,,,
 UAA,2026,men,uaa_2026,100 Fly,46.39,48.73,49.40,46.39,48.73,49.4,0.2007,2026 UAA Championships-FullSWIMResults.pdf,finals,,,
-UAA,2026,men,uaa_2026,200 Fly,3:20.42,2:44.75,1:51.25,200.42,226.8,111.25,-5.9447,2026 UAA Championships-FullSWIMResults.pdf,finals,,,
+UAA,2026,men,uaa_2026,200 Fly,1:42.91,1:49.17,1:51.25,102.91,109.17,111.25,0.556,2026 UAA Championships-FullSWIMResults.pdf,finals,,,
 UAA,2026,men,uaa_2026,200 IM,1:46.69,1:49.13,1:53.88,106.69,109.13,113.88,0.4793,2026 UAA Championships-FullSWIMResults.pdf,finals,,,
 UAA,2026,men,uaa_2026,400 IM,3:49.97,3:57.25,4:06.36,229.97,237.25,246.36,1.0927,2026 UAA Championships-FullSWIMResults.pdf,finals,,,
 UAA,2026,women,uaa_2026,50 Free,22.43,23.68,24.01,22.43,23.68,24.01,0.1053,2026 UAA Championships-FullSWIMResults.pdf,finals,,,
@@ -870,7 +868,7 @@ NCAC,unknown,women,unknown_unknown,200 Fly,2:01.81,2:11.15,2:22.80,121.81,131.15
 NCAC,unknown,women,unknown_unknown,200 IM,2:03.72,2:10.91,2:15.45,123.72,130.91,135.45,0.782,NCACSwimDiveChamps-FinalResults2026.pdf.pdf,finals,,,
 NCAC,unknown,women,unknown_unknown,400 IM,4:22.77,4:47.58,5:00.99,262.77,287.58,300.99,2.548,NCACSwimDiveChamps-FinalResults2026.pdf.pdf,finals,,,
 WAC,2025,men,wac_2025,100 Free,41.83,44.19,44.59,41.83,44.19,44.59,0.184,WAC 2025 RESULTS.pdf,pdf_repaired,pdf_verified,pdf_verified,pdf_verified
-WAC,2025,men,wac_2025,200 Free,1:35.32,1:37.44,1:40.61,95.32,103.35,100.61,0.3527,WAC 2025 RESULTS.pdf,pdf_repaired,pdf_verified,pdf_verified,pdf_verified
+WAC,2025,men,wac_2025,200 Free,1:35.32,1:37.44,1:40.61,95.32,97.44,100.61,0.3527,WAC 2025 RESULTS.pdf,pdf_repaired,pdf_verified,pdf_verified,pdf_verified
 WAC,2025,men,wac_2025,500 Free,4:16.95,4:26.69,4:28.35,256.95,266.69,268.35,0.76,WAC 2025 RESULTS.pdf,pdf_repaired,pdf_verified,pdf_verified,pdf_verified
 WAC,2025,men,wac_2025,1650 Free,14:48.48,15:32.90,15:52.68,888.48,932.9,952.68,4.28,WAC 2025 RESULTS.pdf,pdf_repaired,pdf_verified,pdf_verified,pdf_verified
 WAC,2025,men,wac_2025,100 Back,45.40,48.41,49.26,45.4,48.41,49.26,0.2573,WAC 2025 RESULTS.pdf,pdf_repaired,pdf_verified,pdf_verified,pdf_verified
@@ -880,7 +878,7 @@ WAC,2025,men,wac_2025,200 IM,1:43.96,1:47.06,1:49.49,103.96,107.06,109.49,0.3687
 WAC,2025,men,wac_2025,400 IM,3:46.01,3:56.97,4:03.65,226.01,236.97,243.65,1.176,WAC 2025 RESULTS.pdf,pdf_repaired,pdf_verified,pdf_verified,pdf_verified
 WAC,2025,women,wac_2025,50 Free,22.19,23.46,23.72,22.19,23.46,23.72,0.102,WAC 2025 RESULTS.pdf,pdf_repaired,pdf_verified,pdf_verified,pdf_verified
 WAC,2025,women,wac_2025,100 Free,48.76,51.13,51.62,48.76,51.13,51.62,0.1907,WAC 2025 RESULTS.pdf,pdf_repaired,pdf_verified,pdf_verified,pdf_verified
-WAC,2025,women,wac_2025,200 Free,1:48.40,1:49.62,1:51.45,108.4,112.89,111.45,0.2033,WAC 2025 RESULTS.pdf,pdf_repaired,pdf_verified,pdf_verified,pdf_verified
+WAC,2025,women,wac_2025,200 Free,1:48.40,1:49.62,1:51.45,108.4,109.62,111.45,0.2033,WAC 2025 RESULTS.pdf,pdf_repaired,pdf_verified,pdf_verified,pdf_verified
 WAC,2025,women,wac_2025,500 Free,4:48.95,4:58.77,5:00.97,288.95,298.77,300.97,0.8013,WAC 2025 RESULTS.pdf,pdf_repaired,pdf_verified,pdf_verified,pdf_verified
 WAC,2025,women,wac_2025,1650 Free,16:28.17,17:04.15,17:42.51,988.17,1024.15,1062.51,4.956,WAC 2025 RESULTS.pdf,pdf_repaired,pdf_verified,pdf_verified,pdf_verified
 WAC,2025,women,wac_2025,200 Breast,2:12.42,2:16.84,2:20.85,132.42,136.84,140.85,0.562,WAC 2025 RESULTS.pdf,pdf_repaired,pdf_verified,pdf_verified,pdf_verified

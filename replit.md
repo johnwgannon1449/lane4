@@ -6,7 +6,7 @@ Lane4 is a deterministic swim recruiting analysis tool for D3 college swimming. 
 ## Tech Stack
 - **Backend**: Python / Flask (serves API + static files)
 - **Frontend**: Vanilla HTML/CSS/JS (React SPA planned for next phase)
-- **Data**: `data/lane4_swim_model.xlsx` — source of truth for all benchmarks and team data
+- **Data**: CSV-only (Excel retired); two canonical CSVs — see Data section below
 - **AI**: Anthropic Claude `claude-sonnet-4-20250514` (planned — not yet integrated)
 
 ## Architecture
@@ -27,16 +27,18 @@ Flask app with three layers:
 | `/api/health` | GET | Server status, counts |
 
 ### Data Model
-**`Sheet1` (BENCHMARKS)** — 127 rows, 9 conferences × 14-15 events
-- Key: `Conference|Event`
-- Columns used: `1st_sec`, `8th_sec`, `16th_sec`, `Sec_per_place`
+**`output/all_event_anchors.csv` (BENCHMARKS)** — 886 rows (447 men + 439 women), ~33 conferences × 14 events × 2 genders
+- Key: `Conference|Gender|Event`
+- Columns used: `1st`, `8th`, `16th`, `1st_seconds`, `8th_seconds`, `16th_seconds`, `Sec_per_place`
+- Loaded via `_load_benchmarks()` — validates 1st ≤ 8th ≤ 16th monotonicity at startup, logs violations
+- **Fully repaired**: 37 rows fixed (19 men's + 18 women's 8th_seconds conversion bug; 6 Category B corrupted anchors restored from source PDFs); 2 duplicate rows removed
 
-**`Team_Tiers` (TEAMS)** — 76 rows, one per D3 program
-- Key: `Conference|canonical_name`
-- Columns used: `PSF`, `Tier`, `Finish`, `MenPoints`
-- **Known workbook issue**: Column 14 duplicates header `Conference` — loader uses first-occurrence-wins
+**`output/lane4_snapshot_compatible.csv` (TEAMS)** — 245 team records, one per program
+- Key: `canonical_name`
+- Columns used: `PSF`, `Tier`, `Finish`, `MenPoints`, `Conference`
+- Supplement: programs not in anchor CSV default to `psf=1.0`
 
-**`Swimmer_Calcs`** — Formula template (no data rows); defines the authoritative scoring logic
+**Excel fully retired** — `openpyxl` dependency removed; no XLSX file referenced at runtime
 
 ## Scoring Engine (authoritative formulas from Swimmer_Calcs workbook)
 
