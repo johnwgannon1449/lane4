@@ -2144,32 +2144,42 @@ def _supplement_from_csv():
     excel_confs = set(k.split('|')[0] for k in BENCHMARKS)
 
     # ── 1. Supplement BENCHMARKS from all_event_anchors.csv ─────────────────
+    # CSV comes from actual championship PDFs and is authoritative.
+    # Men's-only rows are used (BENCHMARKS keys are gender-agnostic).
+    # CSV overrides Excel for any conference it covers; Excel-only conferences
+    # are untouched (CSV has no rows for them).
     anchors_path = os.path.join(os.path.dirname(__file__), 'output', 'all_event_anchors.csv')
     if os.path.exists(anchors_path):
         new_bench = 0
+        ovr_bench = 0
         with open(anchors_path, newline='', encoding='utf-8') as f:
             for row in _csv.DictReader(f):
+                # Men's benchmarks only — BENCHMARKS keys carry no gender suffix
+                if (row.get('Gender') or '').strip().lower() != 'men':
+                    continue
                 conf  = (row.get('Conference') or '').strip()
                 event = (row.get('Event') or '').strip()
                 if not conf or not event:
                     continue
-                key = f"{conf}|{event}"
-                if key in BENCHMARKS:
-                    continue  # Excel entry takes priority
-                first  = _float(row.get('1st_seconds'))
-                eighth = _float(row.get('8th_seconds'))
+                first     = _float(row.get('1st_seconds'))
+                eighth    = _float(row.get('8th_seconds'))
                 sixteenth = _float(row.get('16th_seconds'))
-                spp   = _float(row.get('Sec_per_place'))
+                spp       = _float(row.get('Sec_per_place'))
                 if first is None and eighth is None:
                     continue  # no usable benchmark data
+                key = f"{conf}|{event}"
+                already = key in BENCHMARKS
                 BENCHMARKS[key] = {
                     'first':         first,
                     'eighth':        eighth,
                     'sixteenth':     sixteenth,
                     'sec_per_place': spp,
                 }
-                new_bench += 1
-        print(f"[supplement] Added {new_bench} benchmark rows from all_event_anchors.csv")
+                if already:
+                    ovr_bench += 1
+                else:
+                    new_bench += 1
+        print(f"[supplement] Added {new_bench} new + {ovr_bench} corrected benchmark rows from all_event_anchors.csv")
 
     # ── 2. Supplement TEAMS_LIST from lane4_snapshot_compatible.csv ─────────
     snap_path = os.path.join(os.path.dirname(__file__), 'output', 'lane4_snapshot_compatible.csv')
