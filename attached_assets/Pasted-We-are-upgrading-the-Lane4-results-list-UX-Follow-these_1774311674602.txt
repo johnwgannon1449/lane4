@@ -1,0 +1,159 @@
+We are upgrading the Lane4 results/list UX. Follow these instructions exactly. Do not add extra features or alternative behaviors.
+
+==================================================
+OBJECTIVE
+==================================================
+
+We now have a large, correct result set. We need to:
+
+- keep the UI clean and controlled
+- allow users to remove schools they do not want
+- avoid clutter and interruptions
+- maintain a simple, intuitive mental model
+
+There should be NO temporary removal concept. Only persistent hide.
+
+==================================================
+FEATURE 1 — PROGRESSIVE REVEAL (6 AT A TIME)
+==================================================
+
+1. Initial display
+- Show only the first 6 schools from the ranked result set
+
+2. Reveal behavior
+- Add a button at the bottom: "See 6 more"
+- Each click reveals the next 6 schools from the SAME precomputed list
+- Do NOT rerun search
+- Do NOT reshuffle results
+
+3. End state
+- When no more schools remain, remove the button
+
+==================================================
+FEATURE 2 — SINGLE EXCLUSION MODEL (NO TEMPORARY STATE)
+==================================================
+
+We are NOT implementing temporary removal.
+
+Only one action exists:
+
+👉 "Hide this school"
+
+Behavior:
+- Removes the school from:
+  - current visible list
+  - all future search results for this user
+- This must persist across sessions
+
+There should be NO:
+- "remove for now"
+- "dismiss temporarily"
+- dual-state logic
+
+==================================================
+FEATURE 3 — SWIPE-TO-HIDE UX (NO TOAST SPAM)
+==================================================
+
+1. Swipe interaction
+- User swipes a school card (left)
+- Reveal a red background behind the card
+
+2. Animated feedback (based on swipe distance)
+- Early swipe (~25%): faint red, text "Hide"
+- Mid swipe (~50%): stronger red, clear "Hide"
+- Full swipe (~75%+): bold red, "Hide this school"
+
+3. Trigger threshold
+- If swipe passes ~50–60%, releasing triggers hide action
+
+4. Visual style
+- Smooth animation
+- Optional icon (e.g., 🚫 or eye-slash)
+- Should feel like native iOS/modern app interaction
+
+5. NO toast spam
+- Do NOT show a toast or popup for every hide action
+- Do NOT show repeated "moved to excluded" messages
+
+6. Optional (only once)
+- On the FIRST hide action (per session or per day), show a subtle, auto-fading hint:
+  "Hidden — view in Excluded at bottom"
+- No interaction required
+- Do not repeat
+
+==================================================
+FEATURE 4 — EXCLUDED SCHOOLS SECTION
+==================================================
+
+1. Placement
+- At the bottom of the main list
+
+2. Header
+- "Excluded Schools (N)"
+- Show count of hidden schools
+
+3. Default state
+- Collapsed
+
+4. Expanded view
+- List all hidden schools
+
+5. Per-school action
+- Each school has:
+  👉 "Add back"
+- Restores the school:
+  - removes it from excluded list
+  - allows it back into search/results
+
+6. Bulk action (optional but preferred)
+- "Restore all"
+
+7. Visibility
+- If no excluded schools, hide the section entirely
+
+==================================================
+FEATURE 5 — DATA + STATE BEHAVIOR
+==================================================
+
+1. Hidden schools
+- Must be persisted (user-specific)
+- Must be excluded from:
+  - current results
+  - future searches
+
+2. Restore behavior
+- Restoring a school removes it from the hidden set
+- It can appear again in results normally
+
+3. Result list stability
+- The ranked result list should be computed once
+- Progressive reveal should NOT change ordering
+
+==================================================
+DELIVERABLES
+==================================================
+
+Report back with:
+
+1. Files changed
+2. How the result list is stored for progressive reveal
+3. How hidden schools are stored and persisted
+4. Swipe interaction implementation details (threshold, animation)
+5. Confirmation:
+   - no temporary removal exists
+   - no toast spam exists
+   - hidden schools do not reappear unless restored
+6. Any edge cases handled
+
+==================================================
+IMPORTANT RULES
+==================================================
+
+- Do NOT introduce temporary removal
+- Do NOT add extra UI states
+- Do NOT rerun search when revealing more schools
+- Do NOT spam the user with confirmations
+- Keep behavior simple and predictable
+
+This is a UX simplification and control feature — not a redesign.
+Proceed.
