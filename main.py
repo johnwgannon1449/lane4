@@ -3223,7 +3223,7 @@ def _pre_sort(results, query, eliminated, my_list):
         # are not all buried at adjPts=0 behind every swim-scored D3 school.
         pool.sort(key=lambda r: -_strength(r))
 
-    return pool[:35]
+    return pool[:150]
 
 def _program_strength_desc(r):
     """Plain-language program strength label — never uses the word 'tier'."""
@@ -3397,7 +3397,10 @@ def _detect_query_intent(query: str) -> dict:
         'strongest academic', 'strongest academics', 'most academically',
         'smartest school', 'smartest schools', 'smartest college',
         'elite school', 'elite schools', 'elite college', 'elite program',
+        'most elite', 'most academic', 'academic school', 'academic college',
+        'best academic', 'top academic', 'highly selective', 'high academic',
         'most well-known', 'most well known', 'best known',
+        'ranked school', 'ranked college', 'ranked university',
     ])
 
     return {
@@ -3902,12 +3905,101 @@ def search():
             'directMatch': bool(direct_match),
         }), 503
 
-    # ── NON-DIRECT: 4-STEP PIPELINE ──────────────────────────────────────────
-    # Step 1 — AI generates candidate pool
-    # Step 2 — Hard filter using our truth labels
-    # Step 3 — Sort by admissions fit
-    # Step 4 — Return top 6
+    # ── NON-DIRECT: BROAD-POOL PATH or 4-STEP PIPELINE ──────────────────────
     if not direct_match:
+        # ── BROAD-POOL PATH ──────────────────────────────────────────────────
+        # Triggered for: prestige + personal + swim queries
+        #   e.g. "most elite schools I can swim for"
+        #        "every academic school I can contribute at"
+        #        "all schools where I can make the team"
+        #
+        # Bypasses Claude's narrow 12–15 candidate generation.
+        # Filters the full ~330-school universe to every swim-viable school,
+        # sorts by academic selectivity (prestige first) then swim fit,
+        # and returns the entire viable pool — typically 50–150 schools.
+        _bp_intent = _detect_query_intent(query)
+        _bp_intent['has_any_times'] = bool(times)
+
+        _BROAD_EXPLICIT = (
+            'all schools', 'every school', 'full list', 'complete list',
+            'all the schools', 'every college', 'all colleges',
+        )
+        _is_broad_pool = (
+            (_bp_intent['is_prestige_sort'] or
+             any(t in query.lower() for t in _BROAD_EXPLICIT))
+            and _bp_intent['is_personal']
+            and _bp_intent['is_swim']
+            and not _bp_intent['is_explicit_reach']
+        )
+
+        if _is_broad_pool:
+            excl_set  = set(eliminated) | set(my_list)
+            full_pool = [r for r in all_results if r['school'] not in excl_set]
+
+            # Viable = has benchmark data AND swim tier above "Not Competitive".
+            # "Below Roster Level" included as near-scoring / development range.
+            viable = [
+                r for r in full_pool
+                if r.get('hasSwimData')
+                and r.get('adjTier', '') not in ('', 'Not Competitive')
+            ]
+
+            # Primary sort: most selective first (accept% asc; unknown → 999).
+            # Secondary: better swim fit wins within the same selectivity band.
+            viable.sort(key=lambda r: (
+                r['meta'].get('accept') or 999,
+                -r.get('adjPts', 0),
+            ))
+
+            # Attach fit labels — same logic as main pipeline
+            for r in viable:
+                adm_lbl  = r.get('admission', {}).get('label', '')
+                swim_lbl = r.get('adjTier', '')
+                parts    = [p for p in [adm_lbl, swim_lbl] if p and p not in ('Unknown', '')]
+                r['aiWhy'] = ' · '.join(parts[:2])
+
+            n       = len(viable)
+            top_str = ', '.join(r['school'] for r in viable[:5]) if viable else 'none found'
+
+            # Tier breakdown for answer
+            _tier_order = [
+                'High-Point Contender', 'Conference Star', 'Top Recruit',
+                'Priority Recruit', 'Recruitable', 'Below Roster Level',
+            ]
+            tier_counts = {t: 0 for t in _tier_order}
+            for r in viable:
+                t = r.get('adjTier', '')
+                if t in tier_counts:
+                    tier_counts[t] += 1
+            tier_summary = ', '.join(
+                f"{cnt} {t}" for t, cnt in tier_counts.items() if cnt > 0
+            )
+
+            answer = (
+                f"Found {n} programs where you have a realistic shot to contribute, "
+                f"ordered from most to least selective. "
+                f"Leading the list: {top_str}. "
+                f"Swim fit across the pool — {tier_summary}."
+            )
+
+            return jsonify({
+                'answer':      answer,
+                'schools':     viable,
+                'directMatch': False,
+                'broadPool':   True,
+                '_debug': {
+                    'intent':     _bp_intent,
+                    'poolSize':   len(full_pool),
+                    'viableSize': n,
+                    'path':       'broad-pool-prestige-swim',
+                },
+            })
+
+        # ── 4-STEP AI PIPELINE (unchanged for all other queries) ─────────────
+        # Step 1 — AI generates candidate pool (~12–15 schools)
+        # Step 2 — Hard filter using our truth labels
+        # Step 3 — Sort by admissions fit / prestige
+        # Step 4 — Return top 6 (or 12 for "show me more")
         vibe_answers  = data.get('vibeAnswers', {}) or {}
         other_prefs_s = data.get('otherPrefs', '') or ''
 
