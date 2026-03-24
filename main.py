@@ -3348,6 +3348,9 @@ def _detect_query_intent(query: str) -> dict:
         'recruitable',  # "recruitable schools" implies "schools that recruit me"
         'pipe dream',   # "not pipe dreams" = "realistic for me"
         'swim fit',     # "swim fits" / "swim fit" — inherently personal (fit for me)
+        'recruit me',   # "would recruit me", "that would recruit me", "recruit me"
+        'want me',      # "schools that would want me"
+        'take me',      # "schools that would take me as a swimmer"
     ])
 
     # ── Explicit-reach override ──────────────────────────────────────────────
