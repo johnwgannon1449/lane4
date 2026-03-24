@@ -4370,17 +4370,27 @@ def deep_dive():
         sat_detail += (", " if sat_detail else "") + f"ACT {act_score}"
     ap_detail = f", {ap_count} projected APs" if ap_count else ""
 
+    # Structured major inputs (take priority over vibe career/academic fallback)
+    primary_major   = (prof_ovr.get('primaryMajor')   or data.get('primaryMajor',   '')).strip()
+    secondary_major = (prof_ovr.get('secondaryMajor') or data.get('secondaryMajor', '')).strip()
+
     # Determine academic direction for optional section
-    career_raw   = (vibe_answers.get('career')   or '').strip()
-    academic_raw = (vibe_answers.get('academic')  or '').strip()
-    _generic_career   = career_raw   in ('', 'Not sure yet')
-    _generic_academic = academic_raw in ('', 'Genuinely want to be well-rounded')
-    if not _generic_career or not _generic_academic:
-        _parts = [p for p in [career_raw, academic_raw]
-                  if p and p not in ('Not sure yet', 'Genuinely want to be well-rounded')]
-        academic_direction = ' / '.join(_parts) if _parts else None
+    if primary_major:
+        _major_parts = [primary_major]
+        if secondary_major:
+            _major_parts.append(secondary_major)
+        academic_direction = ' / '.join(_major_parts)
     else:
-        academic_direction = None
+        career_raw   = (vibe_answers.get('career')   or '').strip()
+        academic_raw = (vibe_answers.get('academic')  or '').strip()
+        _generic_career   = career_raw   in ('', 'Not sure yet')
+        _generic_academic = academic_raw in ('', 'Genuinely want to be well-rounded')
+        if not _generic_career or not _generic_academic:
+            _parts = [p for p in [career_raw, academic_raw]
+                      if p and p not in ('Not sure yet', 'Genuinely want to be well-rounded')]
+            academic_direction = ' / '.join(_parts) if _parts else None
+        else:
+            academic_direction = None
 
     # Admission comparison block
     sat_median   = meta.get('satMedian', 0)
@@ -4433,17 +4443,47 @@ def deep_dive():
 
     # Build optional academic section instruction
     if academic_direction:
+        _school_nm = result['school']
         acad_section_instr = (
             f"## If You're Serious About {academic_direction}\n"
-            f"Name the specific program or department at {result['school']}. "
-            "Explain why it's strong there. Be specific — research access, outcomes, reputation. "
-            "Do not write this section generically.\n"
+            f"This is the highest-priority section when a major is known. 4-5 sentences. Be specific.\n"
+            f"Cover: the exact department or program name at {_school_nm}; whether it sits in "
+            f"engineering, arts and sciences, a dedicated college, or another structure; "
+            f"how established or respected the program is; undergraduate research or lab access; "
+            f"practical vs theoretical tilt; faculty accessibility; what makes it distinctive at "
+            f"{_school_nm} specifically. Include employer or grad school outcomes where relevant. "
+            "Do not write generic 'strong academics' language. Sound informed and specific.\n\n"
+            f"## More: {academic_direction}\n"
+            f"Expanded academic section (shown behind a 'More' button — do not repeat the above). "
+            "6-8 sentences going substantially deeper:\n"
+            f"- Class size and faculty access in upper-division {academic_direction} courses\n"
+            f"- Internship pathways tied to {_school_nm}'s location or industry connections\n"
+            "- Specific labs, research centers, institutes, or partnerships if known\n"
+            "- Graduate school placement trends for this program, if relevant\n"
+            f"- How employers view {_school_nm} graduates in {academic_direction}\n"
+            "- Any honest tradeoffs, gaps, or things worth investigating before committing\n"
+            "Sound informed. Do not promote. If uncertain on a specific detail, give honest framing "
+            "rather than inventing facts.\n"
         )
     else:
         acad_section_instr = (
-            "[SKIP the optional academic section — no academic direction provided. "
-            "Do not include any section about majors or academic programs.]\n"
+            "[SKIP the academic sections entirely. No major has been provided. "
+            "Do not include 'If You're Serious About' or 'More: [Field]' sections.]\n"
         )
+
+    # Student Experience "More" section — only when meaningful free response exists
+    _has_vibe_signals = bool(vibe_lines and vibe_lines.strip())
+    _more_student_exp = (
+        "\n## More: Student Experience\n"
+        "Expanded section (shown behind a 'More' button). 4-6 sentences:\n"
+        "- Collaboration vs intensity of the academic culture\n"
+        "- What students do outside class and team\n"
+        "- Social life anchors (campus, city, team, greek life, etc.)\n"
+        "- Relevant lifestyle notes from the free response, used lightly and naturally\n"
+        "No direct callbacks to specific preferences. No overpersonalization.\n"
+    ) if _has_vibe_signals else (
+        "[SKIP the More: Student Experience section — free response is thin or absent.]\n"
+    )
 
     if is_oou:
         user_prompt = (
@@ -4459,21 +4499,23 @@ def deep_dive():
             f"{hidden_ivy_note}{ivy_note}{stem_note}\n\n"
             "NOTE: This school is not in our swim recruiting database. The swimmer is comparing it "
             "against D3 options — be honest about what choosing this school means for swim.\n\n"
-            "Write exactly these sections in this order. 2-3 sentences per section.\n\n"
+            "Write exactly these sections in this order:\n\n"
             "## Bottom Line\n"
             "2-3 sentences. School value + academic/personal fit + overall verdict.\n"
-            "## What {school} Is Known For\n".replace('{school}', result['school'])
-            + f"{acad_section_instr}"
+            f"## What {result['school']} Is Known For\n"
+            "School identity. Make it feel important and real. Prestige when deserved. 3-4 sentences.\n"
+            f"{acad_section_instr}"
             "## Are You Admissible?\n"
             "Use the ADMISSION COMPARISON above. Compare swimmer numbers to school numbers. "
-            "Plain-English read: in range, above, slightly below, or real reach.\n"
+            "Plain-English read. One brief note on whether swim support might help if applicable.\n"
             "## What It Costs\n"
             "Use EXACTLY the MONEY DATA figures above. Do not change the numbers. "
             "Cover COA, merit or no merit, net cost, aid philosophy.\n"
             "## Campus Life\n"
-            "What do four years here actually feel like? Size, energy, setting, social scene.\n"
+            "What do four years here actually feel like? Size, energy, setting, social scene. 3-4 sentences.\n"
+            f"{_more_student_exp}"
             "## How It Compares to Your D3 Options\n"
-            "Be honest — what does choosing this school mean for continuing to swim competitively?"
+            "Be honest — what does choosing this school mean for continuing to swim competitively?\n"
         )
     else:
         user_prompt = (
@@ -4491,9 +4533,9 @@ def deep_dive():
             f"{money_block}\n"
             f"{hidden_ivy_note}{ivy_note}{stem_note}\n\n"
             "Write exactly these sections in this order. "
-            "Swim fit is explained ONCE in 'In the Pool' — do not repeat it in other sections. "
-            "Weave in personality preferences naturally where relevant. "
-            "Use 'Hidden Ivy' naturally if applicable. 2-3 sentences per section.\n\n"
+            "Swim fit is explained ONCE in 'In the Pool' — do not repeat it elsewhere. "
+            "Use the free response lightly and naturally — no overpersonalization. "
+            "Use 'Hidden Ivy' naturally if applicable.\n\n"
             "## Bottom Line\n"
             "2-3 sentences. Swim reality + school value + overall verdict. No hedging.\n"
             "## In the Pool\n"
@@ -4503,24 +4545,25 @@ def deep_dive():
             "Likely level of recruiting engagement. Will they respond quickly? Is this swimmer a priority? "
             "What moves the needle: time drops, roster gaps, academic strength, event needs.\n"
             f"## What {result['school']} Is Known For\n"
-            "School identity. Make it feel important and real. Prestige and seriousness when deserved.\n"
+            "School identity. Make it feel important and real. Prestige and seriousness when deserved. 3-4 sentences.\n"
             f"{acad_section_instr}"
             "## Are You Admissible?\n"
             "Use the ADMISSION COMPARISON above. Compare swimmer numbers to school numbers directly. "
             "Plain-English read: in range, above, slightly below, or real reach. "
-            "If highly selective, say so. If swim support helps, mention it briefly.\n"
+            "If highly selective, say so. One brief sentence on whether swim recruit support helps, if applicable.\n"
             "## What It Costs\n"
             "Use EXACTLY the MONEY DATA figures above. Do not change the numbers. "
             "Cover COA, merit or no merit, net cost, aid philosophy. Practical family language.\n"
             "## Campus Life\n"
             "What do four years here actually feel like? Size, energy, setting, social scene, "
-            "what kind of student thrives. No brochure copy."
+            "what kind of student thrives. No brochure copy. 3-4 sentences.\n"
+            f"{_more_student_exp}"
         )
 
     try:
         resp = client.messages.create(
             model='claude-sonnet-4-6',
-            max_tokens=1200,
+            max_tokens=2400,
             system=system_prompt,
             messages=[{'role': 'user', 'content': user_prompt}],
         )

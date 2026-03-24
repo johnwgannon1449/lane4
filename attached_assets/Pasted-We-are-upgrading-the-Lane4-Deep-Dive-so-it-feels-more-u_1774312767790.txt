@@ -1,0 +1,238 @@
+We are upgrading the Lane4 Deep Dive so it feels more useful, more specific, and less generic. This is not a rewrite for more words. It is a rewrite for better substance.
+
+Read carefully and follow exactly.
+
+OBJECTIVE
+
+The current deep dive is too general. It sounds polished, but it does not always answer the questions a student or parent actually has.
+
+We want the deep dive to stay readable, but become much more valuable in two areas:
+
+1. Academic Program depth
+2. Student Experience relevance
+
+This should be driven by:
+- intended major(s)
+- the user’s free response profile
+
+IMPORTANT STYLE RULES
+
+1. No em dashes anywhere
+- Do not generate em dashes in any deep dive or expanded section
+- Use commas, periods, or parentheses instead
+
+2. Do not sound like AI
+Avoid:
+- generic brochure language
+- vague “holistic” phrases
+- repetitive sentence structure
+- overexplaining obvious things
+- padded transitions
+- stiff consultant tone
+
+3. Do not overpersonalize
+Do NOT write things like:
+- “for a student like you”
+- “a kid like you who enjoys fishing”
+- “because you said you value collaboration”
+
+Instead, use the free response lightly and naturally.
+
+Good:
+- “There is good access to fishing nearby.”
+- “This environment tends to be more collaborative than cutthroat.”
+- “Hands-on learning is a real strength here.”
+
+Bad:
+- “Since you like fishing, you will love the nearby fishing.”
+- “Because you want collaboration, this is a perfect fit.”
+
+4. Be specific when discussing the major
+This is the main place to go deep.
+This section should feel informed and concrete, not generic.
+
+CORE PRODUCT CHANGE
+
+We want the Deep Dive to use two forms of personalization:
+
+A. Intended major(s)
+B. Free response profile
+
+The major should drive the deepest and most specific content.
+The free response should lightly shape what gets emphasized in Student Experience and overall fit language.
+
+PART 1 — MAJOR HANDLING
+
+We need a better way to lock in 1 to 2 possible majors.
+
+Implement:
+- Primary intended major
+- Secondary intended major (optional)
+
+This should be a structured input, not just buried in free response.
+
+These major selections should drive:
+- Academic Program section
+- Outcomes / career section
+- any expanded “More” content tied to academics
+
+If no major is selected:
+- fall back to a lighter academic overview
+- do not pretend to know the student’s academic priorities
+
+PART 2 — FREE RESPONSE USAGE
+
+Use the free response carefully and lightly.
+
+Goal:
+Extract a small number of meaningful preferences or priorities that can shape emphasis, not facts.
+
+Examples of useful signals:
+- collaborative vs highly competitive environment
+- hands-on learning
+- smaller classes
+- urban vs suburban vs college town feel
+- outdoors access
+- social energy
+- pace / intensity
+
+Do NOT:
+- overfit tiny details
+- force every preference into every school
+- make the writing sound like it is talking directly back to the user’s hobbies
+
+If a free response mentions a hobby or lifestyle preference, handle it lightly.
+Example:
+- mention nearby hiking, fishing, skiing, city access, etc.
+- do not build the whole section around it
+
+PART 3 — DEEP DIVE CONTENT CHANGES
+
+A. Academic Program section
+This is the highest-priority upgrade.
+
+When a major is selected, this section should become much more detailed and useful.
+
+It should include, where relevant and available:
+- exact department or program name
+- whether the major is housed in engineering, arts and sciences, or another structure
+- how established or respected the program is
+- undergraduate research access
+- lab opportunities
+- internship pathways
+- class size experience within the program
+- faculty access
+- practical vs theoretical tilt
+- employer or graduate school outcomes
+- how this program is generally viewed by employers or grad schools
+- anything school-specific that makes the program distinctive
+
+This should feel like real meat, not generic “strong academics” language.
+
+For high-interest majors like BME, go especially deep.
+A student clicking “More” on the major section should get a serious, substantive readout.
+
+B. Student Experience section
+This should use the free response lightly.
+
+The goal is not to say “you would love this.”
+The goal is to highlight relevant aspects of the environment in a grounded way.
+
+Good examples:
+- collaboration vs intensity
+- student culture
+- whether the school feels more balanced or more all-in academically
+- whether social life revolves around campus, city, team, etc.
+- nearby outdoor access or city access if relevant
+
+Avoid fluff:
+- beautiful campus
+- vibrant student life
+- strong sense of community
+unless there is actual substance behind it
+
+C. Admissions reality
+Do NOT create a giant expanded section here.
+Do NOT invent detailed strategy.
+
+But in the standard deep dive, include a sharper statement about whether swimming meaningfully moves the needle.
+
+Examples of the kind of thing we want:
+- “Swim helps here, but you still need to be strong academically.”
+- “Coach support can matter here.”
+- “Swim alone is not enough here.”
+
+Keep this concise and grounded.
+Do not drift into made-up ED advice or fake certainty.
+
+D. Swim section
+Do NOT add a new deep “More” section for swim.
+We do not have enough grounded information to safely expand that section without speculating.
+
+PART 4 — EXPANDABLE “MORE” SECTIONS
+
+Add “More” support only where we can provide real value safely.
+
+Priority:
+1. Academic Program / Major
+2. Outcomes / career direction
+3. Student Experience
+
+Do NOT add “More” for swim.
+Do NOT create fluffy “More” sections that just repeat the same content in longer form.
+
+PART 5 — WRITING QUALITY RULES
+
+The writing must:
+- sound natural
+- sound specific
+- sound informed
+- not sound AI-generated
+- not overpersonalize
+- not overclaim
+- not read like marketing copy
+
+Avoid:
+- “This school offers a wide range of opportunities”
+- “Students can take advantage of”
+- “vibrant”
+- “dynamic”
+- “renowned”
+- “world-class” unless clearly warranted
+- repetitive “this is a place where...”
+
+Prefer:
+- direct statements
+- concrete examples
+- honest tradeoffs
+- plain English
+
+PART 6 — IMPLEMENTATION GOALS
+
+Update the deep dive generation so that:
+- major drives the most detailed academic content
+- free response lightly influences emphasis
+- the output remains readable and not bloated
+- expanded sections contain real substance
+- no em dashes appear anywhere
+
+DELIVERABLES
+
+After making the changes, report back with:
+
+1. Files changed
+2. How major inputs are now handled
+3. How free response is being parsed or used
+4. Which sections now support “More”
+5. One example deep dive before/after
+6. One example expanded Academic Program section for BME
+7. Confirmation that no em dashes are used anywhere in the generated deep dives
+
+IMPORTANT
+
+Do not make this feel like AI trying to impress someone.
+Do not overpersonalize.
+Do not add fluff.
+Do go deep where the major calls for it.
+
+Proceed.

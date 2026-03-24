@@ -298,6 +298,10 @@
     }
     .deep-section-title { font-family: 'Fraunces', serif; font-weight: 700; font-size: 0.95rem; color: var(--navy); margin-bottom: 0.4rem; }
     .deep-section-body { font-size: 0.9rem; line-height: 1.65; color: var(--slate); white-space: pre-wrap; }
+    .dd-more-wrap { margin-top: 0.5rem; }
+    .dd-more-btn { background: none; border: 1px solid var(--border); border-radius: 6px; padding: 4px 12px; font-size: 0.8rem; color: var(--blue); cursor: pointer; font-weight: 600; }
+    .dd-more-btn:hover { background: var(--blue-l); }
+    .dd-more-content { font-size: 0.88rem; line-height: 1.65; color: var(--slate); white-space: pre-wrap; margin-top: 0.6rem; padding: 0.75rem 1rem; background: #F8FAFF; border-left: 3px solid var(--blue); border-radius: 0 6px 6px 0; }
     /* ── ADMISSIONS COMPARISON TABLE ─────────────────────────── */
     .adm-card { background: #fff; border-radius: 14px; box-shadow: 0 1px 8px rgba(15,23,42,0.07); padding: 1rem 1.2rem; margin-bottom: 0.85rem; }
     .adm-header { display: grid; grid-template-columns: 1.6fr 1fr 1.6fr; padding-bottom: 0.45rem; border-bottom: 1.5px solid #F1F5F9; margin-bottom: 0.1rem; }
@@ -1145,6 +1149,8 @@ async function submitOnboarding() {
     actScore: act     || 0,
     apCount:  apCount || 0,
     satProjected: 0,
+    primaryMajor:   '',
+    secondaryMajor: '',
     times,
     vibe: {},
   };
@@ -1983,7 +1989,14 @@ async function openDeepDive(school) {
     const res  = await fetch('/api/deep-dive', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ school, vibeAnswers: VIBE_STATE, otherPrefs: OTHER_PREFS, profile: buildCurrentProfile() }),
+      body: JSON.stringify({
+        school,
+        vibeAnswers:    VIBE_STATE,
+        otherPrefs:     OTHER_PREFS,
+        primaryMajor:   JAMES.primaryMajor   || '',
+        secondaryMajor: JAMES.secondaryMajor || '',
+        profile:        buildCurrentProfile(),
+      }),
     });
     const data = await res.json();
 
@@ -1997,13 +2010,34 @@ async function openDeepDive(school) {
     const adm      = result.admission || data.admission || {};
     const inList   = MY_LIST.includes(school);
     const sections = data.sections || [];
-    const bottomLine = sections.find(s => s.title.toLowerCase().includes('bottom line'));
-    const mainSections = sections.filter(s => !s.title.toLowerCase().includes('bottom line'));
 
-    const _ddHero     = _schoolPhoto(school, 'hero');
-    const _ddLife     = _schoolPhoto(school, 'student_life');
-    const _ddSwim     = _schoolPhoto(school, 'swim');
-    const _ddAnyPhoto = _ddHero || _ddLife || _ddSwim;
+    // Separate "Bottom Line" and "More:" sections from main sections
+    const bottomLine   = sections.find(s => s.title.toLowerCase().includes('bottom line'));
+    const moreSections = sections.filter(s => s.title.toLowerCase().startsWith('more:'));
+    const moreByTitle  = Object.fromEntries(moreSections.map(s => [s.title.toLowerCase(), s]));
+    const mainSections = sections.filter(
+      s => !s.title.toLowerCase().includes('bottom line') &&
+           !s.title.toLowerCase().startsWith('more:')
+    );
+
+    const _ddHero = _schoolPhoto(school, 'hero');
+    const _ddLife = _schoolPhoto(school, 'student_life');
+    const _ddSwim = _schoolPhoto(school, 'swim');
+
+    // Find a matching "More:" section for a main section title
+    function _findMore(mainTitle) {
+      const t = mainTitle.toLowerCase();
+      // Try direct prefix match: "If You're Serious About X" → "More: X"
+      const m = t.match(/^if you're serious about (.+)$/);
+      if (m) {
+        const key = 'more: ' + m[1];
+        return moreByTitle[key] || null;
+      }
+      if (t === 'campus life') {
+        return moreByTitle['more: student experience'] || null;
+      }
+      return null;
+    }
 
     content.innerHTML = `
       <div class="deep-dive-header">
@@ -2041,11 +2075,18 @@ async function openDeepDive(school) {
         const admTable = isAdm
           ? buildAdmTableHTML(meta, JAMES.gpa, JAMES.sat || 0, JAMES.actScore || 0)
           : '';
+        const moreSection = _findMore(s.title);
+        const moreId = 'ddmore-' + Math.random().toString(36).slice(2, 8);
         return `
         <div class="deep-section">
           <div class="deep-section-title">${esc(s.title)}</div>
           ${admTable}
           <div class="${isAdm ? 'adm-prose' : 'deep-section-body'}">${esc(s.body)}</div>
+          ${moreSection ? `
+          <div class="dd-more-wrap">
+            <button class="dd-more-btn" onclick="_ddToggleMore('${moreId}', this)">More ▾</button>
+            <div class="dd-more-content" id="${moreId}" style="display:none;">${esc(moreSection.body)}</div>
+          </div>` : ''}
         </div>`;
       }).join('')}
 
@@ -2075,6 +2116,14 @@ async function openDeepDive(school) {
 function closeDeepDive() {
   document.getElementById('explore-search').style.display    = 'block';
   document.getElementById('explore-deepdive').style.display  = 'none';
+}
+
+function _ddToggleMore(id, btn) {
+  const el   = document.getElementById(id);
+  if (!el) return;
+  const open = el.style.display !== 'none';
+  el.style.display = open ? 'none' : 'block';
+  btn.textContent  = open ? 'More ▾' : 'Less ▴';
 }
 
 function ddAddToList(school) {
@@ -2209,7 +2258,14 @@ async function printListWithDeepDives() {
       const res  = await fetch('/api/deep-dive', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ school, vibeAnswers: VIBE_STATE, otherPrefs: OTHER_PREFS, profile: buildCurrentProfile() }),
+        body: JSON.stringify({
+          school,
+          vibeAnswers:    VIBE_STATE,
+          otherPrefs:     OTHER_PREFS,
+          primaryMajor:   JAMES.primaryMajor   || '',
+          secondaryMajor: JAMES.secondaryMajor || '',
+          profile:        buildCurrentProfile(),
+        }),
       });
       dives.push({ school, data: await res.json() });
     } catch (e) {
@@ -2884,16 +2940,18 @@ function actToSat(act) {
 
 function buildCurrentProfile() {
   return {
-    name:         JAMES.name,
-    gradYear:     JAMES.gradYear,
-    gpa:          JAMES.gpa,
-    sat:          JAMES.sat,
-    actScore:     JAMES.actScore,
-    apCount:      JAMES.apCount,
-    satProjected: JAMES.satProjected,
-    mathSat:      JAMES.mathSat,
-    times:        JAMES.times,
-    vibe:         JAMES.vibe,
+    name:           JAMES.name,
+    gradYear:       JAMES.gradYear,
+    gpa:            JAMES.gpa,
+    sat:            JAMES.sat,
+    actScore:       JAMES.actScore,
+    apCount:        JAMES.apCount,
+    satProjected:   JAMES.satProjected,
+    mathSat:        JAMES.mathSat,
+    primaryMajor:   JAMES.primaryMajor   || '',
+    secondaryMajor: JAMES.secondaryMajor || '',
+    times:          JAMES.times,
+    vibe:           JAMES.vibe,
   };
 }
 
@@ -2938,6 +2996,17 @@ function renderStats() {
     `<div class="stat-tile"><div class="stat-val">${esc(String(s.val))}</div><div class="stat-lbl">${esc(s.lbl)}</div></div>`
   ).join('');
 
+  // Show major below tiles if set (always remove old one first to avoid duplicates)
+  const _oldMajorDisplay = document.getElementById('major-display');
+  if (_oldMajorDisplay) _oldMajorDisplay.remove();
+  if (JAMES.primaryMajor) {
+    const majorParts = [JAMES.primaryMajor, JAMES.secondaryMajor].filter(Boolean).join(' / ');
+    el.insertAdjacentHTML('afterend',
+      `<div id="major-display" style="font-size:0.8rem;color:var(--blue-d);margin-top:0.35rem;">
+        Intended major: <strong>${esc(majorParts)}</strong>
+       </div>`);
+  }
+
   if (!panel) return;
   if (!EDIT_STATS) { panel.style.display = 'none'; return; }
   panel.style.display = 'block';
@@ -2974,6 +3043,14 @@ function renderStats() {
           ${apOptions}
         </select>
       </div>
+      <div class="stat-edit-field" style="grid-column:1/-1;">
+        <label>Intended major <span style="font-weight:400;font-size:0.78em;color:var(--muted);">shapes the academic section of your deep dives</span></label>
+        <input id="edit-primary-major" type="text" value="${esc(JAMES.primaryMajor || '')}" placeholder="e.g. Biomedical Engineering, Computer Science, Economics">
+      </div>
+      <div class="stat-edit-field" style="grid-column:1/-1;">
+        <label>Second major of interest <span style="font-weight:400;font-size:0.78em;color:var(--muted);">optional</span></label>
+        <input id="edit-secondary-major" type="text" value="${esc(JAMES.secondaryMajor || '')}" placeholder="e.g. Biology, Pre-Med, Psychology">
+      </div>
     </div>
     <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
       <button class="btn btn-primary" onclick="saveStats()">Save &amp; Rescore</button>
@@ -3003,6 +3080,9 @@ async function saveStats() {
   const apVal = parseInt(document.getElementById('edit-ap-count')?.value);
   if (apVal >= 1 && apVal <= 16) JAMES.apCount = apVal;
   else if (apVal === 0) JAMES.apCount = 0;
+
+  JAMES.primaryMajor   = (document.getElementById('edit-primary-major')?.value   || '').trim();
+  JAMES.secondaryMajor = (document.getElementById('edit-secondary-major')?.value || '').trim();
 
   EDIT_STATS = false;
   const btn = document.getElementById('stats-edit-btn');

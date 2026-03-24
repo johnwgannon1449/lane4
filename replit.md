@@ -202,6 +202,46 @@ Returns top 6 (up to 12 if user asks for more).
 
 ---
 
+## Deep Dive System (`/api/deep-dive`)
+
+Generates an 8-to-12-section narrative for a single school. Powered by Claude `claude-sonnet-4-6`, max 2400 tokens.
+
+### Personalization Inputs
+| Input | Source | How Used |
+|---|---|---|
+| `primaryMajor` | JAMES profile (structured text field) | Drives academic section depth and "More: [Field]" expanded section |
+| `secondaryMajor` | JAMES profile (optional) | Combined with primary if present |
+| `vibeAnswers` | VIBE_STATE (structured dropdown) | Shapes Campus Life tone; light influence on Student Experience |
+| `otherPrefs` | OTHER_PREFS (free-form textarea) | Signals extracted for Student Experience and Campus Life |
+
+### Section Order
+1. Bottom Line (2-3 sentences, always)
+2. In the Pool (swim-universe only)
+3. Coach Interest (swim-universe only)
+4. What [School] Is Known For
+5. If You're Serious About [Major] (only when major is known; 4-5 sentences, specific)
+6. **More: [Major]** (expandable; 6-8 sentences going deeper — class size, internships, labs, outcomes, tradeoffs)
+7. Are You Admissible? (with admission comparison table injected by frontend)
+8. What It Costs (uses exact MONEY DATA figures)
+9. Campus Life (3-4 sentences, vibe-informed)
+10. **More: Student Experience** (expandable; 4-6 sentences, only when vibe/free-response signals present)
+
+### "More" Expandable Sections
+- Pre-generated in same API call; hidden behind toggle button in frontend
+- Academic "More" section: always generated when a major is known; never for swim
+- Student Experience "More": only generated when meaningful free-response signals exist
+- `_ddToggleMore()` in frontend toggles visibility and button label
+
+### Key Prompt Rules
+- No em dashes anywhere
+- No brochure language, no generic positivity
+- No overpersonalization (never "for a student like you" or "because you said X")
+- Swim fit explained ONCE only (in "In the Pool")
+- "More:" sections do not repeat the parent section — go further
+- Prompt file: `prompts/lane4_deep_dive_prompt.txt`
+
+---
+
 ## Data Harvester — `harvester.py`
 
 Batch-parses NCAA conference championship PDFs into structured CSV anchor data.
