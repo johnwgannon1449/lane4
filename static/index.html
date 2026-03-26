@@ -422,9 +422,9 @@
     .major-chip { display: inline-flex; align-items: center; gap: 0.25rem; background: #EFF6FF; color: var(--blue-d); padding: 0.22rem 0.55rem 0.22rem 0.7rem; border-radius: 999px; font-size: 0.82rem; font-weight: 500; }
     .major-chip-remove { border: none; background: none; cursor: pointer; color: var(--blue-d); font-size: 0.78rem; padding: 0; line-height: 1; opacity: 0.6; }
     .major-chip-remove:hover { opacity: 1; }
-    .major-option { padding: 0.45rem 0.8rem; cursor: pointer; font-size: 0.88rem; color: var(--text); border-bottom: 1px solid var(--bg); }
+    .major-option { padding: 0.45rem 0.8rem; cursor: pointer; font-size: 0.88rem; color: var(--navy); border-bottom: 1px solid var(--bg); }
     .major-option:last-child { border-bottom: none; }
-    .major-option:hover { background: var(--bg-alt); }
+    .major-option:hover { background: var(--blue-l); }
     .times-edit-wrap { padding: 0.85rem 1.1rem; border-top: 1.5px solid var(--border); }
     .event-add-row { display: flex; gap: 0.5rem; align-items: flex-end; flex-wrap: wrap; }
     .event-select-wrap { flex: 1; min-width: 140px; }
@@ -1503,6 +1503,13 @@ async function loadFromServer() {
     if (d.vibe_state && typeof d.vibe_state === 'object' && Object.keys(d.vibe_state).length > 0) VIBE_STATE = d.vibe_state;
     if (typeof d.other_prefs === 'string' && d.other_prefs.length > 0)                           OTHER_PREFS = d.other_prefs;
     if (d.preferences && typeof d.preferences === 'object' && Object.keys(d.preferences).length > 0) PREFERENCES = d.preferences;
+    // Backfill new fields in case server data pre-dates this version
+    if (!Array.isArray(JAMES.potentialMajors)) {
+      JAMES.potentialMajors = [JAMES.primaryMajor, JAMES.secondaryMajor].filter(Boolean);
+    }
+    if (!JAMES.academicGoal) {
+      JAMES.academicGoal = (VIBE_STATE && VIBE_STATE.academic) || '';
+    }
     return true;
   } catch(e) { console.warn('Server load failed', e); return false; }
 }
@@ -3338,6 +3345,10 @@ async function saveStats() {
   const apVal = parseInt(document.getElementById('edit-ap-count')?.value);
   if (apVal >= 1 && apVal <= 16) JAMES.apCount = apVal;
   else if (apVal === 0) JAMES.apCount = 0;
+
+  // Ensure potentialMajors array exists and primaryMajor/secondaryMajor are synced from it
+  if (!Array.isArray(JAMES.potentialMajors)) JAMES.potentialMajors = [];
+  _syncMajors();
 
   EDIT_STATS = false;
   const btn = document.getElementById('stats-edit-btn');

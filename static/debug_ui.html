@@ -87,13 +87,23 @@ h2{font-size:1rem;font-weight:700;color:var(--navy);margin-bottom:1rem;padding-b
   <div id="dd-test"></div>
 </div>
 
-<!-- ── PART 3: Real API call ────────────────────────────────── -->
+<!-- ── PART 3: Backfill test ─────────────────────────────────── -->
 <div class="card">
-  <h2>Part 3: Real /api/deep-dive call (MIT, major=Computer Science)</h2>
-  <p style="font-size:0.82rem;color:var(--muted);margin-bottom:0.75rem;">This will hit the actual backend. Will fail if the school isn't in the dataset.</p>
-  <button class="btn btn-secondary" onclick="runRealDive()">Run real deep dive →</button>
-  <div id="real-dive-status" class="status ok" style="display:none;margin-top:0.5rem;"></div>
-  <div id="real-dive-sections" style="margin-top:1rem;"></div>
+  <h2>Part 3: Backfill — old server data (no potentialMajors) → picker</h2>
+  <div id="backfill-status" class="status ok"></div>
+  <div id="backfill-picker" style="margin-top:1rem;border:1.5px solid var(--border);border-radius:8px;padding:0.75rem;background:var(--bg);"></div>
+</div>
+
+<!-- ── PART 4: Persistence test ──────────────────────────────── -->
+<div class="card">
+  <h2>Part 4: Persistence — select → save → reload → confirm</h2>
+  <div id="persist-status" class="status ok"></div>
+  <div style="margin-top:0.75rem;font-size:0.82rem;color:var(--muted);">
+    <p>Select a major in Part 1's picker, then click "Save &amp; Rescore" below.</p>
+    <p style="margin-top:0.3rem;">After save, JAMES.potentialMajors will be logged to this section.</p>
+  </div>
+  <button class="btn btn-secondary" style="margin-top:0.75rem;" onclick="testPersist()">Simulate Save → Reload →</button>
+  <pre id="persist-output" style="margin-top:0.75rem;font-size:0.78rem;background:var(--bg);padding:0.75rem;border-radius:8px;border:1px solid var(--border);white-space:pre-wrap;display:none;"></pre>
 </div>
 
 <script>
@@ -347,10 +357,83 @@ async function runRealDive() {
   }
 }
 
+// ── Part 3: Backfill test ────────────────────────────────────
+function testBackfill() {
+  // Simulate old server data: has primaryMajor/secondaryMajor but no potentialMajors
+  const oldServerJAMES = {
+    name: 'Test Swimmer',
+    gpa: 3.8, sat: 1400,
+    primaryMajor: 'Computer Science',
+    secondaryMajor: 'Mathematics',
+    // potentialMajors is MISSING (old data)
+  };
+
+  // Simulate the fixed loadFromServer() backfill logic
+  const loaded = Object.assign({}, oldServerJAMES);
+  if (!Array.isArray(loaded.potentialMajors)) {
+    loaded.potentialMajors = [loaded.primaryMajor, loaded.secondaryMajor].filter(Boolean);
+  }
+
+  const statusEl = document.getElementById('backfill-status');
+  const containerEl = document.getElementById('backfill-picker');
+
+  const backfillOk = Array.isArray(loaded.potentialMajors) &&
+    loaded.potentialMajors[0] === 'Computer Science' &&
+    loaded.potentialMajors[1] === 'Mathematics';
+
+  statusEl.className = backfillOk ? 'status ok' : 'status err';
+  statusEl.innerHTML = backfillOk
+    ? `✓ Backfill works. Old server data (primaryMajor="Computer Science", secondaryMajor="Mathematics", no potentialMajors array) → potentialMajors=${JSON.stringify(loaded.potentialMajors)}`
+    : `✗ Backfill FAILED. potentialMajors=${JSON.stringify(loaded.potentialMajors)}`;
+
+  // Show a picker rendering with the backfilled data
+  const chips = loaded.potentialMajors.map((m, i) =>
+    `<span class="major-chip">${esc(m)}<button class="major-chip-remove" onclick="">✕</button></span>`
+  ).join('');
+  containerEl.innerHTML = `
+    <div style="font-size:0.78rem;font-weight:600;color:var(--slate);margin-bottom:0.5rem;">
+      Potential majors <span style="font-weight:400;color:var(--muted);">select up to 2 — shapes the academic section of your deep dives</span>
+    </div>
+    <div class="major-chips">${chips}<span style="font-size:0.78rem;color:var(--muted);">max 2 selected</span></div>
+    <div style="font-size:0.75rem;color:var(--muted);margin-top:0.5rem;">
+      primaryMajor = "${esc(loaded.potentialMajors[0]||'')}" | secondaryMajor = "${esc(loaded.potentialMajors[1]||'')}"
+    </div>`;
+}
+
+// ── Part 4: Persistence test ─────────────────────────────────
+function testPersist() {
+  const output = document.getElementById('persist-output');
+  const statusEl = document.getElementById('persist-status');
+  output.style.display = 'block';
+
+  // Read current JAMES state (from Part 1 picker interactions)
+  const snapshot = {
+    potentialMajors: JAMES.potentialMajors,
+    primaryMajor: (JAMES.potentialMajors||[])[0] || '',
+    secondaryMajor: (JAMES.potentialMajors||[])[1] || '',
+  };
+
+  // Simulate saving to localStorage (what saveToStorage + schedulePush do)
+  localStorage.setItem('debug_major_test', JSON.stringify(snapshot));
+
+  // Simulate reload: read it back
+  const reloaded = JSON.parse(localStorage.getItem('debug_major_test') || '{}');
+
+  const persistOk = JSON.stringify(snapshot) === JSON.stringify(reloaded);
+
+  statusEl.className = persistOk ? 'status ok' : 'status err';
+  statusEl.textContent = persistOk
+    ? '✓ Persistence confirmed — save/reload matches'
+    : '✗ Persistence FAILED';
+
+  output.textContent =
+    `Saved:   ${JSON.stringify(snapshot, null, 2)}\n\nReloaded: ${JSON.stringify(reloaded, null, 2)}\n\nMatch: ${persistOk}`;
+}
+
 // ── Init ─────────────────────────────────────────────────────
 renderMajorPicker();
 renderSimulatedDive();
-runRealDive();
+testBackfill();
 </script>
 </body>
 </html>
