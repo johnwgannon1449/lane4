@@ -1,0 +1,87 @@
+Deep dives are currently broken.
+
+Current user-facing error:
+“Something went wrong loading the deep dive. Please try again.”
+
+We need a real diagnosis and fix, not guesswork.
+
+OBJECTIVE
+Find the exact failure point in the Deep Dive pipeline and restore working deep dives.
+
+CHECK THE FULL PIPELINE END TO END
+
+1. Frontend trigger
+- Inspect the click/action that opens or requests the deep dive
+- Confirm what request is being sent
+- Confirm the payload shape
+- Confirm whether required fields are present
+
+2. Backend/API handler
+- Identify the endpoint/function generating the deep dive
+- Add logging if needed
+- Verify whether the request reaches the backend successfully
+- Verify whether it fails before model generation, during generation, or during response parsing
+
+3. Recent changes most likely responsible
+Pay special attention to anything recently changed involving:
+- major / secondary major inputs
+- free response parsing
+- “More” section generation
+- section-specific expansion logic
+- prompt/template formatting
+- JSON parsing / structured response parsing
+- required fields that may now be missing
+
+4. Null / missing-field handling
+Check whether the deep dive logic now assumes fields exist that do not always exist, for example:
+- primary major
+- secondary major
+- free response
+- expanded sections
+- scraped program content
+- school metadata
+
+If any of these are missing, the system should fail gracefully and still produce a base deep dive.
+
+5. Prompt / model response handling
+- Inspect the exact prompt being built
+- Check for malformed string interpolation
+- Check for unescaped braces, quotes, or template syntax problems
+- Check whether the parser expects one output format but the prompt now produces another
+- If structured parsing is used, verify schema compliance
+
+6. Frontend rendering
+- Confirm whether the backend is actually returning content but the frontend render path is failing
+- Check whether the UI now expects section-level “More” content that is absent or malformed
+- Confirm whether the error is thrown by:
+  - failed fetch
+  - non-200 response
+  - JSON parse failure
+  - undefined property access in the renderer
+
+7. Reproduce with logging
+Test at least one specific school and report:
+- request payload
+- backend function reached
+- exact exception/error
+- line number / file
+- whether the failure happens before or after model output
+
+FIX REQUIREMENTS
+
+- Restore basic deep dive functionality first
+- If expanded “More” sections are causing the failure, temporarily degrade gracefully rather than crashing the whole deep dive
+- Base deep dive must still load even if enriched sections fail
+- Do not leave silent failures
+- Add clear defensive handling for missing optional fields
+
+DELIVERABLES
+
+Report back with:
+1. root cause
+2. files changed
+3. exact fix made
+4. whether the failure was frontend, backend, prompt, parser, or render-related
+5. confirmation that base deep dives now load successfully
+6. whether “More” sections also load successfully
+7. any remaining edge cases or fallback behavior added

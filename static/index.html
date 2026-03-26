@@ -1982,6 +1982,9 @@ async function openDeepDive(school) {
   document.getElementById('explore-search').style.display    = 'none';
   document.getElementById('explore-deepdive').style.display  = 'block';
 
+  // Reset academic args cache for this new deep dive
+  window._ddAcadArgs = {};
+
   const content = document.getElementById('dd-content');
   content.innerHTML = `<div class="loading-state"><span class="spinner"></span> Writing deep dive for ${esc(school)}…</div>`;
 
@@ -2100,14 +2103,18 @@ async function openDeepDive(school) {
         let moreHtml = '';
         if (isAcad && (JAMES.primaryMajor || JAMES.secondaryMajor)) {
           // Academic section: lazy-loaded via dedicated endpoint with specialist prompt
-          const _major   = JAMES.primaryMajor || JAMES.secondaryMajor || '';
-          const _loc     = meta.location  || '';
-          const _vibe    = meta.vibe      || '';
-          const _btnArgs = JSON.stringify([moreId, school, _major, _loc, _vibe]);
+          // Store args in a side-channel map keyed by moreId to avoid HTML attribute escaping issues
+          window._ddAcadArgs = window._ddAcadArgs || {};
+          window._ddAcadArgs[moreId] = {
+            school: school,
+            major:  JAMES.primaryMajor || JAMES.secondaryMajor || '',
+            loc:    meta.location || '',
+            vibe:   meta.vibe    || '',
+          };
           moreHtml = `
           <div class="dd-more-wrap">
             <button class="dd-more-btn" id="btn-${moreId}"
-              onclick="_ddLoadAcademic(...${_btnArgs})">More about this program ▾</button>
+              onclick="_ddLoadAcademic(${JSON.stringify(moreId)})">More about this program ▾</button>
             <div class="dd-more-content" id="${moreId}" style="display:none;"></div>
           </div>`;
         } else {
@@ -2152,6 +2159,7 @@ async function openDeepDive(school) {
     `;
 
   } catch (e) {
+    console.error('[deep-dive] render error:', e);
     content.innerHTML = `<div class="err-box">Something went wrong loading the deep dive. Please try again.</div>`;
   }
 }
@@ -2169,7 +2177,7 @@ function _ddToggleMore(id, btn, moreLabel, lessLabel) {
   btn.textContent  = open ? (moreLabel || 'More ▾') : (lessLabel || 'Less ▴');
 }
 
-async function _ddLoadAcademic(id, school, major, location, vibe) {
+async function _ddLoadAcademic(id) {
   const el  = document.getElementById(id);
   const btn = document.getElementById('btn-' + id);
   if (!el || !btn) return;
@@ -2181,6 +2189,11 @@ async function _ddLoadAcademic(id, school, major, location, vibe) {
     btn.textContent  = open ? 'More about this program ▾' : 'Less ▴';
     return;
   }
+
+  // Look up args from the side-channel map stored at render time
+  const args = (window._ddAcadArgs || {})[id];
+  if (!args) return;
+  const { school, major, loc: location, vibe } = args;
 
   // First click — fetch from the dedicated academic endpoint
   btn.disabled    = true;
