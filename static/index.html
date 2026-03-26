@@ -1111,6 +1111,8 @@ const LS_HIDDEN     = 'lane4_hidden';
 
 function saveToStorage() {
   try {
+    // Keep academicGoal in sync with vibe answer before persisting
+    JAMES.academicGoal = (VIBE_STATE && VIBE_STATE.academic) || JAMES.academicGoal || '';
     localStorage.setItem(LS_SWIMMER,    JSON.stringify(JAMES));
     localStorage.setItem(LS_MYLIST,     JSON.stringify(MY_LIST));
     localStorage.setItem(LS_CRM,        JSON.stringify(CRM_DATA));
@@ -1132,6 +1134,13 @@ function loadFromStorage() {
     if (crm) CRM_DATA = JSON.parse(crm);
     const vibe = localStorage.getItem(LS_VIBE);
     if (vibe) VIBE_STATE = JSON.parse(vibe);
+    // Backfill new fields for profiles saved before this version
+    if (JAMES && !Array.isArray(JAMES.potentialMajors)) {
+      JAMES.potentialMajors = [JAMES.primaryMajor, JAMES.secondaryMajor].filter(Boolean);
+    }
+    if (JAMES && !JAMES.academicGoal) {
+      JAMES.academicGoal = (VIBE_STATE && VIBE_STATE.academic) || '';
+    }
     const op = localStorage.getItem(LS_OTHERPREFS);
     if (op !== null) OTHER_PREFS = op;
     const prefs = localStorage.getItem(LS_PREFS);
@@ -1253,8 +1262,10 @@ async function submitOnboarding() {
     actScore: act     || 0,
     apCount:  apCount || 0,
     satProjected: 0,
-    primaryMajor:   '',
-    secondaryMajor: '',
+    potentialMajors: [],
+    primaryMajor:    '',
+    secondaryMajor:  '',
+    academicGoal:    '',
     times,
     vibe: {},
   };
@@ -2118,28 +2129,24 @@ async function openDeepDive(school) {
     const inList   = MY_LIST.includes(school);
     const sections = data.sections || [];
 
-    // Separate "Bottom Line" and "More:" sections from main sections
-    const bottomLine   = sections.find(s => s.title.toLowerCase().includes('bottom line'));
-    const moreSections = sections.filter(s => s.title.toLowerCase().startsWith('more:'));
-    const moreByTitle  = Object.fromEntries(moreSections.map(s => [s.title.toLowerCase(), s]));
+    // Use explicit stable section types returned by the backend.
+    // Bottom line separates out; sections whose type starts with 'more_' are pre-generated expansions.
+    const bottomLine   = sections.find(s => s.type === 'bottom_line');
+    const moreByType   = Object.fromEntries(
+      sections.filter(s => s.type && s.type.startsWith('more_')).map(s => [s.type, s])
+    );
     const mainSections = sections.filter(
-      s => !s.title.toLowerCase().includes('bottom line') &&
-           !s.title.toLowerCase().startsWith('more:')
+      s => s.type !== 'bottom_line' && !(s.type && s.type.startsWith('more_'))
     );
 
     const _ddHero = _schoolPhoto(school, 'hero');
     const _ddLife = _schoolPhoto(school, 'student_life');
     const _ddSwim = _schoolPhoto(school, 'swim');
 
-    // Stable section identity checks
-    function _secIsAcademic(title)         { return title.toLowerCase().startsWith("if you're serious about"); }
-    function _secIsStudentExp(title)       { return title.toLowerCase() === 'campus life'; }
-    function _secIsOutcomes(title)         { return title.toLowerCase() === 'outcomes'; }
-
-    // Pre-generated "More:" lookup for Campus Life and Outcomes
-    function _preGenSection(mainTitle) {
-      if (_secIsStudentExp(mainTitle)) return moreByTitle['more: student experience'] || null;
-      if (_secIsOutcomes(mainTitle))   return moreByTitle['more: career paths']       || null;
+    // Look up the pre-generated expansion section for student_experience or outcomes
+    function _preGenSection(sectionType) {
+      if (sectionType === 'student_experience') return moreByType['more_student_experience'] || null;
+      if (sectionType === 'outcomes')           return moreByType['more_career_paths']       || null;
       return null;
     }
 
@@ -2181,15 +2188,13 @@ async function openDeepDive(school) {
           : '';
         const moreId = 'ddmore-' + Math.random().toString(36).slice(2, 8);
 
-        // Determine section role using stable identity checks
-        const _isAcademicSec    = _secIsAcademic(s.title);
-        const _isStudentExpSec  = _secIsStudentExp(s.title);
-        const _isOutcomesSec    = _secIsOutcomes(s.title);
+        // Section identity comes from the backend-assigned type — no title parsing.
+        const _sType = s.type || 'content';
 
         let moreHtml = '';
-        if (_isAcademicSec) {
-          // Academic Program — button visible when this section exists.
-          // Major sourced from structured picker (JAMES.primaryMajor) — never inferred from title.
+        if (_sType === 'academic_program') {
+          // Academic Program — "More about this program" button present when this section exists.
+          // Major from structured picker only: JAMES.primaryMajor (synced from potentialMajors).
           const _major = JAMES.primaryMajor || JAMES.secondaryMajor || '';
           window._ddAcadArgs = window._ddAcadArgs || {};
           window._ddAcadArgs[moreId] = {
@@ -2204,15 +2209,14 @@ async function openDeepDive(school) {
               onclick="_ddLoadAcademic(${JSON.stringify(moreId)})">More about this program ▾</button>
             <div class="dd-more-content" id="${moreId}" style="display:none;"></div>
           </div>`;
-        } else if (_isStudentExpSec || _isOutcomesSec) {
-          // Student Experience / Outcomes — button visible when pre-generated section exists.
-          const preGen = _preGenSection(s.title);
+        } else if (_sType === 'student_experience' || _sType === 'outcomes') {
+          // Student Experience / Outcomes — visible when pre-generated expansion section exists.
+          const preGen = _preGenSection(_sType);
           if (preGen) {
-            const moreLabel = _isStudentExpSec ? 'More about student life ▾' : 'More about career paths ▾';
-            const lessLabel = 'Less ▴';
+            const moreLabel = _sType === 'student_experience' ? 'More about student life ▾' : 'More about career paths ▾';
             moreHtml = `
           <div class="dd-more-wrap">
-            <button class="dd-more-btn" onclick="_ddToggleMore('${moreId}', this, ${JSON.stringify(moreLabel)}, ${JSON.stringify(lessLabel)})">${esc(moreLabel)}</button>
+            <button class="dd-more-btn" onclick="_ddToggleMore('${moreId}', this, ${JSON.stringify(moreLabel)}, 'Less ▴')">${esc(moreLabel)}</button>
             <div class="dd-more-content" id="${moreId}" style="display:none;">${esc(preGen.body)}</div>
           </div>`;
           }
@@ -3128,18 +3132,20 @@ function actToSat(act) {
 
 function buildCurrentProfile() {
   return {
-    name:           JAMES.name,
-    gradYear:       JAMES.gradYear,
-    gpa:            JAMES.gpa,
-    sat:            JAMES.sat,
-    actScore:       JAMES.actScore,
-    apCount:        JAMES.apCount,
-    satProjected:   JAMES.satProjected,
-    mathSat:        JAMES.mathSat,
-    primaryMajor:   JAMES.primaryMajor   || '',
-    secondaryMajor: JAMES.secondaryMajor || '',
-    times:          JAMES.times,
-    vibe:           JAMES.vibe,
+    name:            JAMES.name,
+    gradYear:        JAMES.gradYear,
+    gpa:             JAMES.gpa,
+    sat:             JAMES.sat,
+    actScore:        JAMES.actScore,
+    apCount:         JAMES.apCount,
+    satProjected:    JAMES.satProjected,
+    mathSat:         JAMES.mathSat,
+    potentialMajors: Array.isArray(JAMES.potentialMajors) ? JAMES.potentialMajors : [],
+    primaryMajor:    JAMES.primaryMajor   || '',
+    secondaryMajor:  JAMES.secondaryMajor || '',
+    academicGoal:    (VIBE_STATE && VIBE_STATE.academic) || JAMES.academicGoal || '',
+    times:           JAMES.times,
+    vibe:            JAMES.vibe,
   };
 }
 
@@ -3165,8 +3171,13 @@ function toggleEditStats() {
 }
 
 // ── Major picker ────────────────────────────────────────────────
+function _syncMajors() {
+  JAMES.primaryMajor   = (JAMES.potentialMajors || [])[0] || '';
+  JAMES.secondaryMajor = (JAMES.potentialMajors || [])[1] || '';
+}
+
 function _majorsSelected() {
-  return [JAMES.primaryMajor, JAMES.secondaryMajor].filter(Boolean);
+  return Array.isArray(JAMES.potentialMajors) ? JAMES.potentialMajors : [];
 }
 
 function renderMajorPicker() {
@@ -3207,15 +3218,17 @@ function filterMajors(query) {
 }
 
 function selectMajor(name) {
-  if (JAMES.primaryMajor && JAMES.secondaryMajor) return;
-  if (!JAMES.primaryMajor) JAMES.primaryMajor = name;
-  else JAMES.secondaryMajor = name;
+  if (!Array.isArray(JAMES.potentialMajors)) JAMES.potentialMajors = [];
+  if (JAMES.potentialMajors.length >= 2) return;
+  JAMES.potentialMajors.push(name);
+  _syncMajors();
   renderMajorPicker();
 }
 
 function removeMajor(index) {
-  if (index === 0) { JAMES.primaryMajor = JAMES.secondaryMajor || ''; JAMES.secondaryMajor = ''; }
-  else             { JAMES.secondaryMajor = ''; }
+  if (!Array.isArray(JAMES.potentialMajors)) JAMES.potentialMajors = [];
+  JAMES.potentialMajors.splice(index, 1);
+  _syncMajors();
   renderMajorPicker();
 }
 

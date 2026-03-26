@@ -4906,6 +4906,17 @@ def deep_dive():
         raw = resp.content[0].text
 
         # Split on section headers — per OUTPUT_SCHEMA response parsing spec
+        def _classify_section(t):
+            t = t.lower().strip()
+            if 'bottom line' in t:                    return 'bottom_line'
+            if t.startswith("if you're serious about"): return 'academic_program'
+            if t == 'campus life':                    return 'student_experience'
+            if t == 'outcomes':                       return 'outcomes'
+            if t == 'more: academic':                 return 'more_academic'
+            if t == 'more: student experience':       return 'more_student_experience'
+            if t == 'more: career paths':             return 'more_career_paths'
+            return 'content'
+
         parts  = re.split(r'^## ', raw, flags=re.MULTILINE)
         sections = []
         for part in parts:
@@ -4916,7 +4927,8 @@ def deep_dive():
             title = lines[0].strip()
             body  = lines[1].strip() if len(lines) > 1 else ''
             if title and not title.startswith('#') and not title.startswith('---'):
-                sections.append({'title': title, 'body': body})
+                sections.append({'title': title, 'body': body,
+                                 'type': _classify_section(title)})
 
         if not sections:
             return jsonify({'error': 'AI returned empty deep dive', 'raw': raw}), 200

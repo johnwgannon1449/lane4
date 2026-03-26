@@ -1,0 +1,92 @@
+We are not making documentation changes or theoretical refactors.
+We need actual functional UI behavior changes in the running app.
+
+Current status:
+- There is NO visible profile change
+- There is NO visible deep dive structural change
+- MORE still does not work correctly
+- Only 2 MORE buttons appear
+
+That means the prior pass did not implement the real live code path.
+
+YOUR JOB NOW
+Do not describe intended changes.
+Do not simulate.
+Do not report helper functions unless they are part of the actual live path.
+Do not claim success based on grep, local helper logic, or theoretical rendering conditions.
+
+You must trace and modify the real end-to-end flow:
+1. where the profile UI is actually rendered in the live app
+2. where profile state is actually stored/saved/hydrated
+3. where deep dive content is actually generated or normalized
+4. where deep dive sections are actually rendered in the live UI
+5. where MORE buttons are actually mounted and clicked
+
+NON-NEGOTIABLE REQUIREMENT:
+At the end, report only changes that are visible and verified in the running app.
+
+REQUIRED FUNCTIONAL OUTCOME
+
+A. Profile
+The profile must visibly include a new Potential Majors control in the actual live profile UI.
+It must allow 0, 1, or 2 selections from a searchable curated list.
+Those values must persist through save/reload.
+
+B. Stored state
+Final live profile state must explicitly include:
+- academicGoal
+- potentialMajors
+- primaryMajor
+- secondaryMajor
+
+C. Deep dive section model
+Deep dive must use explicit stable section identities:
+- academic_program
+- student_experience
+- outcomes
+
+Do not determine academic section identity from generated title text.
+Do not use “If You're Serious About...” matching as a section classifier.
+
+D. Buttons
+When those sections exist, the live UI must show:
+- More about this program
+- More about student life
+- More about career paths
+
+E. Behavior
+- Academic Program button lazy-loads correctly
+- Student Experience toggles correct pre-generated content
+- Outcomes toggles correct pre-generated content
+- No catch-all More block exists
+- No swim expansion exists
+- No admissions expansion exists
+
+REQUIRED WORKFLOW
+1. First identify the exact live code path for profile render/save/hydrate and deep dive render.
+2. Then make only the changes required in those real paths.
+3. Then verify in the running app.
+
+DO NOT REPORT SUCCESS unless you verified all of the following in the live app:
+- profile visually shows Potential Majors
+- selecting majors updates saved state
+- reloading preserves majors
+- all 3 MORE buttons are visible when expected
+- each MORE button expands the correct content
+- no catch-all MORE block exists
+
+FINAL REPORT FORMAT
+Use exactly these headings:
+
+1. Why the previous attempt failed
+2. Files changed in the actual live path
+3. Exact live profile state shape
+4. Exact live deep dive section structure
+5. Verified visible profile changes
+6. Verified MORE button behavior
+7. Remaining issues, if any
+
+IMPORTANT
+If you did not verify something in the running app, say so explicitly.
+Do not use simulation output.
+Do not use grep as proof of user-visible behavior.
