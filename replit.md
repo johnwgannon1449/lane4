@@ -165,12 +165,21 @@ Non-school-name queries use a 5-step generative pipeline. School-name queries
 use a new liberal resolver described in **School-Name Resolution** below.
 
 ### School-Name Resolution (`_resolve_school_names`)
-Added June 2025. Replaces the old exact + first-substring-only match.
+Added June 2025, redesigned Phase 2. General school-entity search — no giant handcrafted alias table.
 
-**Functions added to main.py (around line 3582):**
-- `_qnorm(s)` — normalizes query: lowercase, strip punctuation, `&`→`and`, `st`→`saint`, `univ`→`university`
-- `_SCHOOL_SEARCH_ALIASES` — ~250-entry alias dict mapping normalized queries → canonical school name(s) in the universe; covers UC acronyms (UCSB/UCLA/UCSD/UCB), initials (WPI/CMU/JHU/CWRU/RPI/RIT/NJIT), nicknames (WashU/GWU/GT/NC State), saint/st abbreviations, and known ambiguous multi-candidate entries
-- `_resolve_school_names(query, all_results)` — 5-pass resolver: alias table → exact normalized → substring (both directions) → token Jaccard ≥ 0.55 (custom minimal stop list, deliberately includes "tech"/"state") → difflib fuzzy cutoff 0.55; returns schools with confidence score ≥ 0.55
+**Functions (main.py ~line 3597):**
+- `_qnorm(s)` — normalizes query: lowercase, strip punctuation, `&`→`and`
+- `_ACRONYM_ALIASES` — ~40-entry table of **genuine gaps only**: pure initials (CMU, JHU, UCSB, UCLA, WPI, RPI, RIT, CWRU, NJIT, NYU, GWU), nickname contractions (WashU/WUSTL), stored-abbreviation mismatches (VA Tech, NC State, Georgia Tech), and known ambiguous multi-candidate entries (rochester, augustana, wheaton)
+- `_US_STATES` — state abbreviation → full name dict (51 entries) for surface matching
+- `_school_entity_surface(record)` — builds normalized search text per school: canonical name + city + state abbreviation + full state name (all from `meta.location`); 323/323 coverage
+- `_resolve_school_names(query, all_results)` — **6-pass entity resolver**:
+  1. Acronym alias → score 1.0
+  2. Exact normalized name → score 1.0
+  3. Name substring (both directions, min 4 chars) → score 0.80–0.85
+  4. Prefix-token match (all query tokens must be prefixes of school-name tokens) → score 0.78; catches truncated canonicals: "Penn State"→"Pennsylvania State University", "Georgia Tech"→"Georgia Institute of Technolog", "Johns Hopkin"→Johns Hopkins
+  5. difflib fuzzy against names → cutoff 0.80 (tight to avoid false friends like Worcester/Rochester)
+  6. City/state surface fallback → score 0.65, **only fires when passes 1–5 return nothing**; enables city-based queries: "Nashville"→Vanderbilt, "Pittsburgh"→Pitt
+  - Confidence gate: MIN_CONF = 0.55
 
 **`search()` endpoint behavior:**
 - `len(resolved) == 1` → `direct_match` → original similarity-sort + Claude-picks-5 path

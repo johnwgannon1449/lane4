@@ -3594,407 +3594,122 @@ def _qnorm(s: str) -> str:
     return s
 
 
-# ── Alias table: normalized query form → canonical school name(s) in universe ─
-# Values may be str (single unambiguous match) or list[str] (multi-candidate).
-# Keys MUST be pre-normalized (run through _qnorm mentally before adding).
-# This table bridges acronyms, nicknames, abbreviations, and city names that
-# fuzzy matching alone cannot reliably resolve.
-_SCHOOL_SEARCH_ALIASES: dict = {
-    # ── UC System ──────────────────────────────────────────────────────────────
-    'ucsb':                          'UC Santa Barbara',
-    'uc santa barbara':              'UC Santa Barbara',
-    'santa barbara':                 'UC Santa Barbara',
-    'ucsd':                          'UC San Diego',
-    'uc san diego':                  'UC San Diego',
-    'ucla':                          'University of California, Los',
-    'uc los angeles':                'University of California, Los',
-    'uc la':                         'University of California, Los',
-    'ucb':                           'California, University of, Ber',
-    'uc berkeley':                   'California, University of, Ber',
-    'cal berkeley':                  'California, University of, Ber',
-    'berkeley':                      'California, University of, Ber',
-    'ucd':                           'UC Davis',
-    'uc davis':                      'UC Davis',
-    'davis':                         'UC Davis',
-    # ── Major acronyms ─────────────────────────────────────────────────────────
-    'wpi':                           'Worcester Polytechnic Institute',
-    'cmu':                           'Carnegie Mellon',
-    'jhu':                           'Johns Hopkins University',
-    'cwru':                          'Case Western',
-    'rpi':                           'Rensselaer Polytechnic Institute',
-    'rit':                           'Rochester Institute of Technology',
-    'njit':                          'New Jersey Institute of Techno',
-    'mit':                           'MIT',
-    'nyu':                           'NYU',
-    'gwu':                           'George Washington University',
-    'uva':                           'Virginia, University of',
-    'unc':                           'North Carolina, University of',
-    'ncsu':                          'North Carolina State Universit',
-    'uncw':                          'University of North Carolina W',
-    'odu':                           'Old Dominion University',
-    'gmu':                           'George Mason University',
-    'vmi':                           'Virginia Military Institute',
-    'vwc':                           'Virginia Wesleyan University',
-    'psu':                           'Pennsylvania State University',
-    'upenn':                         'University of Pennsylvania',
-    'bu':                            'Boston University',
-    'bc':                            'Boston College',
-    'neu':                           'Northeastern University',
-    'uconn':                         'Connecticut, University of',
-    'uri':                           'University of Rhode Island',
-    'unh':                           'New Hampshire, University of',
-    'uvm':                           'Vermont, University of',
-    'umbc':                          'University of Maryland Baltimo',
-    'umich':                         'Michigan, University of',
-    'osu':                           'Ohio State University',
-    'lsu':                           'Louisiana State University',
-    'fsu':                           'Florida State University',
-    'fau':                           'Florida Atlantic University',
-    'fgcu':                          'Florida Gulf Coast University',
-    'uf':                            'University of Florida',
-    'asu':                           'Arizona State University',
-    'nau':                           'Northern Arizona University',
-    'byu':                           'Brigham Young University',
-    'sdsu':                          'South Dakota State University',
-    'unlv':                          'University of Nevada Las Vegas',
-    'nmsu':                          'New Mexico State University',
-    'ru':                            'Rutgers University',
-    'usc':                           'University of Southern Califor',
-    'ku':                            'University of Kansas',
-    'iu':                            'Indiana University',
-    'iup':                           'Indiana University of PA',
-    'umn':                           'University of Minnesota',
-    'uiowa':                         'Iowa, University of',
-    'isu':                           'Iowa State University',
-    'unl':                           'University of Nebraska-Lincoln',
-    'uno':                           'University of Nebraska Omaha',
-    'ysu':                           'Youngstown State University',
-    'lssu':                          'Lake Superior State University',
-    'nmu':                           'Northern Michigan University',
-    'nku':                           'Northern Kentucky University',
-    'gvsu':                          'Grand Valley State University',
-    'svsu':                          'Saginaw Valley State Universit',
-    'wcu':                           'West Chester University',
-    'slu':                           'Saint Louis University',
-    'hws':                           'Hobart and William Smith',
-    'oxy':                           'Occidental College',
-    'clu':                           'Cal Lutheran University',
-    'apu':                           'Azusa Pacific University',
-    'lru':                           'Lenoir-Rhyne University',
-    'unco':                          'Northern Colorado, University',
-    'jcu':                           'John Carroll University',
-    'shu':                           'Sacred Heart University',
-    'fdu':                           'Fairleigh Dickinson University',
-    'sbu':                           'St Bonaventure University',
-    'uiw':                           'University of Incarnate Word',
-    'utrgv':                         'University of Texas Rio Grande',
-    'smu':                           'Southern Methodist University',
-    'du':                            'University of Denver',
-    'usd':                           'University of San Diego',
-    'esu':                           'East Stroudsburg University',
-    'lvc':                           'Lebanon Valley College',
-    'wl':                            'Washington and Lee University',
-    'rhit':                          'Rose-Hulman Institute of Technology',
-    'usafa':                         'Air Force',
-    # ── Nicknames / common aliases ─────────────────────────────────────────────
-    'washu':                         'Washington (Mo)',
-    'wash u':                        'Washington (Mo)',
-    'wustl':                         'Washington (Mo)',
-    'washington university':         'Washington (Mo)',
-    'washington university saint louis': 'Washington (Mo)',
-    'washington university saint louie': 'Washington (Mo)',
-    'washington university saint louey': 'Washington (Mo)',
-    'washington university st louis':    'Washington (Mo)',
-    'virginia tech':                 'VA Tech',
-    'va tech':                       'VA Tech',
-    'hokies':                        'VA Tech',
-    'georgia tech':                  'Georgia Institute of Technolog',
-    'gatech':                        'Georgia Institute of Technolog',
-    'gt':                            'Georgia Institute of Technolog',
-    'nc state':                      'North Carolina State Universit',
-    'penn state':                    'Pennsylvania State University',
-    'ohio state':                    'Ohio State University',
-    'notre dame':                    'Notre Dame, University of',
-    'nd':                            'Notre Dame, University of',
-    'pitt':                          'Pittsburgh, University of',
-    'pittsburgh':                    'Pittsburgh, University of',
-    'george mason':                  'George Mason University',
-    'george washington':             'George Washington University',
-    'old dominion':                  'Old Dominion University',
-    'johns hopkins':                 'Johns Hopkins University',
-    'case western':                  'Case Western',
-    'case western reserve':          'Case Western',
-    'worcester':                     'Worcester Polytechnic Institute',
-    'worcester polytechnic':         'Worcester Polytechnic Institute',
-    'worcester tech':                'Worcester Polytechnic Institute',
-    'rensselaer':                    'Rensselaer Polytechnic Institute',
-    'carnegie mellon':               'Carnegie Mellon',
-    'rose hulman':                   'Rose-Hulman Institute of Technology',
-    'rose-hulman':                   'Rose-Hulman Institute of Technology',
-    'william and mary':              'William and Mary',
-    'william mary':                  'William and Mary',
-    'wm':                            'William and Mary',
-    'w and m':                       'William and Mary',
-    'washington and lee':            'Washington and Lee University',
-    'wash and lee':                  'Washington and Lee University',
-    'hobart william smith':          'Hobart and William Smith',
-    'franklin marshall':             'Franklin & Marshall College',
-    'f and m':                       'Franklin & Marshall College',
-    'holy cross':                    'College of the Holy Cross',
-    'vandy':                         'Vanderbilt University',
-    'iowa':                          'Iowa, University of',
-    'iowa state':                    'Iowa State University',
-    'nebraska':                      'University of Nebraska-Lincoln',
-    'minnesota':                     'University of Minnesota',
-    'wisconsin':                     'Wisconsin, University of, Madi',
-    'illinois':                      'University of Illinois',
-    'indiana':                       'Indiana University',
-    'michigan':                      'Michigan, University of',
-    'florida':                       'University of Florida',
-    'florida state':                 'Florida State University',
-    'south carolina':                'South Carolina, University of',
-    'north carolina':                'North Carolina, University of',
-    'unc chapel hill':               'North Carolina, University of',
-    'georgia':                       'Georgia, University of',
-    'uga':                           'Georgia, University of',
-    'auburn':                        'Auburn University',
-    'alabama':                       'University of Alabama',
-    'purdue':                        'Purdue University',
-    'virginia':                      'Virginia, University of',
-    'hawaii':                        'University of Hawaii',
-    'nevada':                        'University of Nevada Las Vegas',
-    'wyoming':                       'University of Wyoming',
-    'utah':                          'University of Utah',
-    'utah tech':                     'Utah Tech University',
-    'dixie':                         'Utah Tech University',
-    'arizona state':                 'Arizona State University',
-    'northern arizona':              'Northern Arizona University',
-    'new mexico state':              'New Mexico State University',
-    'northern colorado':             'Northern Colorado, University',
-    'seattle u':                     'Seattle U',
-    'seattle university':            'Seattle U',
-    'u of idaho':                    'Idaho, University of',
-    'university of idaho':           'Idaho, University of',
-    'pepperdine':                    'Pepperdine University',
-    'san diego':                     'University of San Diego',
-    'la verne':                      'University of La Verne',
-    'redlands':                      'University of Redlands',
-    'pacific':                       'University of the Pacific',
-    'loyola':                        'Loyola University',
-    'rutgers':                       'Rutgers University',
-    'hawaii':                        'University of Hawaii',
-    'south florida':                 'University of Southern Indiana',  # closest match
-    'north florida':                 'University of North Florida',
-    'denver':                        'University of Denver',
-    # ── Saint / St abbreviations (canonical has "Saint") ──────────────────────
-    'saint olaf':                    'Saint Olaf College',
-    'st olaf':                       'Saint Olaf College',
-    'saint john':                    "Saint John's University",
-    'saint johns':                   "Saint John's University",
-    'st john':                       "Saint John's University",
-    'st johns':                      "Saint John's University",
-    'saint louis university':        'Saint Louis University',
-    'saint peter':                   "Saint Peter's University",
-    'st peter':                      "Saint Peter's University",
-    'saint catherine':               'Saint Catherine University',
-    'st catherine':                  'Saint Catherine University',
-    'saint benedict':                'College of Saint Benedict',
-    'st benedict':                   'College of Saint Benedict',
-    'saint cloud':                   'St Cloud State University (M)',
-    'st cloud':                      'St Cloud State University (M)',
-    'st cloud state':                'St Cloud State University (M)',
-    'saint bonaventure':             'St Bonaventure University',
-    'st bonaventure':                'St Bonaventure University',
-    'bonaventure':                   'St Bonaventure University',
-    'gustavus':                      'Gustavus Adolphus College',
-    'gustavus adolphus':             'Gustavus Adolphus College',
-    'saint thomas':                  'University of St. Thomas MN',
-    'st thomas':                     'University of St. Thomas MN',
-    'mount saint mary':              "Mount Saint Mary's University",
-    'mount saint marys':             "Mount Saint Mary's University",
-    'mount st mary':                 "Mount Saint Mary's University",
-    # ── Short single-word names (already in universe but need alias for clarity) ─
-    'cornell':                       'Cornell University',
-    'dartmouth':                     'Dartmouth College',
-    'columbia':                      'Columbia University',
-    'northwestern':                  'Northwestern University',
-    'vanderbilt':                    'Vanderbilt University',
-    'brandeis':                      'Brandeis',
-    'emory':                         'Emory',
-    'chicago':                       'Chicago',
-    'caltech':                       'Caltech',
-    'drexel':                        'Drexel University',
-    'fordham':                       'Fordham University',
-    'lehigh':                        'Lehigh University',
-    'bucknell':                      'Bucknell University',
-    'colby':                         'Colby College',
-    'amherst':                       'Amherst College',
-    'middlebury':                    'Middlebury College',
-    'bates':                         'Bates College',
-    'bowdoin':                       'Bowdoin College',
-    'williams':                      'Williams College',
-    'kenyon':                        'Kenyon College',
-    'oberlin':                       'Oberlin College',
-    'denison':                       'Denison University',
-    'depauw':                        'DePauw University',
-    'wabash':                        'Wabash College',
-    'davidson':                      'Davidson College',
-    'vassar':                        'Vassar College',
-    'skidmore':                      'Skidmore College',
-    'gettysburg':                    'Gettysburg College',
-    'dickinson':                     'Dickinson College',
-    'colgate':                       'Colgate University',
-    'lafayette':                     'Lafayette College',
-    'villanova':                     'Villanova University',
-    'duquesne':                      'Duquesne University',
-    'fairfield':                     'Fairfield University',
-    'iona':                          'Iona University',
-    'niagara':                       'Niagara University',
-    'siena':                         'Siena University',
-    'marist':                        'Marist University',
-    'manhattan':                     'Manhattan University',
-    'monmouth':                      'Monmouth University',
-    'rider':                         'Rider University',
-    'binghamton':                    'Binghamton University',
-    'ursinus':                       'Ursinus College',
-    'widener':                       'Widener University',
-    'la salle':                      'La Salle University',
-    'seton hall':                    'Seton Hall University',
-    'sacred heart':                  'Sacred Heart University',
-    'fairleigh dickinson':           'Fairleigh Dickinson University',
-    'bloomsburg':                    'Bloomsburg University',
-    'kutztown':                      'Kutztown University',
-    'millersville':                  'Millersville University',
-    'shippensburg':                  'Shippensburg University of PA',
-    'lock haven':                    'Lock Haven University',
-    'east stroudsburg':              'East Stroudsburg University',
-    'west chester':                  'West Chester University',
-    'edinboro':                      'PennWest Edinboro University',
-    'clarion':                       'PennWest University Clarion',
-    'juniata':                       'Juniata College',
-    'lycoming':                      'Lycoming College',
-    'misericordia':                  'Misericordia University',
-    'wilkes':                        'Wilkes University',
-    'moravian':                      'Moravian University',
-    'elizabethtown':                 'Elizabethtown College',
-    'messiah':                       'Messiah University',
-    'goucher':                       'Goucher College',
-    'hood':                          'Hood College Swimming',
-    'mcdaniel':                      'McDaniel College',
-    'hollins':                       'Hollins University',
-    'roanoke':                       'Roanoke College Swimming Maroo',
-    'bridgewater':                   'Bridgewater College',
-    'lenoir rhyne':                  'Lenoir-Rhyne University',
-    'mars hill':                     'Mars Hill University',
-    'wingate':                       'Wingate University',
-    'catawba':                       'Catawba College',
-    'campbell':                      'Campbell University',
-    'gardner webb':                  'Gardner-Webb University',
-    'queens charlotte':              'Queens University of Charlotte',
-    'carson newman':                 'Carson-Newman University',
-    'bellarmine':                    'Bellarmine University',
-    'xavier':                        'Xavier University',
-    'davenport':                     'Davenport University',
-    'grand valley':                  'Grand Valley State University',
-    'northern michigan':             'Northern Michigan University',
-    'northern kentucky':             'Northern Kentucky University',
-    'lake superior':                 'Lake Superior State University',
-    'saginaw valley':                'Saginaw Valley State Universit',
-    'wayne state':                   'Wayne State University',
-    'oakland':                       'Oakland University',
-    'youngstown':                    'Youngstown State University',
-    'cleveland state':               'Cleveland State University',
-    'john carroll':                  'John Carroll University',
-    'ohio wesleyan':                 'Ohio Wesleyan University',
-    'wittenberg':                    'Wittenberg University',
-    'wooster':                       'College of Wooster',
-    'clarkson':                      'Clarkson University',
-    'ithaca':                        'Ithaca College',
-    'canisius':                      'Canisius University',
-    'hobart':                        'Hobart and William Smith',
-    'arcadia':                       'Arcadia University',
-    'drew':                          'Drew University',
-    'providence':                    'Providence College',
-    'merrimack':                     'Merrimack College',
-    'clark':                         'Clark University',
-    'simpson':                       'Simpson University',
-    'soka':                          'Soka University',
-    'biola':                         'Biola University',
-    'azusa':                         'Azusa Pacific University',
-    'westmont':                      'Westmont College',
-    'cal lutheran':                  'Cal Lutheran University',
-    'fresno pacific':                'Fresno Pacific University',
-    'chapman':                       'Chapman University',
-    'whittier':                      'Whittier College',
-    'occidental':                    'Occidental College',
-    'claremont':                     'Claremont-Mudd-Scripps',
-    'mudd':                          'Claremont-Mudd-Scripps',
-    'pomona':                        'Pomona-Pitzer',
-    'pitzer':                        'Pomona-Pitzer',
-    'bryn mawr':                     'Bryn Mawr College Owls',
-    'wellesley':                     'Wellesley College',
-    'smith':                         'Smith College',
-    'mount holyoke':                 'Mount Holyoke College',
-    'air force':                     'Air Force',
-    'cal state bakersfield':         'Cal State Bakersfield',
-    'augsburg':                      'Augsburg University',
-    'hamline':                       'Hamline University',
-    'north central':                 'North Central College',
-    'illinois wesleyan':             'Illinois Wesleyan University',
-    'millikin':                      'Millikin University',
-    'carroll':                       'Carroll University',
-    'carthage':                      'Carthage College',
-    'augustana il':                  'Augustana College',
-    'augustana sd':                  'Augustana University',
-    'green bay':                     'Green Bay Phoenix',
-    'uwm':                           'University of Wisconsin-Milwau',
-    'uw milwaukee':                  'University of Wisconsin-Milwau',
-    'concordia moorhead':            'Concordia College',
-    'concordia irvine':              'Concordia University Irvine',
-    'macalester':                    'Macalester College',
-    'carleton':                      'Carleton College',
-    'hamline':                       'Hamline University',
-    'gannon':                        'Gannon University',
-    'incarnate word':                'University of Incarnate Word',
-    'texas rio grande':              'University of Texas Rio Grande',
-    'rpi':                           'Rensselaer Polytechnic Institute',
-    'washington and lee':            'Washington and Lee University',
-    'california baptist':            'California Baptist',
-    'cal baptist':                   'Cal Baptist University',
-    'pennwest':                      ['PennWest Edinboro University', 'PennWest University Clarion', 'PennWest University,California'],
-    'grand canyon':                  ['Grand Canyon', 'Grand Canyon University'],
-    'northern illinois':             'University of Illinois',  # closest match
-    'scranton':                      'University of Scranton',
-    'american':                      'American University',
-    'american university':           'American University',
-    # ── Ambiguous multi-candidate entries ──────────────────────────────────────
-    # When multiple schools plausibly match, return them all.
-    'rochester':                     ['Rochester', 'Rochester Institute of Technology'],
-    'augustana':                     ['Augustana College', 'Augustana University'],
-    'concordia':                     ['Concordia College', 'Concordia University Irvine'],
-    'idaho':                         ['Idaho', 'Idaho, University of', 'College of Idaho'],
-    'wheaton':                       ['Wheaton College', 'Wheaton College (MA)'],
-    'washington':                    ['Washington (Mo)', 'Washington College',
-                                      'George Washington University', 'Washington and Lee University'],
-    'seattle':                       ['Seattle', 'Seattle U'],
-    'randolph':                      ['Randolph College', 'Randolph-Macon College'],
-    'cal baptist university':        ['Cal Baptist University', 'California Baptist'],
+# ── School-entity search: acronym/nickname alias table ────────────────────────
+# Maps _qnorm(query) → canonical school name(s) stored in the universe.
+# ONLY genuine acronyms and nickname contractions that text-surface matching
+# fundamentally cannot resolve (pure initials, stored abbreviations, etc.).
+# City/substring/prefix-token/difflib passes handle everything else.
+_ACRONYM_ALIASES: dict = {
+    # UC system — acronyms not deducible from stored canonical names
+    'ucsb':              'UC Santa Barbara',
+    'ucsd':              'UC San Diego',
+    'ucla':              'University of California, Los',
+    'ucb':               'California, University of, Ber',
+    'uc berkeley':       'California, University of, Ber',
+    'ucd':               'UC Davis',
+    'uc davis':          'UC Davis',
+    # Common school initials (city alone can't bridge these)
+    'cmu':               'Carnegie Mellon',
+    'jhu':               'Johns Hopkins University',
+    'cwru':              'Case Western',
+    'wpi':               'Worcester Polytechnic Institute',
+    'rpi':               'Rensselaer Polytechnic Institute',
+    'rit':               'Rochester Institute of Technology',
+    'njit':              'New Jersey Institute of Techno',
+    'mit':               'MIT',
+    'nyu':               'NYU',
+    'gwu':               'George Washington University',
+    # Nickname contractions
+    'washu':             'Washington (Mo)',
+    'wustl':             'Washington (Mo)',
+    'wash u':            'Washington (Mo)',
+    # Stored-abbreviation mismatches (canonical in universe is a short form)
+    'virginia tech':     'VA Tech',
+    'vt':                'VA Tech',
+    'nc state':          'North Carolina State Universit',
+    'ncsu':              'North Carolina State Universit',
+    'georgia tech':      'Georgia Institute of Technolog',
+    'gatech':            'Georgia Institute of Technolog',
+    'gt':                'Georgia Institute of Technolog',
+    'odu':               'Old Dominion University',
+    'gmu':               'George Mason University',
+    'uva':               'Virginia, University of',
+    'slu':               'Saint Louis University',
+    'unc':               'North Carolina, University of',
+    'hws':               'Hobart and William Smith',
+    'byu':               'Brigham Young University',
+    'lssu':              'Lake Superior State University',
+    # Ambiguous multi-candidate entries (explicitly known)
+    'rochester':         ['Rochester', 'Rochester Institute of Technology'],
+    'augustana':         ['Augustana College', 'Augustana University'],
+    'wheaton':           ['Wheaton College', 'Wheaton College (MA)'],
+    'idaho':             ['Idaho', 'Idaho, University of', 'College of Idaho'],
+    'grand canyon':      ['Grand Canyon', 'Grand Canyon University'],
+}
+
+# ── US state abbreviation → full name (for city/state surface matching) ───────
+_US_STATES: dict[str, str] = {
+    'AL': 'Alabama',        'AK': 'Alaska',         'AZ': 'Arizona',
+    'AR': 'Arkansas',       'CA': 'California',      'CO': 'Colorado',
+    'CT': 'Connecticut',    'DE': 'Delaware',        'DC': 'District of Columbia',
+    'FL': 'Florida',        'GA': 'Georgia',         'HI': 'Hawaii',
+    'ID': 'Idaho',          'IL': 'Illinois',        'IN': 'Indiana',
+    'IA': 'Iowa',           'KS': 'Kansas',          'KY': 'Kentucky',
+    'LA': 'Louisiana',      'ME': 'Maine',           'MD': 'Maryland',
+    'MA': 'Massachusetts',  'MI': 'Michigan',        'MN': 'Minnesota',
+    'MS': 'Mississippi',    'MO': 'Missouri',        'MT': 'Montana',
+    'NE': 'Nebraska',       'NV': 'Nevada',          'NH': 'New Hampshire',
+    'NJ': 'New Jersey',     'NM': 'New Mexico',      'NY': 'New York',
+    'NC': 'North Carolina', 'ND': 'North Dakota',    'OH': 'Ohio',
+    'OK': 'Oklahoma',       'OR': 'Oregon',          'PA': 'Pennsylvania',
+    'RI': 'Rhode Island',   'SC': 'South Carolina',  'SD': 'South Dakota',
+    'TN': 'Tennessee',      'TX': 'Texas',           'UT': 'Utah',
+    'VT': 'Vermont',        'VA': 'Virginia',        'WA': 'Washington',
+    'WV': 'West Virginia',  'WI': 'Wisconsin',       'WY': 'Wyoming',
 }
 
 
+def _school_entity_surface(record: dict) -> str:
+    """Build a normalized search surface for a school record.
+
+    Combines canonical name + city + state abbreviation + full state name so
+    that city-based queries ("Nashville", "Pittsburgh", "Santa Barbara") can
+    match schools even when the city doesn't appear in the school's name.
+    Conference is intentionally excluded — too broad, causes false positives.
+    """
+    parts = [_qnorm(record['school'])]
+    meta  = record.get('meta') or {}
+    loc   = meta.get('location', '')      # e.g. "Santa Barbara, CA"
+    if loc:
+        clean = re.sub(r'[,.]', ' ', loc)
+        parts.append(_qnorm(clean))
+        bits = [b.strip() for b in loc.split(',')]
+        if len(bits) >= 2:
+            state_ab   = bits[-1].strip().upper()
+            full_state = _US_STATES.get(state_ab, '')
+            if full_state:
+                parts.append(_qnorm(full_state))
+    return ' '.join(parts)
+
+
 def _resolve_school_names(query: str, all_results: list) -> list:
-    """Liberal school-name resolver for user-typed queries.
+    """School-entity resolver: find plausible universe matches for a user query.
 
-    Returns a list of matching school records (0..N).
-    Biases toward recall: better to return 2–5 plausible matches than to
-    miss the intended school entirely.
+    Six-pass pipeline (highest confidence first):
+      1. Acronym alias    — pure initials / nickname contractions (CMU, WashU …)
+      2. Exact normalized — _qnorm(query) == _qnorm(school_name)
+      3. Name substring   — query contained in school name, or vice-versa
+      4. Prefix-token     — every query token is a prefix of some school-name
+                            token; catches truncated canonicals:
+                              "Penn State"   → "Pennsylvania State University"
+                              "Georgia Tech" → "Georgia Institute of Technolog"
+      5. difflib fuzzy    — typos / near-misspellings (cutoff 0.60)
+      6. Surface fallback — city / state match, ONLY when passes 1–5 return
+                            nothing (e.g. "Nashville" → Vanderbilt University)
 
-    Matching pipeline (highest confidence first):
-      1. Alias table       — acronyms, nicknames, multi-candidate entries
-      2. Exact normalized  — _qnorm applied to both sides
-      3. Substring         — query in school name or school name in query
-      4. Token Jaccard     — significant shared words ≥ 0.55
-      5. difflib fuzzy     — typos / close misspellings (cutoff 0.55)
+    Favors recall: returns all matches with confidence ≥ 0.55 so that
+    ambiguous queries like "Washington" surface multiple schools for the user
+    to pick from, rather than silently returning the first hit.
     """
     import difflib
 
@@ -4003,75 +3718,82 @@ def _resolve_school_names(query: str, all_results: list) -> list:
 
     by_name    = {r['school']: r for r in all_results}
     canon_list = list(by_name.keys())
-    scores: dict[str, float] = {}   # school_name → best confidence seen
+    scores: dict[str, float] = {}
 
     def _add(school: str, score: float) -> None:
         if school in by_name:
             scores[school] = max(scores.get(school, 0.0), score)
 
-    # ── Pass 1: Alias table ───────────────────────────────────────────────────
-    alias_hit = _SCHOOL_SEARCH_ALIASES.get(q_n)
+    # ── Pass 1: Acronym / nickname alias ──────────────────────────────────────
+    alias_hit = _ACRONYM_ALIASES.get(q_n)
     if alias_hit:
         targets = alias_hit if isinstance(alias_hit, list) else [alias_hit]
         for t in targets:
             _add(t, 1.0)
 
-    # ── Pass 2: Exact normalized name match ───────────────────────────────────
-    norm_to_canon = {_qnorm(name): name for name in canon_list}
-    exact_hit = norm_to_canon.get(q_n)
-    if exact_hit:
-        _add(exact_hit, 1.0)
+    # ── Pass 2: Exact normalized name ─────────────────────────────────────────
+    norm_to_canon = {_qnorm(n): n for n in canon_list}
+    exact = norm_to_canon.get(q_n)
+    if exact:
+        _add(exact, 1.0)
 
-    # ── Pass 3: Substring match (both directions, min length 4) ──────────────
+    # ── Pass 3: Name substring (both directions, min 4 chars) ─────────────────
     if len(q_n) >= 4:
-        for name, rec in by_name.items():
+        for name in canon_list:
             s_n = _qnorm(name)
             if q_n in s_n:
                 _add(name, 0.85)
             elif len(s_n) >= 4 and s_n in q_n:
                 _add(name, 0.80)
 
-    # ── Pass 4: Significant token overlap (Jaccard ≥ 0.55) ───────────────────
-    # Use a minimal stop list — deliberately excludes "tech", "state", etc. so
-    # that discriminating words like "Georgia Tech" aren't reduced to {"georgia"}.
-    _RESOLVE_STOP = frozenset({'of', 'the', 'and', 'at', 'for', 'in', 'a'})
-    q_toks = {t for t in q_n.split() if t not in _RESOLVE_STOP and len(t) > 2}
-    if q_toks:
+    # ── Pass 4: Prefix-token match ────────────────────────────────────────────
+    # Every query token must be a prefix of at least one school-name token.
+    # Handles truncated canonical names and common abbreviations:
+    #   "Penn State"   → tokens ["penn","state"] prefix-match ["pennsylvania","state",…]
+    #   "Georgia Tech" → tokens ["georgia","tech"] prefix-match ["georgia","…technolog"]
+    #   "Johns Hopkin" → ["johns","hopkin"] prefix-match ["johns","hopkins",…]
+    _PREFIX_STOP = frozenset({'of', 'the', 'and', 'at', 'for', 'in', 'a'})
+    q_toks = [t for t in q_n.split() if t not in _PREFIX_STOP and len(t) > 1]
+    if len(q_toks) >= 2:
         for name in canon_list:
-            s_toks = {t for t in _qnorm(name).split() if t not in _RESOLVE_STOP and len(t) > 2}
-            if not s_toks:
-                continue
-            inter = q_toks & s_toks
-            if not inter:
-                continue
-            jac = len(inter) / len(q_toks | s_toks)
-            if jac >= 0.55:
-                _add(name, 0.5 + jac * 0.4)
+            s_toks = [t for t in _qnorm(name).split()
+                      if t not in _PREFIX_STOP and len(t) > 1]
+            if s_toks and all(any(st.startswith(qt) for st in s_toks)
+                              for qt in q_toks):
+                _add(name, 0.78)
 
-    # ── Pass 5: difflib fuzzy (handles typos / close misspellings) ────────────
-    # Try against raw canonical names and against normalized forms.
-    for fuzzy_q, key_list in [
-        (q_raw, canon_list),
-        (q_n,   list(norm_to_canon.keys())),
+    # ── Pass 5: difflib fuzzy (typos / close misspellings, cutoff 0.80) ───────
+    norm_list = list(norm_to_canon.keys())
+    for fuzzy_q, src, lookup in [
+        (q_raw, canon_list, lambda h: h if h in by_name else None),
+        (q_n,   norm_list,  lambda h: norm_to_canon.get(h)),
     ]:
-        hits = difflib.get_close_matches(fuzzy_q, key_list, n=6, cutoff=0.55)
-        for hit in hits:
-            canon = hit if hit in by_name else norm_to_canon.get(hit, '')
+        for hit in difflib.get_close_matches(fuzzy_q, src, n=6, cutoff=0.80):
+            canon = lookup(hit)
             if canon:
-                ratio = difflib.SequenceMatcher(
-                    None, fuzzy_q.lower(), _qnorm(canon)
-                ).ratio()
+                ratio = difflib.SequenceMatcher(None, q_n, _qnorm(canon)).ratio()
                 _add(canon, ratio * 0.80)
+
+    # ── Pass 6: City / state surface fallback ─────────────────────────────────
+    # ONLY activated when passes 1–5 found nothing.
+    # Allows city-based queries: "Nashville" → Vanderbilt, "Pittsburgh" → Pitt.
+    # Does NOT fire when passes 1–5 already returned name-based matches, so
+    # "Washington" stays clean (4 name matches) without adding every DC school.
+    if not scores and len(q_n) >= 4:
+        for record in all_results:
+            if q_n in _school_entity_surface(record):
+                _add(record['school'], 0.65)
 
     if not scores:
         return []
 
-    # Minimum confidence gate: alias/exact=1.0, substring=0.80-0.85,
-    # strong Jaccard/difflib ≥ 0.55.  Drops weak coincidental difflib hits
-    # (e.g. "VA Tech" matching "Georgia Tech" at raw ratio 0.63 × 0.80 = 0.50).
+    # Confidence gate (0.55): drops weak difflib coincidences while keeping
+    # alias hits (1.0), substring hits (0.80–0.85), prefix-token (0.78),
+    # strong difflib (≥ 0.60 ratio × 0.80 = 0.48 … raise cutoff to 0.60 so
+    # stored score ≥ 0.60 × 0.80 = 0.48 … hmm).
+    # With cutoff=0.60, difflib stored score = ratio*0.80 ≥ 0.48 for a hit.
+    # Alias/exact/substring/prefix are all ≥ 0.78, well above 0.55.
     MIN_CONF = 0.55
-
-    # Sort by confidence descending; secondary sort by school name for stability
     return [by_name[name] for name, sc in
             sorted(scores.items(), key=lambda kv: (-kv[1], kv[0]))
             if sc >= MIN_CONF]

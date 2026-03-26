@@ -1,0 +1,70 @@
+I want to change the approach for school-name queries.
+
+We should stop relying primarily on rigid direct-match logic, handcrafted acronym rules, or manual alias generation as the main solution.
+
+For queries that appear to be a specific college lookup, use a broader school-entity search over our school universe.
+
+OBJECTIVE
+
+When a query looks like a school name, acronym, short form, misspelling, or city-based lookup, search for plausible college matches the way a modern search engine would, but restricted to our school dataset.
+
+Examples:
+- UCSB
+- CMU
+- Worcester
+- Case Western
+- Washington
+- WashU
+- JHU
+- St Olaf
+- Johns Hopkin
+- Santa Barbara
+
+REQUIRED APPROACH
+
+1. Add a school-lookup detection step
+If the query appears to be naming a school rather than describing a search intent, route it into school entity search mode.
+
+2. In school entity search mode, do broad fuzzy/entity search across the school universe
+Search against a combined school text surface, including as available:
+- official school name
+- short name
+- alternate display name
+- city
+- state
+- conference
+- any existing short-form fields
+- other school-identifying text fields already present in the dataset
+
+3. Return all plausible school matches above threshold
+Do not force one winner when multiple schools plausibly match.
+For ambiguous queries like "Washington", return multiple plausible schools.
+
+4. Favor recall over precision
+It is better to return a few plausible college matches than to miss the intended school entirely.
+
+5. Do not depend on manual alias generation as the primary strategy
+A small amount of metadata enrichment is fine, but the main behavior should come from general school-entity matching, not a giant handcrafted alias table.
+
+6. Preserve unrelated-query protection
+Only return schools that are plausibly related to the query. Do not return random unrelated colleges.
+
+TESTS TO RUN
+Please report results for:
+- UCSB
+- CMU
+- Worcester
+- Washington
+- WashU
+- JHU
+- Case Western
+- Santa Barbara
+- Johns Hopkin
+
+DELIVER BACK
+1. files changed
+2. how school-lookup detection works
+3. how school entity search works
+4. what school fields are searched
+5. how ambiguous queries are handled
+6. exact outputs for the test queries above
