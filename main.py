@@ -4692,36 +4692,58 @@ def deep_dive():
             f"practical vs theoretical tilt; faculty accessibility; what makes it distinctive at "
             f"{_school_nm} specifically. Include employer or grad school outcomes where relevant. "
             "Do not write generic 'strong academics' language. Sound informed and specific.\n\n"
-            f"## More: {academic_direction}\n"
-            f"Expanded academic section (shown behind a 'More' button — do not repeat the above). "
-            "6-8 sentences going substantially deeper:\n"
-            f"- Class size and faculty access in upper-division {academic_direction} courses\n"
-            f"- Internship pathways tied to {_school_nm}'s location or industry connections\n"
-            "- Specific labs, research centers, institutes, or partnerships if known\n"
-            "- Graduate school placement trends for this program, if relevant\n"
-            f"- How employers view {_school_nm} graduates in {academic_direction}\n"
-            "- Any honest tradeoffs, gaps, or things worth investigating before committing\n"
-            "Sound informed. Do not promote. If uncertain on a specific detail, give honest framing "
-            "rather than inventing facts.\n"
+            "## More: Academic\n"
+            "Use EXACTLY this heading: 'More: Academic'\n"
+            "Expanded academic deep dive (shown behind a 'More about this program' button). "
+            "Do not repeat what you wrote above. 6-8 sentences going substantially deeper:\n"
+            f"- Department structure: faculty count, undergraduate vs graduate focus at {_school_nm}\n"
+            f"- How the {academic_direction} program is organized: required sequence, flexibility, capstone or thesis options\n"
+            f"- Research access: specific labs, centers, or institutes undergraduates can join\n"
+            f"- Internship pathways tied to {_school_nm}'s location or alumni network\n"
+            "- Industry connections: which companies recruit here, any co-op or partnership programs\n"
+            f"- Career outcomes: where graduates land (name industries or specific employers if known)\n"
+            "- Graduate school pipelines: acceptance rates or target programs if relevant\n"
+            "- Selectivity of the major: open enrollment or competitive admission\n"
+            "- Any unique program structures (example: Pomona engineering 3-2 pathways)\n"
+            "- Honest tradeoffs or gaps to investigate before committing\n"
+            "Sound informed and honest. Name specifics where possible. Do not invent facts.\n"
         )
     else:
         acad_section_instr = (
             "[SKIP the academic sections entirely. No major has been provided. "
-            "Do not include 'If You're Serious About' or 'More: [Field]' sections.]\n"
+            "Do not include 'If You're Serious About' or 'More: Academic' sections.]\n"
         )
 
-    # Student Experience "More" section — only when meaningful free response exists
-    _has_vibe_signals = bool(vibe_lines and vibe_lines.strip())
+    # Student Experience "More" section — always included
     _more_student_exp = (
         "\n## More: Student Experience\n"
-        "Expanded section (shown behind a 'More' button). 4-6 sentences:\n"
-        "- Collaboration vs intensity of the academic culture\n"
-        "- What students do outside class and team\n"
+        "Use EXACTLY this heading: 'More: Student Experience'\n"
+        "Expanded student life section (shown behind a 'More about student life' button). 4-6 sentences:\n"
+        "- Academic pressure level and pacing at this specific school\n"
+        "- Collaboration vs competition in the academic culture\n"
+        "- What students actually do outside of class and team\n"
         "- Social life anchors (campus, city, team, greek life, etc.)\n"
-        "- Relevant lifestyle notes from the free response, used lightly and naturally\n"
-        "No direct callbacks to specific preferences. No overpersonalization.\n"
-    ) if _has_vibe_signals else (
-        "[SKIP the More: Student Experience section — free response is thin or absent.]\n"
+        "- What students commonly praise and what they commonly complain about\n"
+        "No direct callbacks to stated preferences. No overpersonalization.\n"
+    )
+
+    # Outcomes + Career Paths — always included
+    _outcomes_section = (
+        "\n## Outcomes\n"
+        "3-4 sentences. Where do graduates from this school typically land? "
+        "Cover: employment patterns, typical industries, graduate school rates if known, "
+        "geographic patterns. Be specific to this school. No generic statements.\n"
+        "\n## More: Career Paths\n"
+        "Use EXACTLY this heading: 'More: Career Paths'\n"
+        "Expanded career section (shown behind a 'More about career paths' button). 6-8 sentences:\n"
+        "- Typical employers by name if known (not just 'finance' but specific firms)\n"
+        "- Graduate school pipelines: where graduates apply, acceptance rates if known\n"
+        "- Industry concentrations this school is known for placing into\n"
+        "- Geographic career advantages: does location or alumni base help in specific cities\n"
+        "- Alumni network strength and how alumni engage with undergraduates\n"
+        "- On-campus recruiting, employer partnerships, or career center strengths\n"
+        "- Honest gaps: industries or regions where this school's network is thin\n"
+        "Sound informed. Name specifics where possible. Do not promote.\n"
     )
 
     if is_oou:
@@ -4755,6 +4777,7 @@ def deep_dive():
             f"{_more_student_exp}"
             "## How It Compares to Your D3 Options\n"
             "Be honest — what does choosing this school mean for continuing to swim competitively?\n"
+            f"{_outcomes_section}"
         )
     else:
         user_prompt = (
@@ -4797,12 +4820,13 @@ def deep_dive():
             "What do four years here actually feel like? Size, energy, setting, social scene, "
             "what kind of student thrives. No brochure copy. 3-4 sentences.\n"
             f"{_more_student_exp}"
+            f"{_outcomes_section}"
         )
 
     try:
         resp = client.messages.create(
             model='claude-sonnet-4-6',
-            max_tokens=2400,
+            max_tokens=3200,
             system=system_prompt,
             messages=[{'role': 'user', 'content': user_prompt}],
         )

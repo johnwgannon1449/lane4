@@ -2027,16 +2027,35 @@ async function openDeepDive(school) {
     // Find a matching "More:" section for a main section title
     function _findMore(mainTitle) {
       const t = mainTitle.toLowerCase();
-      // Try direct prefix match: "If You're Serious About X" → "More: X"
-      const m = t.match(/^if you're serious about (.+)$/);
-      if (m) {
-        const key = 'more: ' + m[1];
-        return moreByTitle[key] || null;
+      // Academic section: any "If You're Serious About X" → "More: Academic"
+      if (t.startsWith("if you're serious about")) {
+        return moreByTitle['more: academic'] || null;
       }
+      // Campus life → student experience
       if (t === 'campus life') {
         return moreByTitle['more: student experience'] || null;
       }
+      // Outcomes → career paths
+      if (t === 'outcomes') {
+        return moreByTitle['more: career paths'] || null;
+      }
       return null;
+    }
+
+    // Per-section button labels
+    function _moreBtnLabel(mainTitle) {
+      const t = mainTitle.toLowerCase();
+      if (t.startsWith("if you're serious about")) return 'More about this program ▾';
+      if (t === 'campus life')                        return 'More about student life ▾';
+      if (t === 'outcomes')                           return 'More about career paths ▾';
+      return 'More ▾';
+    }
+    function _lessBtnLabel(mainTitle) {
+      const t = mainTitle.toLowerCase();
+      if (t.startsWith("if you're serious about")) return 'Less ▴';
+      if (t === 'campus life')                        return 'Less ▴';
+      if (t === 'outcomes')                           return 'Less ▴';
+      return 'Less ▴';
     }
 
     content.innerHTML = `
@@ -2075,8 +2094,10 @@ async function openDeepDive(school) {
         const admTable = isAdm
           ? buildAdmTableHTML(meta, JAMES.gpa, JAMES.sat || 0, JAMES.actScore || 0)
           : '';
-        const moreSection = _findMore(s.title);
-        const moreId = 'ddmore-' + Math.random().toString(36).slice(2, 8);
+        const moreSection  = _findMore(s.title);
+        const moreId       = 'ddmore-' + Math.random().toString(36).slice(2, 8);
+        const moreLabel    = _moreBtnLabel(s.title);
+        const lessLabel    = _lessBtnLabel(s.title);
         return `
         <div class="deep-section">
           <div class="deep-section-title">${esc(s.title)}</div>
@@ -2084,7 +2105,7 @@ async function openDeepDive(school) {
           <div class="${isAdm ? 'adm-prose' : 'deep-section-body'}">${esc(s.body)}</div>
           ${moreSection ? `
           <div class="dd-more-wrap">
-            <button class="dd-more-btn" onclick="_ddToggleMore('${moreId}', this)">More ▾</button>
+            <button class="dd-more-btn" onclick="_ddToggleMore('${moreId}', this, ${JSON.stringify(moreLabel)}, ${JSON.stringify(lessLabel)})">${esc(moreLabel)}</button>
             <div class="dd-more-content" id="${moreId}" style="display:none;">${esc(moreSection.body)}</div>
           </div>` : ''}
         </div>`;
@@ -2118,12 +2139,12 @@ function closeDeepDive() {
   document.getElementById('explore-deepdive').style.display  = 'none';
 }
 
-function _ddToggleMore(id, btn) {
+function _ddToggleMore(id, btn, moreLabel, lessLabel) {
   const el   = document.getElementById(id);
   if (!el) return;
   const open = el.style.display !== 'none';
   el.style.display = open ? 'none' : 'block';
-  btn.textContent  = open ? 'More ▾' : 'Less ▴';
+  btn.textContent  = open ? (moreLabel || 'More ▾') : (lessLabel || 'Less ▴');
 }
 
 function ddAddToList(school) {
