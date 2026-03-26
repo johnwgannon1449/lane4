@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Lane4 — UI Debug</title>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --blue:#2563EB;--blue-l:#EFF6FF;--blue-m:#BFDBFE;--blue-d:#1D4ED8;
+  --navy:#0F172A;--slate:#475569;--muted:#64748B;
+  --border:#E2E8F0;--bg:#F8FAFC;--white:#ffffff;
+  --green:#059669;--green-l:#ECFDF5;
+  --amber:#D97706;--amber-l:#FFFBEB;
+  --red:#EF4444;--red-l:#FEF2F2;
+}
+body{font-family:'Figtree',sans-serif;background:var(--bg);color:var(--navy);font-size:15px;min-height:100vh;padding:1.5rem;}
+h1{font-size:1.2rem;font-weight:700;margin-bottom:1.5rem;color:var(--navy);}
+h2{font-size:1rem;font-weight:700;color:var(--navy);margin-bottom:1rem;padding-bottom:0.5rem;border-bottom:1.5px solid var(--border);}
+.card{background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:1rem 1.25rem;margin-bottom:1.5rem;}
+.section-label{font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:0.6rem;}
+.btn{padding:8px 16px;border-radius:8px;font-size:0.88rem;font-weight:600;border:none;cursor:pointer;font-family:inherit;}
+.btn-primary{background:var(--blue);color:white;}
+.btn-primary:hover{background:var(--blue-d);}
+.btn-secondary{background:var(--bg);color:var(--navy);border:1.5px solid var(--border);}
+.btn-secondary:hover{border-color:var(--blue);color:var(--blue);}
+.stat-edit-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:1rem;}
+.stat-edit-field{display:flex;flex-direction:column;gap:0.3rem;}
+.stat-edit-field label{font-size:0.78rem;font-weight:600;color:var(--slate);}
+.stat-edit-field input,.stat-edit-field select{padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:0.95rem;font-family:inherit;color:var(--navy);background:var(--white);}
+.major-chips{display:flex;flex-wrap:wrap;gap:0.4rem;margin-bottom:0.5rem;}
+.major-chip{background:var(--blue-l);color:var(--blue);border:1.5px solid var(--blue-m);border-radius:20px;padding:4px 10px;font-size:0.82rem;font-weight:600;display:flex;align-items:center;gap:0.3rem;}
+.major-chip-remove{background:none;border:none;color:var(--blue);cursor:pointer;font-size:0.9rem;padding:0;line-height:1;}
+.major-option{padding:8px 12px;cursor:pointer;font-size:0.9rem;color:var(--navy);}
+.major-option:hover{background:var(--blue-l);color:var(--blue);}
+.deep-section{background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:1rem 1.25rem;margin-bottom:0.75rem;}
+.deep-section-title{font-size:0.95rem;font-weight:700;color:var(--navy);margin-bottom:0.5rem;}
+.deep-section-body{font-size:0.88rem;color:var(--slate);line-height:1.6;}
+.dd-more-btn{background:none;border:1px solid var(--border);border-radius:6px;padding:4px 12px;font-size:0.8rem;color:var(--blue);cursor:pointer;font-weight:600;margin-top:0.6rem;}
+.dd-more-btn:hover{background:var(--blue-l);}
+.dd-more-content{font-size:0.88rem;color:var(--slate);line-height:1.6;margin-top:0.5rem;padding:0.75rem;background:var(--bg);border-radius:8px;border:1px solid var(--border);}
+.bottom-line{background:var(--blue-l);border:1.5px solid var(--blue-m);border-radius:12px;padding:0.85rem 1.1rem;margin-bottom:1rem;}
+.bottom-line-label{font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--blue);margin-bottom:0.3rem;}
+.status{font-size:0.82rem;padding:6px 10px;border-radius:6px;margin-bottom:0.5rem;}
+.status.ok{background:var(--green-l);color:var(--green);}
+.status.err{background:var(--red-l);color:var(--red);}
+.spinner{display:inline-block;width:16px;height:16px;border:2px solid var(--border);border-top-color:var(--blue);border-radius:50%;animation:spin 0.7s linear infinite;vertical-align:middle;margin-right:6px;}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<h1>Lane4 — UI Debug Page (no auth required)</h1>
+
+<!-- ── PART 1: Profile edit panel ───────────────────────────── -->
+<div class="card">
+  <h2>Part 1: Profile edit panel (Major Picker)</h2>
+  <div id="status-picker" class="status ok">Rendering picker…</div>
+
+  <div id="edit-panel">
+    <div class="stat-edit-grid">
+      <div class="stat-edit-field">
+        <label>GPA (unweighted)</label>
+        <input type="number" step="0.01" min="0" max="4.0" value="3.85" placeholder="3.85">
+      </div>
+      <div class="stat-edit-field">
+        <label>SAT composite (400–1600)</label>
+        <input type="number" step="10" min="400" max="1600" value="1380" placeholder="1450">
+      </div>
+      <div class="stat-edit-field" style="grid-column:1/-1;">
+        <label>Potential majors <span style="font-weight:400;font-size:0.78em;color:var(--muted);">select up to 2 — shapes the academic section of your deep dives</span></label>
+        <div id="major-picker"></div>
+      </div>
+    </div>
+    <div style="display:flex;gap:0.5rem;">
+      <button class="btn btn-primary">Save &amp; Rescore</button>
+      <button class="btn btn-secondary">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── PART 2: Deep dive sections ──────────────────────────── -->
+<div class="card">
+  <h2>Part 2: Deep Dive Section Rendering (simulated API response)</h2>
+  <div id="status-dd" class="status ok">Rendering sections…</div>
+  <div id="dd-test"></div>
+</div>
+
+<!-- ── PART 3: Real API call ────────────────────────────────── -->
+<div class="card">
+  <h2>Part 3: Real /api/deep-dive call (MIT, major=Computer Science)</h2>
+  <p style="font-size:0.82rem;color:var(--muted);margin-bottom:0.75rem;">This will hit the actual backend. Will fail if the school isn't in the dataset.</p>
+  <button class="btn btn-secondary" onclick="runRealDive()">Run real deep dive →</button>
+  <div id="real-dive-status" class="status ok" style="display:none;margin-top:0.5rem;"></div>
+  <div id="real-dive-sections" style="margin-top:1rem;"></div>
+</div>
+
+<script>
+// ── Shared state ─────────────────────────────────────────────
+const JAMES = {
+  potentialMajors: [],
+  primaryMajor:    '',
+  secondaryMajor:  '',
+  gpa: 3.85, sat: 1380,
+};
+
+const MAJORS_LIST = [
+  'Accounting','Actuarial Science','Aerospace Engineering','Agriculture','American Studies',
+  'Anthropology','Applied Mathematics','Architecture','Art History','Biochemistry',
+  'Biology','Biomedical Engineering','Business Administration','Chemical Engineering',
+  'Chemistry','Civil Engineering','Classics','Communications','Computer Engineering',
+  'Computer Science','Criminal Justice','Data Science','Economics','Education',
+  'Electrical Engineering','English','Environmental Engineering','Environmental Science',
+  'Film Studies','Finance','Fine Arts','French','Geography','Geology','German',
+  'Graphic Design','Health Science','History','Hospitality Management','Human Biology',
+  'Industrial Engineering','Information Systems','International Business',
+  'International Relations','Italian','Japanese','Journalism','Kinesiology','Law',
+  'Linguistics','Management','Marine Biology','Marketing','Materials Engineering',
+  'Mathematics','Mechanical Engineering','Media Studies','Music','Neuroscience',
+  'Nursing','Nutrition','Philosophy','Physics','Political Science','Pre-Dental',
+  'Pre-Law','Pre-Med','Psychology','Public Health','Public Policy','Real Estate',
+  'Religious Studies','Social Work','Sociology','Spanish','Sports Management',
+  'Statistics','Supply Chain Management','Sustainability','Theater','Urban Planning',
+  'Women\'s Studies','Zoology'
+];
+
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── Major picker ─────────────────────────────────────────────
+function _syncMajors() {
+  JAMES.primaryMajor   = (JAMES.potentialMajors || [])[0] || '';
+  JAMES.secondaryMajor = (JAMES.potentialMajors || [])[1] || '';
+}
+function _majorsSelected() {
+  return Array.isArray(JAMES.potentialMajors) ? JAMES.potentialMajors : [];
+}
+function renderMajorPicker() {
+  const container = document.getElementById('major-picker');
+  if (!container) return;
+  const selected = _majorsSelected();
+  const canAdd   = selected.length < 2;
+  container.innerHTML =
+    `<div class="major-chips">${
+      selected.map((m, i) =>
+        `<span class="major-chip">${esc(m)}<button type="button" class="major-chip-remove" onclick="removeMajor(${i})">✕</button></span>`
+      ).join('')
+    }${!canAdd ? '<span style="font-size:0.78rem;color:var(--muted);margin-left:0.2rem;">max 2 selected</span>' : ''}</div>${
+      canAdd
+        ? `<div style="position:relative;">
+             <input type="text" id="major-search" autocomplete="off" placeholder="Type to search majors…"
+               oninput="filterMajors(this.value)" onfocus="filterMajors(this.value)"
+               style="width:100%;box-sizing:border-box;padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:0.95rem;font-family:inherit;color:var(--navy);background:var(--white);">
+             <div id="major-dropdown" style="display:none;position:absolute;top:calc(100% + 2px);left:0;right:0;z-index:200;background:var(--white);border:1.5px solid var(--border);border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,0.10);max-height:200px;overflow-y:auto;"></div>
+           </div>`
+        : ''
+    }`;
+  document.getElementById('status-picker').textContent =
+    selected.length === 0
+      ? '✓ Picker rendered — no majors selected yet (search input visible)'
+      : `✓ Picker rendered — ${selected.length} major(s) selected: ${selected.join(', ')}`;
+}
+function filterMajors(query) {
+  const dd = document.getElementById('major-dropdown');
+  if (!dd) return;
+  const selected = _majorsSelected();
+  const q = query.toLowerCase().trim();
+  const matches = MAJORS_LIST.filter(m =>
+    !selected.includes(m) && (!q || m.toLowerCase().includes(q))
+  ).slice(0, 12);
+  if (!matches.length) { dd.style.display = 'none'; return; }
+  dd.innerHTML = matches.map(m =>
+    `<div class="major-option" onmousedown="selectMajor(${JSON.stringify(m)})">${esc(m)}</div>`
+  ).join('');
+  dd.style.display = 'block';
+}
+function selectMajor(name) {
+  if (!Array.isArray(JAMES.potentialMajors)) JAMES.potentialMajors = [];
+  if (JAMES.potentialMajors.length >= 2) return;
+  JAMES.potentialMajors.push(name);
+  _syncMajors();
+  renderMajorPicker();
+}
+function removeMajor(index) {
+  if (!Array.isArray(JAMES.potentialMajors)) JAMES.potentialMajors = [];
+  JAMES.potentialMajors.splice(index, 1);
+  _syncMajors();
+  renderMajorPicker();
+}
+document.addEventListener('click', function(e) {
+  const dd = document.getElementById('major-dropdown');
+  if (dd && e.target.id !== 'major-search' && !dd.contains(e.target)) dd.style.display = 'none';
+});
+
+// ── Part 2: Simulated deep dive section rendering ─────────────
+function _ddToggleMore(id, btn, moreLabel, lessLabel) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const showing = el.style.display !== 'none';
+  el.style.display = showing ? 'none' : 'block';
+  btn.textContent  = showing ? moreLabel : lessLabel;
+}
+
+function renderSimulatedDive() {
+  // Simulate what the backend returns — with explicit type field
+  const sections = [
+    { title: 'Bottom Line',                                    type: 'bottom_line',            body: 'MIT is the hardest admission in the dataset and the highest swim bar — a fit only for sub-1:48 200 free men with a 1580+ SAT. If that\'s you, this is the ceiling.' },
+    { title: 'In the Pool',                                    type: 'content',                body: 'MIT\'s NCAA D3 program is nationally competitive. The 200 free benchmark is 1:47.2. With your current 1:49.5, you\'d be at the top of the development tier.' },
+    { title: 'If You\'re Serious About Computer Science',      type: 'academic_program',       body: 'MIT\'s CS department ranks #1 globally. Course 6-3 (Computer Science and Engineering) leads to roles at Google, Jane Street, and top research labs. 87% of CS graduates receive job offers before graduation.' },
+    { title: 'Are You Admissible?',                            type: 'content',                body: 'MIT\'s mid-50% SAT is 1510–1580. Your 1380 is below median. Swim recruiting can help, but MIT\'s academic floor is real — a 1500+ makes admission conversations realistic.' },
+    { title: 'What MIT Is Known For',                          type: 'content',                body: 'Research culture, entrepreneurship (Route 128 corridor), and a relentless problem-solving ethos. Hack culture is real and celebrated.' },
+    { title: 'Campus Life',                                    type: 'student_experience',     body: 'Dorms have strong house cultures. Most students find community through living groups, labs, and sports. Boston is 10 minutes away by T.' },
+    { title: 'More: Student Experience',                       type: 'more_student_experience',body: 'MIT\'s Student Association runs 500+ clubs. East Campus and Random Hall are known for quirky hacker culture. The swim team trains together year-round and GPA requirements are the same for athletes as everyone else.' },
+    { title: 'Outcomes',                                       type: 'outcomes',               body: 'MIT graduates earn a median starting salary of $118,000. Top employers include Google, Microsoft, McKinsey, and SpaceX. Graduate school acceptance rates exceed 90% for those who apply.' },
+    { title: 'More: Career Paths',                             type: 'more_career_paths',      body: 'CS graduates commonly enter software engineering, quantitative finance, or ML research. The MIT brand opens cold-call conversations at any firm. Many alumni found startups within 5 years of graduation — MIT\'s entrepreneurship ecosystem is unmatched.' },
+  ];
+
+  const bottomLine   = sections.find(s => s.type === 'bottom_line');
+  const moreByType   = Object.fromEntries(
+    sections.filter(s => s.type && s.type.startsWith('more_')).map(s => [s.type, s])
+  );
+  const mainSections = sections.filter(
+    s => s.type !== 'bottom_line' && !(s.type && s.type.startsWith('more_'))
+  );
+
+  function _preGenSection(sectionType) {
+    if (sectionType === 'student_experience') return moreByType['more_student_experience'] || null;
+    if (sectionType === 'outcomes')           return moreByType['more_career_paths']       || null;
+    return null;
+  }
+
+  let html = '';
+
+  if (bottomLine) {
+    html += `<div class="bottom-line"><div class="bottom-line-label">Bottom Line</div><div>${esc(bottomLine.body)}</div></div>`;
+  }
+
+  let buttonCount = 0;
+  const buttonLog = [];
+
+  html += mainSections.map(s => {
+    const _sType = s.type || 'content';
+    const moreId = 'ddm-' + Math.random().toString(36).slice(2, 8);
+    let moreHtml = '';
+
+    if (_sType === 'academic_program') {
+      const _major = JAMES.primaryMajor || '';
+      buttonCount++;
+      buttonLog.push(`"More about this program ▾" on section [${s.title}]`);
+      moreHtml = `
+        <div>
+          <button class="dd-more-btn" id="btn-${moreId}" onclick="alert('Would lazy-load academic details for major: ${esc(_major) || '(none set)'}')">More about this program ▾</button>
+          <div class="dd-more-content" id="${moreId}" style="display:none;">Academic details for ${esc(_major)} at MIT would load here.</div>
+        </div>`;
+    } else if (_sType === 'student_experience' || _sType === 'outcomes') {
+      const preGen = _preGenSection(_sType);
+      if (preGen) {
+        const moreLabel = _sType === 'student_experience' ? 'More about student life ▾' : 'More about career paths ▾';
+        buttonCount++;
+        buttonLog.push(`"${moreLabel}" on section [${s.title}]`);
+        moreHtml = `
+          <div>
+            <button class="dd-more-btn" onclick="_ddToggleMore('${moreId}', this, ${JSON.stringify(moreLabel)}, 'Less ▴')">${esc(moreLabel)}</button>
+            <div class="dd-more-content" id="${moreId}" style="display:none;">${esc(preGen.body)}</div>
+          </div>`;
+      }
+    }
+
+    return `
+      <div class="deep-section">
+        <div class="deep-section-title">${esc(s.title)}</div>
+        <div class="deep-section-body">${esc(s.body)}</div>
+        ${moreHtml}
+      </div>`;
+  }).join('');
+
+  document.getElementById('dd-test').innerHTML = html;
+
+  const statusEl = document.getElementById('status-dd');
+  statusEl.className = buttonCount === 3 ? 'status ok' : 'status err';
+  statusEl.innerHTML = `${buttonCount === 3 ? '✓' : '✗'} ${buttonCount} MORE button(s) rendered.<br><small>${buttonLog.join('<br>')}</small>`;
+}
+
+// ── Part 3: Real API call ─────────────────────────────────────
+async function runRealDive() {
+  const statusEl = document.getElementById('real-dive-status');
+  const sectionsEl = document.getElementById('real-dive-sections');
+  statusEl.style.display = 'block';
+  statusEl.className = 'status ok';
+  statusEl.innerHTML = '<span class="spinner"></span> Calling /api/deep-dive…';
+  sectionsEl.innerHTML = '';
+
+  try {
+    const res = await fetch('/api/deep-dive', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        school: 'Stanford University',
+        vibeAnswers: { academic: 'Computer Science' },
+        otherPrefs: {},
+        primaryMajor: 'Computer Science',
+        secondaryMajor: '',
+        profile: { gpa: 3.85, sat: 1380, actScore: 0, mathSat: 0, apCount: 6,
+                   primaryMajor: 'Computer Science', secondaryMajor: '',
+                   potentialMajors: ['Computer Science'], academicGoal: 'Computer Science' },
+        _debug: true,
+      }),
+    });
+    const data = await res.json();
+
+    if (data.error) {
+      statusEl.className = 'status err';
+      statusEl.textContent = '✗ API error: ' + data.error;
+      return;
+    }
+
+    const sections = data.sections || [];
+    const typeCounts = {};
+    sections.forEach(s => { typeCounts[s.type || 'undefined'] = (typeCounts[s.type || 'undefined'] || 0) + 1; });
+
+    const acad = sections.filter(s => s.type === 'academic_program').length;
+    const stuExp = sections.filter(s => s.type === 'student_experience').length;
+    const outc = sections.filter(s => s.type === 'outcomes').length;
+    const moreStuExp = sections.filter(s => s.type === 'more_student_experience').length;
+    const moreCareer = sections.filter(s => s.type === 'more_career_paths').length;
+
+    const expectedButtons = acad + (stuExp && moreStuExp ? 1 : 0) + (outc && moreCareer ? 1 : 0);
+
+    statusEl.className = 'status ok';
+    statusEl.innerHTML = `✓ Got ${sections.length} sections. Expected MORE buttons: ${expectedButtons}.<br>
+      <small>academic_program:${acad} | student_experience:${stuExp} | outcomes:${outc} | more_student_experience:${moreStuExp} | more_career_paths:${moreCareer}</small><br>
+      <small>All types: ${JSON.stringify(typeCounts)}</small>`;
+
+    sectionsEl.innerHTML = sections.map(s =>
+      `<div style="border:1px solid var(--border);border-radius:8px;padding:0.6rem 0.8rem;margin-bottom:0.4rem;background:var(--white);">
+         <div style="font-size:0.75rem;font-weight:700;color:var(--blue);">[${esc(s.type || 'undefined')}]</div>
+         <div style="font-size:0.85rem;font-weight:600;">${esc(s.title)}</div>
+         <div style="font-size:0.78rem;color:var(--muted);margin-top:0.25rem;">${esc((s.body||'').slice(0,120))}…</div>
+       </div>`
+    ).join('');
+
+  } catch(e) {
+    statusEl.className = 'status err';
+    statusEl.textContent = '✗ Fetch error: ' + e.message;
+  }
+}
+
+// ── Init ─────────────────────────────────────────────────────
+renderMajorPicker();
+renderSimulatedDive();
+runRealDive();
+</script>
+</body>
+</html>

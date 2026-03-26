@@ -3969,7 +3969,15 @@ def _build_vibe_lines(vibe, other_prefs=''):
 
 @app.route('/')
 def index():
-    return send_from_directory('static', 'index.html')
+    resp = send_from_directory('static', 'index.html')
+    resp.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
+    resp.headers['Pragma'] = 'no-cache'
+    resp.headers['Expires'] = '0'
+    return resp
+
+@app.route('/debug-ui')
+def debug_ui():
+    return send_from_directory('static', 'debug_ui.html')
 
 @app.route('/api/meta', methods=['GET'])
 def meta():
