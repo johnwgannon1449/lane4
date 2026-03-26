@@ -3237,10 +3237,11 @@ function filterMajors(query, dropdownId) {
   const q = query.toLowerCase().trim();
   const matches = MAJORS_LIST.filter(m =>
     !selected.includes(m) && (!q || m.toLowerCase().includes(q))
-  ).slice(0, 12);
+  );
   if (!matches.length) { dd.style.display = 'none'; return; }
+  // Use single-quote attribute delimiter so JSON.stringify double-quotes don't break the HTML
   dd.innerHTML = matches.map(m =>
-    `<div class="major-option" onmousedown="selectMajor(${JSON.stringify(m)})">${esc(m)}</div>`
+    `<div class="major-option" onmousedown='selectMajor(${JSON.stringify(m)})'>${esc(m)}</div>`
   ).join('');
   dd.style.display = 'block';
 }
