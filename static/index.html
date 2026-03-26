@@ -795,6 +795,12 @@
     <div class="stat-grid" id="prof-stats"></div>
     <div id="stats-edit-panel" style="display:none;"></div>
 
+    <div class="section-label" style="margin-top:1rem;">Potential Majors</div>
+    <div class="card" style="margin-bottom:1rem;padding:0.9rem 1rem;">
+      <div style="font-size:0.78rem;color:var(--muted);margin-bottom:0.6rem;">Select up to 2 — shapes the academic section of every deep dive</div>
+      <div id="major-picker-profile"></div>
+    </div>
+
     <div class="section-label" style="margin-top:0.5rem;display:flex;align-items:center;justify-content:space-between;">
       Current Best Times (SCY)
       <button class="btn-edit-link" onclick="toggleEditTimes()">✏ Edit times</button>
@@ -3187,8 +3193,11 @@ function _majorsSelected() {
   return Array.isArray(JAMES.potentialMajors) ? JAMES.potentialMajors : [];
 }
 
-function renderMajorPicker() {
-  const container = document.getElementById('major-picker');
+// Renders the major picker into any container element.
+// containerId: the id of the div to fill.
+// searchId / dropdownId: ids for the search input and dropdown (must be unique per picker instance).
+function _renderMajorPickerInto(containerId, searchId, dropdownId) {
+  const container = document.getElementById(containerId);
   if (!container) return;
   const selected = _majorsSelected();
   const canAdd   = selected.length < 2;
@@ -3197,20 +3206,31 @@ function renderMajorPicker() {
       selected.map((m, i) =>
         `<span class="major-chip">${esc(m)}<button type="button" class="major-chip-remove" onclick="removeMajor(${i})">✕</button></span>`
       ).join('')
-    }${!canAdd ? '<span style="font-size:0.78rem;color:var(--muted);margin-left:0.2rem;">max 2 selected</span>' : ''}</div>${
+    }${!canAdd ? '<span style="font-size:0.78rem;color:var(--muted);margin-left:0.3rem;">max 2 selected</span>' : ''}</div>${
       canAdd
         ? `<div style="position:relative;">
-             <input type="text" id="major-search" autocomplete="off" placeholder="Type to search majors…"
-               oninput="filterMajors(this.value)" onfocus="filterMajors(this.value)"
-               style="width:100%;box-sizing:border-box;padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:0.95rem;font-family:inherit;color:var(--text);background:var(--white);">
-             <div id="major-dropdown" style="display:none;position:absolute;top:calc(100% + 2px);left:0;right:0;z-index:200;background:var(--white);border:1.5px solid var(--border);border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,0.10);max-height:200px;overflow-y:auto;"></div>
+             <input type="text" id="${searchId}" autocomplete="off" placeholder="Type to search majors…"
+               oninput="filterMajors(this.value,'${dropdownId}')" onfocus="filterMajors(this.value,'${dropdownId}')"
+               style="width:100%;box-sizing:border-box;padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:0.95rem;font-family:inherit;color:var(--navy);background:var(--white);">
+             <div id="${dropdownId}" style="display:none;position:absolute;top:calc(100% + 2px);left:0;right:0;z-index:200;background:var(--white);border:1.5px solid var(--border);border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,0.10);max-height:200px;overflow-y:auto;"></div>
            </div>`
         : ''
     }`;
 }
 
-function filterMajors(query) {
-  const dd = document.getElementById('major-dropdown');
+// Picker inside the stats edit panel (shows when user clicks ✏ Edit)
+function renderMajorPicker() {
+  _renderMajorPickerInto('major-picker', 'major-search', 'major-dropdown');
+}
+
+// Picker always visible on the profile page (primary entry point)
+function renderMajorPickerProfile() {
+  _renderMajorPickerInto('major-picker-profile', 'major-search-profile', 'major-dropdown-profile');
+}
+
+function filterMajors(query, dropdownId) {
+  const ddId = dropdownId || 'major-dropdown';
+  const dd = document.getElementById(ddId);
   if (!dd) return;
   const selected = _majorsSelected();
   const q = query.toLowerCase().trim();
@@ -3229,19 +3249,30 @@ function selectMajor(name) {
   if (JAMES.potentialMajors.length >= 2) return;
   JAMES.potentialMajors.push(name);
   _syncMajors();
+  // Re-render both picker instances and auto-save
+  renderMajorPickerProfile();
   renderMajorPicker();
+  saveToStorage();
+  schedulePush();
 }
 
 function removeMajor(index) {
   if (!Array.isArray(JAMES.potentialMajors)) JAMES.potentialMajors = [];
   JAMES.potentialMajors.splice(index, 1);
   _syncMajors();
+  // Re-render both picker instances and auto-save
+  renderMajorPickerProfile();
   renderMajorPicker();
+  saveToStorage();
+  schedulePush();
 }
 
 document.addEventListener('click', function(e) {
-  const dd = document.getElementById('major-dropdown');
-  if (dd && e.target.id !== 'major-search' && !dd.contains(e.target)) dd.style.display = 'none';
+  ['major-dropdown', 'major-dropdown-profile'].forEach(ddId => {
+    const dd = document.getElementById(ddId);
+    const searchId = ddId === 'major-dropdown' ? 'major-search' : 'major-search-profile';
+    if (dd && e.target.id !== searchId && !dd.contains(e.target)) dd.style.display = 'none';
+  });
 });
 
 function renderStats() {
@@ -3512,6 +3543,7 @@ function renderProfile() {
   const aboutLabel = document.getElementById('prof-about-label');
   if (aboutLabel) aboutLabel.textContent = 'About ' + JAMES.name;
   renderStats();
+  renderMajorPickerProfile();
   renderTimes();
   renderVibeQuestions();
   renderPreferences();
