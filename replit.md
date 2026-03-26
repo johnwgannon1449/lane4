@@ -161,8 +161,23 @@ Single-page app at `/` with:
 
 ## Search Architecture — AI-First Pipeline (`/api/search`)
 
-Non-school-name queries use a 5-step generative pipeline (direct school-name
-lookups use the original similarity-sort + Claude-picks-5 path, unchanged).
+Non-school-name queries use a 5-step generative pipeline. School-name queries
+use a new liberal resolver described in **School-Name Resolution** below.
+
+### School-Name Resolution (`_resolve_school_names`)
+Added June 2025. Replaces the old exact + first-substring-only match.
+
+**Functions added to main.py (around line 3582):**
+- `_qnorm(s)` — normalizes query: lowercase, strip punctuation, `&`→`and`, `st`→`saint`, `univ`→`university`
+- `_SCHOOL_SEARCH_ALIASES` — ~250-entry alias dict mapping normalized queries → canonical school name(s) in the universe; covers UC acronyms (UCSB/UCLA/UCSD/UCB), initials (WPI/CMU/JHU/CWRU/RPI/RIT/NJIT), nicknames (WashU/GWU/GT/NC State), saint/st abbreviations, and known ambiguous multi-candidate entries
+- `_resolve_school_names(query, all_results)` — 5-pass resolver: alias table → exact normalized → substring (both directions) → token Jaccard ≥ 0.55 (custom minimal stop list, deliberately includes "tech"/"state") → difflib fuzzy cutoff 0.55; returns schools with confidence score ≥ 0.55
+
+**`search()` endpoint behavior:**
+- `len(resolved) == 1` → `direct_match` → original similarity-sort + Claude-picks-5 path
+- `len(resolved) >= 2` → multi-match early return: `{ answer, schools, directMatch: false, multiMatch: true }` — no AI call; user sees all plausible matches as cards and picks the right one
+- `len(resolved) == 0` → falls through to out-of-universe stub (Harvard, Stanford, etc.)
+
+Non-school-name queries use a 5-step generative pipeline (unchanged).
 
 **Step 1 — Query classification** (`_classify_query_mode`)
 Returns GUIDED / CONSTRAINED / OBJECTIVE / EXPLORATORY based on signal words.

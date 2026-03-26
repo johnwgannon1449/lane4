@@ -1,0 +1,207 @@
+We need to make school-name search much more forgiving and much more useful.
+
+Right now, direct/exact match logic is too rigid. It misses obvious intent when the user:
+- uses an acronym
+- makes a small spelling mistake
+- types only part of a school name
+- types the city instead of the official school name
+- types an ambiguous term that could refer to several schools
+
+This needs to be fixed aggressively. We should be liberal in guessing, as long as results are plausibly related.
+
+==================================================
+OBJECTIVE
+==================================================
+
+When a user types a school-like query, we want to find the right college even if the wording is imperfect.
+
+Examples:
+- UCSB -> UC Santa Barbara
+- WPI / Worcester -> Worcester Polytechnic Institute
+- Case Western -> Case Western Reserve University
+- WashU -> Washington University in St. Louis
+- St Olaf -> Saint Olaf College
+- William and Mary / William & Mary
+- Carnegie Mellon / CMU
+- UCSD / UC San Diego
+- Santa Barbara -> UC Santa Barbara
+- Washington -> possibly multiple schools
+
+If the query is ambiguous, do NOT over-resolve it.
+Instead, return all schools that appear plausibly related and let the user narrow from the cards.
+
+We do NOT need fancy tie-break logic here.
+We do NOT need to force one answer when multiple results are plausible.
+
+==================================================
+REQUIRED BEHAVIOR
+==================================================
+
+1. Liberal matching for school-like queries
+If a user appears to be searching for a school name, acronym, city, nickname, abbreviation, or close misspelling, return all plausible school matches.
+
+2. Be forgiving with:
+- acronyms
+- abbreviations
+- missing words
+- punctuation differences
+- ampersand vs "and"
+- saint vs st
+- university vs u
+- california/university order changes
+- small spelling errors
+- city-only queries when clearly school-related
+
+3. Ambiguous queries should return multiple plausible schools
+Example:
+- "Washington" should return multiple Washington-related schools if more than one is plausible
+- Do not hide candidates just because one seems slightly more likely
+
+4. Avoid unrelated junk
+We can be liberal, but results still need to be school-related and plausibly connected to the query.
+Do not return random unrelated colleges just to fill slots.
+
+==================================================
+IMPLEMENTATION APPROACH
+==================================================
+
+Build a school name resolution layer before normal ranking.
+
+Use a broad combination of:
+
+A. Normalization
+Normalize both query and school names/aliases:
+- lowercase
+- strip punctuation
+- collapse whitespace
+- normalize "&" to "and"
+- normalize "st." and "st" to "saint"
+- normalize common abbreviations like "univ" -> "university"
+- normalize "ucsb" style acronyms for matching
+- remove commas in names like "University of California, Santa Barbara"
+
+B. Alias table
+Every school should support a list of aliases.
+Examples:
+- University of California, Santa Barbara:
+  - ucsb
+  - uc santa barbara
+  - university of california santa barbara
+  - santa barbara
+- Worcester Polytechnic Institute:
+  - wpi
+  - worcester polytechnic
+  - worcester
+- Washington University in St. Louis:
+  - washu
+  - washington university
+  - washington university st louis
+
+This alias table can be partly generated and partly hand-maintained.
+
+C. Fuzzy matching
+Use fuzzy matching generously for school-like queries.
+This should catch:
+- small misspellings
+- missing words
+- partial names
+- slightly wrong acronyms
+
+Use modern fuzzy/entity matching logic, but keep a plausibility threshold so unrelated schools do not appear.
+
+D. Multi-candidate return
+If multiple schools score as plausible matches, return all of them.
+Do not force a single winner unless one school is overwhelmingly obvious.
+
+==================================================
+MATCHING RULES
+==================================================
+
+When the query appears to be a specific school search:
+
+1. First gather candidates from:
+- exact canonical name match
+- exact alias match
+- normalized alias match
+- substring / token overlap
+- fuzzy name match
+- city / nickname / abbreviation aliases
+
+2. Score candidates broadly but do not over-prune.
+
+3. Return all plausible candidates above threshold.
+
+4. If one school is clearly dominant, it can appear first.
+But do not suppress other plausible schools if the query is ambiguous.
+
+==================================================
+EXAMPLES WE SHOULD HANDLE
+==================================================
+
+Must work well for:
+- UCSB
+- UC Santa Barbara
+- Santa Barbara
+- Worcester
+- WPI
+- Case Western
+- CWRU
+- WashU
+- Washington
+- St Olaf
+- Saint Olaf
+- William and Mary
+- William & Mary
+- Carnegie Mellon
+- CMU
+- UCSD
+- UC Davis
+- Johns Hopkins
+- JHU
+
+Also handle small misspellings gracefully:
+- Worcester
+- Carnagie Mellon
+- Johns Hopkin
+- Emmory
+- Tufts
+
+==================================================
+IMPORTANT PRODUCT RULE
+==================================================
+
+For school-name resolution, it is much better to show a few plausible college matches than to miss the intended school entirely.
+
+The risk of returning 2 to 5 plausible schools is low.
+The risk of missing the obvious school is much worse.
+
+So bias toward recall over precision, as long as results remain plausibly related.
+
+==================================================
+DELIVERABLES
+==================================================
+
+After implementing, report back with:
+
+1. Files changed
+2. Matching pipeline added
+3. Alias strategy used
+4. Fuzzy matching approach used
+5. Ambiguous-query behavior
+6. Example outputs for:
+   - UCSB
+   - Worcester
+   - Washington
+   - Carnagie Mellon
+   - St Olaf
+7. Confirmation that multiple plausible matches are returned when ambiguity exists
+
+==================================================
+IMPORTANT
+==================================================
+
+Do not keep the old rigid exact-match behavior as the primary gate.
+Do not require tie-breakers for ambiguous school-name queries.
+Do not suppress plausible candidates just because more than one match exists.
+
+Proceed now.
