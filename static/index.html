@@ -2101,13 +2101,16 @@ async function openDeepDive(school) {
         const moreId = 'ddmore-' + Math.random().toString(36).slice(2, 8);
 
         let moreHtml = '';
-        if (isAcad && (JAMES.primaryMajor || JAMES.secondaryMajor)) {
-          // Academic section: lazy-loaded via dedicated endpoint with specialist prompt
-          // Store args in a side-channel map keyed by moreId to avoid HTML attribute escaping issues
+        if (isAcad) {
+          // Academic section: lazy-loaded via dedicated endpoint.
+          // Extract the field name directly from the section title — reliable regardless of
+          // whether the major came from JAMES.primaryMajor, JAMES.secondaryMajor, or a vibe answer.
+          const _major = s.title.replace(/^if you're serious about\s+/i, '').trim()
+                      || JAMES.primaryMajor || JAMES.secondaryMajor || '';
           window._ddAcadArgs = window._ddAcadArgs || {};
           window._ddAcadArgs[moreId] = {
             school: school,
-            major:  JAMES.primaryMajor || JAMES.secondaryMajor || '',
+            major:  _major,
             loc:    meta.location || '',
             vibe:   meta.vibe    || '',
           };
@@ -2118,7 +2121,7 @@ async function openDeepDive(school) {
             <div class="dd-more-content" id="${moreId}" style="display:none;"></div>
           </div>`;
         } else {
-          // Student experience and career paths: pre-generated, toggled inline
+          // Campus life / Outcomes: pre-generated, toggled inline
           const moreSection = _findMore(s.title);
           if (moreSection) {
             const moreLabel = _moreBtnLabel(s.title);
