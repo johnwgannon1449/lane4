@@ -418,6 +418,13 @@
     .stat-edit-field input:focus, .stat-edit-field select:focus { outline: none; border-color: var(--blue); }
     .stat-edit-field .act-note { font-size: 0.72rem; color: var(--muted); margin-top: 3px; display: block; }
     .act-note { font-size: 0.72rem; color: var(--muted); margin-top: 1px; }
+    .major-chips { display: flex; flex-wrap: wrap; gap: 0.4rem; min-height: 1.6rem; margin-bottom: 0.4rem; align-items: center; }
+    .major-chip { display: inline-flex; align-items: center; gap: 0.25rem; background: #EFF6FF; color: var(--blue-d); padding: 0.22rem 0.55rem 0.22rem 0.7rem; border-radius: 999px; font-size: 0.82rem; font-weight: 500; }
+    .major-chip-remove { border: none; background: none; cursor: pointer; color: var(--blue-d); font-size: 0.78rem; padding: 0; line-height: 1; opacity: 0.6; }
+    .major-chip-remove:hover { opacity: 1; }
+    .major-option { padding: 0.45rem 0.8rem; cursor: pointer; font-size: 0.88rem; color: var(--text); border-bottom: 1px solid var(--bg); }
+    .major-option:last-child { border-bottom: none; }
+    .major-option:hover { background: var(--bg-alt); }
     .times-edit-wrap { padding: 0.85rem 1.1rem; border-top: 1.5px solid var(--border); }
     .event-add-row { display: flex; gap: 0.5rem; align-items: flex-end; flex-wrap: wrap; }
     .event-select-wrap { flex: 1; min-width: 140px; }
@@ -980,6 +987,103 @@ const VIBE_QUESTIONS = [
               'Business / finance',
               'Environment / sustainability',
               'Not sure yet'] },
+];
+
+const MAJORS_LIST = [
+  'Accounting',
+  'Aerospace Engineering',
+  'African American Studies',
+  'Agricultural Science',
+  'Anthropology',
+  'Architecture',
+  'Art History',
+  'Artificial Intelligence',
+  'Astronomy & Astrophysics',
+  'Biochemistry',
+  'Biology',
+  'Biomedical Engineering',
+  'Business Administration',
+  'Chemical Engineering',
+  'Chemistry',
+  'Civil Engineering',
+  'Classics',
+  'Cognitive Science',
+  'Communications & Media Studies',
+  'Comparative Literature',
+  'Computer Engineering',
+  'Computer Science',
+  'Creative Writing',
+  'Criminology & Criminal Justice',
+  'Cybersecurity',
+  'Dance',
+  'Data Science',
+  'Early Childhood Education',
+  'Earth & Environmental Science',
+  'Economics',
+  'Education',
+  'Electrical Engineering',
+  'English Literature',
+  'Entrepreneurship',
+  'Environmental Engineering',
+  'Environmental Studies',
+  'Exercise Science & Kinesiology',
+  'Film Studies & Production',
+  'Finance',
+  'Forestry & Wildlife Management',
+  'Gender Studies',
+  'Geography',
+  'Global Studies',
+  'Graphic Design',
+  'History',
+  'Human-Computer Interaction',
+  'Human Resources Management',
+  'Industrial Design',
+  'Industrial Engineering',
+  'Information Technology',
+  'Interior Design',
+  'International Business',
+  'International Relations',
+  'Journalism',
+  'Latin American Studies',
+  'Linguistics',
+  'Management',
+  'Marine Biology',
+  'Marketing',
+  'Materials Science & Engineering',
+  'Mathematics',
+  'Mechanical Engineering',
+  'Middle Eastern Studies',
+  'Music',
+  'Neuroscience',
+  'Nursing',
+  'Nutrition & Dietetics',
+  'Occupational Therapy (Pre-OT)',
+  'Operations Management',
+  'Pharmacy (Pre-Pharm)',
+  'Philosophy',
+  'Photography',
+  'Physical Therapy (Pre-PT)',
+  'Physics',
+  'Political Science',
+  'Pre-Dentistry',
+  'Pre-Law',
+  'Pre-Medicine',
+  'Psychology',
+  'Public Administration',
+  'Public Health',
+  'Public Policy',
+  'Religious Studies',
+  'Social Work',
+  'Sociology',
+  'Software Engineering',
+  'Special Education',
+  'Speech-Language Pathology',
+  'Statistics',
+  'Studio Art',
+  'Supply Chain Management',
+  'Sustainable Agriculture & Environment',
+  'Theatre Arts',
+  'Urban Planning',
 ];
 
 function getSuggestedQueries() {
@@ -2027,38 +2131,16 @@ async function openDeepDive(school) {
     const _ddLife = _schoolPhoto(school, 'student_life');
     const _ddSwim = _schoolPhoto(school, 'swim');
 
-    // Find a matching "More:" section for a main section title
-    function _findMore(mainTitle) {
-      const t = mainTitle.toLowerCase();
-      // Academic section: any "If You're Serious About X" → "More: Academic"
-      if (t.startsWith("if you're serious about")) {
-        return moreByTitle['more: academic'] || null;
-      }
-      // Campus life → student experience
-      if (t === 'campus life') {
-        return moreByTitle['more: student experience'] || null;
-      }
-      // Outcomes → career paths
-      if (t === 'outcomes') {
-        return moreByTitle['more: career paths'] || null;
-      }
-      return null;
-    }
+    // Stable section identity checks
+    function _secIsAcademic(title)         { return title.toLowerCase().startsWith("if you're serious about"); }
+    function _secIsStudentExp(title)       { return title.toLowerCase() === 'campus life'; }
+    function _secIsOutcomes(title)         { return title.toLowerCase() === 'outcomes'; }
 
-    // Per-section button labels
-    function _moreBtnLabel(mainTitle) {
-      const t = mainTitle.toLowerCase();
-      if (t.startsWith("if you're serious about")) return 'More about this program ▾';
-      if (t === 'campus life')                        return 'More about student life ▾';
-      if (t === 'outcomes')                           return 'More about career paths ▾';
-      return 'More ▾';
-    }
-    function _lessBtnLabel(mainTitle) {
-      const t = mainTitle.toLowerCase();
-      if (t.startsWith("if you're serious about")) return 'Less ▴';
-      if (t === 'campus life')                        return 'Less ▴';
-      if (t === 'outcomes')                           return 'Less ▴';
-      return 'Less ▴';
+    // Pre-generated "More:" lookup for Campus Life and Outcomes
+    function _preGenSection(mainTitle) {
+      if (_secIsStudentExp(mainTitle)) return moreByTitle['more: student experience'] || null;
+      if (_secIsOutcomes(mainTitle))   return moreByTitle['more: career paths']       || null;
+      return null;
     }
 
     content.innerHTML = `
@@ -2094,19 +2176,21 @@ async function openDeepDive(school) {
 
       ${mainSections.map(s => {
         const isAdm   = s.title.toLowerCase().includes('admissible');
-        const isAcad  = s.title.toLowerCase().startsWith("if you're serious about");
         const admTable = isAdm
           ? buildAdmTableHTML(meta, JAMES.gpa, JAMES.sat || 0, JAMES.actScore || 0)
           : '';
         const moreId = 'ddmore-' + Math.random().toString(36).slice(2, 8);
 
+        // Determine section role using stable identity checks
+        const _isAcademicSec    = _secIsAcademic(s.title);
+        const _isStudentExpSec  = _secIsStudentExp(s.title);
+        const _isOutcomesSec    = _secIsOutcomes(s.title);
+
         let moreHtml = '';
-        if (isAcad) {
-          // Academic section: lazy-loaded via dedicated endpoint.
-          // Extract the field name directly from the section title — reliable regardless of
-          // whether the major came from JAMES.primaryMajor, JAMES.secondaryMajor, or a vibe answer.
-          const _major = s.title.replace(/^if you're serious about\s+/i, '').trim()
-                      || JAMES.primaryMajor || JAMES.secondaryMajor || '';
+        if (_isAcademicSec) {
+          // Academic Program — button visible when this section exists.
+          // Major sourced from structured picker (JAMES.primaryMajor) — never inferred from title.
+          const _major = JAMES.primaryMajor || JAMES.secondaryMajor || '';
           window._ddAcadArgs = window._ddAcadArgs || {};
           window._ddAcadArgs[moreId] = {
             school: school,
@@ -2120,16 +2204,16 @@ async function openDeepDive(school) {
               onclick="_ddLoadAcademic(${JSON.stringify(moreId)})">More about this program ▾</button>
             <div class="dd-more-content" id="${moreId}" style="display:none;"></div>
           </div>`;
-        } else {
-          // Campus life / Outcomes: pre-generated, toggled inline
-          const moreSection = _findMore(s.title);
-          if (moreSection) {
-            const moreLabel = _moreBtnLabel(s.title);
-            const lessLabel = _lessBtnLabel(s.title);
+        } else if (_isStudentExpSec || _isOutcomesSec) {
+          // Student Experience / Outcomes — button visible when pre-generated section exists.
+          const preGen = _preGenSection(s.title);
+          if (preGen) {
+            const moreLabel = _isStudentExpSec ? 'More about student life ▾' : 'More about career paths ▾';
+            const lessLabel = 'Less ▴';
             moreHtml = `
           <div class="dd-more-wrap">
             <button class="dd-more-btn" onclick="_ddToggleMore('${moreId}', this, ${JSON.stringify(moreLabel)}, ${JSON.stringify(lessLabel)})">${esc(moreLabel)}</button>
-            <div class="dd-more-content" id="${moreId}" style="display:none;">${esc(moreSection.body)}</div>
+            <div class="dd-more-content" id="${moreId}" style="display:none;">${esc(preGen.body)}</div>
           </div>`;
           }
         }
@@ -3080,6 +3164,66 @@ function toggleEditStats() {
   if (btn) btn.textContent = EDIT_STATS ? '✕ Cancel' : '✏ Edit';
 }
 
+// ── Major picker ────────────────────────────────────────────────
+function _majorsSelected() {
+  return [JAMES.primaryMajor, JAMES.secondaryMajor].filter(Boolean);
+}
+
+function renderMajorPicker() {
+  const container = document.getElementById('major-picker');
+  if (!container) return;
+  const selected = _majorsSelected();
+  const canAdd   = selected.length < 2;
+  container.innerHTML =
+    `<div class="major-chips">${
+      selected.map((m, i) =>
+        `<span class="major-chip">${esc(m)}<button type="button" class="major-chip-remove" onclick="removeMajor(${i})">✕</button></span>`
+      ).join('')
+    }${!canAdd ? '<span style="font-size:0.78rem;color:var(--muted);margin-left:0.2rem;">max 2 selected</span>' : ''}</div>${
+      canAdd
+        ? `<div style="position:relative;">
+             <input type="text" id="major-search" autocomplete="off" placeholder="Type to search majors…"
+               oninput="filterMajors(this.value)" onfocus="filterMajors(this.value)"
+               style="width:100%;box-sizing:border-box;padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:0.95rem;font-family:inherit;color:var(--text);background:var(--white);">
+             <div id="major-dropdown" style="display:none;position:absolute;top:calc(100% + 2px);left:0;right:0;z-index:200;background:var(--white);border:1.5px solid var(--border);border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,0.10);max-height:200px;overflow-y:auto;"></div>
+           </div>`
+        : ''
+    }`;
+}
+
+function filterMajors(query) {
+  const dd = document.getElementById('major-dropdown');
+  if (!dd) return;
+  const selected = _majorsSelected();
+  const q = query.toLowerCase().trim();
+  const matches = MAJORS_LIST.filter(m =>
+    !selected.includes(m) && (!q || m.toLowerCase().includes(q))
+  ).slice(0, 12);
+  if (!matches.length) { dd.style.display = 'none'; return; }
+  dd.innerHTML = matches.map(m =>
+    `<div class="major-option" onmousedown="selectMajor(${JSON.stringify(m)})">${esc(m)}</div>`
+  ).join('');
+  dd.style.display = 'block';
+}
+
+function selectMajor(name) {
+  if (JAMES.primaryMajor && JAMES.secondaryMajor) return;
+  if (!JAMES.primaryMajor) JAMES.primaryMajor = name;
+  else JAMES.secondaryMajor = name;
+  renderMajorPicker();
+}
+
+function removeMajor(index) {
+  if (index === 0) { JAMES.primaryMajor = JAMES.secondaryMajor || ''; JAMES.secondaryMajor = ''; }
+  else             { JAMES.secondaryMajor = ''; }
+  renderMajorPicker();
+}
+
+document.addEventListener('click', function(e) {
+  const dd = document.getElementById('major-dropdown');
+  if (dd && e.target.id !== 'major-search' && !dd.contains(e.target)) dd.style.display = 'none';
+});
+
 function renderStats() {
   const el = document.getElementById('prof-stats');
   const panel = document.getElementById('stats-edit-panel');
@@ -3148,12 +3292,8 @@ function renderStats() {
         </select>
       </div>
       <div class="stat-edit-field" style="grid-column:1/-1;">
-        <label>Intended major <span style="font-weight:400;font-size:0.78em;color:var(--muted);">shapes the academic section of your deep dives</span></label>
-        <input id="edit-primary-major" type="text" value="${esc(JAMES.primaryMajor || '')}" placeholder="e.g. Biomedical Engineering, Computer Science, Economics">
-      </div>
-      <div class="stat-edit-field" style="grid-column:1/-1;">
-        <label>Second major of interest <span style="font-weight:400;font-size:0.78em;color:var(--muted);">optional</span></label>
-        <input id="edit-secondary-major" type="text" value="${esc(JAMES.secondaryMajor || '')}" placeholder="e.g. Biology, Pre-Med, Psychology">
+        <label>Potential majors <span style="font-weight:400;font-size:0.78em;color:var(--muted);">select up to 2 — shapes the academic section of your deep dives</span></label>
+        <div id="major-picker"></div>
       </div>
     </div>
     <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
@@ -3161,6 +3301,7 @@ function renderStats() {
       <button class="btn btn-secondary" onclick="toggleEditStats()">Cancel</button>
     </div>
   </div>`;
+  renderMajorPicker();
 }
 
 function setScoreMode(mode) {
@@ -3184,9 +3325,6 @@ async function saveStats() {
   const apVal = parseInt(document.getElementById('edit-ap-count')?.value);
   if (apVal >= 1 && apVal <= 16) JAMES.apCount = apVal;
   else if (apVal === 0) JAMES.apCount = 0;
-
-  JAMES.primaryMajor   = (document.getElementById('edit-primary-major')?.value   || '').trim();
-  JAMES.secondaryMajor = (document.getElementById('edit-secondary-major')?.value || '').trim();
 
   EDIT_STATS = false;
   const btn = document.getElementById('stats-edit-btn');

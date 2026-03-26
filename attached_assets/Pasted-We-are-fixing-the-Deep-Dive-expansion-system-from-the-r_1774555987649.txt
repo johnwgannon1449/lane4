@@ -1,0 +1,155 @@
+We are fixing the Deep Dive expansion system from the root.
+
+Do not patch button conditions in isolation.
+Do not preserve brittle fallback logic.
+Do not infer majors from generated text, vibe answers, or section headings.
+Fix this in the exact order below.
+
+You have freedom on implementation details and UI mechanics.
+You do NOT have freedom on:
+- source of truth for major data
+- section structure
+- button visibility rules
+- removal of catch-all More behavior
+
+==================================================
+NON-NEGOTIABLE FINAL STATE
+==================================================
+
+1. Profile has a real structured Potential Majors input
+- up to 2 selections
+- searchable curated list
+- selection 1 -> primaryMajor
+- selection 2 -> secondaryMajor
+
+2. Deep Dive expandable sections are only:
+- Academic Program
+- Student Experience
+- Outcomes
+
+3. Buttons are section-presence-driven, not major-truthiness-driven
+- "More about this program" appears when Academic Program section exists
+- "More about student life" appears when Student Experience section exists
+- "More about career paths" appears when Outcomes section exists
+
+4. Academic expansion lazy-loads
+5. Student Experience and Outcomes toggle pre-generated content
+6. No catch-all More block exists
+7. No swim expansion exists
+8. No admissions expansion exists
+
+==================================================
+STEP 1 — STRUCTURED MAJOR INPUT
+==================================================
+
+Keep Academic Goal exactly as it is.
+
+Add a new profile field:
+Potential majors
+
+Requirements:
+- searchable curated list
+- user can select 0, 1, or 2 majors
+- cannot select more than 2
+- selected majors persist in profile state
+- first selected major must populate primaryMajor
+- second selected major must populate secondaryMajor
+- if only one selected, secondaryMajor = ""
+- if none selected, both = ""
+
+Deep Dive source of truth:
+- use primaryMajor first
+- secondaryMajor may be referenced lightly
+- if no primaryMajor, fall back to academicGoal
+- do not infer majors from any generated narrative text
+
+Curated list should be broad, clean, and student-friendly.
+
+==================================================
+STEP 2 — DEEP DIVE SECTION MODEL
+==================================================
+
+Refactor the Deep Dive renderer so it uses explicit stable section keys.
+
+Use section identities equivalent to:
+- academic_program
+- student_experience
+- outcomes
+
+Do not rely on fuzzy parsing hacks like:
+- checking for major-like section headings
+- reading “If You’re Serious About X” as structured profile data
+- generic “More: Academic” fallback scraping
+
+Academic Program = program/major explanation
+Student Experience = student life expansion
+Outcomes = career path / post-grad outcomes expansion
+
+Remove any generic/catch-all More block logic.
+
+==================================================
+STEP 3 — BUTTON RULES
+==================================================
+
+Button visibility must be determined only by whether the corresponding section exists.
+
+Required conditions:
+- Academic button visible iff academic_program section exists
+- Student Life button visible iff student_experience section exists
+- Outcomes button visible iff outcomes section exists
+
+Required behavior:
+- Academic button lazy-loads academic expansion on click
+- Student Life button toggles pre-generated student-life content
+- Outcomes button toggles pre-generated outcomes content
+
+Academic button visibility must NOT depend on:
+- JAMES.primaryMajor
+- JAMES.secondaryMajor
+- vibe answers
+- section-title inference
+- legacy fallback hacks
+
+==================================================
+STEP 4 — VERIFY IN ACTUAL RENDER FLOW
+==================================================
+
+Verify and report that:
+- all three MORE buttons appear when their sections exist
+- each expands only its own content
+- academic lazy-load works
+- student/outcomes toggles work
+- no catch-all More block exists
+- no swim expansion exists
+- no admissions expansion exists
+
+==================================================
+IMPLEMENTATION FREEDOM
+==================================================
+
+You may choose the cleanest implementation for:
+- UI control details
+- helper names
+- constants file placement
+- state migration strategy
+- internal section parsing helpers
+
+But do not change the required behavior above.
+
+==================================================
+REPORT BACK WITH EXACTLY THESE HEADINGS
+==================================================
+
+1. Files changed
+2. Profile major selection implementation
+3. How majors are stored and accessed
+4. Updated deep dive section structure
+5. Confirmation that all three MORE buttons appear
+6. Confirmation that each MORE button expands the correct content
+7. Confirmation that the catch-all MORE block no longer exists
+
+Be concrete.
+Name actual files changed.
+Show final profile state shape.
+Show final button visibility conditions.
+Report verified behavior, not intentions.

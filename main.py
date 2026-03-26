@@ -4706,23 +4706,18 @@ def deep_dive():
     primary_major   = (prof_ovr.get('primaryMajor')   or data.get('primaryMajor',   '')).strip()
     secondary_major = (prof_ovr.get('secondaryMajor') or data.get('secondaryMajor', '')).strip()
 
-    # Determine academic direction for optional section
+    # Determine academic direction for optional section.
+    # Source of truth: primaryMajor (structured picker), then secondaryMajor.
+    # Fallback: academicGoal from vibe (vibe.academic). Never inferred from career vibe.
     if primary_major:
         _major_parts = [primary_major]
         if secondary_major:
             _major_parts.append(secondary_major)
         academic_direction = ' / '.join(_major_parts)
     else:
-        career_raw   = (vibe_answers.get('career')   or '').strip()
-        academic_raw = (vibe_answers.get('academic')  or '').strip()
-        _generic_career   = career_raw   in ('', 'Not sure yet')
-        _generic_academic = academic_raw in ('', 'Genuinely want to be well-rounded')
-        if not _generic_career or not _generic_academic:
-            _parts = [p for p in [career_raw, academic_raw]
-                      if p and p not in ('Not sure yet', 'Genuinely want to be well-rounded')]
-            academic_direction = ' / '.join(_parts) if _parts else None
-        else:
-            academic_direction = None
+        academic_raw = (vibe_answers.get('academic') or '').strip()
+        _generic = academic_raw in ('', 'Genuinely want to be well-rounded')
+        academic_direction = academic_raw if not _generic else None
 
     # Admission comparison block
     sat_median   = meta.get('satMedian', 0)
