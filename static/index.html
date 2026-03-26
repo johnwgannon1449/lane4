@@ -2090,24 +2090,46 @@ async function openDeepDive(school) {
         </div>` : ''}
 
       ${mainSections.map(s => {
-        const isAdm = s.title.toLowerCase().includes('admissible');
+        const isAdm   = s.title.toLowerCase().includes('admissible');
+        const isAcad  = s.title.toLowerCase().startsWith("if you're serious about");
         const admTable = isAdm
           ? buildAdmTableHTML(meta, JAMES.gpa, JAMES.sat || 0, JAMES.actScore || 0)
           : '';
-        const moreSection  = _findMore(s.title);
-        const moreId       = 'ddmore-' + Math.random().toString(36).slice(2, 8);
-        const moreLabel    = _moreBtnLabel(s.title);
-        const lessLabel    = _lessBtnLabel(s.title);
+        const moreId = 'ddmore-' + Math.random().toString(36).slice(2, 8);
+
+        let moreHtml = '';
+        if (isAcad && (JAMES.primaryMajor || JAMES.secondaryMajor)) {
+          // Academic section: lazy-loaded via dedicated endpoint with specialist prompt
+          const _major   = JAMES.primaryMajor || JAMES.secondaryMajor || '';
+          const _loc     = meta.location  || '';
+          const _vibe    = meta.vibe      || '';
+          const _btnArgs = JSON.stringify([moreId, school, _major, _loc, _vibe]);
+          moreHtml = `
+          <div class="dd-more-wrap">
+            <button class="dd-more-btn" id="btn-${moreId}"
+              onclick="_ddLoadAcademic(...${_btnArgs})">More about this program ▾</button>
+            <div class="dd-more-content" id="${moreId}" style="display:none;"></div>
+          </div>`;
+        } else {
+          // Student experience and career paths: pre-generated, toggled inline
+          const moreSection = _findMore(s.title);
+          if (moreSection) {
+            const moreLabel = _moreBtnLabel(s.title);
+            const lessLabel = _lessBtnLabel(s.title);
+            moreHtml = `
+          <div class="dd-more-wrap">
+            <button class="dd-more-btn" onclick="_ddToggleMore('${moreId}', this, ${JSON.stringify(moreLabel)}, ${JSON.stringify(lessLabel)})">${esc(moreLabel)}</button>
+            <div class="dd-more-content" id="${moreId}" style="display:none;">${esc(moreSection.body)}</div>
+          </div>`;
+          }
+        }
+
         return `
         <div class="deep-section">
           <div class="deep-section-title">${esc(s.title)}</div>
           ${admTable}
           <div class="${isAdm ? 'adm-prose' : 'deep-section-body'}">${esc(s.body)}</div>
-          ${moreSection ? `
-          <div class="dd-more-wrap">
-            <button class="dd-more-btn" onclick="_ddToggleMore('${moreId}', this, ${JSON.stringify(moreLabel)}, ${JSON.stringify(lessLabel)})">${esc(moreLabel)}</button>
-            <div class="dd-more-content" id="${moreId}" style="display:none;">${esc(moreSection.body)}</div>
-          </div>` : ''}
+          ${moreHtml}
         </div>`;
       }).join('')}
 
@@ -2145,6 +2167,51 @@ function _ddToggleMore(id, btn, moreLabel, lessLabel) {
   const open = el.style.display !== 'none';
   el.style.display = open ? 'none' : 'block';
   btn.textContent  = open ? (moreLabel || 'More ▾') : (lessLabel || 'Less ▴');
+}
+
+async function _ddLoadAcademic(id, school, major, location, vibe) {
+  const el  = document.getElementById(id);
+  const btn = document.getElementById('btn-' + id);
+  if (!el || !btn) return;
+
+  // Already loaded — just toggle visibility
+  if (el.dataset.loaded === '1') {
+    const open = el.style.display !== 'none';
+    el.style.display = open ? 'none' : 'block';
+    btn.textContent  = open ? 'More about this program ▾' : 'Less ▴';
+    return;
+  }
+
+  // First click — fetch from the dedicated academic endpoint
+  btn.disabled    = true;
+  btn.textContent = 'Loading…';
+  el.style.display = 'block';
+  el.innerHTML    = '<span class="spinner"></span>';
+
+  try {
+    const res  = await fetch('/api/deep-dive/academic', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ school, primaryMajor: major, location, schoolVibe: vibe }),
+    });
+    const data = await res.json();
+    if (data.error) {
+      el.innerHTML = `<span style="color:var(--err,#EF4444);font-size:0.9rem;">${esc(data.error)}</span>`;
+    } else {
+      // Render as plain paragraphs — the API returns flowing prose, not sections
+      el.innerHTML = data.body
+        .split(/\n\n+/)
+        .filter(p => p.trim())
+        .map(p => `<p style="margin:0 0 0.75rem;">${esc(p.trim())}</p>`)
+        .join('');
+      el.dataset.loaded = '1';
+    }
+  } catch (e) {
+    el.innerHTML = '<span style="color:var(--err,#EF4444);font-size:0.9rem;">Failed to load. Please try again.</span>';
+  }
+
+  btn.disabled    = false;
+  btn.textContent = el.dataset.loaded === '1' ? 'Less ▴' : 'More about this program ▾';
 }
 
 function ddAddToList(school) {

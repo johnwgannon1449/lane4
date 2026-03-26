@@ -4504,6 +4504,99 @@ def _estimate_merit_block(merit_level, sat, gpa, sat_median, accept):
     }
 
 
+@app.route('/api/deep-dive/academic', methods=['POST'])
+def deep_dive_academic():
+    """
+    Lazy-load the "More about this program" academic expansion for a school.
+
+    Body: { school, primaryMajor, location, schoolVibe }
+    Response: { body: "plain prose" } or { error }
+    """
+    data         = request.json or {}
+    school_name  = data.get('school', '').strip()
+    major        = data.get('primaryMajor', '').strip()
+    location     = data.get('location', '').strip()
+    vibe         = data.get('schoolVibe', '').strip()
+
+    if not school_name or not major:
+        return jsonify({'error': 'school and primaryMajor are required'}), 400
+
+    if not client:
+        return jsonify({'error': 'AI is not configured — add ANTHROPIC_API_KEY to enable deep dives'}), 200
+
+    system_prompt = (
+        "You are an experienced college advisor who understands how academic programs work at universities.\n\n"
+        "Your job is to explain an academic program clearly to a student and their parents so they understand "
+        "how the program actually works and what the experience would be like.\n\n"
+        "This content appears in the 'More about this program' expansion inside a school Deep Dive. "
+        "The summary Deep Dive already introduced the school, so this section should add new insight "
+        "rather than repeat information.\n\n"
+        "GOAL\n"
+        "Help the reader understand the structure and realities of the academic program. Focus on details "
+        "a student might not immediately learn from a quick look at the school's website.\n\n"
+        "THINK FIRST\n"
+        "Before writing, briefly identify 3-5 distinctive aspects of the program that a student might "
+        "not already know. These might include program structure, unusual pathways, research access, "
+        "cross-registration opportunities, internship patterns, or career outcomes. "
+        "Use those insights to guide the explanation. Do not output the list.\n\n"
+        "WRITING STYLE\n"
+        "Write like an experienced college advisor explaining the program to a student and parent.\n"
+        "The tone should be: knowledgeable, clear, natural, engaging.\n"
+        "Avoid sounding like: a marketing brochure, an academic paper, an AI assistant.\n\n"
+        "STRUCTURE\n"
+        "Use short paragraphs. Each paragraph should explain one idea. "
+        "Depth should come from additional short paragraphs, not longer sentences. "
+        "Most expansions will include 4-6 short paragraphs. "
+        "No section headings. No bullet points. Just short paragraphs.\n\n"
+        "CONTENT GUIDELINES\n"
+        "Focus on explaining how the program actually works. "
+        "Helpful topics often include:\n"
+        "- Department structure\n"
+        "- Cross-registration options\n"
+        "- Undergraduate research access\n"
+        "- Program pathways (for example 3-2 engineering or interdisciplinary tracks)\n"
+        "- Internship pipelines\n"
+        "- Career directions or graduate study trends\n"
+        "- Practical realities students should know\n"
+        "Avoid repeating information already stated in the Deep Dive summary.\n\n"
+        "STYLE RULES\n"
+        "- Write clearly and avoid long academic sentences.\n"
+        "- No em dashes anywhere.\n"
+        "- Do not address the reader directly.\n"
+        "- Do not over-personalize using hobbies or profile details.\n"
+        "- Avoid marketing phrases such as 'renowned program' or 'world-class faculty'.\n"
+        "- Avoid unverifiable claims about specific employers recruiting from the school.\n"
+        "- Avoid listing elite graduate schools unless it is widely documented.\n\n"
+        "QUALITY CHECK\n"
+        "If the writing becomes dense, academic, or generic, rewrite it so it is clearer, "
+        "more natural, and easier to read."
+    )
+
+    user_prompt = (
+        f"Write the 'More about this program' expansion for the {major} program at {school_name}.\n\n"
+        f"School: {school_name}\n"
+        + (f"Location: {location}\n" if location else "")
+        + (f"School character: {vibe}\n" if vibe else "")
+        + "\nWrite 4-6 short paragraphs. Each paragraph covers one idea about how the program "
+        "actually works at this specific school. Focus on structure, research access, "
+        "distinctive pathways, and practical realities. "
+        "No headings. No bullet points. No em dashes. No marketing language. "
+        "Do not address the reader directly."
+    )
+
+    try:
+        resp = client.messages.create(
+            model='claude-sonnet-4-6',
+            max_tokens=900,
+            system=system_prompt,
+            messages=[{'role': 'user', 'content': user_prompt}],
+        )
+        body = resp.content[0].text.strip()
+        return jsonify({'body': body})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 200
+
+
 @app.route('/api/deep-dive', methods=['POST'])
 def deep_dive():
     """
@@ -4689,29 +4782,14 @@ def deep_dive():
             f"Cover: the exact department or program name at {_school_nm}; whether it sits in "
             f"engineering, arts and sciences, a dedicated college, or another structure; "
             f"how established or respected the program is; undergraduate research or lab access; "
-            f"practical vs theoretical tilt; faculty accessibility; what makes it distinctive at "
+            f"practical vs theoretical tilt; faculty accessibility; and what makes it distinctive at "
             f"{_school_nm} specifically. Include employer or grad school outcomes where relevant. "
             "Do not write generic 'strong academics' language. Sound informed and specific.\n\n"
-            "## More: Academic\n"
-            "Use EXACTLY this heading: 'More: Academic'\n"
-            "Expanded academic deep dive (shown behind a 'More about this program' button). "
-            "Do not repeat what you wrote above. 6-8 sentences going substantially deeper:\n"
-            f"- Department structure: faculty count, undergraduate vs graduate focus at {_school_nm}\n"
-            f"- How the {academic_direction} program is organized: required sequence, flexibility, capstone or thesis options\n"
-            f"- Research access: specific labs, centers, or institutes undergraduates can join\n"
-            f"- Internship pathways tied to {_school_nm}'s location or alumni network\n"
-            "- Industry connections: which companies recruit here, any co-op or partnership programs\n"
-            f"- Career outcomes: where graduates land (name industries or specific employers if known)\n"
-            "- Graduate school pipelines: acceptance rates or target programs if relevant\n"
-            "- Selectivity of the major: open enrollment or competitive admission\n"
-            "- Any unique program structures (example: Pomona engineering 3-2 pathways)\n"
-            "- Honest tradeoffs or gaps to investigate before committing\n"
-            "Sound informed and honest. Name specifics where possible. Do not invent facts.\n"
         )
     else:
         acad_section_instr = (
-            "[SKIP the academic sections entirely. No major has been provided. "
-            "Do not include 'If You're Serious About' or 'More: Academic' sections.]\n"
+            "[SKIP the academic section entirely. No major has been provided. "
+            "Do not include an 'If You're Serious About' section.]\n"
         )
 
     # Student Experience "More" section — always included
