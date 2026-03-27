@@ -341,9 +341,17 @@ def _conf_token_match(key: str, text: str) -> bool:
 
 
 def detect_conference(filename: str, pdf_title_text: str = "") -> str:
+    # Per-file override: exact basename match (handles camelCase and double-extension filenames)
+    basename = Path(filename).name
+    if basename in FILE_CONF_OVERRIDE:
+        return FILE_CONF_OVERRIDE[basename]
+
+    # Normalize double/triple .pdf extensions so the stem is clean
+    norm_fn = re.sub(r"(?i)(\.pdf)+$", ".pdf", filename)
+
     conf_map = load_conference_map()
 
-    stem = Path(filename).stem.lower()
+    stem = Path(norm_fn).stem.lower()
     tokens = re.split(r"[_\s\-]+", stem)
     clean_tokens = [
         t for t in tokens
@@ -353,7 +361,7 @@ def detect_conference(filename: str, pdf_title_text: str = "") -> str:
         and not re.fullmatch(r"d[1-9]", t)
     ]
     clean_stem = "_".join(clean_tokens)
-    fname_lower = filename.lower()
+    fname_lower = norm_fn.lower()
 
     for key, conf_name in conf_map.items():
         k = key.lower()
@@ -375,13 +383,20 @@ def detect_conference(filename: str, pdf_title_text: str = "") -> str:
 # ── Filename metadata parsing ─────────────────────────────────────────────────
 
 def parse_filename_metadata(filename: str) -> dict:
-    stem = Path(filename).stem.lower()
+    # Normalize double/triple .pdf extensions before stem extraction
+    norm_fn = re.sub(r"(?i)(\.pdf)+$", ".pdf", filename)
+    stem = Path(norm_fn).stem.lower()
     tokens = re.split(r"[_\s\-]+", stem)
 
     year = None
     for t in tokens:
         if re.fullmatch(r"20\d\d", t):
             year = t
+            break
+        # Also catch year embedded in compound tokens like "finalresults2026" or "results2026.pdf"
+        m = re.search(r"(?<!\d)(20\d\d)(?!\d)", t)
+        if m:
+            year = m.group(1)
             break
 
     gender = "combined"
@@ -1089,6 +1104,14 @@ FILE_PARSE_MODE: dict[str, str] = {
     # Conference-level mode cannot be used because it would apply to both files.
     "2026 Ivy Womens Conf": "multi_column_2",
     "2026 Ivy Mens Conf":   "normal",
+}
+
+# Per-file conference overrides for filenames that defeat the regex detector.
+# Keyed by exact basename (including any double extension).
+# Use when a PDF name concatenates the conference acronym directly into a word
+# with no separator (e.g. "NCACSwimDiveChamps...") or has a double extension.
+FILE_CONF_OVERRIDE: dict[str, str] = {
+    "NCACSwimDiveChamps-FinalResults2026.pdf.pdf": "NCAC",
 }
 
 # Events known to not be contested by certain conferences (used in coverage report).

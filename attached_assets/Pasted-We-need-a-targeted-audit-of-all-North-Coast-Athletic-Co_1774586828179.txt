@@ -1,0 +1,149 @@
+We need a targeted audit of all North Coast Athletic Conference (NCAC) schools in the Lane4 data pipeline.
+
+Current problem examples:
+- Wooster has school data but no associated conference
+- Kenyon has no swim data
+- We need to know the full set of NCAC schools and exactly where the gaps are
+
+Do not change UI.
+Do not change deep dive writing.
+Do not change ranking logic.
+Do not change admissions logic.
+
+This is a data audit + gap report only.
+
+==================================================
+GOAL
+==================================================
+
+Pull all NCAC schools through the current pipeline and show, for each school:
+
+1. whether the school exists in the master school universe
+2. whether it has a conference assigned
+3. whether that conference is NCAC / North Coast / North Coast Athletic Conference
+4. whether swim data exists
+5. whether team tier data exists
+6. whether school profile / academic data exists
+7. whether images exist
+8. whether the school is surfaced correctly in explore/search
+9. what exact field/path is missing when a gap exists
+
+==================================================
+NCAC SCHOOL LIST TO AUDIT
+==================================================
+
+Audit these schools explicitly:
+
+- Denison University
+- DePauw University
+- John Carroll University
+- Kenyon College
+- Oberlin College
+- Ohio Wesleyan University
+- Wabash College
+- Wittenberg University
+- The College of Wooster
+
+Be careful about aliases / normalization:
+- Wooster may appear as "College of Wooster" or "The College of Wooster"
+- Ohio Wesleyan may appear as "Ohio Wesleyan" or "Ohio Wesleyan University"
+
+==================================================
+REQUIRED CHECKS
+==================================================
+
+For each school, inspect the actual live data pipeline outputs and report:
+
+A. Identity / normalization
+- canonical school name
+- aliases found
+- whether duplicate records exist
+
+B. Conference mapping
+- conference field value
+- source file or mapping table where conference is assigned
+- whether the school is missing from conference mapping
+- whether normalization mismatch is causing a null conference
+
+C. Swim data
+- whether meet/championship swim data exists
+- source conference or PDF file feeding that data
+- whether the school appears in team scores
+- whether the school appears in swimmer/event rows
+- whether absence is a true missing-data issue or a mapping/join failure
+
+D. Tier / model outputs
+- whether the school appears in:
+  - team_scores.csv
+  - team_tiers.csv
+  - lane4_snapshot.csv
+  - any merged explore/universe dataset actually used by the app
+
+E. App availability
+- whether the school is searchable / explorable in the app
+- whether it has enough data to render a result
+- if not, exactly what missing field blocks it
+
+==================================================
+SPECIFIC QUESTIONS TO ANSWER
+==================================================
+
+1. Why does Wooster have no associated conference?
+2. Why does Kenyon have no swim data?
+3. Are there any other NCAC schools with:
+   - missing conference
+   - missing swim data
+   - missing team tier
+   - duplicate normalization
+   - dropped joins
+4. Is the issue coming from:
+   - conference mapping
+   - school-name normalization
+   - parser output
+   - merge/join logic
+   - explore dataset filtering
+
+==================================================
+OUTPUT FORMAT
+==================================================
+
+Return a table with one row per NCAC school and these columns:
+
+- School
+- Canonical Name
+- Conference Assigned?
+- Conference Value
+- Swim Data Present?
+- Team Scores Present?
+- Team Tier Present?
+- Snapshot / Explore Present?
+- Gap Type
+- Exact Cause
+- Exact File / Mapping / Join Responsible
+- Recommended Fix
+
+Then give a short summary:
+
+1. schools fully healthy
+2. schools with conference issues
+3. schools with swim-data issues
+4. schools with normalization issues
+5. minimum set of fixes needed to make NCAC complete
+
+==================================================
+IMPORTANT
+==================================================
+
+Do not just inspect one final output file.
+
+Trace each missing school backward through the pipeline until you find the exact break point:
+- raw parsed results
+- normalized school names
+- conference mapping
+- team scores
+- tiers
+- snapshot/explore merge
+
+If a school is missing because of a naming mismatch, show both names.
+If a school truly has no source swim data, say that explicitly.
+If the problem is aliasing, show the exact alias map that should be added.
