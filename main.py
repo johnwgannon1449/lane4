@@ -4781,7 +4781,7 @@ def deep_dive():
     if academic_direction:
         _school_nm = result['school']
         acad_section_instr = (
-            f"## If You're Serious About {academic_direction}\n"
+            f"## {academic_direction} at {_school_nm}\n"
             f"This is the highest-priority section when a major is known. 4-5 sentences. Be specific.\n"
             f"Cover: the exact department or program name at {_school_nm}; whether it sits in "
             f"engineering, arts and sciences, a dedicated college, or another structure; "
@@ -4793,7 +4793,7 @@ def deep_dive():
     else:
         acad_section_instr = (
             "[SKIP the academic section entirely. No major has been provided. "
-            "Do not include an 'If You're Serious About' section.]\n"
+            "Do not include an academic program section.]\n"
         )
 
     # Student Experience "More" section — always included
@@ -4915,11 +4915,14 @@ def deep_dive():
         raw = resp.content[0].text
 
         # Split on section headers — per OUTPUT_SCHEMA response parsing spec
+        # Build expected academic title for exact-match classification (no title-text guessing)
+        _acad_title_lc = f"{academic_direction} at {result['school']}".lower() if academic_direction else ''
+
         def _classify_section(t):
             t = t.lower().strip()
-            if 'bottom line' in t:                    return 'bottom_line'
-            if t.startswith("if you're serious about"): return 'academic_program'
-            if t == 'campus life':                    return 'student_experience'
+            if 'bottom line' in t:                              return 'bottom_line'
+            if _acad_title_lc and t == _acad_title_lc:         return 'academic_program'
+            if t == 'campus life':                              return 'student_experience'
             if t == 'outcomes':                       return 'outcomes'
             if t == 'more: academic':                 return 'more_academic'
             if t == 'more: student experience':       return 'more_student_experience'
