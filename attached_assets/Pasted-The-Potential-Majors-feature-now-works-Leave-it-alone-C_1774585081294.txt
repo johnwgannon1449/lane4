@@ -1,0 +1,59 @@
+The Potential Majors feature now works. Leave it alone.
+
+Current live issue:
+The Deep Dive now shows all 3 MORE buttons:
+- More about this program
+- More about student life
+- More about career paths
+
+But the buttons do not work. They appear, but clicking them does not expand content.
+
+Do not touch profile UI.
+Do not touch the major picker.
+Do not touch Bottom Line generation.
+Do not change deep dive writing/copy.
+Do not add new features.
+
+ONLY fix the live MORE button behavior.
+
+Required live behavior:
+
+1. Academic Program
+- "More about this program" must lazy-load on click
+- it must fetch/populate the academic expansion content
+- it must visibly expand in the UI
+
+2. Student Experience
+- "More about student life" must toggle the existing pre-generated student-life content
+- it must visibly expand/collapse in the UI
+
+3. Outcomes
+- "More about career paths" must toggle the existing pre-generated outcomes/career-paths content
+- it must visibly expand/collapse in the UI
+
+4. No catch-all More block
+5. No swim expansion
+6. No admissions expansion
+
+Please inspect specifically for:
+- click handlers not being bound to the visible buttons
+- buttons rendered but expansion containers missing or mis-targeted
+- duplicate IDs
+- hidden divs never unhidden
+- lazy-load fetch failing or returning content that is never inserted
+- rerender wiping expanded state immediately after click
+- event delegation mismatch
+- old dead button logic still being used by the visible path
+
+You must verify in the actual live app that:
+- clicking each of the 3 buttons expands the correct content
+- academic loads content on first click
+- student life expands its own content only
+- outcomes expands its own content only
+
+Report back with:
+1. exact root cause for why the buttons appeared but did not work
+2. exact file/functions changed
+3. confirmation that each of the 3 buttons now works in the actual live app
+4. confirmation that each button expands only its own content
+5. confirmation that no catch-all More block exists

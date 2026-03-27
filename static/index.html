@@ -2220,7 +2220,7 @@ async function openDeepDive(school) {
           moreHtml = `
           <div class="dd-more-wrap">
             <button class="dd-more-btn" id="btn-${moreId}"
-              onclick="_ddLoadAcademic(${JSON.stringify(moreId)})">More about this program ▾</button>
+              onclick='_ddLoadAcademic(${JSON.stringify(moreId)})'>More about this program ▾</button>
             <div class="dd-more-content" id="${moreId}" style="display:none;"></div>
           </div>`;
         } else if (_sType === 'student_experience' || _sType === 'outcomes') {
@@ -2230,7 +2230,7 @@ async function openDeepDive(school) {
             const moreLabel = _sType === 'student_experience' ? 'More about student life ▾' : 'More about career paths ▾';
             moreHtml = `
           <div class="dd-more-wrap">
-            <button class="dd-more-btn" onclick="_ddToggleMore('${moreId}', this, ${JSON.stringify(moreLabel)}, 'Less ▴')">${esc(moreLabel)}</button>
+            <button class="dd-more-btn" onclick='_ddToggleMore("${moreId}", this, ${JSON.stringify(moreLabel)}, "Less ▴")'>${esc(moreLabel)}</button>
             <div class="dd-more-content" id="${moreId}" style="display:none;">${esc(preGen.body)}</div>
           </div>`;
           }
