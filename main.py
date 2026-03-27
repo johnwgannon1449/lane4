@@ -4529,6 +4529,7 @@ def deep_dive_academic():
     if not school_name or not major:
         return jsonify({'error': 'school and primaryMajor are required'}), 400
 
+    client = _get_anthropic()
     if not client:
         return jsonify({'error': 'AI is not configured — add ANTHROPIC_API_KEY to enable deep dives'}), 200
 
