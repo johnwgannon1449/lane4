@@ -2236,9 +2236,16 @@ async function openDeepDive(school) {
           }
         }
 
+        // For academic_program sections, show "{major} at {school}" from structured data,
+        // not the fixed LLM header ("Academic Program") used for reliable classification.
+        const _dispMajor = JAMES.primaryMajor || JAMES.secondaryMajor || '';
+        const _displayTitle = (_sType === 'academic_program' && _dispMajor)
+          ? esc(_dispMajor + ' at ' + school)
+          : esc(s.title);
+
         return `
         <div class="deep-section">
-          <div class="deep-section-title">${esc(s.title)}</div>
+          <div class="deep-section-title">${_displayTitle}</div>
           ${admTable}
           <div class="${isAdm ? 'adm-prose' : 'deep-section-body'}">${esc(s.body)}</div>
           ${moreHtml}

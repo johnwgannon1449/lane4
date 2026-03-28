@@ -1,0 +1,80 @@
+We need to fix the Academic Program section in Deep Dive.
+
+Current live behavior:
+- the academic section appears
+- but the "More about this program" button is NOT present
+- the title still shows "If You're Serious About..."
+
+Do not work on profile UI.
+Do not work on Student Experience or Outcomes.
+Do not work on Bottom Line.
+Do not change general deep dive writing.
+
+Fix only the Academic Program section.
+
+-------------------------------------
+ISSUE 1 — Academic MORE button is missing
+-------------------------------------
+
+The academic section is visible, but the "More about this program" button does not render.
+
+Find the exact reason the visible academic section is not getting a MORE button.
+
+Inspect specifically for:
+1. section type mismatch
+   - visible section may not actually be tagged as type: "academic_program"
+2. button render condition still depending on old logic
+   - title matching
+   - more_academic presence
+   - primaryMajor truthiness
+   - legacy fallback conditions
+3. section normalization mismatch between backend and frontend
+4. visible academic section being rendered through a different path than the button logic
+
+Required behavior:
+- whenever the academic section exists, show:
+  "More about this program"
+- this must depend on the section being the academic section
+- it must NOT depend on title text
+- it must NOT depend on primaryMajor being truthy
+- it must NOT require any catch-all More block
+
+-------------------------------------
+ISSUE 2 — Academic title wording
+-------------------------------------
+
+Current title:
+"If You're Serious About {Major}"
+
+Replace with:
+
+{Major} at {School}
+
+Examples:
+- Biomedical Engineering at Macalester
+- Economics at Kenyon
+- Biology at Carleton
+
+Rules:
+- use primaryMajor if available
+- otherwise fall back to academicGoal
+- do not use title text for section classification
+- section identity must rely on structured section type/key
+
+-------------------------------------
+Verification
+-------------------------------------
+
+Verify in the live app:
+
+1. The academic section shows a visible button:
+   "More about this program"
+2. The academic title displays as:
+   "{Major} at {School}"
+3. Student Experience and Outcomes remain unchanged
+
+Report back with:
+1. exact root cause of the missing academic MORE button
+2. exact file/functions changed
+3. exact final condition used to render the academic MORE button
+4. confirmation that the new title is visible in the live app

@@ -4781,7 +4781,9 @@ def deep_dive():
     if academic_direction:
         _school_nm = result['school']
         acad_section_instr = (
-            f"## {academic_direction} at {_school_nm}\n"
+            "## Academic Program\n"
+            "Use EXACTLY this heading: 'Academic Program'\n"
+            f"Major focus: {academic_direction} at {_school_nm}. "
             f"This is the highest-priority section when a major is known. 4-5 sentences. Be specific.\n"
             f"Cover: the exact department or program name at {_school_nm}; whether it sits in "
             f"engineering, arts and sciences, a dedicated college, or another structure; "
@@ -4915,18 +4917,17 @@ def deep_dive():
         raw = resp.content[0].text
 
         # Split on section headers — per OUTPUT_SCHEMA response parsing spec
-        # Build expected academic title for exact-match classification (no title-text guessing)
-        _acad_title_lc = f"{academic_direction} at {result['school']}".lower() if academic_direction else ''
+        # Section identity uses fixed header strings, never title-text guessing.
 
         def _classify_section(t):
             t = t.lower().strip()
             if 'bottom line' in t:                              return 'bottom_line'
-            if _acad_title_lc and t == _acad_title_lc:         return 'academic_program'
+            if t == 'academic program':                         return 'academic_program'
             if t == 'campus life':                              return 'student_experience'
-            if t == 'outcomes':                       return 'outcomes'
-            if t == 'more: academic':                 return 'more_academic'
-            if t == 'more: student experience':       return 'more_student_experience'
-            if t == 'more: career paths':             return 'more_career_paths'
+            if t == 'outcomes':                                 return 'outcomes'
+            if t == 'more: academic':                           return 'more_academic'
+            if t == 'more: student experience':                 return 'more_student_experience'
+            if t == 'more: career paths':                       return 'more_career_paths'
             return 'content'
 
         parts  = re.split(r'^## ', raw, flags=re.MULTILINE)
