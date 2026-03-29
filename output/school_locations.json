@@ -1,0 +1,1946 @@
+{
+  "California, University of, Ber": {
+    "lat": 37.8716,
+    "lng": -122.2727,
+    "city": "Berkeley",
+    "state": "CA"
+  },
+  "Stanford University": {
+    "lat": 37.4275,
+    "lng": -122.1697,
+    "city": "Stanford",
+    "state": "CA"
+  },
+  "North Carolina State Universit": {
+    "lat": 35.7796,
+    "lng": -78.6382,
+    "city": "Raleigh",
+    "state": "NC"
+  },
+  "Louisville, University of": {
+    "lat": 38.2527,
+    "lng": -85.7585,
+    "city": "Louisville",
+    "state": "KY"
+  },
+  "VA Tech": {
+    "lat": 37.2296,
+    "lng": -80.4139,
+    "city": "Blacksburg",
+    "state": "VA"
+  },
+  "Florida State University": {
+    "lat": 30.4383,
+    "lng": -84.2807,
+    "city": "Tallahassee",
+    "state": "FL"
+  },
+  "Virginia, University of": {
+    "lat": 38.0293,
+    "lng": -78.4767,
+    "city": "Charlottesville",
+    "state": "VA"
+  },
+  "North Carolina, University of": {
+    "lat": 35.9132,
+    "lng": -79.0558,
+    "city": "Chapel Hill",
+    "state": "NC"
+  },
+  "Notre Dame, University of": {
+    "lat": 41.7056,
+    "lng": -86.2353,
+    "city": "Notre Dame",
+    "state": "IN"
+  },
+  "Southern Methodist University": {
+    "lat": 32.7767,
+    "lng": -96.797,
+    "city": "Dallas",
+    "state": "TX"
+  },
+  "Pittsburgh, University of": {
+    "lat": 40.4406,
+    "lng": -79.9959,
+    "city": "Pittsburgh",
+    "state": "PA"
+  },
+  "Georgia Institute of Technolog": {
+    "lat": 33.749,
+    "lng": -84.388,
+    "city": "Atlanta",
+    "state": "GA"
+  },
+  "University of Miami (Florida)": {
+    "lat": 25.7215,
+    "lng": -80.2684,
+    "city": "Coral Gables",
+    "state": "FL"
+  },
+  "Duke University": {
+    "lat": 35.994,
+    "lng": -78.8986,
+    "city": "Durham",
+    "state": "NC"
+  },
+  "Boston College": {
+    "lat": 42.3344,
+    "lng": -71.168,
+    "city": "Chestnut Hill",
+    "state": "MA"
+  },
+  "University of Maryland Baltimo": {
+    "lat": 39.2904,
+    "lng": -76.6122,
+    "city": "Baltimore",
+    "state": "MD"
+  },
+  "Binghamton University": {
+    "lat": 42.0987,
+    "lng": -75.918,
+    "city": "Binghamton",
+    "state": "NY"
+  },
+  "Bryant University": {
+    "lat": 41.8843,
+    "lng": -71.544,
+    "city": "Smithfield",
+    "state": "RI"
+  },
+  "Virginia Military Institute": {
+    "lat": 37.784,
+    "lng": -79.4428,
+    "city": "Lexington",
+    "state": "VA"
+  },
+  "New Jersey Institute of Techno": {
+    "lat": 40.7357,
+    "lng": -74.1724,
+    "city": "Newark",
+    "state": "NJ"
+  },
+  "Maine, University of": {
+    "lat": 44.8942,
+    "lng": -68.6698,
+    "city": "Orono",
+    "state": "ME"
+  },
+  "New Hampshire, University of": {
+    "lat": 43.134,
+    "lng": -70.9239,
+    "city": "Durham",
+    "state": "NH"
+  },
+  "Vermont, University of": {
+    "lat": 44.4759,
+    "lng": -73.2121,
+    "city": "Burlington",
+    "state": "VT"
+  },
+  "Florida Atlantic University": {
+    "lat": 26.3683,
+    "lng": -80.1289,
+    "city": "Boca Raton",
+    "state": "FL"
+  },
+  "Queens University of Charlotte": {
+    "lat": 35.2271,
+    "lng": -80.8431,
+    "city": "Charlotte",
+    "state": "NC"
+  },
+  "Delaware": {
+    "lat": 39.6837,
+    "lng": -75.7497,
+    "city": "Newark",
+    "state": "DE"
+  },
+  "Gardner-Webb University": {
+    "lat": 35.2463,
+    "lng": -81.6673,
+    "city": "Boiling Springs",
+    "state": "NC"
+  },
+  "Old Dominion University": {
+    "lat": 36.8508,
+    "lng": -76.2859,
+    "city": "Norfolk",
+    "state": "VA"
+  },
+  "Bellarmine University": {
+    "lat": 38.2527,
+    "lng": -85.7585,
+    "city": "Louisville",
+    "state": "KY"
+  },
+  "Florida Gulf Coast University": {
+    "lat": 26.6406,
+    "lng": -81.8723,
+    "city": "Fort Myers",
+    "state": "FL"
+  },
+  "Georgia Southern University": {
+    "lat": 32.4488,
+    "lng": -81.7832,
+    "city": "Statesboro",
+    "state": "GA"
+  },
+  "Univ North Carolina Asheville": {
+    "lat": 35.5951,
+    "lng": -82.5515,
+    "city": "Asheville",
+    "state": "NC"
+  },
+  "University of North Florida": {
+    "lat": 30.3322,
+    "lng": -81.6557,
+    "city": "Jacksonville",
+    "state": "FL"
+  },
+  "George Washington University": {
+    "lat": 38.9072,
+    "lng": -77.0369,
+    "city": "Washington",
+    "state": "DC"
+  },
+  "George Mason University": {
+    "lat": 38.8462,
+    "lng": -77.3064,
+    "city": "Fairfax",
+    "state": "VA"
+  },
+  "St Bonaventure University": {
+    "lat": 42.0787,
+    "lng": -78.4731,
+    "city": "St. Bonaventure",
+    "state": "NY"
+  },
+  "La Salle University": {
+    "lat": 39.9526,
+    "lng": -75.1652,
+    "city": "Philadelphia",
+    "state": "PA"
+  },
+  "Davidson College": {
+    "lat": 35.4993,
+    "lng": -80.844,
+    "city": "Davidson",
+    "state": "NC"
+  },
+  "Saint Louis University": {
+    "lat": 38.627,
+    "lng": -90.1994,
+    "city": "St. Louis",
+    "state": "MO"
+  },
+  "Fordham University": {
+    "lat": 40.7128,
+    "lng": -74.006,
+    "city": "New York",
+    "state": "NY"
+  },
+  "University of Richmond": {
+    "lat": 37.5407,
+    "lng": -77.436,
+    "city": "Richmond",
+    "state": "VA"
+  },
+  "Duquesne University": {
+    "lat": 40.4406,
+    "lng": -79.9959,
+    "city": "Pittsburgh",
+    "state": "PA"
+  },
+  "University of Rhode Island": {
+    "lat": 41.4801,
+    "lng": -71.5268,
+    "city": "Kingston",
+    "state": "RI"
+  },
+  "Arizona State University": {
+    "lat": 33.4255,
+    "lng": -111.94,
+    "city": "Tempe",
+    "state": "AZ"
+  },
+  "University of Arizona": {
+    "lat": 32.2226,
+    "lng": -110.9747,
+    "city": "Tucson",
+    "state": "AZ"
+  },
+  "University of Utah": {
+    "lat": 40.7608,
+    "lng": -111.891,
+    "city": "Salt Lake City",
+    "state": "UT"
+  },
+  "Texas Christian University": {
+    "lat": 32.7555,
+    "lng": -97.3308,
+    "city": "Fort Worth",
+    "state": "TX"
+  },
+  "Brigham Young University": {
+    "lat": 40.2338,
+    "lng": -111.6585,
+    "city": "Provo",
+    "state": "UT"
+  },
+  "University of Cincinnati": {
+    "lat": 39.1031,
+    "lng": -84.512,
+    "city": "Cincinnati",
+    "state": "OH"
+  },
+  "West Virginia University": {
+    "lat": 39.6295,
+    "lng": -79.9559,
+    "city": "Morgantown",
+    "state": "WV"
+  },
+  "University of Houston": {
+    "lat": 29.7604,
+    "lng": -95.3698,
+    "city": "Houston",
+    "state": "TX"
+  },
+  "University of Kansas": {
+    "lat": 38.9717,
+    "lng": -95.2353,
+    "city": "Lawrence",
+    "state": "KS"
+  },
+  "Iowa State University": {
+    "lat": 42.0308,
+    "lng": -93.6319,
+    "city": "Ames",
+    "state": "IA"
+  },
+  "Georgetown University": {
+    "lat": 38.9072,
+    "lng": -77.0369,
+    "city": "Washington",
+    "state": "DC"
+  },
+  "Seton Hall University": {
+    "lat": 40.7512,
+    "lng": -74.2607,
+    "city": "South Orange",
+    "state": "NJ"
+  },
+  "Villanova University": {
+    "lat": 40.0367,
+    "lng": -75.3427,
+    "city": "Villanova",
+    "state": "PA"
+  },
+  "Xavier University": {
+    "lat": 39.1031,
+    "lng": -84.512,
+    "city": "Cincinnati",
+    "state": "OH"
+  },
+  "Providence College": {
+    "lat": 41.824,
+    "lng": -71.4128,
+    "city": "Providence",
+    "state": "RI"
+  },
+  "Connecticut, University of": {
+    "lat": 41.8084,
+    "lng": -72.2495,
+    "city": "Storrs",
+    "state": "CT"
+  },
+  "Butler University": {
+    "lat": 39.7684,
+    "lng": -86.1581,
+    "city": "Indianapolis",
+    "state": "IN"
+  },
+  "Indiana University": {
+    "lat": 39.1653,
+    "lng": -86.5264,
+    "city": "Bloomington",
+    "state": "IN"
+  },
+  "Michigan, University of": {
+    "lat": 42.2808,
+    "lng": -83.743,
+    "city": "Ann Arbor",
+    "state": "MI"
+  },
+  "Ohio State University": {
+    "lat": 39.9612,
+    "lng": -82.9988,
+    "city": "Columbus",
+    "state": "OH"
+  },
+  "Northwestern University": {
+    "lat": 42.045,
+    "lng": -87.6877,
+    "city": "Evanston",
+    "state": "IL"
+  },
+  "Wisconsin, University of, Madi": {
+    "lat": 43.0731,
+    "lng": -89.4012,
+    "city": "Madison",
+    "state": "WI"
+  },
+  "Purdue University": {
+    "lat": 40.4259,
+    "lng": -86.9081,
+    "city": "West Lafayette",
+    "state": "IN"
+  },
+  "University of Southern Califor": {
+    "lat": 34.0522,
+    "lng": -118.2437,
+    "city": "Los Angeles",
+    "state": "CA"
+  },
+  "University of Minnesota": {
+    "lat": 44.9778,
+    "lng": -93.265,
+    "city": "Minneapolis",
+    "state": "MN"
+  },
+  "Pennsylvania State University": {
+    "lat": 40.7934,
+    "lng": -77.86,
+    "city": "State College",
+    "state": "PA"
+  },
+  "University of California, Los": {
+    "lat": 34.0522,
+    "lng": -118.2437,
+    "city": "Los Angeles",
+    "state": "CA"
+  },
+  "University of Nebraska-Lincoln": {
+    "lat": 40.8136,
+    "lng": -96.7026,
+    "city": "Lincoln",
+    "state": "NE"
+  },
+  "Rutgers University": {
+    "lat": 40.4862,
+    "lng": -74.4518,
+    "city": "New Brunswick",
+    "state": "NJ"
+  },
+  "Iowa, University of": {
+    "lat": 41.6611,
+    "lng": -91.5302,
+    "city": "Iowa City",
+    "state": "IA"
+  },
+  "University of Illinois": {
+    "lat": 40.1106,
+    "lng": -88.2073,
+    "city": "Urbana-Champaign",
+    "state": "IL"
+  },
+  "University of Hawaii": {
+    "lat": 21.3069,
+    "lng": -157.8583,
+    "city": "Honolulu",
+    "state": "HI"
+  },
+  "Grand Canyon University": {
+    "lat": 33.4484,
+    "lng": -112.074,
+    "city": "Phoenix",
+    "state": "AZ"
+  },
+  "UC San Diego": {
+    "lat": 32.8328,
+    "lng": -117.2713,
+    "city": "La Jolla",
+    "state": "CA"
+  },
+  "UC Santa Barbara": {
+    "lat": 34.4208,
+    "lng": -119.6982,
+    "city": "Santa Barbara",
+    "state": "CA"
+  },
+  "Cal State Bakersfield": {
+    "lat": 35.3733,
+    "lng": -119.0187,
+    "city": "Bakersfield",
+    "state": "CA"
+  },
+  "Seattle U": {
+    "lat": 47.6062,
+    "lng": -122.3321,
+    "city": "Seattle",
+    "state": "WA"
+  },
+  "UC Davis": {
+    "lat": 38.5449,
+    "lng": -121.7405,
+    "city": "Davis",
+    "state": "CA"
+  },
+  "University of San Diego": {
+    "lat": 32.7157,
+    "lng": -117.1611,
+    "city": "San Diego",
+    "state": "CA"
+  },
+  "University of North Carolina W": {
+    "lat": 34.2257,
+    "lng": -77.9447,
+    "city": "Wilmington",
+    "state": "NC"
+  },
+  "Towson University": {
+    "lat": 39.4018,
+    "lng": -76.6019,
+    "city": "Towson",
+    "state": "MD"
+  },
+  "Drexel University": {
+    "lat": 39.9526,
+    "lng": -75.1652,
+    "city": "Philadelphia",
+    "state": "PA"
+  },
+  "William and Mary": {
+    "lat": 37.2707,
+    "lng": -76.7075,
+    "city": "Williamsburg",
+    "state": "VA"
+  },
+  "Monmouth University": {
+    "lat": 40.2935,
+    "lng": -74.006,
+    "city": "West Long Branch",
+    "state": "NJ"
+  },
+  "Northeastern University": {
+    "lat": 42.3601,
+    "lng": -71.0589,
+    "city": "Boston",
+    "state": "MA"
+  },
+  "Stony Brook University": {
+    "lat": 40.9176,
+    "lng": -73.123,
+    "city": "Stony Brook",
+    "state": "NY"
+  },
+  "Campbell University": {
+    "lat": 35.4226,
+    "lng": -78.7419,
+    "city": "Buies Creek",
+    "state": "NC"
+  },
+  "Augustana College": {
+    "lat": 41.5095,
+    "lng": -90.5151,
+    "city": "Rock Island",
+    "state": "IL"
+  },
+  "Wheaton College": {
+    "lat": 41.8661,
+    "lng": -88.107,
+    "city": "Wheaton",
+    "state": "IL"
+  },
+  "Carthage College": {
+    "lat": 42.5847,
+    "lng": -87.8212,
+    "city": "Kenosha",
+    "state": "WI"
+  },
+  "Illinois Wesleyan University": {
+    "lat": 40.4842,
+    "lng": -88.9937,
+    "city": "Bloomington",
+    "state": "IL"
+  },
+  "Carroll University": {
+    "lat": 43.0117,
+    "lng": -88.2315,
+    "city": "Waukesha",
+    "state": "WI"
+  },
+  "Millikin University": {
+    "lat": 39.8403,
+    "lng": -88.9548,
+    "city": "Decatur",
+    "state": "IL"
+  },
+  "North Central College": {
+    "lat": 41.7508,
+    "lng": -88.1535,
+    "city": "Naperville",
+    "state": "IL"
+  },
+  "Johns Hopkins University": {
+    "lat": 39.2904,
+    "lng": -76.6122,
+    "city": "Baltimore",
+    "state": "MD"
+  },
+  "Gettysburg College": {
+    "lat": 39.8309,
+    "lng": -77.2314,
+    "city": "Gettysburg",
+    "state": "PA"
+  },
+  "Swarthmore College": {
+    "lat": 39.9023,
+    "lng": -75.3516,
+    "city": "Swarthmore",
+    "state": "PA"
+  },
+  "Dickinson College": {
+    "lat": 40.2015,
+    "lng": -77.1889,
+    "city": "Carlisle",
+    "state": "PA"
+  },
+  "Franklin & Marshall College": {
+    "lat": 40.0379,
+    "lng": -76.3055,
+    "city": "Lancaster",
+    "state": "PA"
+  },
+  "Ursinus College": {
+    "lat": 40.1926,
+    "lng": -75.4521,
+    "city": "Collegeville",
+    "state": "PA"
+  },
+  "Washington College": {
+    "lat": 39.209,
+    "lng": -76.0672,
+    "city": "Chestertown",
+    "state": "MD"
+  },
+  "McDaniel College Swim Team": {
+    "lat": 39.5754,
+    "lng": -76.9958,
+    "city": "Westminster",
+    "state": "MD"
+  },
+  "Bryn Mawr College Owls": {
+    "lat": 40.0204,
+    "lng": -75.3099,
+    "city": "Bryn Mawr",
+    "state": "PA"
+  },
+  "Grand Valley State University": {
+    "lat": 42.9781,
+    "lng": -85.9536,
+    "city": "Allendale",
+    "state": "MI"
+  },
+  "Wayne State University": {
+    "lat": 42.3314,
+    "lng": -83.0458,
+    "city": "Detroit",
+    "state": "MI"
+  },
+  "Northern Michigan University": {
+    "lat": 46.5436,
+    "lng": -87.3954,
+    "city": "Marquette",
+    "state": "MI"
+  },
+  "St Cloud State University (M)": {
+    "lat": 45.5579,
+    "lng": -94.1632,
+    "city": "St. Cloud",
+    "state": "MN"
+  },
+  "Saginaw Valley State Universit": {
+    "lat": 43.5478,
+    "lng": -83.9899,
+    "city": "University Center",
+    "state": "MI"
+  },
+  "Davenport University": {
+    "lat": 42.9634,
+    "lng": -85.6681,
+    "city": "Grand Rapids",
+    "state": "MI"
+  },
+  "Augustana University": {
+    "lat": 43.5473,
+    "lng": -96.7283,
+    "city": "Sioux Falls",
+    "state": "SD"
+  },
+  "Lake Superior State University": {
+    "lat": 46.4953,
+    "lng": -84.3453,
+    "city": "Sault Ste. Marie",
+    "state": "MI"
+  },
+  "Oakland University": {
+    "lat": 42.6803,
+    "lng": -83.1224,
+    "city": "Rochester",
+    "state": "MI"
+  },
+  "IU Indianapolis": {
+    "lat": 39.7684,
+    "lng": -86.1581,
+    "city": "Indianapolis",
+    "state": "IN"
+  },
+  "Youngstown State University": {
+    "lat": 41.0998,
+    "lng": -80.6495,
+    "city": "Youngstown",
+    "state": "OH"
+  },
+  "University of Wisconsin-Milwau": {
+    "lat": 43.0389,
+    "lng": -87.9065,
+    "city": "Milwaukee",
+    "state": "WI"
+  },
+  "Cleveland State University": {
+    "lat": 41.4993,
+    "lng": -81.6944,
+    "city": "Cleveland",
+    "state": "OH"
+  },
+  "Green Bay Phoenix": {
+    "lat": 44.5133,
+    "lng": -88.0133,
+    "city": "Green Bay",
+    "state": "WI"
+  },
+  "Northern Kentucky University": {
+    "lat": 38.9598,
+    "lng": -84.4505,
+    "city": "Highland Heights",
+    "state": "KY"
+  },
+  "Princeton University": {
+    "lat": 40.3573,
+    "lng": -74.6672,
+    "city": "Princeton",
+    "state": "NJ"
+  },
+  "Yale University": {
+    "lat": 41.3083,
+    "lng": -72.9279,
+    "city": "New Haven",
+    "state": "CT"
+  },
+  "Harvard Men's Swimming": {
+    "lat": 42.377,
+    "lng": -71.1167,
+    "city": "Cambridge",
+    "state": "MA"
+  },
+  "Columbia University": {
+    "lat": 40.7128,
+    "lng": -74.006,
+    "city": "New York",
+    "state": "NY"
+  },
+  "Cornell University": {
+    "lat": 42.444,
+    "lng": -76.5021,
+    "city": "Ithaca",
+    "state": "NY"
+  },
+  "Brown University": {
+    "lat": 41.824,
+    "lng": -71.4128,
+    "city": "Providence",
+    "state": "RI"
+  },
+  "Dartmouth College": {
+    "lat": 43.7022,
+    "lng": -72.2896,
+    "city": "Hanover",
+    "state": "NH"
+  },
+  "University of Pennsylvania": {
+    "lat": 39.9526,
+    "lng": -75.1652,
+    "city": "Philadelphia",
+    "state": "PA"
+  },
+  "Harvard University": {
+    "lat": 42.3736,
+    "lng": -71.1097,
+    "city": "Cambridge",
+    "state": "MA"
+  },
+  "Catholic University of America": {
+    "lat": 38.9072,
+    "lng": -77.0369,
+    "city": "Washington",
+    "state": "DC"
+  },
+  "University of Scranton": {
+    "lat": 41.409,
+    "lng": -75.6624,
+    "city": "Scranton",
+    "state": "PA"
+  },
+  "Drew University": {
+    "lat": 40.7598,
+    "lng": -74.4171,
+    "city": "Madison",
+    "state": "NJ"
+  },
+  "Susquehanna University": {
+    "lat": 40.7987,
+    "lng": -76.8641,
+    "city": "Selinsgrove",
+    "state": "PA"
+  },
+  "Elizabethtown College": {
+    "lat": 40.1523,
+    "lng": -76.5996,
+    "city": "Elizabethtown",
+    "state": "PA"
+  },
+  "Wilkes University": {
+    "lat": 41.2459,
+    "lng": -75.8813,
+    "city": "Wilkes-Barre",
+    "state": "PA"
+  },
+  "Juniata College": {
+    "lat": 40.4851,
+    "lng": -78.0108,
+    "city": "Huntingdon",
+    "state": "PA"
+  },
+  "Lycoming College": {
+    "lat": 41.2412,
+    "lng": -77.0011,
+    "city": "Williamsport",
+    "state": "PA"
+  },
+  "Moravian University": {
+    "lat": 40.6259,
+    "lng": -75.3705,
+    "city": "Bethlehem",
+    "state": "PA"
+  },
+  "Goucher College": {
+    "lat": 39.2904,
+    "lng": -76.6122,
+    "city": "Baltimore",
+    "state": "MD"
+  },
+  "Fairfield University": {
+    "lat": 41.1418,
+    "lng": -73.2632,
+    "city": "Fairfield",
+    "state": "CT"
+  },
+  "Marist University": {
+    "lat": 41.7004,
+    "lng": -73.921,
+    "city": "Poughkeepsie",
+    "state": "NY"
+  },
+  "Niagara University": {
+    "lat": 43.1342,
+    "lng": -79.0445,
+    "city": "Niagara University",
+    "state": "NY"
+  },
+  "Iona University": {
+    "lat": 40.9115,
+    "lng": -73.7826,
+    "city": "New Rochelle",
+    "state": "NY"
+  },
+  "Rider University": {
+    "lat": 40.2926,
+    "lng": -74.7346,
+    "city": "Lawrenceville",
+    "state": "NJ"
+  },
+  "Mount Saint Mary's University": {
+    "lat": 39.7042,
+    "lng": -77.3275,
+    "city": "Emmitsburg",
+    "state": "MD"
+  },
+  "Canisius University": {
+    "lat": 42.8864,
+    "lng": -78.8784,
+    "city": "Buffalo",
+    "state": "NY"
+  },
+  "Saint Peter's University": {
+    "lat": 40.7178,
+    "lng": -74.0431,
+    "city": "Jersey City",
+    "state": "NJ"
+  },
+  "Manhattan University": {
+    "lat": 40.9012,
+    "lng": -73.9129,
+    "city": "Riverdale",
+    "state": "NY"
+  },
+  "Sacred Heart University": {
+    "lat": 41.1418,
+    "lng": -73.2632,
+    "city": "Fairfield",
+    "state": "CT"
+  },
+  "Siena University": {
+    "lat": 42.6942,
+    "lng": -73.7626,
+    "city": "Loudonville",
+    "state": "NY"
+  },
+  "Merrimack College": {
+    "lat": 42.6978,
+    "lng": -71.1298,
+    "city": "North Andover",
+    "state": "MA"
+  },
+  "Stevens Institute of Technolog": {
+    "lat": 40.744,
+    "lng": -74.0324,
+    "city": "Hoboken",
+    "state": "NJ"
+  },
+  "York College of Pennsylvania": {
+    "lat": 39.9626,
+    "lng": -76.7277,
+    "city": "York",
+    "state": "PA"
+  },
+  "Misericordia University": {
+    "lat": 41.3354,
+    "lng": -75.9657,
+    "city": "Dallas",
+    "state": "PA"
+  },
+  "Arcadia University": {
+    "lat": 40.1026,
+    "lng": -75.1521,
+    "city": "Glenside",
+    "state": "PA"
+  },
+  "Widener University": {
+    "lat": 39.8498,
+    "lng": -75.356,
+    "city": "Chester",
+    "state": "PA"
+  },
+  "Stevenson University": {
+    "lat": 39.4165,
+    "lng": -76.7805,
+    "city": "Owings Mills",
+    "state": "MD"
+  },
+  "Messiah University": {
+    "lat": 40.2143,
+    "lng": -77.0086,
+    "city": "Mechanicsburg",
+    "state": "PA"
+  },
+  "King's College": {
+    "lat": 41.2459,
+    "lng": -75.8813,
+    "city": "Wilkes-Barre",
+    "state": "PA"
+  },
+  "Hood College Swimming": {
+    "lat": 39.4143,
+    "lng": -77.4105,
+    "city": "Frederick",
+    "state": "MD"
+  },
+  "Fairleigh Dickinson University": {
+    "lat": 40.8918,
+    "lng": -74.0121,
+    "city": "Teaneck",
+    "state": "NJ"
+  },
+  "Lebanon Valley College": {
+    "lat": 40.3287,
+    "lng": -76.5147,
+    "city": "Annville",
+    "state": "PA"
+  },
+  "Gustavus Adolphus College": {
+    "lat": 44.3258,
+    "lng": -93.958,
+    "city": "Saint Peter",
+    "state": "MN"
+  },
+  "Carleton College": {
+    "lat": 44.4583,
+    "lng": -93.1616,
+    "city": "Northfield",
+    "state": "MN"
+  },
+  "Saint Johns University": {
+    "lat": 45.5866,
+    "lng": -94.3594,
+    "city": "Collegeville",
+    "state": "MN"
+  },
+  "Macalester College": {
+    "lat": 44.9537,
+    "lng": -93.09,
+    "city": "Saint Paul",
+    "state": "MN"
+  },
+  "Saint Olaf College": {
+    "lat": 44.4583,
+    "lng": -93.1616,
+    "city": "Northfield",
+    "state": "MN"
+  },
+  "Hamline University": {
+    "lat": 44.9537,
+    "lng": -93.09,
+    "city": "Saint Paul",
+    "state": "MN"
+  },
+  "College of Saint Benedict": {
+    "lat": 45.5638,
+    "lng": -94.3158,
+    "city": "St. Joseph",
+    "state": "MN"
+  },
+  "Saint Catherine University": {
+    "lat": 44.9537,
+    "lng": -93.09,
+    "city": "St. Paul",
+    "state": "MN"
+  },
+  "Concordia College": {
+    "lat": 46.8738,
+    "lng": -96.7678,
+    "city": "Moorhead",
+    "state": "MN"
+  },
+  "Augsburg University": {
+    "lat": 44.9778,
+    "lng": -93.265,
+    "city": "Minneapolis",
+    "state": "MN"
+  },
+  "US Air Force Academy": {
+    "lat": 38.8339,
+    "lng": -104.8214,
+    "city": "Colorado Springs",
+    "state": "CO"
+  },
+  "University of Nevada Las Vegas": {
+    "lat": 36.1699,
+    "lng": -115.1398,
+    "city": "Las Vegas",
+    "state": "NV"
+  },
+  "University of Wyoming": {
+    "lat": 41.3114,
+    "lng": -105.5911,
+    "city": "Laramie",
+    "state": "WY"
+  },
+  "Cal Baptist University": {
+    "lat": 33.9533,
+    "lng": -117.3962,
+    "city": "Riverside",
+    "state": "CA"
+  },
+  "University of the Pacific": {
+    "lat": 37.9577,
+    "lng": -121.2908,
+    "city": "Stockton",
+    "state": "CA"
+  },
+  "Northern Arizona University": {
+    "lat": 35.1983,
+    "lng": -111.6513,
+    "city": "Flagstaff",
+    "state": "AZ"
+  },
+  "New Mexico State University": {
+    "lat": 32.3199,
+    "lng": -106.7637,
+    "city": "Las Cruces",
+    "state": "NM"
+  },
+  "Northern Colorado, University": {
+    "lat": 40.4233,
+    "lng": -104.7091,
+    "city": "Greeley",
+    "state": "CO"
+  },
+  "Idaho, University of": {
+    "lat": 46.7324,
+    "lng": -117.0002,
+    "city": "Moscow",
+    "state": "ID"
+  },
+  "Pepperdine University": {
+    "lat": 34.0259,
+    "lng": -118.7798,
+    "city": "Malibu",
+    "state": "CA"
+  },
+  "Utah Tech University": {
+    "lat": 37.0965,
+    "lng": -113.5684,
+    "city": "St. George",
+    "state": "UT"
+  },
+  "University of Incarnate Word": {
+    "lat": 29.4241,
+    "lng": -98.4936,
+    "city": "San Antonio",
+    "state": "TX"
+  },
+  "Univ Texas Rio Grande Valley": {
+    "lat": 26.3017,
+    "lng": -98.1633,
+    "city": "Edinburg",
+    "state": "TX"
+  },
+  "Williams College": {
+    "lat": 42.7121,
+    "lng": -73.2036,
+    "city": "Williamstown",
+    "state": "MA"
+  },
+  "Tufts University": {
+    "lat": 42.4184,
+    "lng": -71.1062,
+    "city": "Medford",
+    "state": "MA"
+  },
+  "Amherst College": {
+    "lat": 42.3732,
+    "lng": -72.5199,
+    "city": "Amherst",
+    "state": "MA"
+  },
+  "Connecticut College": {
+    "lat": 41.3557,
+    "lng": -72.0995,
+    "city": "New London",
+    "state": "CT"
+  },
+  "Bates College": {
+    "lat": 44.1004,
+    "lng": -70.2148,
+    "city": "Lewiston",
+    "state": "ME"
+  },
+  "Hamilton College": {
+    "lat": 43.0484,
+    "lng": -75.3749,
+    "city": "Clinton",
+    "state": "NY"
+  },
+  "Bowdoin College": {
+    "lat": 43.9145,
+    "lng": -69.9654,
+    "city": "Brunswick",
+    "state": "ME"
+  },
+  "Middlebury College": {
+    "lat": 44.0154,
+    "lng": -73.1673,
+    "city": "Middlebury",
+    "state": "VT"
+  },
+  "Colby College": {
+    "lat": 44.5524,
+    "lng": -69.6317,
+    "city": "Waterville",
+    "state": "ME"
+  },
+  "Trinity College": {
+    "lat": 41.7658,
+    "lng": -72.6851,
+    "city": "Hartford",
+    "state": "CT"
+  },
+  "Wesleyan University": {
+    "lat": 41.5623,
+    "lng": -72.6506,
+    "city": "Middletown",
+    "state": "CT"
+  },
+  "Massachusetts Institute of Tec": {
+    "lat": 42.3601,
+    "lng": -71.0942,
+    "city": "Cambridge",
+    "state": "MA"
+  },
+  "U.S. Coast Guard Academy": {
+    "lat": 41.3557,
+    "lng": -72.0995,
+    "city": "New London",
+    "state": "CT"
+  },
+  "Worcester Polytechnic Institut": {
+    "lat": 42.2626,
+    "lng": -71.8023,
+    "city": "Worcester",
+    "state": "MA"
+  },
+  "Babson College": {
+    "lat": 42.2968,
+    "lng": -71.2924,
+    "city": "Wellesley",
+    "state": "MA"
+  },
+  "Wheaton College (Ma)": {
+    "lat": 42.1015,
+    "lng": -71.5112,
+    "city": "Norton",
+    "state": "MA"
+  },
+  "Springfield College": {
+    "lat": 42.1015,
+    "lng": -72.5898,
+    "city": "Springfield",
+    "state": "MA"
+  },
+  "Clark University": {
+    "lat": 42.2626,
+    "lng": -71.8023,
+    "city": "Worcester",
+    "state": "MA"
+  },
+  "Wellesley College": {
+    "lat": 42.2968,
+    "lng": -71.2924,
+    "city": "Wellesley",
+    "state": "MA"
+  },
+  "Smith College": {
+    "lat": 42.3251,
+    "lng": -72.6412,
+    "city": "Northampton",
+    "state": "MA"
+  },
+  "Mount Holyoke College": {
+    "lat": 42.2548,
+    "lng": -72.571,
+    "city": "South Hadley",
+    "state": "MA"
+  },
+  "Washington and Lee University": {
+    "lat": 37.784,
+    "lng": -79.4428,
+    "city": "Lexington",
+    "state": "VA"
+  },
+  "University of Lynchburg": {
+    "lat": 37.4138,
+    "lng": -79.1422,
+    "city": "Lynchburg",
+    "state": "VA"
+  },
+  "Roanoke College Swimming Maroo": {
+    "lat": 37.2935,
+    "lng": -80.0548,
+    "city": "Salem",
+    "state": "VA"
+  },
+  "Bridgewater College": {
+    "lat": 38.3818,
+    "lng": -78.9736,
+    "city": "Bridgewater",
+    "state": "VA"
+  },
+  "Randolph-Macon College": {
+    "lat": 37.7601,
+    "lng": -77.4805,
+    "city": "Ashland",
+    "state": "VA"
+  },
+  "Randolph College": {
+    "lat": 37.4138,
+    "lng": -79.1422,
+    "city": "Lynchburg",
+    "state": "VA"
+  },
+  "Virginia Wesleyan University": {
+    "lat": 36.8508,
+    "lng": -76.2859,
+    "city": "Norfolk",
+    "state": "VA"
+  },
+  "Hampden-Sydney College": {
+    "lat": 37.2393,
+    "lng": -78.4558,
+    "city": "Hampden Sydney",
+    "state": "VA"
+  },
+  "Greensboro College": {
+    "lat": 36.0726,
+    "lng": -79.792,
+    "city": "Greensboro",
+    "state": "NC"
+  },
+  "Hollins University": {
+    "lat": 37.271,
+    "lng": -79.9414,
+    "city": "Roanoke",
+    "state": "VA"
+  },
+  "Sweet Briar College": {
+    "lat": 37.5568,
+    "lng": -79.0656,
+    "city": "Sweet Briar",
+    "state": "VA"
+  },
+  "United States Navy Academy": {
+    "lat": 38.9784,
+    "lng": -76.4922,
+    "city": "Annapolis",
+    "state": "MD"
+  },
+  "United States Military Academy": {
+    "lat": 41.3912,
+    "lng": -73.955,
+    "city": "West Point",
+    "state": "NY"
+  },
+  "Loyola University": {
+    "lat": 39.2904,
+    "lng": -76.6122,
+    "city": "Baltimore",
+    "state": "MD"
+  },
+  "Boston University": {
+    "lat": 42.3601,
+    "lng": -71.0589,
+    "city": "Boston",
+    "state": "MA"
+  },
+  "Bucknell University": {
+    "lat": 40.9648,
+    "lng": -76.8844,
+    "city": "Lewisburg",
+    "state": "PA"
+  },
+  "Lehigh University": {
+    "lat": 40.6259,
+    "lng": -75.3705,
+    "city": "Bethlehem",
+    "state": "PA"
+  },
+  "College of the Holy Cross": {
+    "lat": 42.2626,
+    "lng": -71.8023,
+    "city": "Worcester",
+    "state": "MA"
+  },
+  "Lafayette College": {
+    "lat": 40.6884,
+    "lng": -75.2207,
+    "city": "Easton",
+    "state": "PA"
+  },
+  "Colgate University": {
+    "lat": 42.8237,
+    "lng": -75.5441,
+    "city": "Hamilton",
+    "state": "NY"
+  },
+  "American University": {
+    "lat": 38.9072,
+    "lng": -77.0369,
+    "city": "Washington",
+    "state": "DC"
+  },
+  "University of California, Sant": {
+    "lat": 36.9741,
+    "lng": -122.0308,
+    "city": "Santa Cruz",
+    "state": "CA"
+  },
+  "Biola University": {
+    "lat": 33.9172,
+    "lng": -118.0117,
+    "city": "La Mirada",
+    "state": "CA"
+  },
+  "Fresno Pacific University": {
+    "lat": 36.7378,
+    "lng": -119.7871,
+    "city": "Fresno",
+    "state": "CA"
+  },
+  "The Master's University": {
+    "lat": 34.3917,
+    "lng": -118.5426,
+    "city": "Santa Clarita",
+    "state": "CA"
+  },
+  "Arizona Christian University": {
+    "lat": 33.4484,
+    "lng": -112.074,
+    "city": "Phoenix",
+    "state": "AZ"
+  },
+  "College of Idaho": {
+    "lat": 43.6629,
+    "lng": -116.6874,
+    "city": "Caldwell",
+    "state": "ID"
+  },
+  "Ottawa University of Arizona": {
+    "lat": 33.6292,
+    "lng": -112.3679,
+    "city": "Surprise",
+    "state": "AZ"
+  },
+  "Soka University": {
+    "lat": 33.5769,
+    "lng": -117.7258,
+    "city": "Aliso Viejo",
+    "state": "CA"
+  },
+  "Simpson University": {
+    "lat": 40.5865,
+    "lng": -122.3917,
+    "city": "Redding",
+    "state": "CA"
+  },
+  "California State University, E": {
+    "lat": 37.6688,
+    "lng": -122.0808,
+    "city": "Hayward",
+    "state": "CA"
+  },
+  "Azusa Pacific University": {
+    "lat": 34.1336,
+    "lng": -117.9076,
+    "city": "Azusa",
+    "state": "CA"
+  },
+  "University of Alaska Fairbanks": {
+    "lat": 64.2008,
+    "lng": -149.4937,
+    "city": "Fairbanks",
+    "state": "AK"
+  },
+  "Westmont College": {
+    "lat": 34.4208,
+    "lng": -119.6982,
+    "city": "Santa Barbara",
+    "state": "CA"
+  },
+  "Concordia University Irvine": {
+    "lat": 33.6846,
+    "lng": -117.8265,
+    "city": "Irvine",
+    "state": "CA"
+  },
+  "West Chester University": {
+    "lat": 39.9607,
+    "lng": -75.6055,
+    "city": "West Chester",
+    "state": "PA"
+  },
+  "Gannon University": {
+    "lat": 42.1292,
+    "lng": -80.0851,
+    "city": "Erie",
+    "state": "PA"
+  },
+  "Bloomsburg University": {
+    "lat": 41.0048,
+    "lng": -76.4547,
+    "city": "Bloomsburg",
+    "state": "PA"
+  },
+  "PennWest University Clarion": {
+    "lat": 41.2132,
+    "lng": -79.3823,
+    "city": "Clarion",
+    "state": "PA"
+  },
+  "Indiana University of PA": {
+    "lat": 40.6217,
+    "lng": -79.1525,
+    "city": "Indiana",
+    "state": "PA"
+  },
+  "Shippensburg University of PA": {
+    "lat": 40.0509,
+    "lng": -77.5197,
+    "city": "Shippensburg",
+    "state": "PA"
+  },
+  "Kutztown University": {
+    "lat": 40.5193,
+    "lng": -75.7793,
+    "city": "Kutztown",
+    "state": "PA"
+  },
+  "PennWest Edinboro University": {
+    "lat": 41.8748,
+    "lng": -80.1285,
+    "city": "Edinboro",
+    "state": "PA"
+  },
+  "East Stroudsburg University": {
+    "lat": 40.9926,
+    "lng": -75.1796,
+    "city": "East Stroudsburg",
+    "state": "PA"
+  },
+  "Millersville University": {
+    "lat": 39.999,
+    "lng": -76.3566,
+    "city": "Millersville",
+    "state": "PA"
+  },
+  "PennWest University,California": {
+    "lat": 40.0643,
+    "lng": -79.8942,
+    "city": "California",
+    "state": "PA"
+  },
+  "Lock Haven University": {
+    "lat": 41.1371,
+    "lng": -77.4469,
+    "city": "Lock Haven",
+    "state": "PA"
+  },
+  "Wingate University": {
+    "lat": 34.9873,
+    "lng": -80.459,
+    "city": "Wingate",
+    "state": "NC"
+  },
+  "Catawba College": {
+    "lat": 35.671,
+    "lng": -80.4742,
+    "city": "Salisbury",
+    "state": "NC"
+  },
+  "Carson-Newman University": {
+    "lat": 36.1159,
+    "lng": -83.491,
+    "city": "Jefferson City",
+    "state": "TN"
+  },
+  "Lenoir-Rhyne University": {
+    "lat": 35.7332,
+    "lng": -81.3415,
+    "city": "Hickory",
+    "state": "NC"
+  },
+  "Mars Hill University": {
+    "lat": 35.8271,
+    "lng": -82.5496,
+    "city": "Mars Hill",
+    "state": "NC"
+  },
+  "Pomona-Pitzer": {
+    "lat": 34.0967,
+    "lng": -117.7198,
+    "city": "Claremont",
+    "state": "CA"
+  },
+  "Claremont-Mudd-Scripps": {
+    "lat": 34.0967,
+    "lng": -117.7198,
+    "city": "Claremont",
+    "state": "CA"
+  },
+  "Chapman University": {
+    "lat": 33.7879,
+    "lng": -117.8531,
+    "city": "Orange",
+    "state": "CA"
+  },
+  "California Institute of Techno": {
+    "lat": 34.1478,
+    "lng": -118.1445,
+    "city": "Pasadena",
+    "state": "CA"
+  },
+  "Whittier College": {
+    "lat": 33.9792,
+    "lng": -118.0328,
+    "city": "Whittier",
+    "state": "CA"
+  },
+  "Cal Lutheran University": {
+    "lat": 34.1706,
+    "lng": -118.8376,
+    "city": "Thousand Oaks",
+    "state": "CA"
+  },
+  "Occidental College": {
+    "lat": 34.0522,
+    "lng": -118.2437,
+    "city": "Los Angeles",
+    "state": "CA"
+  },
+  "University of Redlands": {
+    "lat": 34.0556,
+    "lng": -117.1825,
+    "city": "Redlands",
+    "state": "CA"
+  },
+  "University of La Verne": {
+    "lat": 34.1006,
+    "lng": -117.7678,
+    "city": "La Verne",
+    "state": "CA"
+  },
+  "University of Texas": {
+    "lat": 30.2672,
+    "lng": -97.7431,
+    "city": "Austin",
+    "state": "TX"
+  },
+  "University of Florida": {
+    "lat": 29.6516,
+    "lng": -82.3248,
+    "city": "Gainesville",
+    "state": "FL"
+  },
+  "University of Tennessee": {
+    "lat": 35.9606,
+    "lng": -83.9207,
+    "city": "Knoxville",
+    "state": "TN"
+  },
+  "Georgia, University of": {
+    "lat": 33.9519,
+    "lng": -83.3576,
+    "city": "Athens",
+    "state": "GA"
+  },
+  "Auburn University": {
+    "lat": 32.6099,
+    "lng": -85.4808,
+    "city": "Auburn",
+    "state": "AL"
+  },
+  "University of Alabama": {
+    "lat": 33.2098,
+    "lng": -87.5692,
+    "city": "Tuscaloosa",
+    "state": "AL"
+  },
+  "Louisiana State University": {
+    "lat": 30.4515,
+    "lng": -91.1871,
+    "city": "Baton Rouge",
+    "state": "LA"
+  },
+  "Kentucky, University of": {
+    "lat": 38.0406,
+    "lng": -84.5037,
+    "city": "Lexington",
+    "state": "KY"
+  },
+  "Texas A&M University": {
+    "lat": 30.628,
+    "lng": -96.3344,
+    "city": "College Station",
+    "state": "TX"
+  },
+  "Missouri": {
+    "lat": 38.9517,
+    "lng": -92.3341,
+    "city": "Columbia",
+    "state": "MO"
+  },
+  "South Carolina, University of": {
+    "lat": 34.0007,
+    "lng": -81.0348,
+    "city": "Columbia",
+    "state": "SC"
+  },
+  "University of Arkansas": {
+    "lat": 36.0626,
+    "lng": -94.1574,
+    "city": "Fayetteville",
+    "state": "AR"
+  },
+  "Vanderbilt University": {
+    "lat": 36.1627,
+    "lng": -86.7816,
+    "city": "Nashville",
+    "state": "TN"
+  },
+  "University of Denver": {
+    "lat": 39.7392,
+    "lng": -104.9903,
+    "city": "Denver",
+    "state": "CO"
+  },
+  "University of South Dakota": {
+    "lat": 42.7794,
+    "lng": -96.9294,
+    "city": "Vermillion",
+    "state": "SD"
+  },
+  "University of Nebraska Omaha": {
+    "lat": 41.2565,
+    "lng": -95.9345,
+    "city": "Omaha",
+    "state": "NE"
+  },
+  "South Dakota State University": {
+    "lat": 44.3114,
+    "lng": -96.7984,
+    "city": "Brookings",
+    "state": "SD"
+  },
+  "University of St. Thomas MN": {
+    "lat": 44.9537,
+    "lng": -93.09,
+    "city": "St. Paul",
+    "state": "MN"
+  },
+  "University of Southern Indiana": {
+    "lat": 37.9716,
+    "lng": -87.5711,
+    "city": "Evansville",
+    "state": "IN"
+  },
+  "Eastern Illinois University": {
+    "lat": 39.4959,
+    "lng": -88.1761,
+    "city": "Charleston",
+    "state": "IL"
+  },
+  "Emory University": {
+    "lat": 33.749,
+    "lng": -84.388,
+    "city": "Atlanta",
+    "state": "GA"
+  },
+  "New York University": {
+    "lat": 40.7295,
+    "lng": -73.9965,
+    "city": "New York",
+    "state": "NY"
+  },
+  "University of Chicago": {
+    "lat": 41.8781,
+    "lng": -87.6298,
+    "city": "Chicago",
+    "state": "IL"
+  },
+  "Washington University St Louis": {
+    "lat": 38.627,
+    "lng": -90.1994,
+    "city": "St. Louis",
+    "state": "MO"
+  },
+  "Carnegie Mellon University": {
+    "lat": 40.4406,
+    "lng": -79.9959,
+    "city": "Pittsburgh",
+    "state": "PA"
+  },
+  "Case Western Reserve Universit": {
+    "lat": 41.4993,
+    "lng": -81.6944,
+    "city": "Cleveland",
+    "state": "OH"
+  },
+  "University of Rochester": {
+    "lat": 43.1566,
+    "lng": -77.6088,
+    "city": "Rochester",
+    "state": "NY"
+  },
+  "Brandeis University": {
+    "lat": 42.3765,
+    "lng": -71.2356,
+    "city": "Waltham",
+    "state": "MA"
+  },
+  "Ithaca College": {
+    "lat": 42.444,
+    "lng": -76.5021,
+    "city": "Ithaca",
+    "state": "NY"
+  },
+  "Rochester Institute of Technol": {
+    "lat": 43.1566,
+    "lng": -77.6088,
+    "city": "Rochester",
+    "state": "NY"
+  },
+  "Rensselaer Polytechnic Institu": {
+    "lat": 42.7284,
+    "lng": -73.6918,
+    "city": "Troy",
+    "state": "NY"
+  },
+  "Clarkson University": {
+    "lat": 44.6701,
+    "lng": -74.9815,
+    "city": "Potsdam",
+    "state": "NY"
+  },
+  "Union College (New York)": {
+    "lat": 42.8142,
+    "lng": -73.9396,
+    "city": "Schenectady",
+    "state": "NY"
+  },
+  "Skidmore College": {
+    "lat": 43.0831,
+    "lng": -73.7846,
+    "city": "Saratoga Springs",
+    "state": "NY"
+  },
+  "Vassar College": {
+    "lat": 41.7004,
+    "lng": -73.921,
+    "city": "Poughkeepsie",
+    "state": "NY"
+  },
+  "St. Lawrence University": {
+    "lat": 44.5959,
+    "lng": -75.1696,
+    "city": "Canton",
+    "state": "NY"
+  },
+  "Hobart and William Smith": {
+    "lat": 42.8698,
+    "lng": -76.9777,
+    "city": "Geneva",
+    "state": "NY"
+  },
+  "Bard College": {
+    "lat": 42.027,
+    "lng": -73.9138,
+    "city": "Annandale-on-Hudson",
+    "state": "NY"
+  },
+  "Denison University": {
+    "lat": 40.0681,
+    "lng": -82.5193,
+    "city": "Granville",
+    "state": "OH"
+  },
+  "Kenyon College": {
+    "lat": 40.3751,
+    "lng": -82.3943,
+    "city": "Gambier",
+    "state": "OH"
+  },
+  "John Carroll University": {
+    "lat": 41.5012,
+    "lng": -81.5379,
+    "city": "University Heights",
+    "state": "OH"
+  },
+  "DePauw University": {
+    "lat": 39.6445,
+    "lng": -86.8647,
+    "city": "Greencastle",
+    "state": "IN"
+  },
+  "Wabash College": {
+    "lat": 40.0412,
+    "lng": -86.9003,
+    "city": "Crawfordsville",
+    "state": "IN"
+  },
+  "College of Wooster": {
+    "lat": 40.8051,
+    "lng": -81.9349,
+    "city": "Wooster",
+    "state": "OH"
+  },
+  "Oberlin College": {
+    "lat": 41.2959,
+    "lng": -82.2177,
+    "city": "Oberlin",
+    "state": "OH"
+  },
+  "Ohio Wesleyan University": {
+    "lat": 40.2987,
+    "lng": -83.0677,
+    "city": "Delaware",
+    "state": "OH"
+  },
+  "Wittenberg University": {
+    "lat": 39.9242,
+    "lng": -83.8088,
+    "city": "Springfield",
+    "state": "OH"
+  },
+  "California Baptist": {
+    "lat": 33.9533,
+    "lng": -117.3962,
+    "city": "Riverside",
+    "state": "CA"
+  },
+  "Air Force": {
+    "lat": 38.8339,
+    "lng": -104.8214,
+    "city": "Colorado Springs",
+    "state": "CO"
+  },
+  "Grand Canyon": {
+    "lat": 33.4484,
+    "lng": -112.074,
+    "city": "Phoenix",
+    "state": "AZ"
+  },
+  "Seattle": {
+    "lat": 47.6062,
+    "lng": -122.3321,
+    "city": "Seattle",
+    "state": "WA"
+  },
+  "Northern Arizona": {
+    "lat": 35.1983,
+    "lng": -111.6513,
+    "city": "Flagstaff",
+    "state": "AZ"
+  },
+  "New Mexico State": {
+    "lat": 32.3199,
+    "lng": -106.7637,
+    "city": "Las Cruces",
+    "state": "NM"
+  },
+  "Idaho": {
+    "lat": 46.7324,
+    "lng": -117.0002,
+    "city": "Moscow",
+    "state": "ID"
+  },
+  "Northern Colorado": {
+    "lat": 40.4233,
+    "lng": -104.7091,
+    "city": "Greeley",
+    "state": "CO"
+  },
+  "University of Texas Rio Grande": {
+    "lat": 26.3017,
+    "lng": -98.1633,
+    "city": "Edinburg",
+    "state": "TX"
+  }
+}

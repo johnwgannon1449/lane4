@@ -18,6 +18,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,600;0,700;0,800;1,600&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -59,6 +61,29 @@
 
     /* ── TYPOGRAPHY ──────────────────────────────────────────── */
     .page-title { font-family: 'Fraunces', serif; font-weight: 700; font-size: 1.35rem; color: var(--navy); margin-bottom: 0.25rem; }
+    /* ── My List view toggle ─────────────────────────────────────────── */
+    .mylist-header-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem; }
+    .mylist-header-row .page-title { margin-bottom: 0; }
+    .mylist-view-toggle { display: flex; gap: 0.35rem; }
+    .mylist-view-toggle .view-toggle-btn {
+      font-family: 'Figtree', sans-serif; font-size: 0.78rem; font-weight: 600;
+      padding: 0.3rem 0.75rem; border-radius: 6px; border: 1.5px solid var(--border);
+      background: transparent; color: var(--slate); cursor: pointer; transition: all 0.15s;
+    }
+    .mylist-view-toggle .view-toggle-btn.active {
+      background: var(--navy); color: #fff; border-color: var(--navy);
+    }
+    /* ── Map view container ──────────────────────────────────────────── */
+    #mylist-map-container { border-radius: 12px; overflow: hidden; border: 1px solid var(--border); }
+    #mylist-map-el { height: 520px; width: 100%; }
+    .mylist-map-popup .school-name  { font-family: 'Fraunces', serif; font-weight: 700; font-size: 0.92rem; color: var(--navy); margin-bottom: 0.15rem; }
+    .mylist-map-popup .school-loc   { font-size: 0.78rem; color: var(--muted); margin-bottom: 0.1rem; }
+    .mylist-map-popup .school-conf  { font-size: 0.78rem; color: var(--slate); margin-bottom: 0.55rem; }
+    .mylist-map-popup .popup-dd-btn {
+      display: inline-block; font-family: 'Figtree', sans-serif; font-size: 0.78rem;
+      font-weight: 600; padding: 0.3rem 0.75rem; background: var(--blue); color: #fff;
+      border: none; border-radius: 6px; cursor: pointer;
+    }
     .page-sub { font-size: 0.85rem; color: var(--muted); margin-bottom: 1.5rem; }
     .section-label {
       font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;
@@ -760,8 +785,17 @@
 ════════════════════════════════════════════════════════════════ -->
 <div class="tab-panel" id="panel-mylist">
   <div class="wrap">
-    <div class="page-title">My List</div>
+    <div class="mylist-header-row">
+      <div class="page-title">My List</div>
+      <div class="mylist-view-toggle" id="mylist-view-toggle" style="display:none;">
+        <button class="view-toggle-btn active" id="mylist-toggle-list" onclick="setMyListView('list')">List</button>
+        <button class="view-toggle-btn" id="mylist-toggle-map"  onclick="setMyListView('map')">Map View</button>
+      </div>
+    </div>
     <div id="mylist-body"></div>
+    <div id="mylist-map-container" style="display:none;">
+      <div id="mylist-map-el"></div>
+    </div>
     <div id="mylist-print-bar" style="display:none;gap:0.6rem;flex-wrap:wrap;margin-top:1.1rem;padding-top:1rem;border-top:1px solid var(--border);">
       <button class="btn btn-secondary" onclick="printListCards()" style="font-size:0.82rem;">🖨 Print List (Cards)</button>
       <button class="btn btn-secondary" id="print-with-dives-btn" onclick="printListWithDeepDives()" style="font-size:0.82rem;">🖨 Print with Deep Dives</button>
@@ -868,7 +902,11 @@ let SEARCH_RESULT_POOL = []; // full ordered result set for progressive reveal
 let REVEAL_COUNT  = 6;    // how many schools are currently visible
 let SWIPE_HINT_SHOWN = false; // one-time per-session swipe hint
 let SEARCH_IS_DIRECT = false; // whether last search was a direct school-name match
-let SCHOOL_IMAGES = {};   // { "School Name": { hero, student_life, swim } }
+let SCHOOL_IMAGES     = {};   // { "School Name": { hero, student_life, swim } }
+let SCHOOL_LOCATIONS  = {};   // { "School Name": { lat, lng, city, state } } — loaded once from /api/school-locations
+let MYLIST_VIEW       = 'list'; // 'list' | 'map'
+let _myListMap        = null;   // Leaflet map instance
+let _myListMarkers    = null;   // Leaflet layer group
 
 async function loadSchoolImages() {
   try {
@@ -1295,6 +1333,7 @@ async function submitOnboarding() {
       body: JSON.stringify({ times: JAMES.times, sat: JAMES.sat, gpa: JAMES.gpa }),
     }),
     loadSchoolImages(),
+    fetch('/api/school-locations').then(r => r.ok ? r.json() : {}).then(d => { SCHOOL_LOCATIONS = d || {}; }).catch(() => {}),
   ]);
   if (ob_schoolsRes.status === 'fulfilled' && ob_schoolsRes.value.ok) {
     try { const sd = await ob_schoolsRes.value.json(); ALL_SCHOOLS = sd.schools || []; } catch(_) {}
@@ -1565,6 +1604,7 @@ async function afterAuthBoot() {
       body: JSON.stringify({ times: JAMES.times, sat: JAMES.sat, gpa: JAMES.gpa }),
     }),
     loadSchoolImages(),
+    fetch('/api/school-locations').then(r => r.ok ? r.json() : {}).then(d => { SCHOOL_LOCATIONS = d || {}; }).catch(() => {}),
   ]);
 
   if (schoolsRes.status === 'fulfilled' && schoolsRes.value.ok) {
@@ -2669,11 +2709,17 @@ function toggleListHealth() {
 }
 
 function renderMyList() {
-  const el = document.getElementById('mylist-body');
-  const printBar = document.getElementById('mylist-print-bar');
-  if (printBar) printBar.style.display = MY_LIST.length ? 'flex' : 'none';
+  const el        = document.getElementById('mylist-body');
+  const printBar  = document.getElementById('mylist-print-bar');
+  const mapCont   = document.getElementById('mylist-map-container');
+  const toggleBar = document.getElementById('mylist-view-toggle');
+  if (printBar)  printBar.style.display  = MY_LIST.length ? 'flex' : 'none';
+  if (toggleBar) toggleBar.style.display = MY_LIST.length ? 'flex' : 'none';
 
   if (!MY_LIST.length) {
+    MYLIST_VIEW = 'list';
+    if (mapCont) mapCont.style.display = 'none';
+    el.style.display = '';
     el.innerHTML = `<div class="empty-state">
       <div class="empty-state-icon">📋</div>
       <div class="empty-state-title">Your list is empty</div>
@@ -2681,6 +2727,17 @@ function renderMyList() {
     </div>`;
     return;
   }
+
+  // Honour the current view mode — map beats list
+  if (MYLIST_VIEW === 'map') {
+    el.style.display = 'none';
+    if (mapCont) mapCont.style.display = '';
+    _initMyListMap();
+    _updateMyListMapMarkers();
+    return;
+  }
+  if (mapCont) mapCont.style.display = 'none';
+  el.style.display = '';
 
   // ── List strength box ────────────────────────────────────────────────────
   const _health = evaluateMyList();
@@ -2855,6 +2912,81 @@ function renderMyList() {
     </div>`;
   }).join('');
 
+}
+
+// ── My List — Map View ────────────────────────────────────────────────────────
+
+function setMyListView(view) {
+  MYLIST_VIEW = view;
+  const btnList = document.getElementById('mylist-toggle-list');
+  const btnMap  = document.getElementById('mylist-toggle-map');
+  if (btnList) { btnList.classList.toggle('active', view === 'list'); }
+  if (btnMap)  { btnMap.classList.toggle('active',  view === 'map');  }
+  renderMyList();
+}
+
+function _initMyListMap() {
+  if (_myListMap) {
+    // Already exists — just trigger a resize in case the container was hidden
+    setTimeout(() => _myListMap.invalidateSize(), 50);
+    return;
+  }
+  const el = document.getElementById('mylist-map-el');
+  if (!el) return;
+
+  _myListMap = L.map(el).setView([38.5, -96], 4);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 18,
+    attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+  }).addTo(_myListMap);
+
+  _myListMarkers = L.layerGroup().addTo(_myListMap);
+  setTimeout(() => _myListMap.invalidateSize(), 50);
+}
+
+// Safe key lookup for map popup Deep Dive buttons (avoids quoting issues with apostrophes)
+window._mapPopupKeys = {};
+function _mapPopupDeepDive(key) {
+  const school = window._mapPopupKeys[key];
+  if (school) { showTab('explore'); openDeepDive(school); }
+}
+
+function _updateMyListMapMarkers() {
+  if (!_myListMap || !_myListMarkers) return;
+  _myListMarkers.clearLayers();
+  // Purge stale keys
+  window._mapPopupKeys = {};
+
+  const placed = [];
+  MY_LIST.forEach(school => {
+    const loc = SCHOOL_LOCATIONS[school];
+    if (!loc) return;
+
+    const result  = ALL_RESULTS.find(r => r.school === school);
+    const conf    = result ? (result.conference || '') : '';
+    const cityStr = [loc.city, loc.state].filter(Boolean).join(', ');
+
+    // Safe key avoids quote-escaping issues for school names with apostrophes
+    const key = 'k' + Math.random().toString(36).slice(2, 9);
+    window._mapPopupKeys[key] = school;
+
+    const popupHtml = `
+      <div class="mylist-map-popup" style="min-width:170px;">
+        <div class="school-name">${esc(school)}</div>
+        ${cityStr ? `<div class="school-loc">${esc(cityStr)}</div>` : ''}
+        ${conf     ? `<div class="school-conf">${esc(conf)}</div>`  : ''}
+        <button class="popup-dd-btn" onclick="_mapPopupDeepDive('${key}')">Deep Dive →</button>
+      </div>`;
+
+    const marker = L.marker([loc.lat, loc.lng])
+      .bindPopup(popupHtml, { maxWidth: 240 });
+    _myListMarkers.addLayer(marker);
+    placed.push([loc.lat, loc.lng]);
+  });
+
+  if (placed.length > 0) {
+    try { _myListMap.fitBounds(L.latLngBounds(placed), { padding: [30, 30], maxZoom: 10 }); } catch(_) {}
+  }
 }
 
 function toggleCRM(school) {

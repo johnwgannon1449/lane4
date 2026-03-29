@@ -1,0 +1,155 @@
+We are adding a Map View for My List.
+
+Do not change Explore.
+Do not change Deep Dive content.
+Do not change admissions logic.
+Do not change swim logic.
+Do not redesign the whole My List page.
+
+This is a clean, contained UI/data feature.
+
+==================================================
+GOAL
+==================================================
+
+Add a toggle on the My List page so users can switch between:
+
+1. List View
+2. Map View
+
+Map View should show a zoomable map of all schools currently in My List.
+
+There must also be a clear control to return to List View.
+
+==================================================
+PRODUCT REQUIREMENTS
+==================================================
+
+1. Add a Map View icon/button at the top of My List
+- near the existing My List header/actions
+- keep styling consistent with the app
+- label can be "Map View" or use a map icon + text
+
+2. Add a corresponding "Back to List" control in Map View
+- should be obvious and easy to tap/click
+- keep styling parallel to the Map View control
+
+3. Map View behavior
+- render only schools currently saved in My List
+- same page toggle, not a separate major navigation experience unless technically necessary
+- full-width or near-full-width map area inside My List content region
+- user can zoom and pan
+- clicking a school marker opens a small popup/card
+
+4. Marker popup content (V1)
+Include:
+- school name
+- city, state
+- conference
+- Deep Dive button
+
+Keep this compact and clean.
+Do not dump the full My List card into the popup.
+
+==================================================
+DATA REQUIREMENTS
+==================================================
+
+For every school in My List, we need reliable location data.
+
+Use this structure for each school:
+- school
+- city
+- state
+- lat
+- lng
+
+TASK:
+Audit the schools that can appear in My List and make sure the school dataset has usable location fields.
+
+If lat/lng are missing:
+- populate them
+- store them in the school dataset used by the app
+- do not geocode live on every page load
+
+Important:
+- use the canonical school record already used by the app
+- if a school has aliases, normalize them correctly before attaching location data
+- do not create duplicate school records
+
+==================================================
+IMPLEMENTATION RECOMMENDATION
+==================================================
+
+Use a lightweight stable map library appropriate for this app.
+Leaflet is preferred unless there is a strong reason otherwise.
+
+V1 requirements:
+- standard map tiles
+- simple markers
+- marker clustering when zoomed out if easy to add cleanly
+- no fancy pin coloring yet
+- no route planning
+- no trip-planning logic
+- no all-schools map
+- My List only
+
+==================================================
+UI / UX REQUIREMENTS
+==================================================
+
+List View and Map View should feel like the same product.
+
+Keep the design language aligned with My List:
+- spacing
+- button style
+- card style
+- typography
+
+The Deep Dive button in the map popup should visually match the Deep Dive button style used elsewhere in My List / Explore.
+
+Do not create a dramatically different visual system for the map popup.
+
+==================================================
+BEFORE BUILDING
+==================================================
+
+First inspect the current My List data path and determine:
+1. how saved schools are stored
+2. what school object fields are already available in My List
+3. whether city/state already exist
+4. whether lat/lng already exist anywhere in the pipeline
+5. what school dataset should be enriched if lat/lng are missing
+
+Then implement the smallest clean solution.
+
+==================================================
+VERIFICATION
+==================================================
+
+Verify all of the following in the running app:
+
+1. My List shows a visible Map View toggle/button
+2. Clicking it switches to a zoomable map
+3. All schools currently in My List appear as markers
+4. Clicking a marker opens a popup/card
+5. The popup/card includes:
+   - school name
+   - city, state
+   - conference
+   - Deep Dive button
+6. Back to List returns to the normal My List card view
+7. Refresh does not break the toggle/view
+8. No existing My List behavior is broken
+
+==================================================
+REPORT BACK WITH
+==================================================
+
+1. Files changed
+2. Where My List school data comes from
+3. Whether city/state already existed
+4. Whether lat/lng had to be added
+5. Exact location-data source used for the school records
+6. Map library used
+7. Confirmation that Map View and Back to List both work in the live app
