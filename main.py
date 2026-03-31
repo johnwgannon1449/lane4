@@ -5050,6 +5050,96 @@ def coach_email():
     return jsonify({'subject': subject, 'body': body})
 
 
+# ---------------------------------------------------------------------------
+# ADMIN — Image Curation UI
+# ---------------------------------------------------------------------------
+
+_CANDIDATES_PATH = os.path.join('static', 'candidates_manifest.json')
+_CURATED_PATH    = os.path.join('static', 'curated_manifest.json')
+
+def _load_candidates_manifest():
+    try:
+        with open(_CANDIDATES_PATH, encoding='utf-8') as f:
+            return json.load(f)
+    except (FileNotFoundError, json.JSONDecodeError):
+        return {}
+
+def _load_curated_manifest():
+    try:
+        with open(_CURATED_PATH, encoding='utf-8') as f:
+            return json.load(f)
+    except (FileNotFoundError, json.JSONDecodeError):
+        return {}
+
+def _save_curated_manifest(data: dict):
+    os.makedirs('static', exist_ok=True)
+    with open(_CURATED_PATH, 'w', encoding='utf-8') as f:
+        json.dump(data, f, indent=2, ensure_ascii=False)
+
+
+@app.route('/admin/curate')
+@login_required
+def admin_curate():
+    return send_from_directory('static', 'admin_curate.html')
+
+
+@app.route('/api/admin/schools', methods=['GET'])
+@login_required
+def api_admin_schools():
+    try:
+        with open('school_names.json', encoding='utf-8') as f:
+            all_names = json.load(f)
+    except Exception:
+        all_names = [s['school'] for s in EXPLORE_SCHOOLS]
+
+    candidates = _load_candidates_manifest()
+    curated    = _load_curated_manifest()
+
+    result = []
+    for name in all_names:
+        cands = candidates.get(name, [])
+        cur   = curated.get(name, {})
+        result.append({
+            'name':           name,
+            'has_candidates': bool(cands),
+            'candidate_count': len(cands),
+            'is_curated':     bool(cur.get('selected')),
+            'selected_count': len(cur.get('selected', [])),
+        })
+    return jsonify(result)
+
+
+@app.route('/api/admin/candidates/<path:school>', methods=['GET'])
+@login_required
+def api_admin_candidates(school):
+    candidates = _load_candidates_manifest()
+    curated    = _load_curated_manifest()
+    return jsonify({
+        'candidates': candidates.get(school, []),
+        'curated':    curated.get(school, {'selected': [], 'roles': {}}),
+    })
+
+
+@app.route('/api/admin/save', methods=['POST'])
+@login_required
+def api_admin_save():
+    body   = request.get_json(silent=True) or {}
+    school = (body.get('school') or '').strip()
+    if not school:
+        return jsonify({'error': 'missing school'}), 400
+    selected = body.get('selected', [])
+    roles    = body.get('roles', {})
+
+    curated = _load_curated_manifest()
+    curated[school] = {
+        'selected': selected,
+        'roles':    roles,
+        'saved_at': time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()),
+    }
+    _save_curated_manifest(curated)
+    return jsonify({'ok': True, 'school': school, 'selected': len(selected)})
+
+
 @app.route('/api/health', methods=['GET'])
 def health():
     key_ok = bool(os.environ.get('ANTHROPIC_API_KEY', '').strip())
