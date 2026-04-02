@@ -1,42 +1,4 @@
 Bundle_ID,Conference,Source_File,Parse_Mode,Page_Number,Columns_Detected,Event_Headers_Detected,Notes
-odac_2026,ODAC,odac 2026 swim-full-results.pdf,multi_column_2,1,2,,2col_mode
-odac_2026,ODAC,odac 2026 swim-full-results.pdf,multi_column_2,2,3,,2col_row_paired
-odac_2026,ODAC,odac 2026 swim-full-results.pdf,multi_column_2,3,3,,2col_row_paired
-odac_2026,ODAC,odac 2026 swim-full-results.pdf,multi_column_2,4,2,,2col_mode
-odac_2026,ODAC,odac 2026 swim-full-results.pdf,multi_column_2,5,2,,2col_mode
-odac_2026,ODAC,odac 2026 swim-full-results.pdf,multi_column_2,6,3,,2col_row_paired
-odac_2026,ODAC,odac 2026 swim-full-results.pdf,multi_column_2,7,2,,2col_mode
-odac_2026,ODAC,odac 2026 swim-full-results.pdf,multi_column_2,8,3,,2col_row_paired
-odac_2026,ODAC,odac 2026 swim-full-results.pdf,multi_column_2,9,3,,2col_row_paired
-odac_2026,ODAC,odac 2026 swim-full-results.pdf,multi_column_2,10,3,,2col_row_paired
-odac_2026,ODAC,odac 2026 swim-full-results.pdf,multi_column_2,11,3,,2col_row_paired
-odac_2026,ODAC,odac 2026 swim-full-results.pdf,multi_column_2,12,2,,2col_mode
-odac_2026,ODAC,odac 2026 swim-full-results.pdf,multi_column_2,13,3,,2col_row_paired
-odac_2026,ODAC,odac 2026 swim-full-results.pdf,multi_column_2,14,3,,2col_row_paired
-odac_2026,ODAC,odac 2026 swim-full-results.pdf,multi_column_2,15,2,,2col_mode
-odac_2026,ODAC,odac 2026 swim-full-results.pdf,multi_column_2,16,3,,2col_row_paired
-odac_2026,ODAC,odac 2026 swim-full-results.pdf,multi_column_2,17,3,,2col_row_paired
-odac_2026,ODAC,odac 2026 swim-full-results.pdf,multi_column_2,18,3,,2col_row_paired
-odac_2026,ODAC,odac 2026 swim-full-results.pdf,multi_column_2,19,3,,2col_mode
-odac_2026,ODAC,odac 2026 swim-full-results.pdf,multi_column_2,20,2,,2col_mode
-odac_2026,ODAC,odac 2026 swim-full-results.pdf,multi_column_2,21,2,,2col_mode
-odac_2026,ODAC,odac 2026 swim-full-results.pdf,multi_column_2,22,3,,2col_row_paired
-odac_2026,ODAC,odac 2026 swim-full-results.pdf,multi_column_2,23,2,,2col_mode
-odac_2026,ODAC,odac 2026 swim-full-results.pdf,multi_column_2,24,2,,2col_mode
-odac_2026,ODAC,odac 2026 swim-full-results.pdf,multi_column_2,25,3,,2col_row_paired
-odac_2026,ODAC,odac 2026 swim-full-results.pdf,multi_column_2,26,2,,2col_mode
-odac_2026,ODAC,odac 2026 swim-full-results.pdf,multi_column_2,27,2,,2col_mode
-odac_2026,ODAC,odac 2026 swim-full-results.pdf,multi_column_2,28,3,,2col_row_paired
-odac_2026,ODAC,odac 2026 swim-full-results.pdf,multi_column_2,29,3,,2col_row_paired
-odac_2026,ODAC,odac 2026 swim-full-results.pdf,multi_column_2,30,2,,2col_mode
-odac_2026,ODAC,odac 2026 swim-full-results.pdf,multi_column_2,31,2,,2col_mode
-odac_2026,ODAC,odac 2026 swim-full-results.pdf,multi_column_2,32,3,,2col_row_paired
-odac_2026,ODAC,odac 2026 swim-full-results.pdf,multi_column_2,33,3,,2col_row_paired
-odac_2026,ODAC,odac 2026 swim-full-results.pdf,multi_column_2,34,2,,2col_mode
-odac_2026,ODAC,odac 2026 swim-full-results.pdf,multi_column_2,35,2,,2col_mode
-odac_2026,ODAC,odac 2026 swim-full-results.pdf,multi_column_2,36,2,,2col_mode
-odac_2026,ODAC,odac 2026 swim-full-results.pdf,multi_column_2,37,2,,2col_mode
-odac_2026,ODAC,odac 2026 swim-full-results.pdf,multi_column_2,38,2,,2col_mode
 patriot_2026,Patriot,Patriot League 2026 results.pdf,multi_column_3,1,3,,"3col_fixed splits=[196.0,400.0]"
 patriot_2026,Patriot,Patriot League 2026 results.pdf,multi_column_3,2,3,,"3col_fixed splits=[196.0,400.0]"
 patriot_2026,Patriot,Patriot League 2026 results.pdf,multi_column_3,3,3,,"3col_fixed splits=[196.0,400.0]"

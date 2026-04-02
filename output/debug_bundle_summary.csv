@@ -1,3 +1,2 @@
 Bundle_ID,Conference,Files_In_Bundle,Detected_Gender,Events_Detected,Events_Mapped,Events_Output,Men_Events_Output,Women_Events_Output,Events_Missing,Men_Missing,Women_Missing,Events_Recovered_Pass2,Missing_Event_List,Team_Scores_Found,Team_Score_Strategy,Notes
-odac_2026,ODAC,1,men/women,13,26,26,13,13,0,0,0,0,,0,not_found,
 patriot_2026,Patriot,1,men/women,13,26,26,13,13,0,0,0,0,,0,not_found,

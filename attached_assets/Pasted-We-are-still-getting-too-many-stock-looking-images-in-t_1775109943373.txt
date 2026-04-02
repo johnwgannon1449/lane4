@@ -1,0 +1,161 @@
+We are still getting too many stock-looking images in the Lane4 image curation pipeline.
+
+This means the current collector is too broad and is pulling generic marketing/admissions lifestyle photos instead of school-specific campus and swim imagery.
+
+We need to tighten the sourcing and ranking logic immediately.
+
+GOAL
+Return 8–20 candidate images from official school sources that are strong, school-specific, and visually aspirational.
+We want:
+- campus/place images
+- iconic architecture
+- quad/aerial/outdoor setting
+- swim facility / natatorium / pool images
+We do NOT want generic brochure-style stock-looking student photos.
+
+==================================================
+IMPORTANT CHANGE
+==================================================
+
+Do not treat all images on official school websites as equally valid.
+
+We need to rank for PLACE and FACILITY, not generic marketing people imagery.
+
+==================================================
+SOURCE PRIORITY
+==================================================
+
+Only crawl a small set of high-value official page types:
+
+Highest priority:
+- university homepage
+- campus visit pages
+- campus life overview pages
+- about campus pages
+- traditions / landmarks pages
+- athletics homepage
+- swimming and diving pages
+- aquatics / natatorium / facilities pages
+
+De-prioritize heavily or skip:
+- student support pages
+- generic admissions subpages
+- news posts unless clearly campus/facility related
+- faculty/staff pages
+- student profile pages
+- fundraising/giving pages
+- campaign pages
+- diversity brochure pages
+- pages dominated by generic student marketing photography
+
+==================================================
+IMAGE RANKING RULES
+==================================================
+
+For HERO candidates, prefer images that are:
+- large
+- landscape orientation
+- outdoor
+- campus-first
+- iconic architecture or wide campus scene
+- visually clear even at thumbnail size
+- colorful / vibrant
+- not cluttered
+
+For POOL candidates, prefer:
+- natatorium
+- pool deck
+- lane lines / blocks
+- swimming facility interior/exterior
+- official athletics/facility imagery
+
+For STUDENT LIFE candidates, only keep if they feel authentic and strong.
+Do not force generic smiling student photos into the candidate set.
+
+==================================================
+NEGATIVE FILTERS
+==================================================
+
+Aggressively penalize or reject images that look like:
+- posed close-up students smiling at camera
+- classroom discussion table scenes
+- laptop-on-grass brochure shots
+- generic marketing lifestyle imagery
+- handshake / advising / lecture closeups
+- headshots
+- tiny promo banners
+- text-overlay assets
+- stock-photo-looking diversity brochure images
+- logos
+- icons
+- seals
+- maps
+- SVGs
+- repeated duplicates
+
+==================================================
+SOURCE PAGE KEYWORD BOOSTING
+==================================================
+
+Boost images whose SOURCE PAGE URL or title contains:
+- visit
+- campus
+- about
+- traditions
+- landmarks
+- student-life
+- facilities
+- aquatics
+- natatorium
+- swimming
+
+Penalize images whose SOURCE PAGE URL or title contains:
+- support
+- advising
+- diversity
+- profile
+- apply
+- campaign
+- giving
+- news
+- faculty
+
+==================================================
+IMPORTANT IMPLEMENTATION DETAIL
+==================================================
+
+Do not just scrape all img tags from official pages and rank by size.
+
+We need page-aware candidate selection:
+- collect source page metadata
+- attach each candidate image to the page it came from
+- use page type as part of ranking
+- prefer campus/facility pages
+- de-prioritize brochure-style marketing pages
+
+==================================================
+OPTIONAL IMPROVEMENT
+==================================================
+
+Internally bucket candidates before display:
+- Campus / Hero-leaning
+- Pool / Swim-leaning
+- Student-life-leaning
+
+The user-facing selection UI can still stay simple:
+1st selected = Hero
+2nd selected = Pool
+3rd selected = Student Life
+But candidate generation should be smarter behind the scenes.
+
+==================================================
+SUCCESS CRITERIA
+==================================================
+
+When I review candidate images for a school, I should mostly see:
+- campus scenes
+- architecture
+- iconic views
+- pool/facility shots
+
+I should NOT mostly see generic marketing/student brochure photos.
