@@ -1,19 +1,14 @@
 """
-Lane4 Candidate Image Harvester
-================================
-Fetches up to 8 candidate images per school (across campus, pool, and
-students queries) and stores them all in static/candidates_manifest.json.
-
-Unlike harvest_images.py (which picks only the single best image per
-category), this script saves every valid candidate so the admin curation
-UI can let a human choose.
+Lane4 Candidate Image Harvester  (Pexels edition)
+==================================================
+Fetches up to 8 candidate images per school via the Pexels API and stores
+them in static/candidates_manifest.json for admin curation.
 
 Usage:
     python3 harvest_candidates.py [--school "School Name"] [--reset]
 
-Environment variables required (same as harvest_images.py):
-    GOOGLE_CSE_KEY  — Google Custom Search API key
-    GOOGLE_CSE_ID   — Custom Search Engine ID (cx)
+Environment variable required:
+    PEXELS_KEY  — Pexels API key (free at pexels.com/api, 200 req/hr)
 
 Output:
     static/candidates_manifest.json
@@ -28,14 +23,12 @@ import urllib.error
 import urllib.parse
 import urllib.request
 import argparse
-from datetime import datetime
 
 CANDIDATES_PATH = os.path.join('static', 'candidates_manifest.json')
 NAMES_PATH      = 'school_names.json'
 
-API_KEY = os.environ.get('GOOGLE_CSE_KEY', '')
-CX      = os.environ.get('GOOGLE_CSE_ID', '')
-CSE_URL = 'https://www.googleapis.com/customsearch/v1'
+PEXELS_KEY  = os.environ.get('PEXELS_KEY', '')
+PEXELS_URL  = 'https://api.pexels.com/v1/search'
 
 MIN_WIDTH  = 480
 MIN_HEIGHT = 270
@@ -48,13 +41,13 @@ BAD_TOKENS = [
 ]
 
 QUERIES = {
-    'campus':   '{name} campus exterior buildings',
-    'pool':     '{name} swimming pool natatorium aquatic center',
-    'students': '{name} students campus life quad',
+    'campus':   '{name} university campus buildings',
+    'pool':     '{name} swimming pool aquatic center',
+    'students': '{name} college students campus life',
 }
 
-CANDIDATES_PER_QUERY = 8
-MAX_CANDIDATES       = 8  # total kept per school (best-scored across all queries)
+CANDIDATES_PER_QUERY = 5
+MAX_CANDIDATES       = 8
 
 
 def _is_bad_url(url: str) -> bool:
@@ -62,62 +55,58 @@ def _is_bad_url(url: str) -> bool:
     return any(t in u for t in BAD_TOKENS)
 
 
-def _score(item: dict) -> float:
-    img  = item.get('image', {})
-    link = item.get('link', '')
-    mime = item.get('mime', '')
-    ctx  = item.get('displayLink', '')
-
-    if mime in ('image/svg+xml', 'image/gif', 'image/bmp', 'image/webp'):
-        pass  # allow webp
-    if mime in ('image/svg+xml', 'image/gif', 'image/bmp'):
-        return 0.0
-    if _is_bad_url(link):
-        return 0.0
-
-    w = img.get('width', 0)
-    h = img.get('height', 0)
+def _score_photo(photo: dict, source: str) -> float:
+    w = photo.get('width', 0)
+    h = photo.get('height', 0)
     if w < MIN_WIDTH or h < MIN_HEIGHT:
         return 0.0
-
+    url = photo.get('src', {}).get('large2x', photo.get('src', {}).get('large', ''))
+    if _is_bad_url(url):
+        return 0.0
     score = (w * h) / 1_000_000
-    if '.edu' in ctx:
-        score += 1.5
+    if source == 'pool':
+        score += 0.5
     return score
 
 
-def _cse_search(query: str, num: int = 8) -> list:
-    if not API_KEY or not CX:
-        raise RuntimeError('GOOGLE_CSE_KEY and GOOGLE_CSE_ID must be set.')
+def _pexels_search(query: str, per_page: int = 5) -> list:
+    if not PEXELS_KEY:
+        raise RuntimeError(
+            'PEXELS_KEY environment variable is not set. '
+            'Get a free key at pexels.com/api and add it as PEXELS_KEY in Replit Secrets.'
+        )
     params = {
-        'key': API_KEY, 'cx': CX,
-        'q': query, 'searchType': 'image',
-        'imgType': 'photo', 'imgSize': 'large',
-        'num': num, 'safe': 'active',
+        'query':       query,
+        'per_page':    per_page,
+        'page':        1,
+        'orientation': 'landscape',
     }
-    url = CSE_URL + '?' + urllib.parse.urlencode(params)
-    req = urllib.request.Request(url, headers={'User-Agent': 'Lane4Recruit/2.0'})
+    url = PEXELS_URL + '?' + urllib.parse.urlencode(params)
+    req = urllib.request.Request(url, headers={
+        'Authorization': PEXELS_KEY,
+        'User-Agent':    'Lane4Recruit/2.0',
+    })
     try:
         with urllib.request.urlopen(req, timeout=15) as r:
             data = json.loads(r.read())
-        return data.get('items', [])
+        return data.get('photos', [])
     except urllib.error.HTTPError as e:
         body = ''
-        try: body = e.read().decode()[:300]
-        except Exception: pass
-        if e.code == 403:
+        try:
+            body = e.read().decode()[:300]
+        except Exception:
+            pass
+        if e.code == 401:
             raise RuntimeError(
-                f'Google CSE API returned 403 Forbidden. '
-                f'Check: (1) Custom Search JSON API is enabled in Google Cloud Console, '
-                f'(2) GOOGLE_CSE_KEY is valid, (3) GOOGLE_CSE_ID is correct. '
-                f'Detail: {body}'
+                f'Pexels API returned 401 Unauthorized. '
+                f'Check that PEXELS_KEY is correct. Detail: {body}'
             )
         if e.code == 429:
-            raise RuntimeError(f'Google CSE API quota exceeded (429). Wait and try again.')
-        print(f'    CSE HTTP error {e.code}: {body}')
+            raise RuntimeError('Pexels API rate limit hit (429). Wait a moment and try again.')
+        print(f'    Pexels HTTP error {e.code}: {body}')
         return []
     except Exception as e:
-        print(f'    CSE error: {e}')
+        print(f'    Pexels error: {e}')
         return []
 
 
@@ -128,24 +117,24 @@ def fetch_candidates(school: str) -> list:
     for source, q_template in QUERIES.items():
         q = q_template.format(name=school)
         print(f'  [{source}] {q}')
-        items = _cse_search(q, num=CANDIDATES_PER_QUERY)
-        for item in items:
-            s = _score(item)
+        photos = _pexels_search(q, per_page=CANDIDATES_PER_QUERY)
+        for photo in photos:
+            s = _score_photo(photo, source)
             if s <= 0:
                 continue
-            url = item.get('link', '')
+            src = photo.get('src', {})
+            url = src.get('large2x') or src.get('large') or src.get('original', '')
             if not url or url in seen_urls:
                 continue
             seen_urls.add(url)
-            img = item.get('image', {})
             all_candidates.append({
                 'url':    url,
                 'source': source,
-                'width':  img.get('width', 0),
-                'height': img.get('height', 0),
+                'width':  photo.get('width', 0),
+                'height': photo.get('height', 0),
                 'score':  round(s, 3),
             })
-        time.sleep(0.4)
+        time.sleep(0.3)
 
     all_candidates.sort(key=lambda x: x['score'], reverse=True)
     return all_candidates[:MAX_CANDIDATES]
@@ -171,8 +160,8 @@ def load_school_names() -> list:
 
 
 def run(target_school: str | None = None, reset: bool = False):
-    if not API_KEY or not CX:
-        print('ERROR: Set GOOGLE_CSE_KEY and GOOGLE_CSE_ID env vars.')
+    if not PEXELS_KEY:
+        print('ERROR: Set PEXELS_KEY env var. Get a free key at pexels.com/api')
         sys.exit(1)
 
     manifest = {} if reset else load_manifest()
@@ -198,7 +187,7 @@ def run(target_school: str | None = None, reset: bool = False):
         save_manifest(manifest)
         done += 1
         print(f'         → {len(candidates)} candidates saved')
-        time.sleep(0.8)
+        time.sleep(0.5)
 
     print(f'\nDone. Harvested: {done}  Skipped: {skipped}')
     print(f'Manifest: {CANDIDATES_PATH}  ({len(manifest)} entries)')

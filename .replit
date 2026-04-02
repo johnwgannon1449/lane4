@@ -41,3 +41,8 @@ externalPort = 3000
 [deployment]
 deploymentTarget = "autoscale"
 run = ["gunicorn", "--bind=0.0.0.0:5000", "--reuse-port", "--timeout", "120", "--workers", "2", "main:app"]
+
+[userenv]
+
+[userenv.shared]
+PEXELS_KEY = "oZuuNxwEbX8qIG8I0XwReIFyneIBWxHNDu4Xfughh5Sjv6A6LxGDRvOf"

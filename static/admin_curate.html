@@ -541,7 +541,7 @@ async function fetchMoreCandidates() {
       renderGrid();
       document.getElementById('hdr-save').disabled = false;
     } else {
-      showError('Google returned 0 usable images. The API key may be invalid or quota exceeded.\n\nShell command: python3 harvest_candidates.py --school "' + school.name + '"');
+      showError('Pexels returned 0 usable images for this school. Check that PEXELS_KEY is set correctly in Replit Secrets.\n\nShell command: python3 harvest_candidates.py --school "' + school.name + '"');
     }
   } catch (e) {
     if (_fetchingFor !== fetchingFor) return;   // stale — ignore silently
