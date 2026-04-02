@@ -516,8 +516,9 @@ async function fetchMoreCandidates() {
       body: JSON.stringify({ school: school.name }),
     });
     const data = await res.json();
-    if (!res.ok) throw new Error(data.error || res.statusText);
-
+    if (!res.ok) {
+      throw new Error(data.error || `Server error ${res.status}`);
+    }
     school.has_candidates = data.count > 0;
     CANDIDATES = data.candidates || [];
     SELECTIONS = new Set();
@@ -527,10 +528,10 @@ async function fetchMoreCandidates() {
       renderGrid();
       document.getElementById('hdr-save').disabled = false;
     } else {
-      showNoCandidates(school.name);
+      showError('Google returned 0 usable images for this school. The API key may be invalid or quota is exceeded. Check the Shell: python3 harvest_candidates.py --school "' + school.name + '"');
     }
   } catch (e) {
-    showError('Fetch failed: ' + e.message + '\n\nMake sure GOOGLE_CSE_KEY and GOOGLE_CSE_ID are set.');
+    showError(e.message);
   } finally {
     const b = document.getElementById('fetch-more-btn');
     if (b) { b.disabled = false; b.textContent = prevLabel; }

@@ -24,6 +24,7 @@ import json
 import os
 import sys
 import time
+import urllib.error
 import urllib.parse
 import urllib.request
 import argparse
@@ -100,6 +101,21 @@ def _cse_search(query: str, num: int = 8) -> list:
         with urllib.request.urlopen(req, timeout=15) as r:
             data = json.loads(r.read())
         return data.get('items', [])
+    except urllib.error.HTTPError as e:
+        body = ''
+        try: body = e.read().decode()[:300]
+        except Exception: pass
+        if e.code == 403:
+            raise RuntimeError(
+                f'Google CSE API returned 403 Forbidden. '
+                f'Check: (1) Custom Search JSON API is enabled in Google Cloud Console, '
+                f'(2) GOOGLE_CSE_KEY is valid, (3) GOOGLE_CSE_ID is correct. '
+                f'Detail: {body}'
+            )
+        if e.code == 429:
+            raise RuntimeError(f'Google CSE API quota exceeded (429). Wait and try again.')
+        print(f'    CSE HTTP error {e.code}: {body}')
+        return []
     except Exception as e:
         print(f'    CSE error: {e}')
         return []
