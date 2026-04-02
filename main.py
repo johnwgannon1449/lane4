@@ -5114,9 +5114,13 @@ def api_admin_schools():
 def api_admin_candidates(school):
     candidates = _load_candidates_manifest()
     curated    = _load_curated_manifest()
+    cur = curated.get(school, {})
+    # Back-compat: old format used 'selected'; new format uses 'selected_in_order'
+    if 'selected_in_order' not in cur and 'selected' in cur:
+        cur['selected_in_order'] = cur['selected']
     return jsonify({
         'candidates': candidates.get(school, []),
-        'curated':    curated.get(school, {'selected': [], 'roles': {}}),
+        'curated':    cur,
     })
 
 
@@ -5149,17 +5153,20 @@ def api_admin_save():
     school = (body.get('school') or '').strip()
     if not school:
         return jsonify({'error': 'missing school'}), 400
-    selected = body.get('selected', [])
-    roles    = body.get('roles', {})
+
+    selected_in_order = body.get('selected_in_order', [])
 
     curated = _load_curated_manifest()
     curated[school] = {
-        'selected': selected,
-        'roles':    roles,
+        'selected_in_order':          selected_in_order,
+        'approved_hero_image':        selected_in_order[0] if len(selected_in_order) > 0 else None,
+        'approved_pool_image':        selected_in_order[1] if len(selected_in_order) > 1 else None,
+        'approved_student_life_image': selected_in_order[2] if len(selected_in_order) > 2 else None,
+        'approved_extra_images':      selected_in_order[3:],
         'saved_at': time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()),
     }
     _save_curated_manifest(curated)
-    return jsonify({'ok': True, 'school': school, 'selected': len(selected)})
+    return jsonify({'ok': True, 'school': school, 'selected': len(selected_in_order)})
 
 
 @app.route('/api/health', methods=['GET'])

@@ -10,38 +10,42 @@
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    --blue:    #2563EB;
-    --blue-d:  #1D4ED8;
-    --blue-l:  #EFF6FF;
-    --blue-m:  #BFDBFE;
-    --green:   #16A34A;
-    --green-l: #F0FDF4;
-    --red:     #DC2626;
-    --text:    #0F172A;
-    --muted:   #64748B;
-    --border:  #E2E8F0;
-    --bg:      #F8FAFC;
-    --card-bg: #FFFFFF;
-    --sidebar: 252px;
-    --header:  56px;
-    --radius:  12px;
-    --shadow:  0 2px 8px rgba(0,0,0,.08), 0 0 1px rgba(0,0,0,.06);
-    --shadow-h:0 4px 20px rgba(0,0,0,.13), 0 0 1px rgba(0,0,0,.06);
+    --blue:     #2563EB;
+    --blue-d:   #1D4ED8;
+    --blue-l:   #EFF6FF;
+    --blue-m:   #BFDBFE;
+    --text:     #0F172A;
+    --muted:    #64748B;
+    --border:   #E2E8F0;
+    --bg:       #F8FAFC;
+    --card-bg:  #FFFFFF;
+    --sidebar:  248px;
+    --header:   56px;
+    --radius:   14px;
+    --shadow:   0 2px 10px rgba(0,0,0,.07), 0 0 1px rgba(0,0,0,.05);
+    --shadow-h: 0 6px 24px rgba(0,0,0,.14), 0 0 1px rgba(0,0,0,.06);
+
+    /* Role colors */
+    --r-hero:    #2563EB;
+    --r-pool:    #0891B2;
+    --r-student: #16A34A;
+    --r-extra:   #92400E;
   }
 
   html, body { height: 100%; font-family: 'Figtree', sans-serif; background: var(--bg); color: var(--text); }
 
-  /* ── Header ─────────────────────────────────────────── */
+  /* ── Header ─────────────────── */
   #hdr {
     position: fixed; inset: 0 0 auto 0; height: var(--header); z-index: 100;
     background: #fff; border-bottom: 1px solid var(--border);
-    display: flex; align-items: center; gap: 0; padding: 0 20px;
+    display: flex; align-items: center; padding: 0 20px; gap: 0;
   }
-  #hdr .logo { font-weight: 700; font-size: 1rem; letter-spacing: -.02em; color: var(--blue); flex-shrink: 0; }
-  #hdr .logo span { color: var(--text); }
-  #hdr .school-label { flex: 1; text-align: center; font-size: .9rem; font-weight: 600; color: var(--text); padding: 0 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  #hdr .school-label .sub { font-weight: 400; color: var(--muted); font-size: .78rem; }
+  .logo { font-weight: 700; font-size: 1rem; letter-spacing: -.02em; color: var(--blue); flex-shrink: 0; }
+  .logo span { color: var(--text); }
+  #hdr-school { flex: 1; text-align: center; font-size: .88rem; font-weight: 600; padding: 0 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  #hdr-school .sub { font-weight: 400; color: var(--muted); font-size: .76rem; }
   #hdr-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+  #save-indicator { font-size: .75rem; color: #16A34A; font-weight: 500; white-space: nowrap; display: none; }
   .hdr-btn {
     height: 34px; padding: 0 14px; border-radius: 8px; border: 1px solid var(--border);
     background: #fff; font-family: inherit; font-size: .82rem; font-weight: 500; cursor: pointer;
@@ -49,14 +53,13 @@
   }
   .hdr-btn:hover { background: var(--bg); border-color: #c7d4e4; }
   .hdr-btn.primary { background: var(--blue); border-color: var(--blue); color: #fff; }
-  .hdr-btn.primary:hover { background: var(--blue-d); border-color: var(--blue-d); }
-  .hdr-btn:disabled { opacity: .45; cursor: not-allowed; }
-  #save-indicator { font-size: .75rem; color: var(--green); font-weight: 500; white-space: nowrap; display: none; }
+  .hdr-btn.primary:hover { background: var(--blue-d); }
+  .hdr-btn:disabled { opacity: .42; cursor: not-allowed; }
 
-  /* ── Layout ─────────────────────────────────────────── */
+  /* ── Layout ─────────────────── */
   #layout { display: flex; height: 100%; padding-top: var(--header); }
 
-  /* ── Sidebar ─────────────────────────────────────────── */
+  /* ── Sidebar ─────────────────── */
   #sidebar {
     width: var(--sidebar); flex-shrink: 0; height: 100%; overflow-y: auto;
     border-right: 1px solid var(--border); background: #fff;
@@ -78,55 +81,91 @@
   }
   .school-item:hover { background: var(--bg); }
   .school-item.active { background: var(--blue-l); color: var(--blue); }
-  .school-item.active .status-dot { border-color: var(--blue); }
   .school-item .name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .status-dot {
     width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
     border: 1.5px solid var(--border); background: #fff;
   }
   .status-dot.has-candidates { background: var(--blue-m); border-color: var(--blue); }
-  .status-dot.curated { background: var(--green); border-color: var(--green); }
+  .status-dot.curated { background: #16A34A; border-color: #16A34A; }
 
-  /* ── Main ─────────────────────────────────────────── */
+  /* ── Main ─────────────────── */
   #main { flex: 1; overflow-y: auto; display: flex; flex-direction: column; }
   #main-inner { padding: 24px; display: flex; flex-direction: column; gap: 20px; min-height: 100%; }
 
-  /* ── State overlays ─────────────────────────────────────────── */
+  /* ── Overlay states ─────────────────── */
   #state-overlay {
     flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
     gap: 12px; color: var(--muted); font-size: .95rem; padding: 60px 24px; text-align: center;
   }
-  #state-overlay .icon { font-size: 2.5rem; }
+  #state-overlay .icon { font-size: 2.4rem; }
   #state-overlay .title { font-weight: 600; color: var(--text); font-size: 1.1rem; }
   #state-overlay .desc { max-width: 320px; line-height: 1.5; }
   #state-overlay .cmd {
     background: #1E293B; color: #94A3B8; padding: 10px 16px; border-radius: 8px;
-    font-family: 'JetBrains Mono', monospace; font-size: .82rem; margin-top: 4px;
+    font-family: monospace; font-size: .82rem; margin-top: 4px;
   }
 
-  /* ── School header ─────────────────────────────────────────── */
+  /* ── School header ─────────────────── */
   #school-hdr { display: flex; align-items: baseline; gap: 10px; }
-  #school-hdr h2 { font-size: 1.25rem; font-weight: 700; }
-  #school-hdr .meta { font-size: .8rem; color: var(--muted); font-weight: 400; }
+  #school-hdr h2 { font-size: 1.2rem; font-weight: 700; }
+  #school-hdr .meta { font-size: .8rem; color: var(--muted); }
 
-  /* ── Image grid ─────────────────────────────────────────── */
+  /* ── Slot status strip ─────────────────── */
+  #slot-strip {
+    display: flex; gap: 10px; flex-wrap: wrap;
+  }
+  .slot-pill {
+    display: flex; align-items: center; gap: 7px;
+    border: 1.5px dashed var(--border); border-radius: 10px;
+    padding: 7px 12px; font-size: .78rem; font-weight: 500;
+    color: var(--muted); background: #fff; transition: all .2s;
+    min-width: 110px;
+  }
+  .slot-pill.filled {
+    border-style: solid; color: var(--text);
+  }
+  .slot-pill.filled-hero    { border-color: var(--r-hero);    background: #EFF6FF; color: var(--r-hero); }
+  .slot-pill.filled-pool    { border-color: var(--r-pool);    background: #ECFEFF; color: var(--r-pool); }
+  .slot-pill.filled-student { border-color: var(--r-student); background: #F0FDF4; color: #15803D; }
+  .slot-pill.filled-extra   { border-color: var(--r-extra);   background: #FFFBEB; color: var(--r-extra); }
+  .slot-dot {
+    width: 8px; height: 8px; border-radius: 50%; background: currentColor; flex-shrink: 0;
+    opacity: .35;
+  }
+  .slot-pill.filled .slot-dot { opacity: 1; }
+  .slot-thumb {
+    width: 28px; height: 20px; border-radius: 4px; object-fit: cover;
+    display: none; flex-shrink: 0;
+  }
+  .slot-pill.filled .slot-thumb { display: block; }
+  .slot-label { font-weight: 600; }
+  .slot-status { font-weight: 400; opacity: .7; font-size: .72rem; }
+
+  /* ── Image grid ─────────────────── */
   #img-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 14px;
   }
-  @media (max-width: 900px)  { #img-grid { grid-template-columns: repeat(3, 1fr); } }
-  @media (max-width: 650px)  { #img-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 1100px) { #img-grid { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 720px)  { #img-grid { grid-template-columns: repeat(2, 1fr); } }
 
   .img-card {
     position: relative; border-radius: var(--radius); overflow: hidden;
-    cursor: pointer; background: var(--bg); border: 2.5px solid transparent;
-    box-shadow: var(--shadow); transition: transform .15s, box-shadow .15s, border-color .15s;
-    aspect-ratio: 4/3;
+    cursor: pointer; background: #E2E8F0;
+    border: 2.5px solid transparent;
+    box-shadow: var(--shadow);
+    transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+    aspect-ratio: 16/10;
   }
-  .img-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-h); }
-  .img-card.selected { border-color: var(--blue); background: var(--blue-l); }
-  .img-card.selected .img-card-img { opacity: .92; }
+  .img-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-h); }
+  .img-card:active { transform: translateY(-1px); }
+
+  .img-card.sel-hero    { border-color: var(--r-hero); }
+  .img-card.sel-pool    { border-color: var(--r-pool); }
+  .img-card.sel-student { border-color: var(--r-student); }
+  .img-card.sel-extra   { border-color: var(--r-extra); }
 
   .img-card-img {
     width: 100%; height: 100%; object-fit: cover; display: block;
@@ -136,42 +175,45 @@
   .img-card.img-error::after {
     content: 'Image unavailable'; position: absolute; inset: 0;
     display: flex; align-items: center; justify-content: center;
-    font-size: .72rem; color: var(--muted); text-align: center;
-    padding: 8px;
+    font-size: .72rem; color: var(--muted); padding: 8px;
   }
 
-  .img-num {
+  /* Source tag (bottom-left, always visible) */
+  .img-src {
     position: absolute; bottom: 7px; left: 8px;
-    background: rgba(0,0,0,.5); color: #fff; font-size: .68rem;
-    font-weight: 600; border-radius: 5px; padding: 2px 6px;
-    backdrop-filter: blur(4px); line-height: 1.4;
+    background: rgba(0,0,0,.45); color: #fff; font-size: .64rem;
+    font-weight: 500; border-radius: 5px; padding: 2px 6px;
+    backdrop-filter: blur(4px); pointer-events: none;
+    opacity: 0; transition: opacity .18s;
   }
-  .check-badge {
-    position: absolute; top: 7px; right: 8px; width: 22px; height: 22px;
-    background: var(--blue); border-radius: 50%; display: none;
-    align-items: center; justify-content: center;
-  }
-  .img-card.selected .check-badge { display: flex; }
-  .check-badge svg { width: 12px; height: 12px; }
+  .img-card:hover .img-src { opacity: 1; }
 
-  /* ── Role selector (V2) ─────────────────────────────────────────── */
-  .role-row {
-    display: none; position: absolute; bottom: 0; left: 0; right: 0;
-    background: rgba(255,255,255,.96); backdrop-filter: blur(6px);
-    padding: 6px 8px; gap: 5px; flex-wrap: wrap; justify-content: center;
-    border-top: 1px solid var(--border);
+  /* Order badge (top-right corner) */
+  .order-badge {
+    position: absolute; top: 7px; right: 8px;
+    width: 26px; height: 26px; border-radius: 50%;
+    display: none; align-items: center; justify-content: center;
+    font-size: .75rem; font-weight: 700; color: #fff;
+    box-shadow: 0 2px 6px rgba(0,0,0,.25);
   }
-  .img-card.selected .role-row { display: flex; }
-  .role-pill {
-    font-size: .65rem; font-weight: 600; letter-spacing: .02em; text-transform: uppercase;
-    padding: 3px 8px; border-radius: 20px; border: 1.5px solid var(--border);
-    background: #fff; cursor: pointer; color: var(--muted); transition: all .12s;
-    font-family: inherit;
-  }
-  .role-pill:hover { border-color: var(--blue); color: var(--blue); }
-  .role-pill.active { background: var(--blue); border-color: var(--blue); color: #fff; }
+  .img-card.sel-hero    .order-badge { display: flex; background: var(--r-hero); }
+  .img-card.sel-pool    .order-badge { display: flex; background: var(--r-pool); }
+  .img-card.sel-student .order-badge { display: flex; background: var(--r-student); }
+  .img-card.sel-extra   .order-badge { display: flex; background: var(--r-extra); }
 
-  /* ── Bottom controls ─────────────────────────────────────────── */
+  /* Role label badge (bottom-right of selected images) */
+  .role-badge {
+    position: absolute; bottom: 7px; right: 8px;
+    font-size: .65rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase;
+    padding: 3px 8px; border-radius: 6px; color: #fff; display: none;
+    pointer-events: none; backdrop-filter: blur(4px);
+  }
+  .img-card.sel-hero    .role-badge { display: block; background: var(--r-hero); }
+  .img-card.sel-pool    .role-badge { display: block; background: var(--r-pool); }
+  .img-card.sel-student .role-badge { display: block; background: var(--r-student); }
+  .img-card.sel-extra   .role-badge { display: block; background: var(--r-extra); }
+
+  /* ── Bottom controls ─────────────────── */
   #controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
   #controls .left { display: flex; gap: 8px; }
   #controls .right { margin-left: auto; display: flex; gap: 8px; }
@@ -182,13 +224,11 @@
   }
   .ctrl-btn:hover { background: var(--bg); border-color: #c7d4e4; }
   .ctrl-btn.primary { background: var(--blue); border-color: var(--blue); color: #fff; font-weight: 600; }
-  .ctrl-btn.primary:hover { background: var(--blue-d); border-color: var(--blue-d); }
+  .ctrl-btn.primary:hover { background: var(--blue-d); }
   .ctrl-btn:disabled { opacity: .4; cursor: not-allowed; }
-  .ctrl-btn.ghost { color: var(--muted); border-color: transparent; background: transparent; }
-  .ctrl-btn.ghost:hover { background: var(--bg); border-color: var(--border); color: var(--text); }
-  #selection-count { font-size: .82rem; color: var(--muted); font-weight: 500; align-self: center; }
+  #sel-count { font-size: .82rem; color: var(--muted); font-weight: 500; align-self: center; }
 
-  /* ── Keyboard hint ─────────────────────────────────────────── */
+  /* ── Keyboard hint ─────────────────── */
   #kbd-hint {
     font-size: .72rem; color: var(--muted); line-height: 1.6;
     border-top: 1px solid var(--border); padding-top: 14px;
@@ -197,7 +237,7 @@
   #kbd-hint .hint { display: flex; align-items: center; gap: 5px; }
   kbd { background: var(--bg); border: 1px solid var(--border); border-radius: 4px; padding: 1px 5px; font-size: .7rem; font-family: inherit; }
 
-  /* ── Loading spinner ─────────────────────────────────────────── */
+  /* ── Spinner ─────────────────── */
   .spinner {
     width: 28px; height: 28px; border: 3px solid var(--border); border-top-color: var(--blue);
     border-radius: 50%; animation: spin .7s linear infinite;
@@ -207,12 +247,11 @@
 </head>
 <body>
 
-<!-- Header -->
 <header id="hdr">
   <div class="logo">Lane<span>4</span></div>
-  <div class="school-label" id="hdr-school">
+  <div id="hdr-school">
     <div>Image Curation</div>
-    <div class="sub">Select the best candidate images for each school</div>
+    <div class="sub">Select images for each school — order determines role</div>
   </div>
   <div id="hdr-actions">
     <span id="save-indicator">✓ Saved</span>
@@ -221,10 +260,7 @@
   </div>
 </header>
 
-<!-- Layout -->
 <div id="layout">
-
-  <!-- Sidebar -->
   <aside id="sidebar">
     <div id="sidebar-top">
       <input id="school-search" type="search" placeholder="Search schools…" oninput="filterSidebar(this.value)" />
@@ -232,33 +268,34 @@
     <div id="school-list"><div style="padding:20px;text-align:center;"><div class="spinner" style="margin:auto"></div></div></div>
     <div id="school-stats"></div>
   </aside>
-
-  <!-- Main -->
   <main id="main">
     <div id="main-inner">
       <div id="state-overlay">
         <div class="icon">🏊</div>
         <div class="title">Select a school to begin</div>
-        <div class="desc">Choose a school from the list on the left to review its candidate images.</div>
+        <div class="desc">Choose a school from the sidebar to review and curate its images.</div>
       </div>
     </div>
   </main>
-
 </div>
 
 <script>
-// ── State ────────────────────────────────────────────────────────────────────
-let SCHOOLS       = [];   // [{name, has_candidates, is_curated}]
-let FILTERED      = [];   // currently shown in sidebar
-let ACTIVE_IDX    = -1;   // index into SCHOOLS
-let CANDIDATES    = [];   // [{url, source, width, height}] for active school
-let SELECTIONS    = new Set();    // selected URLs for active school
-let ROLES         = {};          // { url: 'hero'|'student_life'|'swim' }
-let PENDING_SAVE  = false;
-let _fetchingFor  = null;   // school name currently being auto-fetched (race guard)
-const ROLE_LABELS = { hero: 'Hero', student_life: 'Student Life', swim: 'Swim' };
+// ── Constants ─────────────────────────────────────────────────────────────────
+const ROLE_ORDER  = ['hero', 'pool', 'student_life', 'extra_1', 'extra_2'];
+const ROLE_LABELS = ['Hero', 'Pool', 'Student Life', 'Extra 1', 'Extra 2'];
+const ROLE_SLOT_CLASS = ['filled-hero', 'filled-pool', 'filled-student', 'filled-extra', 'filled-extra'];
+const CARD_SEL_CLASS  = ['sel-hero', 'sel-pool', 'sel-student', 'sel-extra', 'sel-extra'];
+const MAX_SEL = 5;
 
-// ── Init ─────────────────────────────────────────────────────────────────────
+// ── State ─────────────────────────────────────────────────────────────────────
+let SCHOOLS      = [];
+let FILTERED     = [];
+let ACTIVE_IDX   = -1;
+let CANDIDATES   = [];
+let SELECTIONS   = [];    // ordered array of URLs — index 0=hero, 1=pool, 2=student_life, 3+=extra
+let _fetchingFor = null;
+
+// ── Init ──────────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', async () => {
   try {
     const res = await fetch('/api/admin/schools');
@@ -268,13 +305,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     FILTERED = [...SCHOOLS];
     renderSidebar();
     updateStats();
-    // Auto-select first school that has candidates
     const firstWithCandidates = SCHOOLS.findIndex(s => s.has_candidates);
     if (firstWithCandidates >= 0) selectSchool(firstWithCandidates);
     else if (SCHOOLS.length > 0) selectSchool(0);
   } catch (e) {
     document.getElementById('school-list').innerHTML =
-      `<div style="padding:16px;color:#DC2626;font-size:.8rem">Failed to load schools: ${e.message}</div>`;
+      `<div style="padding:16px;color:#DC2626;font-size:.8rem">Failed to load: ${esc(e.message)}</div>`;
   }
 });
 
@@ -285,11 +321,10 @@ function renderSidebar() {
     el.innerHTML = '<div style="padding:16px;color:#94A3B8;font-size:.8rem;text-align:center">No schools match</div>';
     return;
   }
-  el.innerHTML = FILTERED.map((s, fi) => {
+  el.innerHTML = FILTERED.map(s => {
     const gi = SCHOOLS.indexOf(s);
     const dotCls = s.is_curated ? 'curated' : s.has_candidates ? 'has-candidates' : '';
-    const activeCls = gi === ACTIVE_IDX ? 'active' : '';
-    return `<div class="school-item ${activeCls}" onclick="selectSchool(${gi})" id="si-${gi}">
+    return `<div class="school-item ${gi === ACTIVE_IDX ? 'active' : ''}" onclick="selectSchool(${gi})" id="si-${gi}">
       <div class="status-dot ${dotCls}"></div>
       <div class="name" title="${esc(s.name)}">${esc(s.name)}</div>
     </div>`;
@@ -312,26 +347,22 @@ function updateStats() {
 // ── School selection ──────────────────────────────────────────────────────────
 async function selectSchool(idx) {
   if (idx < 0 || idx >= SCHOOLS.length) return;
-
   ACTIVE_IDX = idx;
   const school = SCHOOLS[idx];
 
-  // Sidebar highlight
   document.querySelectorAll('.school-item').forEach(el => el.classList.remove('active'));
-  const sideItem = document.getElementById(`si-${idx}`);
-  if (sideItem) { sideItem.classList.add('active'); sideItem.scrollIntoView({ block: 'nearest' }); }
+  const si = document.getElementById(`si-${idx}`);
+  if (si) { si.classList.add('active'); si.scrollIntoView({ block: 'nearest' }); }
 
-  // Header label
-  const subLabel = school.is_curated ? '✓ Curated' : school.has_candidates ? 'Ready to curate' : 'Fetching images…';
+  const sub = school.is_curated ? '✓ Curated' : school.has_candidates ? 'Ready to curate' : 'Fetching images…';
   document.getElementById('hdr-school').innerHTML =
-    `<div>${esc(school.name)}</div><div class="sub">${subLabel}</div>`;
+    `<div>${esc(school.name)}</div><div class="sub">${sub}</div>`;
 
-  // Disable controls while loading
   document.getElementById('hdr-save').disabled = true;
   document.getElementById('hdr-prev').disabled = idx === 0;
 
   if (!school.has_candidates) {
-    fetchMoreCandidates();   // auto-fetch — no button click needed
+    fetchMoreCandidates();
     return;
   }
 
@@ -341,8 +372,7 @@ async function selectSchool(idx) {
     if (!res.ok) throw new Error(await res.text());
     const data = await res.json();
     CANDIDATES = data.candidates || [];
-    SELECTIONS = new Set(data.curated?.selected || []);
-    ROLES      = data.curated?.roles || {};
+    SELECTIONS = data.curated?.selected_in_order || [];
     renderGrid();
     document.getElementById('hdr-save').disabled = false;
   } catch (e) {
@@ -350,28 +380,27 @@ async function selectSchool(idx) {
   }
 }
 
-// ── Grid rendering ────────────────────────────────────────────────────────────
+// ── Grid ──────────────────────────────────────────────────────────────────────
 function renderGrid() {
   const school = SCHOOLS[ACTIVE_IDX];
-  const main   = document.getElementById('main-inner');
-
   if (!CANDIDATES.length) { showNoCandidates(school.name); return; }
 
-  main.innerHTML = `
+  document.getElementById('main-inner').innerHTML = `
     <div id="school-hdr">
       <h2>${esc(school.name)}</h2>
-      <span class="meta">${CANDIDATES.length} candidates · click to select · drag after selecting</span>
+      <span class="meta">${CANDIDATES.length} candidates · click to select (max 5) · order = role</span>
     </div>
+    <div id="slot-strip">${renderSlotStrip()}</div>
     <div id="img-grid">${CANDIDATES.map((c, i) => cardHtml(c, i)).join('')}</div>
     <div id="controls">
       <div class="left">
         <button class="ctrl-btn" onclick="prevSchool()" ${ACTIVE_IDX === 0 ? 'disabled' : ''}>← Previous</button>
-        <button class="ctrl-btn" id="fetch-more-btn" onclick="fetchMoreCandidates()">↻ Fetch more images</button>
+        <button class="ctrl-btn" id="fetch-more-btn" onclick="fetchMoreCandidates()">↻ Refresh images</button>
       </div>
-      <span id="selection-count">${countLabel()}</span>
+      <span id="sel-count">${countLabel()}</span>
       <div class="right">
         <button class="ctrl-btn" onclick="clearSelections()">Clear</button>
-        <button class="ctrl-btn" onclick="skipSchool()" title="Skip without saving">Skip →</button>
+        <button class="ctrl-btn" onclick="skipSchool()">Skip →</button>
         <button class="ctrl-btn primary" onclick="saveAndNext()">Save &amp; Next →</button>
       </div>
     </div>
@@ -382,89 +411,98 @@ function renderGrid() {
     </div>`;
 }
 
+function renderSlotStrip() {
+  return ROLE_ORDER.map((role, i) => {
+    const url = SELECTIONS[i];
+    const filled = !!url;
+    const cand = url ? CANDIDATES.find(c => c.url === url) : null;
+    const cls  = filled ? `filled ${ROLE_SLOT_CLASS[i]}` : '';
+    const thumb = cand ? `<img class="slot-thumb" src="${esc(cand.url)}" alt="" />` : '<img class="slot-thumb" />';
+    return `<div class="slot-pill ${cls}">
+      <div class="slot-dot"></div>
+      ${filled ? thumb : ''}
+      <span class="slot-label">${ROLE_LABELS[i]}</span>
+      <span class="slot-status">${filled ? '✓' : '—'}</span>
+    </div>`;
+  }).join('');
+}
+
 function cardHtml(c, i) {
-  const sel  = SELECTIONS.has(c.url);
-  const role = ROLES[c.url] || '';
-  return `<div class="img-card ${sel ? 'selected' : ''}" id="card-${i}"
-      onclick="toggleCard(${i})" title="${esc(c.source)} · ${c.width}×${c.height}">
+  const selIdx = SELECTIONS.indexOf(c.url);
+  const sel    = selIdx >= 0;
+  const cls    = sel ? CARD_SEL_CLASS[selIdx] : '';
+  return `<div class="img-card ${cls}" id="card-${i}" onclick="toggleCard(${i})"
+      title="${esc(c.source)} · ${c.width}×${c.height}">
     <img class="img-card-img" src="${esc(c.url)}" loading="lazy" alt="${esc(c.source)}"
          onerror="this.closest('.img-card').classList.add('img-error')" />
-    <div class="img-num">${i + 1} · ${esc(c.source)}</div>
-    <div class="check-badge"><svg viewBox="0 0 12 12" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,6 5,9 10,3"/></svg></div>
-    <div class="role-row">
-      ${['hero','student_life','swim'].map(r =>
-        `<button class="role-pill ${role===r?'active':''}" onclick="setRole(event,${i},'${r}')">${ROLE_LABELS[r]}</button>`
-      ).join('')}
-    </div>
+    <div class="img-src">${esc(c.source)}</div>
+    <div class="order-badge">${sel ? selIdx + 1 : ''}</div>
+    <div class="role-badge">${sel ? ROLE_LABELS[selIdx] : ''}</div>
   </div>`;
 }
 
 function refreshCard(i) {
   const el = document.getElementById(`card-${i}`);
   if (!el) return;
-  const c    = CANDIDATES[i];
-  const sel  = SELECTIONS.has(c.url);
-  const role = ROLES[c.url] || '';
-  el.className = `img-card${sel ? ' selected' : ''}`;
-  const pills = el.querySelectorAll('.role-pill');
-  pills.forEach((p, pi) => {
-    const r = ['hero','student_life','swim'][pi];
-    p.classList.toggle('active', role === r);
-  });
-  updateCount();
+  const c      = CANDIDATES[i];
+  const selIdx = SELECTIONS.indexOf(c.url);
+  const sel    = selIdx >= 0;
+  el.className = `img-card ${sel ? CARD_SEL_CLASS[selIdx] : ''}`;
+  el.querySelector('.order-badge').textContent = sel ? selIdx + 1 : '';
+  el.querySelector('.role-badge').textContent  = sel ? ROLE_LABELS[selIdx] : '';
+}
+
+function refreshSlotStrip() {
+  const strip = document.getElementById('slot-strip');
+  if (strip) strip.innerHTML = renderSlotStrip();
 }
 
 function countLabel() {
-  const n = SELECTIONS.size;
-  return n === 0 ? 'No images selected' : `${n} image${n === 1 ? '' : 's'} selected`;
+  const n = SELECTIONS.length;
+  if (n === 0) return 'No images selected';
+  return `${n} of ${MAX_SEL} slots filled`;
 }
+
 function updateCount() {
-  const el = document.getElementById('selection-count');
+  const el = document.getElementById('sel-count');
   if (el) el.textContent = countLabel();
 }
 
-// ── Toggle / roles ────────────────────────────────────────────────────────────
+// ── Toggle ────────────────────────────────────────────────────────────────────
 function toggleCard(i) {
   const c = CANDIDATES[i];
   if (!c) return;
-  if (SELECTIONS.has(c.url)) {
-    SELECTIONS.delete(c.url);
-    delete ROLES[c.url];
+  const idx = SELECTIONS.indexOf(c.url);
+  if (idx >= 0) {
+    SELECTIONS.splice(idx, 1);
   } else {
-    SELECTIONS.add(c.url);
+    if (SELECTIONS.length >= MAX_SEL) return;
+    SELECTIONS.push(c.url);
   }
-  refreshCard(i);
-}
-
-function setRole(e, i, role) {
-  e.stopPropagation();
-  const c = CANDIDATES[i];
-  if (!c) return;
-  if (ROLES[c.url] === role) {
-    delete ROLES[c.url];     // toggle off
-  } else {
-    // clear any other card that had this role
-    Object.keys(ROLES).forEach(url => { if (ROLES[url] === role) delete ROLES[url]; });
-    ROLES[c.url] = role;
-  }
-  // Refresh all cards (role badges)
-  CANDIDATES.forEach((_, idx) => refreshCard(idx));
+  // Re-render all cards (order/role labels all shift)
+  CANDIDATES.forEach((_, ci) => refreshCard(ci));
+  refreshSlotStrip();
+  updateCount();
 }
 
 function clearSelections() {
-  SELECTIONS.clear();
-  ROLES = {};
+  SELECTIONS = [];
   CANDIDATES.forEach((_, i) => refreshCard(i));
+  refreshSlotStrip();
+  updateCount();
 }
 
 // ── Save ──────────────────────────────────────────────────────────────────────
 async function saveSelections() {
-  if (ACTIVE_IDX < 0) return;
+  if (ACTIVE_IDX < 0) return false;
   const school = SCHOOLS[ACTIVE_IDX];
   const body = {
     school: school.name,
-    selected: [...SELECTIONS],
-    roles: ROLES,
+    selected_in_order:          [...SELECTIONS],
+    approved_hero_image:        SELECTIONS[0] || null,
+    approved_pool_image:        SELECTIONS[1] || null,
+    approved_student_life_image: SELECTIONS[2] || null,
+    approved_extra_images:      SELECTIONS.slice(3),
   };
   try {
     const res = await fetch('/api/admin/save', {
@@ -473,9 +511,7 @@ async function saveSelections() {
       body: JSON.stringify(body),
     });
     if (!res.ok) throw new Error(await res.text());
-    // Mark as curated in local state
-    school.is_curated = SELECTIONS.size > 0;
-    // Flash indicator
+    school.is_curated = SELECTIONS.length > 0;
     const ind = document.getElementById('save-indicator');
     ind.style.display = 'inline';
     setTimeout(() => { ind.style.display = 'none'; }, 1800);
@@ -493,28 +529,26 @@ async function saveAndNext() {
   if (ok) nextSchool();
 }
 
-function skipSchool() {
-  nextSchool();
-}
+function skipSchool() { nextSchool(); }
 
+// ── Fetch candidates ──────────────────────────────────────────────────────────
 async function fetchMoreCandidates() {
   if (ACTIVE_IDX < 0) return;
-  const school     = SCHOOLS[ACTIVE_IDX];
+  const school      = SCHOOLS[ACTIVE_IDX];
   const fetchingFor = school.name;
-  _fetchingFor     = fetchingFor;
+  _fetchingFor      = fetchingFor;
 
   const btn = document.getElementById('fetch-more-btn');
   const prevLabel = btn ? btn.textContent : '';
   if (btn) { btn.disabled = true; btn.textContent = '↻ Fetching…'; }
 
-  // Show spinner
   const hasGrid = !!document.getElementById('img-grid');
   if (!hasGrid) {
     document.getElementById('main-inner').innerHTML = `
       <div id="state-overlay">
         <div class="spinner"></div>
-        <div>Fetching images for ${esc(school.name)}…<br>
-          <small style="color:var(--muted)">This takes ~10 seconds</small>
+        <div style="text-align:center">Fetching images for ${esc(school.name)}…<br>
+          <small style="color:var(--muted)">~10 seconds</small>
         </div>
       </div>`;
   }
@@ -526,25 +560,22 @@ async function fetchMoreCandidates() {
       body: JSON.stringify({ school: school.name }),
     });
     const data = await res.json();
-
-    // User navigated to a different school while we were waiting — discard
     if (_fetchingFor !== fetchingFor) return;
-
     if (!res.ok) throw new Error(data.error || `Server error ${res.status}`);
 
     school.has_candidates = data.count > 0;
     CANDIDATES = data.candidates || [];
-    SELECTIONS = new Set();
-    ROLES      = {};
+    SELECTIONS = [];
     renderSidebar();
+
     if (CANDIDATES.length) {
       renderGrid();
       document.getElementById('hdr-save').disabled = false;
     } else {
-      showError('Pexels returned 0 usable images for this school. Check that PEXELS_KEY is set correctly in Replit Secrets.\n\nShell command: python3 harvest_candidates.py --school "' + school.name + '"');
+      showError('No usable images found for this school.\n\nShell command: python3 harvest_candidates.py --school "' + school.name + '"');
     }
   } catch (e) {
-    if (_fetchingFor !== fetchingFor) return;   // stale — ignore silently
+    if (_fetchingFor !== fetchingFor) return;
     showError(e.message);
   } finally {
     _fetchingFor = null;
@@ -567,11 +598,7 @@ function prevSchool() {
 document.addEventListener('keydown', e => {
   if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
   const n = parseInt(e.key, 10);
-  if (n >= 1 && n <= 8) {
-    e.preventDefault();
-    toggleCard(n - 1);
-    return;
-  }
+  if (n >= 1 && n <= 8) { e.preventDefault(); toggleCard(n - 1); return; }
   if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); saveAndNext(); return; }
   if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); nextSchool(); return; }
   if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   { e.preventDefault(); prevSchool(); return; }
@@ -579,21 +606,20 @@ document.addEventListener('keydown', e => {
 
 // ── State overlays ────────────────────────────────────────────────────────────
 function showLoading() {
-  document.getElementById('main-inner').innerHTML = `
-    <div id="state-overlay"><div class="spinner"></div><div>Loading candidates…</div></div>`;
+  document.getElementById('main-inner').innerHTML =
+    `<div id="state-overlay"><div class="spinner"></div><div>Loading…</div></div>`;
 }
 function showNoCandidates(name) {
   document.getElementById('main-inner').innerHTML = `
     <div id="state-overlay">
       <div class="icon">📭</div>
       <div class="title">No candidates for ${esc(name)}</div>
-      <div class="desc">Click below to fetch images from Google now, or run the shell command:</div>
-      <button
-        onclick="fetchMoreCandidates()"
-        style="margin-top:14px;padding:12px 32px;background:#2563EB;color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:600;cursor:pointer;font-family:inherit;letter-spacing:-.01em;">
+      <div class="desc">Click below to fetch images for this school.</div>
+      <button onclick="fetchMoreCandidates()"
+        style="margin-top:14px;padding:12px 32px;background:#2563EB;color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:600;cursor:pointer;font-family:inherit;">
         ↻ Fetch images now
       </button>
-      <div class="cmd" style="margin-top:16px">python3 harvest_candidates.py --school "${esc(name)}"</div>
+      <div class="cmd">python3 harvest_candidates.py --school "${esc(name)}"</div>
     </div>`;
 }
 function showError(msg) {

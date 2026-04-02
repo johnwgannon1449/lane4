@@ -1,0 +1,91 @@
+We are building an internal image curation workflow for Lane4.
+
+IMPORTANT UX CHANGE:
+Do NOT make the user manually assign image roles with separate buttons like "Set as Hero" or "Set as Swim."
+
+Instead, roles should be assigned automatically by the ORDER in which the user selects images.
+
+SELECTION ORDER RULES
+- 1st selected image = Hero
+- 2nd selected image = Pool
+- 3rd selected image = Student Life
+- 4th selected image = Extra 1
+- 5th selected image = Extra 2
+
+The user may stop before selecting all slots.
+Student Life is optional.
+Extras are optional.
+
+CORE UX
+- Show 8–20 candidate images for a school in a clean responsive grid
+- User clicks/taps directly on an image to select it
+- Selected images get:
+  - strong border
+  - checkmark overlay
+  - role badge based on selection order:
+    - Hero
+    - Pool
+    - Student Life
+    - Extra 1
+    - Extra 2
+- Clicking a selected image again should deselect it
+- After deselection, all remaining selected images should automatically re-order and reassign labels based on current selection order
+
+Example:
+- If user selected 5 images, then removes the 2nd one,
+  the old 3rd becomes Pool,
+  the old 4th becomes Student Life,
+  the old 5th becomes Extra 1
+
+SELECTION LIMIT
+- Maximum 5 selected images per school
+
+DISPLAY / STATUS
+At the top of the page, show current selection status:
+- Hero: selected / not selected
+- Pool: selected / not selected
+- Student Life: selected / not selected
+- Extras: count selected
+
+DATA TO SAVE
+For each school, persist:
+- candidate image URLs
+- selected image URLs in order
+- approved_hero_image
+- approved_pool_image
+- approved_student_life_image
+- approved_extra_images[]
+- source page URLs
+- rejected image URLs if easy
+
+APP LOGIC
+- In the main Lane4 product, if approved images exist, always use the saved approved images
+- Do not randomly replace approved images later
+
+SOURCE RULES
+Candidate images should come from official school sources only:
+- school main site
+- admissions pages
+- campus life pages
+- visit pages
+- athletics pages
+- swim/aquatics/facilities pages
+
+DESIGN DIRECTION
+Make the review tool feel premium:
+- large image thumbnails
+- rounded corners
+- soft shadows
+- smooth hover/tap transitions
+- clear selected state
+- minimal clutter
+- fast school-to-school navigation
+
+IMPLEMENTATION PRIORITY
+1. pull 8–20 candidate images from official school pages
+2. show them in a review grid
+3. support click-to-select with automatic role assignment by order
+4. save selections persistently
+5. use approved images in Lane4 frontend
+
+The goal is fast human curation, not full automation.
