@@ -36,8 +36,8 @@ API_KEY = os.environ.get('GOOGLE_CSE_KEY', '')
 CX      = os.environ.get('GOOGLE_CSE_ID', '')
 CSE_URL = 'https://www.googleapis.com/customsearch/v1'
 
-MIN_WIDTH  = 600
-MIN_HEIGHT = 350
+MIN_WIDTH  = 480
+MIN_HEIGHT = 270
 
 BAD_TOKENS = [
     'seal', 'logo', 'coat_of_arms', 'crest', 'flag_of', 'wordmark',

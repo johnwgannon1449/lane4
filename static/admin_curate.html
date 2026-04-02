@@ -184,6 +184,8 @@
   .ctrl-btn.primary { background: var(--blue); border-color: var(--blue); color: #fff; font-weight: 600; }
   .ctrl-btn.primary:hover { background: var(--blue-d); border-color: var(--blue-d); }
   .ctrl-btn:disabled { opacity: .4; cursor: not-allowed; }
+  .ctrl-btn.ghost { color: var(--muted); border-color: transparent; background: transparent; }
+  .ctrl-btn.ghost:hover { background: var(--bg); border-color: var(--border); color: var(--text); }
   #selection-count { font-size: .82rem; color: var(--muted); font-weight: 500; align-self: center; }
 
   /* ── Keyboard hint ─────────────────────────────────────────── */
@@ -362,10 +364,12 @@ function renderGrid() {
     <div id="controls">
       <div class="left">
         <button class="ctrl-btn" onclick="prevSchool()" ${ACTIVE_IDX === 0 ? 'disabled' : ''}>← Previous</button>
+        <button class="ctrl-btn ghost" id="fetch-more-btn" onclick="fetchMoreCandidates()">↻ Fetch more images</button>
       </div>
       <span id="selection-count">${countLabel()}</span>
       <div class="right">
         <button class="ctrl-btn" onclick="clearSelections()">Clear</button>
+        <button class="ctrl-btn" onclick="skipSchool()" title="Skip without saving">Skip →</button>
         <button class="ctrl-btn primary" onclick="saveAndNext()">Save &amp; Next →</button>
       </div>
     </div>
@@ -487,6 +491,52 @@ async function saveAndNext() {
   if (ok) nextSchool();
 }
 
+function skipSchool() {
+  nextSchool();
+}
+
+async function fetchMoreCandidates() {
+  if (ACTIVE_IDX < 0) return;
+  const school = SCHOOLS[ACTIVE_IDX];
+  const btn = document.getElementById('fetch-more-btn');
+  const prevLabel = btn ? btn.textContent : '';
+  if (btn) { btn.disabled = true; btn.textContent = '↻ Fetching…'; }
+
+  // Show spinner in overlay if grid not loaded yet
+  const hasGrid = !!document.getElementById('img-grid');
+  if (!hasGrid) {
+    document.getElementById('main-inner').innerHTML = `
+      <div id="state-overlay"><div class="spinner"></div><div>Fetching images for ${esc(school.name)}…<br><small style="color:var(--muted)">This takes ~10 seconds</small></div></div>`;
+  }
+
+  try {
+    const res = await fetch('/api/admin/fetch-candidates', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ school: school.name }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || res.statusText);
+
+    school.has_candidates = data.count > 0;
+    CANDIDATES = data.candidates || [];
+    SELECTIONS = new Set();
+    ROLES      = {};
+    renderSidebar();
+    if (CANDIDATES.length) {
+      renderGrid();
+      document.getElementById('hdr-save').disabled = false;
+    } else {
+      showNoCandidates(school.name);
+    }
+  } catch (e) {
+    showError('Fetch failed: ' + e.message + '\n\nMake sure GOOGLE_CSE_KEY and GOOGLE_CSE_ID are set.');
+  } finally {
+    const b = document.getElementById('fetch-more-btn');
+    if (b) { b.disabled = false; b.textContent = prevLabel; }
+  }
+}
+
 // ── Navigation ────────────────────────────────────────────────────────────────
 function nextSchool() {
   const next = ACTIVE_IDX + 1;
@@ -521,8 +571,9 @@ function showNoCandidates(name) {
     <div id="state-overlay">
       <div class="icon">📭</div>
       <div class="title">No candidates for ${esc(name)}</div>
-      <div class="desc">Run the candidate harvester to fetch images for this school:</div>
-      <div class="cmd">python3 harvest_candidates.py --school "${esc(name)}"</div>
+      <div class="desc">Fetch images directly or run the harvester from the shell:</div>
+      <button class="ctrl-btn primary" style="margin-top:4px" onclick="fetchMoreCandidates()">↻ Fetch images now</button>
+      <div class="cmd" style="margin-top:8px">python3 harvest_candidates.py --school "${esc(name)}"</div>
     </div>`;
 }
 function showError(msg) {

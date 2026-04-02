@@ -5120,6 +5120,28 @@ def api_admin_candidates(school):
     })
 
 
+@app.route('/api/admin/fetch-candidates', methods=['POST'])
+@login_required
+def api_admin_fetch_candidates():
+    body   = request.get_json(silent=True) or {}
+    school = (body.get('school') or '').strip()
+    if not school:
+        return jsonify({'error': 'missing school'}), 400
+    try:
+        from harvest_candidates import fetch_candidates
+        candidates = fetch_candidates(school)
+        manifest = _load_candidates_manifest()
+        manifest[school] = candidates
+        os.makedirs('static', exist_ok=True)
+        with open(_CANDIDATES_PATH, 'w', encoding='utf-8') as f:
+            json.dump(manifest, f, indent=2, ensure_ascii=False)
+        return jsonify({'ok': True, 'candidates': candidates, 'count': len(candidates)})
+    except RuntimeError as e:
+        return jsonify({'error': str(e)}), 400
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
 @app.route('/api/admin/save', methods=['POST'])
 @login_required
 def api_admin_save():
