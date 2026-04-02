@@ -364,7 +364,7 @@ function renderGrid() {
     <div id="controls">
       <div class="left">
         <button class="ctrl-btn" onclick="prevSchool()" ${ACTIVE_IDX === 0 ? 'disabled' : ''}>← Previous</button>
-        <button class="ctrl-btn ghost" id="fetch-more-btn" onclick="fetchMoreCandidates()">↻ Fetch more images</button>
+        <button class="ctrl-btn" id="fetch-more-btn" onclick="fetchMoreCandidates()">↻ Fetch more images</button>
       </div>
       <span id="selection-count">${countLabel()}</span>
       <div class="right">
