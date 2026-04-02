@@ -571,9 +571,13 @@ function showNoCandidates(name) {
     <div id="state-overlay">
       <div class="icon">📭</div>
       <div class="title">No candidates for ${esc(name)}</div>
-      <div class="desc">Fetch images directly or run the harvester from the shell:</div>
-      <button class="ctrl-btn primary" style="margin-top:4px" onclick="fetchMoreCandidates()">↻ Fetch images now</button>
-      <div class="cmd" style="margin-top:8px">python3 harvest_candidates.py --school "${esc(name)}"</div>
+      <div class="desc">Click below to fetch images from Google now, or run the shell command:</div>
+      <button
+        onclick="fetchMoreCandidates()"
+        style="margin-top:14px;padding:12px 32px;background:#2563EB;color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:600;cursor:pointer;font-family:inherit;letter-spacing:-.01em;">
+        ↻ Fetch images now
+      </button>
+      <div class="cmd" style="margin-top:16px">python3 harvest_candidates.py --school "${esc(name)}"</div>
     </div>`;
 }
 function showError(msg) {
