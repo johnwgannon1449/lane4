@@ -255,6 +255,7 @@ let CANDIDATES    = [];   // [{url, source, width, height}] for active school
 let SELECTIONS    = new Set();    // selected URLs for active school
 let ROLES         = {};          // { url: 'hero'|'student_life'|'swim' }
 let PENDING_SAVE  = false;
+let _fetchingFor  = null;   // school name currently being auto-fetched (race guard)
 const ROLE_LABELS = { hero: 'Hero', student_life: 'Student Life', swim: 'Swim' };
 
 // ── Init ─────────────────────────────────────────────────────────────────────
@@ -321,15 +322,16 @@ async function selectSchool(idx) {
   if (sideItem) { sideItem.classList.add('active'); sideItem.scrollIntoView({ block: 'nearest' }); }
 
   // Header label
+  const subLabel = school.is_curated ? '✓ Curated' : school.has_candidates ? 'Ready to curate' : 'Fetching images…';
   document.getElementById('hdr-school').innerHTML =
-    `<div>${esc(school.name)}</div><div class="sub">${school.is_curated ? '✓ Curated' : school.has_candidates ? 'Ready to curate' : 'No candidates harvested'}</div>`;
+    `<div>${esc(school.name)}</div><div class="sub">${subLabel}</div>`;
 
   // Disable controls while loading
   document.getElementById('hdr-save').disabled = true;
   document.getElementById('hdr-prev').disabled = idx === 0;
 
   if (!school.has_candidates) {
-    showNoCandidates(school.name);
+    fetchMoreCandidates();   // auto-fetch — no button click needed
     return;
   }
 
@@ -497,28 +499,39 @@ function skipSchool() {
 
 async function fetchMoreCandidates() {
   if (ACTIVE_IDX < 0) return;
-  const school = SCHOOLS[ACTIVE_IDX];
+  const school     = SCHOOLS[ACTIVE_IDX];
+  const fetchingFor = school.name;
+  _fetchingFor     = fetchingFor;
+
   const btn = document.getElementById('fetch-more-btn');
   const prevLabel = btn ? btn.textContent : '';
   if (btn) { btn.disabled = true; btn.textContent = '↻ Fetching…'; }
 
-  // Show spinner in overlay if grid not loaded yet
+  // Show spinner
   const hasGrid = !!document.getElementById('img-grid');
   if (!hasGrid) {
     document.getElementById('main-inner').innerHTML = `
-      <div id="state-overlay"><div class="spinner"></div><div>Fetching images for ${esc(school.name)}…<br><small style="color:var(--muted)">This takes ~10 seconds</small></div></div>`;
+      <div id="state-overlay">
+        <div class="spinner"></div>
+        <div>Fetching images for ${esc(school.name)}…<br>
+          <small style="color:var(--muted)">This takes ~10 seconds</small>
+        </div>
+      </div>`;
   }
 
   try {
-    const res = await fetch('/api/admin/fetch-candidates', {
+    const res  = await fetch('/api/admin/fetch-candidates', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ school: school.name }),
     });
     const data = await res.json();
-    if (!res.ok) {
-      throw new Error(data.error || `Server error ${res.status}`);
-    }
+
+    // User navigated to a different school while we were waiting — discard
+    if (_fetchingFor !== fetchingFor) return;
+
+    if (!res.ok) throw new Error(data.error || `Server error ${res.status}`);
+
     school.has_candidates = data.count > 0;
     CANDIDATES = data.candidates || [];
     SELECTIONS = new Set();
@@ -528,11 +541,13 @@ async function fetchMoreCandidates() {
       renderGrid();
       document.getElementById('hdr-save').disabled = false;
     } else {
-      showError('Google returned 0 usable images for this school. The API key may be invalid or quota is exceeded. Check the Shell: python3 harvest_candidates.py --school "' + school.name + '"');
+      showError('Google returned 0 usable images. The API key may be invalid or quota exceeded.\n\nShell command: python3 harvest_candidates.py --school "' + school.name + '"');
     }
   } catch (e) {
+    if (_fetchingFor !== fetchingFor) return;   // stale — ignore silently
     showError(e.message);
   } finally {
+    _fetchingFor = null;
     const b = document.getElementById('fetch-more-btn');
     if (b) { b.disabled = false; b.textContent = prevLabel; }
   }
