@@ -588,6 +588,7 @@ function cardHtml(key, c, i, selected) {
   return `<div class="img-card ${cls}" id="card-${key}-${i}"
       draggable="true"
       ondragstart="dragStart(event,'${key}',${i})"
+      ondragend="dragEnd(event,'${key}',${i})"
       onclick="toggleCard('${key}',${i})"
       title="${esc(c.source)} · ${c.width||0}×${c.height||0}">
     <img class="img-card-img" src="${esc(c.url)}" loading="lazy" alt=""
@@ -624,6 +625,13 @@ function dragStart(e, key, idx) {
   e.dataTransfer.effectAllowed = 'move';
   // Defer adding class so the browser still renders the drag ghost
   setTimeout(() => document.getElementById(`card-${key}-${idx}`)?.classList.add('dragging'), 0);
+}
+
+function dragEnd(e, key, idx) {
+  // Always clean up — fires on drop, cancel, or Escape
+  document.getElementById(`card-${key}-${idx}`)?.classList.remove('dragging');
+  document.querySelectorAll('.section-body.drop-target').forEach(b => b.classList.remove('drop-target'));
+  _drag = null;
 }
 
 function dragOver(e, destKey) {

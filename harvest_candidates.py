@@ -343,9 +343,10 @@ def _assign_category(img: dict) -> str:
     # page_type='student_life' is set by student-life-targeted harvest functions.
     _ctx_student_tokens = {'student', 'campus life', 'campus_life'}
     if (page_type == 'student_life'
-            or any(t in url_low    for t in _STUDENT_URL_TOKENS)
-            or any(t in alt_low    for t in _STUDENT_URL_TOKENS)
-            or any(t in search_ctx for t in _ctx_student_tokens)):
+            or any(t in url_low      for t in _STUDENT_URL_TOKENS)
+            or any(t in page_url_low for t in _STUDENT_URL_TOKENS)
+            or any(t in alt_low      for t in _STUDENT_URL_TOKENS)
+            or any(t in search_ctx   for t in _ctx_student_tokens)):
         return 'student_life'
 
     return 'campus'
