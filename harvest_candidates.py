@@ -321,19 +321,22 @@ def _score_image(img: dict) -> float:
 
 
 def _assign_category(img: dict) -> str:
-    """Derive display category from page_type, URL signals, and search context."""
+    """Derive display category from page_type, URL/alt/title signals, and search context."""
     page_type    = img.get('page_type', 'general')
     url_low      = urllib.parse.unquote(img.get('url', '')).lower()
     page_url_low = urllib.parse.unquote(img.get('page_url', '')).lower()
     search_ctx   = img.get('search_context', '').lower()
+    # Normalize alt text and any title/caption fields
+    alt_low      = (img.get('alt') or img.get('title') or img.get('caption') or '').lower()
 
     # page_type='swim' is set explicitly by pool-targeted harvest functions.
-    # Also check filename, page URL, and the originating search query for pool signals —
+    # Also check filename, page URL, alt/title text, and the originating search query —
     # this catches aquatic facility images whose filenames don't contain pool words.
     _ctx_pool_tokens = {'swim', 'pool', 'aquatic', 'natator', 'diving'}
     if (page_type == 'swim'
             or any(t in url_low      for t in _POOL_URL_TOKENS)
             or any(t in page_url_low for t in _POOL_URL_TOKENS)
+            or any(t in alt_low      for t in _ctx_pool_tokens)
             or any(t in search_ctx   for t in _ctx_pool_tokens)):
         return 'pool'
 
@@ -341,6 +344,7 @@ def _assign_category(img: dict) -> str:
     _ctx_student_tokens = {'student', 'campus life', 'campus_life'}
     if (page_type == 'student_life'
             or any(t in url_low    for t in _STUDENT_URL_TOKENS)
+            or any(t in alt_low    for t in _STUDENT_URL_TOKENS)
             or any(t in search_ctx for t in _ctx_student_tokens)):
         return 'student_life'
 

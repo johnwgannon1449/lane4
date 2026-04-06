@@ -615,17 +615,18 @@ function toggleCard(key, idx) {
 }
 
 // ── Drag-and-drop ──────────────────────────────────────────────────────────────
-let _drag = null;  // { key, idx }
+let _drag = null;  // { key, idx } — fallback for same-page same-browser drags
 
 function dragStart(e, key, idx) {
   _drag = { key, idx };
+  // Store payload in dataTransfer so browsers (incl. Firefox) can recover it in drop
+  e.dataTransfer.setData('application/json', JSON.stringify({ key, idx }));
   e.dataTransfer.effectAllowed = 'move';
-  // Defer adding class so the browser still renders the ghost
+  // Defer adding class so the browser still renders the drag ghost
   setTimeout(() => document.getElementById(`card-${key}-${idx}`)?.classList.add('dragging'), 0);
 }
 
 function dragOver(e, destKey) {
-  if (!_drag || _drag.key === destKey) return;
   e.preventDefault();
   e.dataTransfer.dropEffect = 'move';
   document.getElementById(`body-${destKey}`)?.classList.add('drop-target');
@@ -641,9 +642,15 @@ function dragLeave(e, destKey) {
 function dropCard(e, destKey) {
   e.preventDefault();
   document.getElementById(`body-${destKey}`)?.classList.remove('drop-target');
-  if (!_drag || _drag.key === destKey) { _drag = null; return; }
-  moveCard(_drag.key, _drag.idx, destKey);
+
+  // Prefer dataTransfer payload; fall back to global _drag
+  let src = null;
+  try { src = JSON.parse(e.dataTransfer.getData('application/json')); } catch (_) {}
+  if (!src) src = _drag;
   _drag = null;
+
+  if (!src || src.key === destKey) return;
+  moveCard(src.key, src.idx, destKey);
 }
 
 function moveCard(srcKey, srcIdx, dstKey) {
