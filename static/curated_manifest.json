@@ -1,0 +1,25 @@
+{
+  "Boston College": {
+    "hero_images": [
+      "https://upload.wikimedia.org/wikipedia/commons/b/bc/Simmons_University_Main_College_Building.jpg",
+      "https://images.pexels.com/photos/35209515/pexels-photo-35209515.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
+    ],
+    "pool_images": [
+      "https://images.pexels.com/photos/7513420/pexels-photo-7513420.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "https://images.pexels.com/photos/7513423/pexels-photo-7513423.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
+    ],
+    "student_life_images": [
+      "https://images.pexels.com/photos/5604180/pexels-photo-5604180.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "https://images.pexels.com/photos/7683910/pexels-photo-7683910.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
+    ],
+    "approved_hero_image": "https://upload.wikimedia.org/wikipedia/commons/b/bc/Simmons_University_Main_College_Building.jpg",
+    "approved_pool_image": "https://images.pexels.com/photos/7513420/pexels-photo-7513420.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+    "approved_student_life_image": "https://images.pexels.com/photos/5604180/pexels-photo-5604180.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+    "approved_extra_images": [
+      "https://images.pexels.com/photos/35209515/pexels-photo-35209515.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "https://images.pexels.com/photos/7513423/pexels-photo-7513423.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "https://images.pexels.com/photos/7683910/pexels-photo-7683910.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
+    ],
+    "saved_at": "2026-04-06T17:56:21Z"
+  }
+}
