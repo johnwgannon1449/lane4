@@ -839,26 +839,126 @@ def fetch_candidates(school: str, domains_cache: dict | None = None) -> list[dic
     return all_candidates[:MAX_CANDIDATES]
 
 
+# ── "More images" query sets — broader and different from the initial harvest ──
+# Using many variations so repeated presses keep returning fresh results.
+_MORE_QUERIES: dict[str, list[str]] = {
+    'pool': [
+        '{school} swimming pool',
+        '{school} natatorium',
+        '{school} aquatic center',
+        '{school} swimming',
+        '{school} indoor swimming',
+        '{school} aquatics facility',
+        '{school} diving pool',
+        '{school} recreation center',
+        '{school} pool',
+        '{school} aquatics',
+    ],
+    'student_life': [
+        '{school} students',
+        '{school} campus life',
+        '{school} student center',
+        '{school} college life',
+        '{school} student union',
+        '{school} campus events',
+        '{school} college students',
+        '{school} student activities',
+        '{school} university students',
+        '{school} campus quad',
+    ],
+    'campus': [
+        '{school} campus',
+        '{school} university building',
+        '{school} campus buildings',
+        '{school} college campus',
+        '{school} university exterior',
+        '{school} campus view',
+        '{school} academic building',
+        '{school} campus entrance',
+        '{school} university',
+        '{school} campus landscape',
+    ],
+}
+
+_CATEGORY_PAGE_TYPE = {'pool': 'swim', 'student_life': 'student_life', 'campus': 'campus'}
+
+
 def fetch_candidates_for_category(school: str, category: str) -> list[dict]:
-    """Fetch fresh candidates targeted to a specific display category.
+    """Fetch additional candidates targeted to a specific display category.
 
-    Unlike fetch_candidates() which pulls everything and caps at MAX_CANDIDATES,
-    this runs only the targeted Wikimedia Commons search for the requested section,
-    so pool/student-life fetches return relevant images instead of being crowded out
-    by campus images.
+    Completely separate from fetch_candidates() — uses broad query sets, relaxed
+    filters (no landscape requirement), and Pexels, returning only URLs not already
+    in the manifest.  Guarantees fresh results on repeated presses.
     """
-    if category == 'pool':
-        results = _wiki_commons_pool(school)
-    elif category == 'student_life':
-        results = _wiki_commons_student(school)
-    else:  # campus (default)
-        results = _wiki_commons_campus(school)
+    # Deduplicate against everything already stored for this school
+    existing_urls: set[str] = {c['url'] for c in load_manifest().get(school, [])}
 
-    for img in results:
+    page_type = _CATEGORY_PAGE_TYPE.get(category, 'campus')
+    raw_queries = _MORE_QUERIES.get(category, _MORE_QUERIES['campus'])
+    queries = [q.format(school=school) for q in raw_queries]
+
+    new_results: list[dict] = []
+    seen: set[str] = set(existing_urls)
+
+    for query in queries:
+        if len(new_results) >= 20:
+            break
+        try:
+            params = {
+                'action': 'query', 'generator': 'search',
+                'gsrnamespace': 6, 'gsrsearch': query,
+                'prop': 'imageinfo', 'iiprop': 'url|size|mime',
+                'gsrlimit': 25, 'format': 'json', 'formatversion': '2',
+            }
+            url = COMMONS_API + '?' + urllib.parse.urlencode(params)
+            req = urllib.request.Request(url, headers={
+                'User-Agent': 'Lane4Recruit/3.0 (swim recruiting; open source)'})
+            with urllib.request.urlopen(req, timeout=14) as r:
+                data = json.loads(r.read())
+            for page in data.get('query', {}).get('pages', []):
+                for info in page.get('imageinfo', []):
+                    if info.get('mime') in ('image/svg+xml', 'image/gif', 'image/bmp'):
+                        continue
+                    img_url = info.get('url', '')
+                    if not img_url or _is_bad_url(img_url) or img_url in seen:
+                        continue
+                    fname = urllib.parse.unquote(img_url).lower()
+                    if any(t in fname for t in HISTORICAL_TOKENS):
+                        continue
+                    if _HIST_YEAR_RE.search(fname):
+                        continue
+                    w = info.get('width', 0)
+                    h = info.get('height', 0)
+                    # Relaxed: just minimum dimensions, NO landscape ratio check —
+                    # user wants options; they'll decide what looks good.
+                    if w < MIN_WIDTH or h < MIN_HEIGHT:
+                        continue
+                    score = round((w * h) / 1_200_000 + 1.5, 3)
+                    seen.add(img_url)
+                    new_results.append({
+                        'url': img_url, 'source': 'wiki_commons',
+                        'width': w, 'height': h, 'score': score,
+                        'page_type': page_type, 'page_url': '',
+                        'search_context': query,
+                    })
+        except Exception:
+            pass
+
+    # Pexels — completely different source, reliable for "more" requests
+    pexels_queries = queries[:2]  # two most specific queries
+    for pq in pexels_queries:
+        for img in _pexels_search(pq, n=6):
+            if img['url'] not in seen:
+                img['search_context'] = pq
+                seen.add(img['url'])
+                new_results.append(img)
+
+    # Assign display categories (page_type set above ensures correct bucketing)
+    for img in new_results:
         img['category'] = _assign_category(img)
 
-    results.sort(key=lambda x: x.get('score', 0), reverse=True)
-    return results
+    new_results.sort(key=lambda x: x.get('score', 0), reverse=True)
+    return new_results
 
 
 # ── Manifest helpers ──────────────────────────────────────────────────────────
