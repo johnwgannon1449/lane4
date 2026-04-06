@@ -643,8 +643,13 @@ def _wiki_page_images(title: str, limit: int = 25) -> list[dict]:
 
 def _commons_search(queries: list[str], page_type: str, score_base: float,
                     limit: int = 12, max_results: int = 8,
-                    exclude_fname_tokens: set | None = None) -> list[dict]:
-    """Generic Wikimedia Commons image search helper, shared by campus/pool/student functions."""
+                    exclude_fname_tokens: set | None = None,
+                    min_ratio: float = 0.75) -> list[dict]:
+    """Generic Wikimedia Commons image search helper, shared by campus/pool/student functions.
+
+    min_ratio: minimum width/height ratio (0.75 allows near-square pool shots;
+    use 1.1 for campus sections that strongly prefer wide/landscape framing).
+    """
     results: list[dict] = []
     exclude = exclude_fname_tokens or set()
     for query in queries:
@@ -678,7 +683,7 @@ def _commons_search(queries: list[str], page_type: str, score_base: float,
                     h = info.get('height', 0)
                     if w < MIN_WIDTH or h < MIN_HEIGHT:
                         continue
-                    if h > 0 and w / h < 1.1:
+                    if h > 0 and w / h < min_ratio:
                         continue
                     score = round((w * h) / 1_200_000 + score_base, 3)
                     results.append({
@@ -714,11 +719,13 @@ def _wiki_commons_pool(school: str) -> list[dict]:
             f'{school} swimming pool',
             f'{school} natatorium',
             f'{school} aquatic center',
+            f'{school} swim',
         ],
         page_type='swim',
         score_base=2.0,
-        limit=10,
-        max_results=6,
+        limit=15,
+        max_results=10,
+        min_ratio=0.6,  # pool shots are often near-square — accept them
     )
 
 
@@ -728,11 +735,13 @@ def _wiki_commons_student(school: str) -> list[dict]:
         queries=[
             f'{school} students',
             f'{school} campus life',
+            f'{school} student center',
         ],
         page_type='student_life',
         score_base=1.5,
-        limit=10,
-        max_results=5,
+        limit=15,
+        max_results=8,
+        min_ratio=0.75,
     )
 
 
@@ -961,8 +970,8 @@ def fetch_candidates_for_category(school: str, category: str) -> list[dict]:
     queries = [q.format(school=school)
                for q in _MORE_GOOGLE_QUERIES.get(category, _MORE_GOOGLE_QUERIES['campus'])]
 
+    # ── Google CSE (primary — best quality when key + cx are valid) ──────────
     if GOOGLE_CSE_KEY:
-        # ── Google CSE: run each query, then paginate if still below target ──
         for q in queries:
             for start in (1, 11):  # two pages = up to 20 results per query
                 for img in _google_cse_search(q, page_type=page_type, n=10, start=start):
@@ -971,48 +980,50 @@ def fetch_candidates_for_category(school: str, category: str) -> list[dict]:
                     break
             if len(new_results) >= 20:
                 break
-    else:
-        # ── Fallback: Wikimedia Commons with relaxed filters ─────────────────
-        for q in queries:
-            if len(new_results) >= 20:
-                break
-            try:
-                params = {
-                    'action': 'query', 'generator': 'search',
-                    'gsrnamespace': 6, 'gsrsearch': q,
-                    'prop': 'imageinfo', 'iiprop': 'url|size|mime',
-                    'gsrlimit': 25, 'format': 'json', 'formatversion': '2',
-                }
-                url = COMMONS_API + '?' + urllib.parse.urlencode(params)
-                req = urllib.request.Request(url, headers={
-                    'User-Agent': 'Lane4Recruit/3.0 (swim recruiting; open source)'})
-                with urllib.request.urlopen(req, timeout=14) as r:
-                    data = json.loads(r.read())
-                for page in data.get('query', {}).get('pages', []):
-                    for info in page.get('imageinfo', []):
-                        if info.get('mime') in ('image/svg+xml', 'image/gif', 'image/bmp'):
-                            continue
-                        img_url = info.get('url', '')
-                        if not img_url or _is_bad_url(img_url):
-                            continue
-                        fname = urllib.parse.unquote(img_url).lower()
-                        if any(t in fname for t in HISTORICAL_TOKENS):
-                            continue
-                        if _HIST_YEAR_RE.search(fname):
-                            continue
-                        w = info.get('width', 0)
-                        h = info.get('height', 0)
-                        if w < MIN_WIDTH or h < MIN_HEIGHT:
-                            continue
-                        score = round((w * h) / 1_200_000 + 1.5, 3)
-                        _add_if_new({
-                            'url': img_url, 'source': 'wiki_commons',
-                            'width': w, 'height': h, 'score': score,
-                            'page_type': page_type, 'page_url': '',
-                            'search_context': q,
-                        })
-            except Exception:
-                pass
+
+    # ── Wikimedia Commons (always runs — supplements CSE or replaces it) ──────
+    # No aspect-ratio filter here: pool shots are often near-square, and the
+    # user needs real options when CSE fails or quota is exhausted.
+    for q in queries:
+        if len(new_results) >= 30:
+            break
+        try:
+            params = {
+                'action': 'query', 'generator': 'search',
+                'gsrnamespace': 6, 'gsrsearch': q,
+                'prop': 'imageinfo', 'iiprop': 'url|size|mime',
+                'gsrlimit': 25, 'format': 'json', 'formatversion': '2',
+            }
+            url = COMMONS_API + '?' + urllib.parse.urlencode(params)
+            req = urllib.request.Request(url, headers={
+                'User-Agent': 'Lane4Recruit/3.0 (swim recruiting; open source)'})
+            with urllib.request.urlopen(req, timeout=14) as r:
+                data = json.loads(r.read())
+            for page in data.get('query', {}).get('pages', []):
+                for info in page.get('imageinfo', []):
+                    if info.get('mime') in ('image/svg+xml', 'image/gif', 'image/bmp'):
+                        continue
+                    img_url = info.get('url', '')
+                    if not img_url or _is_bad_url(img_url):
+                        continue
+                    fname = urllib.parse.unquote(img_url).lower()
+                    if any(t in fname for t in HISTORICAL_TOKENS):
+                        continue
+                    if _HIST_YEAR_RE.search(fname):
+                        continue
+                    w = info.get('width', 0)
+                    h = info.get('height', 0)
+                    if w < MIN_WIDTH or h < MIN_HEIGHT:
+                        continue
+                    score = round((w * h) / 1_200_000 + 1.5, 3)
+                    _add_if_new({
+                        'url': img_url, 'source': 'wiki_commons',
+                        'width': w, 'height': h, 'score': score,
+                        'page_type': page_type, 'page_url': '',
+                        'search_context': q,
+                    })
+        except Exception:
+            pass
 
     # Assign display categories
     for img in new_results:

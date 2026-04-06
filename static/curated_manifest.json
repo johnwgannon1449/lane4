@@ -21,5 +21,39 @@
       "https://images.pexels.com/photos/7683910/pexels-photo-7683910.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
     ],
     "saved_at": "2026-04-06T17:56:21Z"
+  },
+  "Bard College": {
+    "hero_images": [
+      "https://www.bard.edu/about/index.php?action=getfile&id=5652977&disposition=inline&type=image"
+    ],
+    "pool_images": [],
+    "student_life_images": [
+      "https://www.bard.edu/campus/index.php?action=getfile&id=1785862&disposition=inline&type=image",
+      "https://upload.wikimedia.org/wikipedia/commons/2/2e/ECLA_of_Bard_campus%2C_2012.jpg"
+    ],
+    "approved_hero_image": "https://www.bard.edu/about/index.php?action=getfile&id=5652977&disposition=inline&type=image",
+    "approved_pool_image": null,
+    "approved_student_life_image": "https://www.bard.edu/campus/index.php?action=getfile&id=1785862&disposition=inline&type=image",
+    "approved_extra_images": [
+      "https://upload.wikimedia.org/wikipedia/commons/2/2e/ECLA_of_Bard_campus%2C_2012.jpg"
+    ],
+    "saved_at": "2026-04-06T18:14:18Z"
+  },
+  "Clarkson University": {
+    "hero_images": [
+      "https://upload.wikimedia.org/wikipedia/commons/9/9f/OldMain%282009%29.jpg"
+    ],
+    "pool_images": [],
+    "student_life_images": [
+      "https://www.clarkson.edu/sites/default/files/2023-07/movein-hero-1600x900.jpg",
+      "https://www.clarkson.edu/sites/default/files/2023-07/applying-knight-vrouter-900x600.jpg"
+    ],
+    "approved_hero_image": "https://upload.wikimedia.org/wikipedia/commons/9/9f/OldMain%282009%29.jpg",
+    "approved_pool_image": null,
+    "approved_student_life_image": "https://www.clarkson.edu/sites/default/files/2023-07/movein-hero-1600x900.jpg",
+    "approved_extra_images": [
+      "https://www.clarkson.edu/sites/default/files/2023-07/applying-knight-vrouter-900x600.jpg"
+    ],
+    "saved_at": "2026-04-06T18:16:38Z"
   }
 }
