@@ -35,12 +35,13 @@ DOMAINS_PATH    = os.path.join('static', 'school_domains.json')
 NAMES_PATH      = 'school_names.json'
 
 PEXELS_KEY = os.environ.get('PEXELS_KEY', '')
-WIKI_API   = 'https://en.wikipedia.org/w/api.php'
-PEXELS_URL = 'https://api.pexels.com/v1/search'
+WIKI_API     = 'https://en.wikipedia.org/w/api.php'
+COMMONS_API  = 'https://commons.wikimedia.org/w/api.php'
+PEXELS_URL   = 'https://api.pexels.com/v1/search'
 
 MIN_WIDTH  = 400
 MIN_HEIGHT = 220
-MAX_CANDIDATES = 12
+MAX_CANDIDATES = 24   # 8 per category × 3 categories
 CRAWL_WORKERS  = 6
 PAGE_TIMEOUT   = 8
 
@@ -103,6 +104,21 @@ PENALTY_IMG_TOKENS = [
     'classroom', 'lecture', 'lab-student', 'laptop', 'smiling',
     'group-photo', 'team-photo', 'promo_', 'marketing_',
 ]
+
+# Archival / historical — heavy penalty for hero slot
+HISTORICAL_TOKENS = [
+    '_1800', '_1810', '_1820', '_1830', '_1840', '_1850', '_1860', '_1870', '_1880', '_1890',
+    '_1900', '_1910', '_1920', '_1930', '_1940', '_1950',
+    '1800s', '1900s', '1910s', '1920s', '1930s', '1940s', '1950s',
+    'vintage', 'historic_photo', 'historical_photo', 'archive_photo',
+    'black_and_white', '_bw_photo', 'sepia_',
+]
+# Regex for bare 4-digit years in filenames (1800–1959 only)
+_HIST_YEAR_RE = re.compile(r'(?<![0-9])(1[89]\d{2}|1[0-5]\d{2})(?![0-9])')
+
+# ── Category signals ──────────────────────────────────────────────────────────
+_POOL_URL_TOKENS    = {'swim', 'pool', 'aquatic', 'natator', 'diving', 'aquatics'}
+_STUDENT_URL_TOKENS = {'student-life', 'student_life', 'studentlife', 'students_at'}
 
 BOOST_PAGE_TOKENS   = ['visit', 'campus', 'about', 'traditions', 'landmarks',
                         'student-life', 'facilities', 'aquatics', 'natatorium',
@@ -280,6 +296,13 @@ def _score_image(img: dict) -> float:
         if tok in combined:
             score -= 1.0
 
+    # Historical / archival penalty — strongly deprioritise for hero slot
+    fname_low = urllib.parse.unquote(url).lower()
+    if any(t in fname_low for t in HISTORICAL_TOKENS):
+        score -= 4.0
+    elif _HIST_YEAR_RE.search(fname_low):
+        score -= 4.0
+
     # Page URL boosts/penalties
     for tok in BOOST_PAGE_TOKENS:
         if tok in page_url:
@@ -289,6 +312,18 @@ def _score_image(img: dict) -> float:
             score -= 0.6
 
     return max(score, 0.0)
+
+
+def _assign_category(img: dict) -> str:
+    """Derive display category from page_type and URL signals."""
+    page_type = img.get('page_type', 'general')
+    url_low   = urllib.parse.unquote(img.get('url', '')).lower()
+
+    if page_type == 'swim' or any(t in url_low for t in _POOL_URL_TOKENS):
+        return 'pool'
+    if any(t in url_low for t in _STUDENT_URL_TOKENS):
+        return 'student_life'
+    return 'campus'
 
 
 # ── Website domain lookup (via Wikipedia extlinks, cached) ────────────────────
@@ -577,6 +612,53 @@ def _wiki_page_images(title: str, limit: int = 25) -> list[dict]:
         return []
 
 
+def _wiki_commons_campus(school: str, limit: int = 12) -> list[dict]:
+    """Search Wikimedia Commons for modern campus images (separate from article images)."""
+    results = []
+    for query in [f'{school} campus', f'{school} university building']:
+        try:
+            params = {
+                'action': 'query', 'generator': 'search',
+                'gsrnamespace': 6, 'gsrsearch': query,
+                'prop': 'imageinfo', 'iiprop': 'url|size|mime',
+                'gsrlimit': limit, 'format': 'json', 'formatversion': '2',
+            }
+            url = COMMONS_API + '?' + urllib.parse.urlencode(params)
+            req = urllib.request.Request(url, headers={
+                'User-Agent': 'Lane4Recruit/3.0 (swim recruiting; open source)'})
+            with urllib.request.urlopen(req, timeout=12) as r:
+                data = json.loads(r.read())
+            for page in data.get('query', {}).get('pages', []):
+                for info in page.get('imageinfo', []):
+                    if info.get('mime') in ('image/svg+xml', 'image/gif', 'image/bmp'):
+                        continue
+                    img_url = info.get('url', '')
+                    if not img_url or _is_bad_url(img_url):
+                        continue
+                    fname = urllib.parse.unquote(img_url).lower()
+                    if any(t in fname for t in HISTORICAL_TOKENS):
+                        continue
+                    if _HIST_YEAR_RE.search(fname):
+                        continue
+                    w = info.get('width', 0)
+                    h = info.get('height', 0)
+                    if w < MIN_WIDTH or h < MIN_HEIGHT:
+                        continue
+                    if h > 0 and w / h < 1.1:
+                        continue   # require landscape
+                    score = round((w * h) / 1_200_000 + 1.8, 3)
+                    results.append({
+                        'url': img_url, 'source': 'wiki_commons',
+                        'width': w, 'height': h, 'score': score,
+                        'page_type': 'campus', 'page_url': '',
+                    })
+        except Exception:
+            pass
+        if len(results) >= 8:
+            break
+    return results
+
+
 def _wiki_candidates(school: str) -> list[dict]:
     wiki_title = _wiki_find_page(school)
     if not wiki_title:
@@ -587,6 +669,13 @@ def _wiki_candidates(school: str) -> list[dict]:
     if main:
         results.append(main)
     results.extend(_wiki_page_images(wiki_title))
+    # Commons search for better modern campus shots
+    commons = _wiki_commons_campus(school)
+    seen = {r['url'] for r in results}
+    for img in commons:
+        if img['url'] not in seen:
+            results.append(img)
+            seen.add(img['url'])
     return results
 
 
@@ -651,12 +740,11 @@ def fetch_candidates(school: str, domains_cache: dict | None = None) -> list[dic
     else:
         print(f'    [web] no domain found — using Wikipedia')
 
-    # ── 2. Wikipedia supplement / fallback ───────────────────────────────────
-    if len(all_candidates) < 6:
-        wiki_imgs = _wiki_candidates(school)
-        wiki_imgs.sort(key=lambda x: x.get('score', 0), reverse=True)
-        for img in wiki_imgs:
-            _add(img)
+    # ── 2. Wikipedia + Wikimedia Commons (always run for campus quality) ─────
+    wiki_imgs = _wiki_candidates(school)
+    wiki_imgs.sort(key=lambda x: x.get('score', 0), reverse=True)
+    for img in wiki_imgs:
+        _add(img)
 
     # ── 3. Pexels last resort ────────────────────────────────────────────────
     if len(all_candidates) < 4:
@@ -665,6 +753,10 @@ def fetch_candidates(school: str, domains_cache: dict | None = None) -> list[dic
                 break
             for img in _pexels_search(suffix, n=3):
                 _add(img)
+
+    # ── Assign display category to every candidate ───────────────────────────
+    for img in all_candidates:
+        img['category'] = _assign_category(img)
 
     all_candidates.sort(key=lambda x: x.get('score', 0), reverse=True)
     return all_candidates[:MAX_CANDIDATES]

@@ -5083,14 +5083,56 @@ def admin_curate():
     return send_from_directory('static', 'admin_curate.html')
 
 
+@app.route('/api/admin/conferences', methods=['GET'])
+@login_required
+def api_admin_conferences():
+    """Return all conferences with school counts and curated progress."""
+    curated = _load_curated_manifest()
+    candidates = _load_candidates_manifest()
+
+    # Build school→conference lookup from EXPLORE_SCHOOLS
+    school_conf = {s['school']: s.get('conference', '') for s in EXPLORE_SCHOOLS}
+
+    # Group schools by conference
+    conf_schools: dict[str, list[str]] = {}
+    for school, conf in school_conf.items():
+        if conf:
+            conf_schools.setdefault(conf, []).append(school)
+
+    result = []
+    for conf in sorted(conf_schools.keys()):
+        schools = conf_schools[conf]
+        cur_count = sum(
+            1 for s in schools
+            if curated.get(s, {}).get('hero_images') or curated.get(s, {}).get('selected_in_order')
+        )
+        cand_count = sum(1 for s in schools if candidates.get(s))
+        result.append({
+            'name': conf,
+            'school_count': len(schools),
+            'curated_count': cur_count,
+            'has_candidates_count': cand_count,
+        })
+    return jsonify(result)
+
+
 @app.route('/api/admin/schools', methods=['GET'])
 @login_required
 def api_admin_schools():
+    conference_filter = request.args.get('conference', '').strip()
+
+    # Build school→conference lookup
+    school_conf = {s['school']: s.get('conference', '') for s in EXPLORE_SCHOOLS}
+
     try:
         with open('school_names.json', encoding='utf-8') as f:
             all_names = json.load(f)
     except Exception:
         all_names = [s['school'] for s in EXPLORE_SCHOOLS]
+
+    if conference_filter:
+        all_names = [n for n in all_names
+                     if school_conf.get(n, '') == conference_filter]
 
     candidates = _load_candidates_manifest()
     curated    = _load_curated_manifest()
@@ -5099,12 +5141,16 @@ def api_admin_schools():
     for name in all_names:
         cands = candidates.get(name, [])
         cur   = curated.get(name, {})
+        is_curated = bool(cur.get('hero_images') or cur.get('selected_in_order'))
         result.append({
-            'name':           name,
-            'has_candidates': bool(cands),
+            'name':            name,
+            'conference':      school_conf.get(name, ''),
+            'has_candidates':  bool(cands),
             'candidate_count': len(cands),
-            'is_curated':     bool(cur.get('selected')),
-            'selected_count': len(cur.get('selected', [])),
+            'is_curated':      is_curated,
+            'hero_count':      len(cur.get('hero_images', cur.get('selected_in_order', [])[:1])),
+            'pool_count':      len(cur.get('pool_images', [])),
+            'student_count':   len(cur.get('student_life_images', [])),
         })
     return jsonify(result)
 
@@ -5115,13 +5161,22 @@ def api_admin_candidates(school):
     candidates = _load_candidates_manifest()
     curated    = _load_curated_manifest()
     cur = curated.get(school, {})
-    # Back-compat: old format used 'selected'; new format uses 'selected_in_order'
+    # Back-compat: old order-based format → new per-type format
     if 'selected_in_order' not in cur and 'selected' in cur:
         cur['selected_in_order'] = cur['selected']
-    return jsonify({
-        'candidates': candidates.get(school, []),
-        'curated':    cur,
-    })
+
+    cands = candidates.get(school, [])
+    # Back-compat: add category field to old candidates that lack it
+    for c in cands:
+        if 'category' not in c:
+            pt = c.get('page_type', 'general')
+            url = c.get('url', '').lower()
+            if pt == 'swim' or any(t in url for t in ('swim', 'pool', 'aquatic', 'natator')):
+                c['category'] = 'pool'
+            else:
+                c['category'] = 'campus'
+
+    return jsonify({'candidates': cands, 'curated': cur})
 
 
 @app.route('/api/admin/fetch-candidates', methods=['POST'])
@@ -5154,19 +5209,32 @@ def api_admin_save():
     if not school:
         return jsonify({'error': 'missing school'}), 400
 
-    selected_in_order = body.get('selected_in_order', [])
+    hero_images         = body.get('hero_images', [])
+    pool_images         = body.get('pool_images', [])
+    student_life_images = body.get('student_life_images', [])
+
+    # Back-compat: if old order-based format sent, derive typed lists
+    if 'selected_in_order' in body and not any([hero_images, pool_images, student_life_images]):
+        sio = body['selected_in_order']
+        hero_images         = sio[:1]
+        pool_images         = sio[1:2]
+        student_life_images = sio[2:3]
 
     curated = _load_curated_manifest()
     curated[school] = {
-        'selected_in_order':          selected_in_order,
-        'approved_hero_image':        selected_in_order[0] if len(selected_in_order) > 0 else None,
-        'approved_pool_image':        selected_in_order[1] if len(selected_in_order) > 1 else None,
-        'approved_student_life_image': selected_in_order[2] if len(selected_in_order) > 2 else None,
-        'approved_extra_images':      selected_in_order[3:],
+        'hero_images':          hero_images,
+        'pool_images':          pool_images,
+        'student_life_images':  student_life_images,
+        # Legacy flat fields for back-compat with existing consumers
+        'approved_hero_image':        hero_images[0] if hero_images else None,
+        'approved_pool_image':        pool_images[0] if pool_images else None,
+        'approved_student_life_image': student_life_images[0] if student_life_images else None,
+        'approved_extra_images':      hero_images[1:] + pool_images[1:] + student_life_images[1:],
         'saved_at': time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()),
     }
     _save_curated_manifest(curated)
-    return jsonify({'ok': True, 'school': school, 'selected': len(selected_in_order)})
+    total = len(hero_images) + len(pool_images) + len(student_life_images)
+    return jsonify({'ok': True, 'school': school, 'selected': total})
 
 
 @app.route('/api/health', methods=['GET'])

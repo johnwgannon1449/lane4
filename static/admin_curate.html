@@ -7,502 +7,669 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet" />
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  :root {
-    --blue:     #2563EB;
-    --blue-d:   #1D4ED8;
-    --blue-l:   #EFF6FF;
-    --blue-m:   #BFDBFE;
-    --text:     #0F172A;
-    --muted:    #64748B;
-    --border:   #E2E8F0;
-    --bg:       #F8FAFC;
-    --card-bg:  #FFFFFF;
-    --sidebar:  248px;
-    --header:   56px;
-    --radius:   14px;
-    --shadow:   0 2px 10px rgba(0,0,0,.07), 0 0 1px rgba(0,0,0,.05);
-    --shadow-h: 0 6px 24px rgba(0,0,0,.14), 0 0 1px rgba(0,0,0,.06);
+:root {
+  --blue:       #2563EB;
+  --blue-d:     #1D4ED8;
+  --blue-l:     #EFF6FF;
+  --green:      #16A34A;
+  --green-d:    #15803D;
+  --green-l:    #F0FDF4;
+  --green-ring: rgba(22,163,74,.22);
+  --amber:      #D97706;
+  --amber-l:    #FFFBEB;
+  --text:       #0F172A;
+  --muted:      #64748B;
+  --border:     #E2E8F0;
+  --bg:         #F8FAFC;
+  --card-bg:    #FFFFFF;
+  --sidebar:    220px;
+  --header:     56px;
+  --radius:     12px;
+  --shadow:     0 2px 8px rgba(0,0,0,.07), 0 0 1px rgba(0,0,0,.05);
+  --shadow-h:   0 6px 20px rgba(0,0,0,.13), 0 0 1px rgba(0,0,0,.06);
+}
 
-    /* Role colors */
-    --r-hero:    #2563EB;
-    --r-pool:    #0891B2;
-    --r-student: #16A34A;
-    --r-extra:   #92400E;
-  }
+html, body { height: 100%; font-family: 'Figtree', sans-serif; background: var(--bg); color: var(--text); }
 
-  html, body { height: 100%; font-family: 'Figtree', sans-serif; background: var(--bg); color: var(--text); }
+/* ── Header ─────────────────── */
+#hdr {
+  position: fixed; inset: 0 0 auto 0; height: var(--header); z-index: 100;
+  background: #fff; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; padding: 0 16px; gap: 12px;
+}
+.logo { font-weight: 700; font-size: 1rem; letter-spacing: -.02em; color: var(--blue); flex-shrink: 0; }
+.logo span { color: var(--text); }
 
-  /* ── Header ─────────────────── */
-  #hdr {
-    position: fixed; inset: 0 0 auto 0; height: var(--header); z-index: 100;
-    background: #fff; border-bottom: 1px solid var(--border);
-    display: flex; align-items: center; padding: 0 20px; gap: 0;
-  }
-  .logo { font-weight: 700; font-size: 1rem; letter-spacing: -.02em; color: var(--blue); flex-shrink: 0; }
-  .logo span { color: var(--text); }
-  #hdr-school { flex: 1; text-align: center; font-size: .88rem; font-weight: 600; padding: 0 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  #hdr-school .sub { font-weight: 400; color: var(--muted); font-size: .76rem; }
-  #hdr-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
-  #save-indicator { font-size: .75rem; color: #16A34A; font-weight: 500; white-space: nowrap; display: none; }
-  .hdr-btn {
-    height: 34px; padding: 0 14px; border-radius: 8px; border: 1px solid var(--border);
-    background: #fff; font-family: inherit; font-size: .82rem; font-weight: 500; cursor: pointer;
-    color: var(--text); transition: background .15s, border-color .15s;
-  }
-  .hdr-btn:hover { background: var(--bg); border-color: #c7d4e4; }
-  .hdr-btn.primary { background: var(--blue); border-color: var(--blue); color: #fff; }
-  .hdr-btn.primary:hover { background: var(--blue-d); }
-  .hdr-btn:disabled { opacity: .42; cursor: not-allowed; }
+#conf-wrap { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+#conf-wrap label { font-size: .78rem; font-weight: 600; color: var(--muted); white-space: nowrap; }
+#conf-select {
+  height: 32px; border: 1px solid var(--border); border-radius: 8px;
+  padding: 0 10px; font-family: inherit; font-size: .82rem; color: var(--text);
+  background: var(--bg); cursor: pointer; outline: none;
+}
+#conf-select:focus { border-color: var(--blue); }
 
-  /* ── Layout ─────────────────── */
-  #layout { display: flex; height: 100%; padding-top: var(--header); }
+#hdr-progress {
+  flex: 1; text-align: center; font-size: .82rem; font-weight: 600;
+  color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+#hdr-progress .sub { font-weight: 400; color: var(--muted); font-size: .72rem; display: block; }
 
-  /* ── Sidebar ─────────────────── */
-  #sidebar {
-    width: var(--sidebar); flex-shrink: 0; height: 100%; overflow-y: auto;
-    border-right: 1px solid var(--border); background: #fff;
-    display: flex; flex-direction: column;
-  }
-  #sidebar-top { padding: 12px; border-bottom: 1px solid var(--border); }
-  #school-search {
-    width: 100%; height: 32px; border: 1px solid var(--border); border-radius: 8px;
-    padding: 0 10px; font-family: inherit; font-size: .8rem; color: var(--text);
-    background: var(--bg); outline: none; transition: border-color .15s;
-  }
-  #school-search:focus { border-color: var(--blue); }
-  #school-list { flex: 1; overflow-y: auto; padding: 6px 0; }
-  #school-stats { padding: 8px 12px; border-top: 1px solid var(--border); font-size: .72rem; color: var(--muted); flex-shrink: 0; }
-  .school-item {
-    display: flex; align-items: center; gap: 8px;
-    padding: 7px 12px; cursor: pointer; transition: background .12s;
-    font-size: .8rem; font-weight: 500; color: var(--text);
-  }
-  .school-item:hover { background: var(--bg); }
-  .school-item.active { background: var(--blue-l); color: var(--blue); }
-  .school-item .name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .status-dot {
-    width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
-    border: 1.5px solid var(--border); background: #fff;
-  }
-  .status-dot.has-candidates { background: var(--blue-m); border-color: var(--blue); }
-  .status-dot.curated { background: #16A34A; border-color: #16A34A; }
+#hdr-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+#save-indicator { font-size: .75rem; color: var(--green); font-weight: 600; white-space: nowrap; display: none; }
+.hdr-btn {
+  height: 32px; padding: 0 14px; border-radius: 8px; border: 1px solid var(--border);
+  background: #fff; font-family: inherit; font-size: .81rem; font-weight: 500; cursor: pointer;
+  color: var(--text); transition: background .12s, border-color .12s;
+}
+.hdr-btn:hover { background: var(--bg); border-color: #c7d4e4; }
+.hdr-btn.primary { background: var(--green); border-color: var(--green); color: #fff; font-weight: 600; }
+.hdr-btn.primary:hover { background: var(--green-d); }
+.hdr-btn:disabled { opacity: .38; cursor: not-allowed; }
 
-  /* ── Main ─────────────────── */
-  #main { flex: 1; overflow-y: auto; display: flex; flex-direction: column; }
-  #main-inner { padding: 24px; display: flex; flex-direction: column; gap: 20px; min-height: 100%; }
+/* ── Layout ─────────────────── */
+#layout { display: flex; height: 100%; padding-top: var(--header); }
 
-  /* ── Overlay states ─────────────────── */
-  #state-overlay {
-    flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
-    gap: 12px; color: var(--muted); font-size: .95rem; padding: 60px 24px; text-align: center;
-  }
-  #state-overlay .icon { font-size: 2.4rem; }
-  #state-overlay .title { font-weight: 600; color: var(--text); font-size: 1.1rem; }
-  #state-overlay .desc { max-width: 320px; line-height: 1.5; }
-  #state-overlay .cmd {
-    background: #1E293B; color: #94A3B8; padding: 10px 16px; border-radius: 8px;
-    font-family: monospace; font-size: .82rem; margin-top: 4px;
-  }
+/* ── Sidebar ─────────────────── */
+#sidebar {
+  width: var(--sidebar); flex-shrink: 0; height: 100%; overflow-y: auto;
+  border-right: 1px solid var(--border); background: #fff;
+  display: flex; flex-direction: column;
+}
+#school-list { flex: 1; overflow-y: auto; padding: 6px 0; }
+#school-stats {
+  padding: 8px 12px; border-top: 1px solid var(--border);
+  font-size: .7rem; color: var(--muted); flex-shrink: 0; line-height: 1.5;
+}
+.school-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 7px 12px; cursor: pointer; transition: background .1s;
+  font-size: .79rem; font-weight: 500; color: var(--text);
+}
+.school-item:hover { background: var(--bg); }
+.school-item.active { background: var(--green-l); color: var(--green-d); }
+.school-item .name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.status-dot {
+  width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+  border: 1.5px solid var(--border); background: #fff;
+}
+.status-dot.partial  { background: #FDE68A; border-color: var(--amber); }
+.status-dot.curated  { background: var(--green); border-color: var(--green-d); }
+.status-dot.has-cands { background: #BFDBFE; border-color: var(--blue); }
 
-  /* ── School header ─────────────────── */
-  #school-hdr { display: flex; align-items: baseline; gap: 10px; }
-  #school-hdr h2 { font-size: 1.2rem; font-weight: 700; }
-  #school-hdr .meta { font-size: .8rem; color: var(--muted); }
+/* ── Main ─────────────────── */
+#main { flex: 1; overflow-y: auto; }
+#main-inner { padding: 20px 24px 32px; display: flex; flex-direction: column; gap: 24px; min-height: 100%; }
 
-  /* ── Slot status strip ─────────────────── */
-  #slot-strip {
-    display: flex; gap: 10px; flex-wrap: wrap;
-  }
-  .slot-pill {
-    display: flex; align-items: center; gap: 7px;
-    border: 1.5px dashed var(--border); border-radius: 10px;
-    padding: 7px 12px; font-size: .78rem; font-weight: 500;
-    color: var(--muted); background: #fff; transition: all .2s;
-    min-width: 110px;
-  }
-  .slot-pill.filled {
-    border-style: solid; color: var(--text);
-  }
-  .slot-pill.filled-hero    { border-color: var(--r-hero);    background: #EFF6FF; color: var(--r-hero); }
-  .slot-pill.filled-pool    { border-color: var(--r-pool);    background: #ECFEFF; color: var(--r-pool); }
-  .slot-pill.filled-student { border-color: var(--r-student); background: #F0FDF4; color: #15803D; }
-  .slot-pill.filled-extra   { border-color: var(--r-extra);   background: #FFFBEB; color: var(--r-extra); }
-  .slot-dot {
-    width: 8px; height: 8px; border-radius: 50%; background: currentColor; flex-shrink: 0;
-    opacity: .35;
-  }
-  .slot-pill.filled .slot-dot { opacity: 1; }
-  .slot-thumb {
-    width: 28px; height: 20px; border-radius: 4px; object-fit: cover;
-    display: none; flex-shrink: 0;
-  }
-  .slot-pill.filled .slot-thumb { display: block; }
-  .slot-label { font-weight: 600; }
-  .slot-status { font-weight: 400; opacity: .7; font-size: .72rem; }
+/* ── Overlay states ─────────────────── */
+#state-overlay {
+  flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 14px; color: var(--muted); font-size: .95rem; padding: 60px 24px; text-align: center;
+}
+#state-overlay .icon { font-size: 2.4rem; }
+#state-overlay .title { font-weight: 700; color: var(--text); font-size: 1.15rem; }
+#state-overlay .desc { max-width: 360px; line-height: 1.6; }
+.fetch-btn {
+  margin-top: 8px; padding: 12px 32px; background: var(--blue); color: #fff;
+  border: none; border-radius: 10px; font-size: 1rem; font-weight: 600;
+  cursor: pointer; font-family: inherit; transition: background .15s;
+}
+.fetch-btn:hover { background: var(--blue-d); }
 
-  /* ── Image grid ─────────────────── */
-  #img-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 14px;
-  }
-  @media (max-width: 1100px) { #img-grid { grid-template-columns: repeat(3, 1fr); } }
-  @media (max-width: 720px)  { #img-grid { grid-template-columns: repeat(2, 1fr); } }
+/* ── School header ─────────────────── */
+#school-hdr { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+#school-hdr h2 { font-size: 1.25rem; font-weight: 700; }
+#school-hdr .conf-tag {
+  font-size: .75rem; font-weight: 600; padding: 2px 8px; border-radius: 6px;
+  background: var(--blue-l); color: var(--blue);
+}
+#school-hdr .meta { font-size: .8rem; color: var(--muted); }
 
-  .img-card {
-    position: relative; border-radius: var(--radius); overflow: hidden;
-    cursor: pointer; background: #E2E8F0;
-    border: 2.5px solid transparent;
-    box-shadow: var(--shadow);
-    transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
-    aspect-ratio: 16/10;
-  }
-  .img-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-h); }
-  .img-card:active { transform: translateY(-1px); }
+/* ── Image section ─────────────────── */
+.img-section {
+  background: #fff; border: 1px solid var(--border); border-radius: var(--radius);
+  overflow: hidden;
+}
 
-  .img-card.sel-hero    { border-color: var(--r-hero); }
-  .img-card.sel-pool    { border-color: var(--r-pool); }
-  .img-card.sel-student { border-color: var(--r-student); }
-  .img-card.sel-extra   { border-color: var(--r-extra); }
+.section-hdr {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  padding: 12px 16px; border-bottom: 1px solid var(--border); background: var(--bg);
+}
+.section-icon { font-size: 1.15rem; flex-shrink: 0; }
+.section-title-text { font-size: .9rem; font-weight: 700; flex: 1; }
+.sel-badge {
+  font-size: .72rem; font-weight: 700; padding: 2px 8px; border-radius: 20px;
+  border: 1.5px solid currentColor;
+}
+.sel-badge.has-sel { color: var(--green); background: var(--green-l); }
+.sel-badge.no-sel  { color: var(--muted); background: transparent; border-color: var(--border); }
+.skip-tag {
+  font-size: .72rem; font-weight: 700; padding: 2px 8px; border-radius: 20px;
+  background: var(--amber-l); color: var(--amber); border: 1.5px solid var(--amber);
+}
 
-  .img-card-img {
-    width: 100%; height: 100%; object-fit: cover; display: block;
-    transition: opacity .15s;
-  }
-  .img-card.img-error .img-card-img { display: none; }
-  .img-card.img-error::after {
-    content: 'Image unavailable'; position: absolute; inset: 0;
-    display: flex; align-items: center; justify-content: center;
-    font-size: .72rem; color: var(--muted); padding: 8px;
-  }
+.section-actions { display: flex; gap: 6px; margin-left: auto; flex-shrink: 0; }
+.sec-btn {
+  height: 28px; padding: 0 12px; border-radius: 7px; border: 1px solid var(--border);
+  background: #fff; font-family: inherit; font-size: .78rem; font-weight: 500;
+  cursor: pointer; color: var(--text); transition: background .1s;
+}
+.sec-btn:hover { background: var(--bg); border-color: #c7d4e4; }
+.sec-btn:disabled { opacity: .38; cursor: not-allowed; }
 
-  /* Source tag (bottom-left, always visible) */
-  .img-src {
-    position: absolute; bottom: 7px; left: 8px;
-    background: rgba(0,0,0,.45); color: #fff; font-size: .64rem;
-    font-weight: 500; border-radius: 5px; padding: 2px 6px;
-    backdrop-filter: blur(4px); pointer-events: none;
-    opacity: 0; transition: opacity .18s;
-  }
-  .img-card:hover .img-src { opacity: 1; }
+.section-body { padding: 14px 16px; }
+.section-body.loading {
+  display: flex; align-items: center; justify-content: center;
+  gap: 12px; min-height: 100px; color: var(--muted); font-size: .85rem;
+}
+.section-body.skipped {
+  display: flex; align-items: center; justify-content: center;
+  min-height: 70px; color: var(--muted); font-size: .85rem; font-style: italic;
+  gap: 8px;
+}
+.section-body.empty {
+  display: flex; align-items: center; justify-content: center;
+  min-height: 70px; color: var(--muted); font-size: .82rem; text-align: center;
+}
 
-  /* Order badge (top-right corner) */
-  .order-badge {
-    position: absolute; top: 7px; right: 8px;
-    width: 26px; height: 26px; border-radius: 50%;
-    display: none; align-items: center; justify-content: center;
-    font-size: .75rem; font-weight: 700; color: #fff;
-    box-shadow: 0 2px 6px rgba(0,0,0,.25);
-  }
-  .img-card.sel-hero    .order-badge { display: flex; background: var(--r-hero); }
-  .img-card.sel-pool    .order-badge { display: flex; background: var(--r-pool); }
-  .img-card.sel-student .order-badge { display: flex; background: var(--r-student); }
-  .img-card.sel-extra   .order-badge { display: flex; background: var(--r-extra); }
+/* ── Image grid ─────────────────── */
+.img-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+}
 
-  /* Role label badge (bottom-right of selected images) */
-  .role-badge {
-    position: absolute; bottom: 7px; right: 8px;
-    font-size: .65rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase;
-    padding: 3px 8px; border-radius: 6px; color: #fff; display: none;
-    pointer-events: none; backdrop-filter: blur(4px);
-  }
-  .img-card.sel-hero    .role-badge { display: block; background: var(--r-hero); }
-  .img-card.sel-pool    .role-badge { display: block; background: var(--r-pool); }
-  .img-card.sel-student .role-badge { display: block; background: var(--r-student); }
-  .img-card.sel-extra   .role-badge { display: block; background: var(--r-extra); }
+.img-card {
+  position: relative; border-radius: 10px; overflow: hidden;
+  cursor: pointer; background: #E2E8F0;
+  border: 2.5px solid transparent;
+  box-shadow: var(--shadow);
+  transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  aspect-ratio: 16/10;
+}
+.img-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-h); }
+.img-card.selected {
+  border-color: var(--green);
+  box-shadow: 0 0 0 3px var(--green-ring), var(--shadow);
+}
+.img-card-img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+}
+.img-card.img-error .img-card-img { display: none; }
+.img-card.img-error::after {
+  content: 'Unavailable'; position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: .72rem; color: var(--muted);
+}
 
-  /* ── Bottom controls ─────────────────── */
-  #controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-  #controls .left { display: flex; gap: 8px; }
-  #controls .right { margin-left: auto; display: flex; gap: 8px; }
-  .ctrl-btn {
-    height: 38px; padding: 0 18px; border-radius: 9px; border: 1px solid var(--border);
-    background: #fff; font-family: inherit; font-size: .85rem; font-weight: 500; cursor: pointer;
-    color: var(--text); transition: background .12s, border-color .12s;
-  }
-  .ctrl-btn:hover { background: var(--bg); border-color: #c7d4e4; }
-  .ctrl-btn.primary { background: var(--blue); border-color: var(--blue); color: #fff; font-weight: 600; }
-  .ctrl-btn.primary:hover { background: var(--blue-d); }
-  .ctrl-btn:disabled { opacity: .4; cursor: not-allowed; }
-  #sel-count { font-size: .82rem; color: var(--muted); font-weight: 500; align-self: center; }
+/* Source tag */
+.img-src {
+  position: absolute; bottom: 6px; left: 7px;
+  background: rgba(0,0,0,.48); color: #fff; font-size: .62rem;
+  font-weight: 500; border-radius: 5px; padding: 2px 5px;
+  opacity: 0; transition: opacity .15s; pointer-events: none;
+}
+.img-card:hover .img-src { opacity: 1; }
 
-  /* ── Keyboard hint ─────────────────── */
-  #kbd-hint {
-    font-size: .72rem; color: var(--muted); line-height: 1.6;
-    border-top: 1px solid var(--border); padding-top: 14px;
-    display: flex; gap: 18px; flex-wrap: wrap;
-  }
-  #kbd-hint .hint { display: flex; align-items: center; gap: 5px; }
-  kbd { background: var(--bg); border: 1px solid var(--border); border-radius: 4px; padding: 1px 5px; font-size: .7rem; font-family: inherit; }
+/* Green check badge (top-right) */
+.check-badge {
+  position: absolute; top: 6px; right: 6px;
+  width: 22px; height: 22px; border-radius: 50%;
+  background: var(--green); color: #fff;
+  display: none; align-items: center; justify-content: center;
+  font-size: .85rem; font-weight: 700;
+  box-shadow: 0 2px 6px rgba(0,0,0,.25);
+}
+.img-card.selected .check-badge { display: flex; }
 
-  /* ── Spinner ─────────────────── */
-  .spinner {
-    width: 28px; height: 28px; border: 3px solid var(--border); border-top-color: var(--blue);
-    border-radius: 50%; animation: spin .7s linear infinite;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
+/* ── Bottom nav bar ─────────────────── */
+#bottom-nav {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  padding: 16px 0 0;
+}
+#bottom-nav .left { display: flex; gap: 8px; }
+#bottom-nav .right { margin-left: auto; display: flex; gap: 8px; }
+.nav-btn {
+  height: 38px; padding: 0 20px; border-radius: 9px; border: 1px solid var(--border);
+  background: #fff; font-family: inherit; font-size: .85rem; font-weight: 500;
+  cursor: pointer; color: var(--text); transition: background .12s;
+}
+.nav-btn:hover { background: var(--bg); border-color: #c7d4e4; }
+.nav-btn.primary { background: var(--green); border-color: var(--green); color: #fff; font-weight: 600; }
+.nav-btn.primary:hover { background: var(--green-d); }
+.nav-btn:disabled { opacity: .38; cursor: not-allowed; }
+
+/* ── Conference completion modal ─────────────────── */
+#modal-bg {
+  position: fixed; inset: 0; background: rgba(0,0,0,.45);
+  display: none; align-items: center; justify-content: center;
+  z-index: 200;
+}
+#modal-bg.open { display: flex; }
+#modal {
+  background: #fff; border-radius: 16px; padding: 32px 36px;
+  max-width: 420px; width: 90%; text-align: center;
+  box-shadow: 0 20px 60px rgba(0,0,0,.22);
+}
+#modal h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: 8px; }
+#modal p  { color: var(--muted); font-size: .9rem; line-height: 1.6; margin-bottom: 20px; }
+#modal .modal-btns { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+.modal-btn {
+  height: 40px; padding: 0 22px; border-radius: 9px; border: 1px solid var(--border);
+  background: #fff; font-family: inherit; font-size: .88rem; font-weight: 600;
+  cursor: pointer; color: var(--text); transition: background .12s;
+}
+.modal-btn:hover { background: var(--bg); }
+.modal-btn.primary { background: var(--blue); border-color: var(--blue); color: #fff; }
+.modal-btn.primary:hover { background: var(--blue-d); }
+
+/* ── Spinner ─────────────────── */
+.spinner {
+  width: 22px; height: 22px; border: 2.5px solid var(--border); border-top-color: var(--blue);
+  border-radius: 50%; animation: spin .65s linear infinite; flex-shrink: 0;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
 </style>
 </head>
 <body>
 
 <header id="hdr">
   <div class="logo">Lane<span>4</span></div>
-  <div id="hdr-school">
-    <div>Image Curation</div>
-    <div class="sub">Select images for each school — order determines role</div>
+
+  <div id="conf-wrap">
+    <label for="conf-select">Conference</label>
+    <select id="conf-select" onchange="onConfChange(this.value)">
+      <option value="">Select…</option>
+    </select>
   </div>
+
+  <div id="hdr-progress">
+    <span id="hdr-school-name">Image Curation</span>
+    <span class="sub" id="hdr-sub">Select a conference to begin</span>
+  </div>
+
   <div id="hdr-actions">
     <span id="save-indicator">✓ Saved</span>
-    <button class="hdr-btn" id="hdr-prev" onclick="prevSchool()" disabled>← Prev</button>
-    <button class="hdr-btn primary" id="hdr-save" onclick="saveAndNext()" disabled>Save &amp; Next →</button>
+    <button class="hdr-btn" id="btn-prev" onclick="prevSchool()" disabled>← Prev</button>
+    <button class="hdr-btn primary" id="btn-save-next" onclick="saveAndNext()" disabled>Save &amp; Next →</button>
   </div>
 </header>
 
 <div id="layout">
   <aside id="sidebar">
-    <div id="sidebar-top">
-      <input id="school-search" type="search" placeholder="Search schools…" oninput="filterSidebar(this.value)" />
-    </div>
-    <div id="school-list"><div style="padding:20px;text-align:center;"><div class="spinner" style="margin:auto"></div></div></div>
+    <div id="school-list"><div style="padding:20px;text-align:center;color:var(--muted);font-size:.8rem">Select a conference</div></div>
     <div id="school-stats"></div>
   </aside>
   <main id="main">
     <div id="main-inner">
       <div id="state-overlay">
         <div class="icon">🏊</div>
-        <div class="title">Select a school to begin</div>
-        <div class="desc">Choose a school from the sidebar to review and curate its images.</div>
+        <div class="title">Select a conference to begin</div>
+        <div class="desc">Use the dropdown at the top to pick a conference, then work through its schools one by one.</div>
       </div>
     </div>
   </main>
 </div>
 
-<script>
-// ── Constants ─────────────────────────────────────────────────────────────────
-const ROLE_ORDER  = ['hero', 'pool', 'student_life', 'extra_1', 'extra_2'];
-const ROLE_LABELS = ['Hero', 'Pool', 'Student Life', 'Extra 1', 'Extra 2'];
-const ROLE_SLOT_CLASS = ['filled-hero', 'filled-pool', 'filled-student', 'filled-extra', 'filled-extra'];
-const CARD_SEL_CLASS  = ['sel-hero', 'sel-pool', 'sel-student', 'sel-extra', 'sel-extra'];
-const MAX_SEL = 5;
+<!-- Conference completion modal -->
+<div id="modal-bg">
+  <div id="modal">
+    <h3 id="modal-title">Conference complete!</h3>
+    <p id="modal-body"></p>
+    <div class="modal-btns" id="modal-btns"></div>
+  </div>
+</div>
 
+<script>
 // ── State ─────────────────────────────────────────────────────────────────────
-let SCHOOLS      = [];
-let FILTERED     = [];
-let ACTIVE_IDX   = -1;
-let CANDIDATES   = [];
-let SELECTIONS   = [];    // ordered array of URLs — index 0=hero, 1=pool, 2=student_life, 3+=extra
-let _fetchingFor = null;
+let CONF_LIST    = [];      // [{name, school_count, curated_count}]
+let ACTIVE_CONF  = '';
+let CONF_SCHOOLS = [];      // [{name, is_curated, has_candidates, ...}]
+let CONF_IDX     = -1;      // index into CONF_SCHOOLS
+let CANDIDATES   = { campus: [], pool: [], student_life: [] };
+let SELECTIONS   = { campus: [], pool: [], student_life: [] };
+let SKIPPED      = { campus: false, pool: false, student_life: false };
+
+const SECTIONS = [
+  { key: 'campus',       label: 'Campus Hero Photos',    icon: '🏛',  hint: 'Select the best 3 campus/building shots' },
+  { key: 'pool',         label: 'Aquatics Facility',     icon: '🏊',  hint: 'Prefer meet photos with swimmers & fans' },
+  { key: 'student_life', label: 'Student Life',          icon: '🎓',  hint: 'Students on campus, walking, studying' },
+];
 
 // ── Init ──────────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', async () => {
   try {
-    const res = await fetch('/api/admin/schools');
+    const res = await fetch('/api/admin/conferences');
     if (res.status === 401) { window.location = '/'; return; }
     if (!res.ok) throw new Error(await res.text());
-    SCHOOLS  = await res.json();
-    FILTERED = [...SCHOOLS];
-    renderSidebar();
-    updateStats();
-    const firstWithCandidates = SCHOOLS.findIndex(s => s.has_candidates);
-    if (firstWithCandidates >= 0) selectSchool(firstWithCandidates);
-    else if (SCHOOLS.length > 0) selectSchool(0);
+    CONF_LIST = await res.json();
+    populateConfDropdown();
   } catch (e) {
     document.getElementById('school-list').innerHTML =
-      `<div style="padding:16px;color:#DC2626;font-size:.8rem">Failed to load: ${esc(e.message)}</div>`;
+      `<div style="padding:16px;color:#DC2626;font-size:.8rem">Failed: ${esc(e.message)}</div>`;
   }
 });
+
+function populateConfDropdown() {
+  const sel = document.getElementById('conf-select');
+  CONF_LIST.forEach(c => {
+    const opt = document.createElement('option');
+    opt.value = c.name;
+    opt.textContent = `${c.name} (${c.curated_count}/${c.school_count})`;
+    sel.appendChild(opt);
+  });
+}
+
+// ── Conference change ─────────────────────────────────────────────────────────
+async function onConfChange(conf) {
+  if (!conf) return;
+  ACTIVE_CONF = conf;
+  CONF_IDX = -1;
+  showOverlay('🏊', `Loading ${conf}…`, '');
+
+  try {
+    const res = await fetch(`/api/admin/schools?conference=${encodeURIComponent(conf)}`);
+    if (!res.ok) throw new Error(await res.text());
+    CONF_SCHOOLS = await res.json();
+    renderSidebar();
+    updateStats();
+    updateConfDropdownLabel();
+
+    // Start at first uncurated school, or first school if all curated
+    const firstUncurated = CONF_SCHOOLS.findIndex(s => !s.is_curated);
+    const startIdx = firstUncurated >= 0 ? firstUncurated : 0;
+    if (CONF_SCHOOLS.length > 0) {
+      selectSchool(startIdx);
+    } else {
+      showOverlay('📭', 'No schools found', `No schools found for ${conf}.`);
+    }
+  } catch (e) {
+    showOverlay('⚠️', 'Error', e.message);
+  }
+}
+
+function updateConfDropdownLabel() {
+  const curated = CONF_SCHOOLS.filter(s => s.is_curated).length;
+  const opt = document.querySelector(`#conf-select option[value="${CSS.escape(ACTIVE_CONF)}"]`);
+  if (opt) opt.textContent = `${ACTIVE_CONF} (${curated}/${CONF_SCHOOLS.length})`;
+}
 
 // ── Sidebar ───────────────────────────────────────────────────────────────────
 function renderSidebar() {
   const el = document.getElementById('school-list');
-  if (!FILTERED.length) {
-    el.innerHTML = '<div style="padding:16px;color:#94A3B8;font-size:.8rem;text-align:center">No schools match</div>';
+  if (!CONF_SCHOOLS.length) {
+    el.innerHTML = '<div style="padding:14px;color:var(--muted);font-size:.8rem;text-align:center">No schools</div>';
     return;
   }
-  el.innerHTML = FILTERED.map(s => {
-    const gi = SCHOOLS.indexOf(s);
-    const dotCls = s.is_curated ? 'curated' : s.has_candidates ? 'has-candidates' : '';
-    return `<div class="school-item ${gi === ACTIVE_IDX ? 'active' : ''}" onclick="selectSchool(${gi})" id="si-${gi}">
+  el.innerHTML = CONF_SCHOOLS.map((s, i) => {
+    const dotCls = s.is_curated ? 'curated'
+                 : s.has_candidates ? 'has-cands' : '';
+    return `<div class="school-item ${i === CONF_IDX ? 'active' : ''}" onclick="selectSchool(${i})" id="si-${i}">
       <div class="status-dot ${dotCls}"></div>
       <div class="name" title="${esc(s.name)}">${esc(s.name)}</div>
     </div>`;
   }).join('');
 }
 
-function filterSidebar(q) {
-  const lq = q.toLowerCase();
-  FILTERED = q ? SCHOOLS.filter(s => s.name.toLowerCase().includes(lq)) : [...SCHOOLS];
-  renderSidebar();
-}
-
 function updateStats() {
-  const curated   = SCHOOLS.filter(s => s.is_curated).length;
-  const withCands = SCHOOLS.filter(s => s.has_candidates).length;
-  document.getElementById('school-stats').textContent =
-    `${curated} curated · ${withCands} with candidates · ${SCHOOLS.length} total`;
+  const curated   = CONF_SCHOOLS.filter(s => s.is_curated).length;
+  const withCands = CONF_SCHOOLS.filter(s => s.has_candidates).length;
+  document.getElementById('school-stats').innerHTML =
+    `<b>${curated}</b> curated · <b>${withCands}</b> with images · ${CONF_SCHOOLS.length} total`;
 }
 
 // ── School selection ──────────────────────────────────────────────────────────
 async function selectSchool(idx) {
-  if (idx < 0 || idx >= SCHOOLS.length) return;
-  ACTIVE_IDX = idx;
-  const school = SCHOOLS[idx];
+  if (idx < 0 || idx >= CONF_SCHOOLS.length) return;
+  CONF_IDX = idx;
+  const school = CONF_SCHOOLS[idx];
 
-  document.querySelectorAll('.school-item').forEach(el => el.classList.remove('active'));
+  // Reset state
+  CANDIDATES = { campus: [], pool: [], student_life: [] };
+  SELECTIONS = { campus: [], pool: [], student_life: [] };
+  SKIPPED    = { campus: false, pool: false, student_life: false };
+
+  renderSidebar();
   const si = document.getElementById(`si-${idx}`);
-  if (si) { si.classList.add('active'); si.scrollIntoView({ block: 'nearest' }); }
+  if (si) si.scrollIntoView({ block: 'nearest' });
 
-  const sub = school.is_curated ? '✓ Curated' : school.has_candidates ? 'Ready to curate' : 'Fetching images…';
-  document.getElementById('hdr-school').innerHTML =
-    `<div>${esc(school.name)}</div><div class="sub">${sub}</div>`;
-
-  document.getElementById('hdr-save').disabled = true;
-  document.getElementById('hdr-prev').disabled = idx === 0;
+  updateHeaderProgress(school);
+  document.getElementById('btn-prev').disabled = idx === 0;
+  document.getElementById('btn-save-next').disabled = true;
 
   if (!school.has_candidates) {
-    fetchMoreCandidates();
+    showFetchPrompt(school.name);
     return;
   }
 
-  showLoading();
+  showOverlay('', '', '', true);
   try {
     const res = await fetch(`/api/admin/candidates/${encodeURIComponent(school.name)}`);
     if (!res.ok) throw new Error(await res.text());
     const data = await res.json();
-    CANDIDATES = data.candidates || [];
-    SELECTIONS = data.curated?.selected_in_order || [];
-    renderGrid();
-    document.getElementById('hdr-save').disabled = false;
+
+    // Split candidates by category
+    (data.candidates || []).forEach(c => {
+      const cat = c.category || 'campus';
+      if (CANDIDATES[cat]) CANDIDATES[cat].push(c);
+    });
+
+    // Restore previous selections if school was already curated
+    const cur = data.curated || {};
+    SELECTIONS.campus       = [...(cur.hero_images || [])];
+    SELECTIONS.pool         = [...(cur.pool_images || [])];
+    SELECTIONS.student_life = [...(cur.student_life_images || [])];
+
+    renderSchoolView(school);
+    document.getElementById('btn-save-next').disabled = false;
   } catch (e) {
-    showError(e.message);
+    showOverlay('⚠️', 'Error loading images', e.message);
   }
 }
 
-// ── Grid ──────────────────────────────────────────────────────────────────────
-function renderGrid() {
-  const school = SCHOOLS[ACTIVE_IDX];
-  if (!CANDIDATES.length) { showNoCandidates(school.name); return; }
+function updateHeaderProgress(school) {
+  document.getElementById('hdr-school-name').textContent = school.name;
+  document.getElementById('hdr-sub').textContent =
+    `${ACTIVE_CONF} · School ${CONF_IDX + 1} of ${CONF_SCHOOLS.length}`;
+}
 
-  document.getElementById('main-inner').innerHTML = `
+// ── School view ───────────────────────────────────────────────────────────────
+function renderSchoolView(school) {
+  const curatedCount = CONF_SCHOOLS.filter(s => s.is_curated).length;
+
+  const html = `
     <div id="school-hdr">
       <h2>${esc(school.name)}</h2>
-      <span class="meta">${CANDIDATES.length} candidates · click to select (max 5) · order = role</span>
+      <span class="conf-tag">${esc(school.conference || ACTIVE_CONF)}</span>
+      <span class="meta">${curatedCount} of ${CONF_SCHOOLS.length} curated in this conference</span>
     </div>
-    <div id="slot-strip">${renderSlotStrip()}</div>
-    <div id="img-grid">${CANDIDATES.map((c, i) => cardHtml(c, i)).join('')}</div>
-    <div id="controls">
+    ${SECTIONS.map(s => renderSection(s)).join('')}
+    <div id="bottom-nav">
       <div class="left">
-        <button class="ctrl-btn" onclick="prevSchool()" ${ACTIVE_IDX === 0 ? 'disabled' : ''}>← Previous</button>
-        <button class="ctrl-btn" id="fetch-more-btn" onclick="fetchMoreCandidates()">↻ Refresh images</button>
+        <button class="nav-btn" onclick="prevSchool()" ${CONF_IDX === 0 ? 'disabled' : ''}>← Previous</button>
+        <button class="nav-btn" id="btn-fetch-more" onclick="fetchMoreAll()">↻ Refresh all images</button>
       </div>
-      <span id="sel-count">${countLabel()}</span>
       <div class="right">
-        <button class="ctrl-btn" onclick="clearSelections()">Clear</button>
-        <button class="ctrl-btn" onclick="skipSchool()">Skip →</button>
-        <button class="ctrl-btn primary" onclick="saveAndNext()">Save &amp; Next →</button>
+        <button class="nav-btn" onclick="skipSchool()">Skip school →</button>
+        <button class="nav-btn primary" onclick="saveAndNext()">Save &amp; Next School →</button>
+      </div>
+    </div>`;
+
+  document.getElementById('main-inner').innerHTML = html;
+}
+
+function renderSection(sec) {
+  const { key, label, icon, hint } = sec;
+  const cands = CANDIDATES[key] || [];
+  const sels  = SELECTIONS[key] || [];
+  const skip  = SKIPPED[key];
+  const hasSel = sels.length > 0;
+
+  const badgeCls = hasSel ? 'has-sel' : 'no-sel';
+  const badgeLabel = hasSel ? `${sels.length} selected` : 'none selected';
+  const skipTag = skip ? `<span class="skip-tag">Skipped</span>` : '';
+
+  return `
+  <div class="img-section" id="section-${key}">
+    <div class="section-hdr">
+      <span class="section-icon">${icon}</span>
+      <span class="section-title-text">${label}</span>
+      <span class="sel-badge ${badgeCls}" id="badge-${key}">${badgeLabel}</span>
+      ${skipTag}
+      <div class="section-actions">
+        <button class="sec-btn" id="more-btn-${key}" onclick="askMore('${key}')">↻ More images</button>
+        <button class="sec-btn" id="skip-btn-${key}" onclick="skipSection('${key}')" ${skip ? 'disabled' : ''}>
+          ${skip ? 'Skipped' : 'Skip this type'}
+        </button>
       </div>
     </div>
-    <div id="kbd-hint">
-      <div class="hint"><kbd>1</kbd>–<kbd>8</kbd> toggle images</div>
-      <div class="hint"><kbd>Enter</kbd> save &amp; next</div>
-      <div class="hint"><kbd>←</kbd><kbd>→</kbd> navigate schools</div>
-    </div>`;
-}
-
-function renderSlotStrip() {
-  return ROLE_ORDER.map((role, i) => {
-    const url = SELECTIONS[i];
-    const filled = !!url;
-    const cand = url ? CANDIDATES.find(c => c.url === url) : null;
-    const cls  = filled ? `filled ${ROLE_SLOT_CLASS[i]}` : '';
-    const thumb = cand ? `<img class="slot-thumb" src="${esc(cand.url)}" alt="" />` : '<img class="slot-thumb" />';
-    return `<div class="slot-pill ${cls}">
-      <div class="slot-dot"></div>
-      ${filled ? thumb : ''}
-      <span class="slot-label">${ROLE_LABELS[i]}</span>
-      <span class="slot-status">${filled ? '✓' : '—'}</span>
-    </div>`;
-  }).join('');
-}
-
-function cardHtml(c, i) {
-  const selIdx = SELECTIONS.indexOf(c.url);
-  const sel    = selIdx >= 0;
-  const cls    = sel ? CARD_SEL_CLASS[selIdx] : '';
-  return `<div class="img-card ${cls}" id="card-${i}" onclick="toggleCard(${i})"
-      title="${esc(c.source)} · ${c.width}×${c.height}">
-    <img class="img-card-img" src="${esc(c.url)}" loading="lazy" alt="${esc(c.source)}"
-         onerror="this.closest('.img-card').classList.add('img-error')" />
-    <div class="img-src">${esc(c.source)}</div>
-    <div class="order-badge">${sel ? selIdx + 1 : ''}</div>
-    <div class="role-badge">${sel ? ROLE_LABELS[selIdx] : ''}</div>
+    <div class="section-body ${skip ? 'skipped' : ''}" id="body-${key}">
+      ${skip
+        ? `<span>🚫</span><span>Skipped — no suitable images found</span>`
+        : renderSectionBody(key, cands, sels, hint)
+      }
+    </div>
   </div>`;
 }
 
-function refreshCard(i) {
-  const el = document.getElementById(`card-${i}`);
-  if (!el) return;
-  const c      = CANDIDATES[i];
-  const selIdx = SELECTIONS.indexOf(c.url);
-  const sel    = selIdx >= 0;
-  el.className = `img-card ${sel ? CARD_SEL_CLASS[selIdx] : ''}`;
-  el.querySelector('.order-badge').textContent = sel ? selIdx + 1 : '';
-  el.querySelector('.role-badge').textContent  = sel ? ROLE_LABELS[selIdx] : '';
-}
-
-function refreshSlotStrip() {
-  const strip = document.getElementById('slot-strip');
-  if (strip) strip.innerHTML = renderSlotStrip();
-}
-
-function countLabel() {
-  const n = SELECTIONS.length;
-  if (n === 0) return 'No images selected';
-  return `${n} of ${MAX_SEL} slots filled`;
-}
-
-function updateCount() {
-  const el = document.getElementById('sel-count');
-  if (el) el.textContent = countLabel();
-}
-
-// ── Toggle ────────────────────────────────────────────────────────────────────
-function toggleCard(i) {
-  const c = CANDIDATES[i];
-  if (!c) return;
-  const idx = SELECTIONS.indexOf(c.url);
-  if (idx >= 0) {
-    SELECTIONS.splice(idx, 1);
-  } else {
-    if (SELECTIONS.length >= MAX_SEL) return;
-    SELECTIONS.push(c.url);
+function renderSectionBody(key, cands, sels, hint) {
+  if (!cands.length) {
+    return `<div class="img-grid" id="grid-${key}"></div>
+      <div class="empty" style="text-align:center;padding:20px 0;color:var(--muted);font-size:.82rem">
+        No images found for this category — click <strong>More images</strong> to fetch.
+      </div>`;
   }
-  // Re-render all cards (order/role labels all shift)
-  CANDIDATES.forEach((_, ci) => refreshCard(ci));
-  refreshSlotStrip();
-  updateCount();
+  return `<p style="font-size:.76rem;color:var(--muted);margin-bottom:10px">${hint}</p>
+    <div class="img-grid" id="grid-${key}">
+      ${cands.map((c, i) => cardHtml(key, c, i, sels.includes(c.url))).join('')}
+    </div>`;
 }
 
-function clearSelections() {
-  SELECTIONS = [];
-  CANDIDATES.forEach((_, i) => refreshCard(i));
-  refreshSlotStrip();
-  updateCount();
+function cardHtml(key, c, i, selected) {
+  const cls = selected ? 'selected' : '';
+  return `<div class="img-card ${cls}" id="card-${key}-${i}" onclick="toggleCard('${key}',${i})"
+      title="${esc(c.source)} · ${c.width||0}×${c.height||0}">
+    <img class="img-card-img" src="${esc(c.url)}" loading="lazy" alt=""
+         onerror="this.closest('.img-card').classList.add('img-error')" />
+    <div class="img-src">${esc(c.source)}</div>
+    <div class="check-badge">✓</div>
+  </div>`;
+}
+
+// ── Toggle card ────────────────────────────────────────────────────────────────
+function toggleCard(key, idx) {
+  const c = (CANDIDATES[key] || [])[idx];
+  if (!c) return;
+
+  const sels = SELECTIONS[key];
+  const pos = sels.indexOf(c.url);
+  if (pos >= 0) {
+    sels.splice(pos, 1);
+    document.getElementById(`card-${key}-${idx}`)?.classList.remove('selected');
+  } else {
+    sels.push(c.url);
+    document.getElementById(`card-${key}-${idx}`)?.classList.add('selected');
+  }
+  refreshBadge(key);
+}
+
+function refreshBadge(key) {
+  const n = (SELECTIONS[key] || []).length;
+  const badge = document.getElementById(`badge-${key}`);
+  if (!badge) return;
+  badge.textContent = n > 0 ? `${n} selected` : 'none selected';
+  badge.className = `sel-badge ${n > 0 ? 'has-sel' : 'no-sel'}`;
+}
+
+// ── Skip section ───────────────────────────────────────────────────────────────
+function skipSection(key) {
+  SKIPPED[key] = true;
+  SELECTIONS[key] = [];
+
+  const body = document.getElementById(`body-${key}`);
+  if (body) {
+    body.className = 'section-body skipped';
+    body.innerHTML = `<span>🚫</span><span>Skipped — no suitable images found</span>`;
+  }
+  const btn = document.getElementById(`skip-btn-${key}`);
+  if (btn) { btn.disabled = true; btn.textContent = 'Skipped'; }
+
+  // Add skip tag to header if not there
+  const hdr = document.querySelector(`#section-${key} .section-hdr`);
+  if (hdr && !hdr.querySelector('.skip-tag')) {
+    const tag = document.createElement('span');
+    tag.className = 'skip-tag';
+    tag.textContent = 'Skipped';
+    hdr.insertBefore(tag, hdr.querySelector('.section-actions'));
+  }
+  refreshBadge(key);
+}
+
+// ── Ask for more images ────────────────────────────────────────────────────────
+async function askMore(key) {
+  if (CONF_IDX < 0) return;
+  const school = CONF_SCHOOLS[CONF_IDX];
+  const btn = document.getElementById(`more-btn-${key}`);
+  const body = document.getElementById(`body-${key}`);
+
+  if (btn) { btn.disabled = true; btn.textContent = '↻ Fetching…'; }
+  if (body) {
+    body.className = 'section-body loading';
+    body.innerHTML = `<div class="spinner"></div><span>Fetching more images…</span>`;
+  }
+
+  try {
+    const res = await fetch('/api/admin/fetch-candidates', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ school: school.name }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || `Error ${res.status}`);
+
+    // Merge new candidates for this key
+    const newCands = (data.candidates || []).filter(c => (c.category || 'campus') === key);
+    const existingUrls = new Set(CANDIDATES[key].map(c => c.url));
+    newCands.forEach(c => {
+      if (!existingUrls.has(c.url)) CANDIDATES[key].push(c);
+    });
+
+    school.has_candidates = data.count > 0;
+    renderSidebar();
+
+    // Re-render just this section body
+    const sec = SECTIONS.find(s => s.key === key);
+    if (body) {
+      body.className = 'section-body';
+      body.innerHTML = renderSectionBody(key, CANDIDATES[key], SELECTIONS[key], sec?.hint || '');
+    }
+  } catch (e) {
+    if (body) {
+      body.className = 'section-body empty';
+      body.innerHTML = `<span style="color:#DC2626">${esc(e.message)}</span>`;
+    }
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = '↻ More images'; }
+  }
+}
+
+async function fetchMoreAll() {
+  for (const sec of SECTIONS) {
+    await askMore(sec.key);
+  }
 }
 
 // ── Save ──────────────────────────────────────────────────────────────────────
 async function saveSelections() {
-  if (ACTIVE_IDX < 0) return false;
-  const school = SCHOOLS[ACTIVE_IDX];
+  if (CONF_IDX < 0) return false;
+  const school = CONF_SCHOOLS[CONF_IDX];
   const body = {
-    school: school.name,
-    selected_in_order:          [...SELECTIONS],
-    approved_hero_image:        SELECTIONS[0] || null,
-    approved_pool_image:        SELECTIONS[1] || null,
-    approved_student_life_image: SELECTIONS[2] || null,
-    approved_extra_images:      SELECTIONS.slice(3),
+    school:              school.name,
+    hero_images:         [...SELECTIONS.campus],
+    pool_images:         [...SELECTIONS.pool],
+    student_life_images: [...SELECTIONS.student_life],
   };
   try {
     const res = await fetch('/api/admin/save', {
@@ -511,12 +678,12 @@ async function saveSelections() {
       body: JSON.stringify(body),
     });
     if (!res.ok) throw new Error(await res.text());
-    school.is_curated = SELECTIONS.length > 0;
-    const ind = document.getElementById('save-indicator');
-    ind.style.display = 'inline';
-    setTimeout(() => { ind.style.display = 'none'; }, 1800);
-    updateStats();
+    const total = body.hero_images.length + body.pool_images.length + body.student_life_images.length;
+    school.is_curated = total > 0;
     renderSidebar();
+    updateStats();
+    updateConfDropdownLabel();
+    flashSaved();
     return true;
   } catch (e) {
     alert('Save failed: ' + e.message);
@@ -524,112 +691,141 @@ async function saveSelections() {
   }
 }
 
+function flashSaved() {
+  const ind = document.getElementById('save-indicator');
+  ind.style.display = 'inline';
+  setTimeout(() => { ind.style.display = 'none'; }, 1800);
+}
+
 async function saveAndNext() {
   const ok = await saveSelections();
   if (ok) nextSchool();
 }
 
-function skipSchool() { nextSchool(); }
-
-// ── Fetch candidates ──────────────────────────────────────────────────────────
-async function fetchMoreCandidates() {
-  if (ACTIVE_IDX < 0) return;
-  const school      = SCHOOLS[ACTIVE_IDX];
-  const fetchingFor = school.name;
-  _fetchingFor      = fetchingFor;
-
-  const btn = document.getElementById('fetch-more-btn');
-  const prevLabel = btn ? btn.textContent : '';
-  if (btn) { btn.disabled = true; btn.textContent = '↻ Fetching…'; }
-
-  const hasGrid = !!document.getElementById('img-grid');
-  if (!hasGrid) {
-    document.getElementById('main-inner').innerHTML = `
-      <div id="state-overlay">
-        <div class="spinner"></div>
-        <div style="text-align:center">Fetching images for ${esc(school.name)}…<br>
-          <small style="color:var(--muted)">~10 seconds</small>
-        </div>
-      </div>`;
-  }
-
-  try {
-    const res  = await fetch('/api/admin/fetch-candidates', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ school: school.name }),
-    });
-    const data = await res.json();
-    if (_fetchingFor !== fetchingFor) return;
-    if (!res.ok) throw new Error(data.error || `Server error ${res.status}`);
-
-    school.has_candidates = data.count > 0;
-    CANDIDATES = data.candidates || [];
-    SELECTIONS = [];
-    renderSidebar();
-
-    if (CANDIDATES.length) {
-      renderGrid();
-      document.getElementById('hdr-save').disabled = false;
-    } else {
-      showError('No usable images found for this school.\n\nShell command: python3 harvest_candidates.py --school "' + school.name + '"');
-    }
-  } catch (e) {
-    if (_fetchingFor !== fetchingFor) return;
-    showError(e.message);
-  } finally {
-    _fetchingFor = null;
-    const b = document.getElementById('fetch-more-btn');
-    if (b) { b.disabled = false; b.textContent = prevLabel; }
-  }
-}
-
 // ── Navigation ────────────────────────────────────────────────────────────────
 function nextSchool() {
-  const next = ACTIVE_IDX + 1;
-  if (next < SCHOOLS.length) selectSchool(next);
+  const next = CONF_IDX + 1;
+  if (next < CONF_SCHOOLS.length) {
+    selectSchool(next);
+  } else {
+    showConfCompleteModal();
+  }
 }
+
 function prevSchool() {
-  const prev = ACTIVE_IDX - 1;
+  const prev = CONF_IDX - 1;
   if (prev >= 0) selectSchool(prev);
+}
+
+function skipSchool() {
+  nextSchool();
+}
+
+// ── Conference complete modal ─────────────────────────────────────────────────
+function showConfCompleteModal() {
+  const curated = CONF_SCHOOLS.filter(s => s.is_curated).length;
+  const total   = CONF_SCHOOLS.length;
+
+  const nextConf = getNextConf();
+  document.getElementById('modal-title').textContent = `${ACTIVE_CONF} complete!`;
+  document.getElementById('modal-body').textContent =
+    `${curated} of ${total} schools curated in this conference.${
+      nextConf ? ` Ready to move to ${nextConf.name}?` : ''
+    }`;
+
+  const btns = document.getElementById('modal-btns');
+  btns.innerHTML = '';
+
+  const stay = document.createElement('button');
+  stay.className = 'modal-btn';
+  stay.textContent = `Stay in ${ACTIVE_CONF}`;
+  stay.onclick = () => closeModal();
+  btns.appendChild(stay);
+
+  if (nextConf) {
+    const go = document.createElement('button');
+    go.className = 'modal-btn primary';
+    go.textContent = `Go to ${nextConf.name} →`;
+    go.onclick = () => {
+      closeModal();
+      document.getElementById('conf-select').value = nextConf.name;
+      onConfChange(nextConf.name);
+    };
+    btns.appendChild(go);
+  }
+
+  document.getElementById('modal-bg').classList.add('open');
+}
+
+function getNextConf() {
+  const idx = CONF_LIST.findIndex(c => c.name === ACTIVE_CONF);
+  return idx >= 0 && idx + 1 < CONF_LIST.length ? CONF_LIST[idx + 1] : null;
+}
+
+function closeModal() {
+  document.getElementById('modal-bg').classList.remove('open');
+}
+document.getElementById('modal-bg').addEventListener('click', e => {
+  if (e.target === document.getElementById('modal-bg')) closeModal();
+});
+
+// ── Overlay helpers ───────────────────────────────────────────────────────────
+function showOverlay(icon, title, desc, loading = false) {
+  const inner = document.getElementById('main-inner');
+  if (loading) {
+    inner.innerHTML = `<div id="state-overlay">
+      <div class="spinner" style="width:32px;height:32px"></div>
+      <div style="color:var(--muted);font-size:.9rem">Loading…</div>
+    </div>`;
+    return;
+  }
+  inner.innerHTML = `<div id="state-overlay">
+    ${icon ? `<div class="icon">${icon}</div>` : ''}
+    ${title ? `<div class="title">${esc(title)}</div>` : ''}
+    ${desc ? `<div class="desc">${esc(desc)}</div>` : ''}
+  </div>`;
+}
+
+function showFetchPrompt(name) {
+  document.getElementById('main-inner').innerHTML = `
+    <div id="state-overlay">
+      <div class="icon">📭</div>
+      <div class="title">No images for ${esc(name)}</div>
+      <div class="desc">Click below to fetch candidate images from Wikipedia, Wikimedia Commons, and the school website.</div>
+      <button class="fetch-btn" onclick="fetchAll('${name.replace(/'/g, "\\'")}')">↻ Fetch images now</button>
+    </div>`;
+}
+
+async function fetchAll(schoolName) {
+  const body = document.querySelector('#state-overlay');
+  if (body) {
+    body.innerHTML = `<div class="spinner" style="width:32px;height:32px;margin-bottom:8px"></div>
+      <div style="color:var(--muted);font-size:.9rem">Fetching images for ${esc(schoolName)}… (~15s)</div>`;
+  }
+  try {
+    const res = await fetch('/api/admin/fetch-candidates', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ school: schoolName }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+    const school = CONF_SCHOOLS[CONF_IDX];
+    if (school) school.has_candidates = data.count > 0;
+    // Re-select school to reload view
+    selectSchool(CONF_IDX);
+  } catch (e) {
+    showOverlay('⚠️', 'Fetch failed', e.message);
+  }
 }
 
 // ── Keyboard shortcuts ────────────────────────────────────────────────────────
 document.addEventListener('keydown', e => {
-  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
-  const n = parseInt(e.key, 10);
-  if (n >= 1 && n <= 8) { e.preventDefault(); toggleCard(n - 1); return; }
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
   if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); saveAndNext(); return; }
   if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); nextSchool(); return; }
   if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   { e.preventDefault(); prevSchool(); return; }
 });
-
-// ── State overlays ────────────────────────────────────────────────────────────
-function showLoading() {
-  document.getElementById('main-inner').innerHTML =
-    `<div id="state-overlay"><div class="spinner"></div><div>Loading…</div></div>`;
-}
-function showNoCandidates(name) {
-  document.getElementById('main-inner').innerHTML = `
-    <div id="state-overlay">
-      <div class="icon">📭</div>
-      <div class="title">No candidates for ${esc(name)}</div>
-      <div class="desc">Click below to fetch images for this school.</div>
-      <button onclick="fetchMoreCandidates()"
-        style="margin-top:14px;padding:12px 32px;background:#2563EB;color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:600;cursor:pointer;font-family:inherit;">
-        ↻ Fetch images now
-      </button>
-      <div class="cmd">python3 harvest_candidates.py --school "${esc(name)}"</div>
-    </div>`;
-}
-function showError(msg) {
-  document.getElementById('main-inner').innerHTML = `
-    <div id="state-overlay">
-      <div class="icon">⚠️</div>
-      <div class="title">Error loading candidates</div>
-      <div class="desc">${esc(msg)}</div>
-    </div>`;
-}
 
 function esc(s) {
   return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
