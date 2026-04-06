@@ -55,5 +55,19 @@
       "https://www.clarkson.edu/sites/default/files/2023-07/applying-knight-vrouter-900x600.jpg"
     ],
     "saved_at": "2026-04-06T18:16:38Z"
+  },
+  "Bryant University": {
+    "hero_images": [
+      "https://www.bryant.edu/sites/web2024/files/styles/webp/public/img/home-vision-2030-nav-belc-290x163.jpg.webp?itok=cNHgKCvT"
+    ],
+    "pool_images": [
+      "https://i.ytimg.com/vi/XiX3ygcs8Hs/maxresdefault.jpg"
+    ],
+    "student_life_images": [],
+    "approved_hero_image": "https://www.bryant.edu/sites/web2024/files/styles/webp/public/img/home-vision-2030-nav-belc-290x163.jpg.webp?itok=cNHgKCvT",
+    "approved_pool_image": "https://i.ytimg.com/vi/XiX3ygcs8Hs/maxresdefault.jpg",
+    "approved_student_life_image": null,
+    "approved_extra_images": [],
+    "saved_at": "2026-04-06T18:47:19Z"
   }
 }

@@ -976,13 +976,8 @@ def fetch_candidates(school: str, domains_cache: dict | None = None) -> list[dic
     for img in wiki_imgs:
         _add(img)
 
-    # ── 4. Pexels true last resort ────────────────────────────────────────────
-    if len(all_candidates) < 4:
-        for suffix in [f'{school} campus', f'{school} swimming pool']:
-            if len(all_candidates) >= MAX_CANDIDATES:
-                break
-            for img in _pexels_search(suffix, n=3):
-                _add(img)
+    # Pexels removed — it returns the same stock photos for every school,
+    # polluting manifests with images that appear across 10+ schools.
 
     # ── Assign display category to every candidate ───────────────────────────
     for img in all_candidates:
@@ -1015,25 +1010,26 @@ _MORE_GOOGLE_QUERIES: dict[str, list[str]] = {
     ],
 }
 
-# DDG queries — no OR operator (DDG treats it literally rather than as boolean)
+# DDG queries — school name is quoted for exact-match to prevent wrong-school
+# results (e.g. "Clarkson Pools" business vs "Clarkson University").
 _DDG_QUERIES: dict[str, list[str]] = {
     'pool': [
-        '{school} natatorium swimming pool',
-        '{school} aquatic center pool',
-        '{school} swimming pool facility',
-        '{school} natatorium',
+        '"{school}" natatorium swimming pool',
+        '"{school}" aquatic center',
+        '"{school}" swimming pool',
+        '"{school}" natatorium',
     ],
     'student_life': [
-        '{school} students campus life',
-        '{school} college students campus',
-        '{school} student center',
-        '{school} campus quad students',
+        '"{school}" students campus life',
+        '"{school}" college students campus',
+        '"{school}" student union',
+        '"{school}" campus life students',
     ],
     'campus': [
-        '{school} campus',
-        '{school} university campus buildings',
-        '{school} campus aerial',
-        '{school} university exterior',
+        '"{school}" campus',
+        '"{school}" university campus',
+        '"{school}" campus buildings',
+        '"{school}" university exterior',
     ],
 }
 

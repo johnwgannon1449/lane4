@@ -5215,6 +5215,18 @@ def api_admin_candidates(school):
             else:
                 c['category'] = 'campus'
 
+    # Cross-school dedup: hide images that appear in 3+ OTHER schools — these
+    # are generic stock/commons images that aren't school-specific.
+    url_schools: dict[str, int] = {}
+    for s, imgs in candidates.items():
+        if s == school:
+            continue
+        for img in imgs:
+            u = img.get('url', '')
+            if u:
+                url_schools[u] = url_schools.get(u, 0) + 1
+    cands = [c for c in cands if url_schools.get(c.get('url', ''), 0) < 3]
+
     return jsonify({'candidates': cands, 'curated': cur})
 
 
