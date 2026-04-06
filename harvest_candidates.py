@@ -34,10 +34,13 @@ CANDIDATES_PATH = os.path.join('static', 'candidates_manifest.json')
 DOMAINS_PATH    = os.path.join('static', 'school_domains.json')
 NAMES_PATH      = 'school_names.json'
 
-PEXELS_KEY = os.environ.get('PEXELS_KEY', '')
-WIKI_API     = 'https://en.wikipedia.org/w/api.php'
-COMMONS_API  = 'https://commons.wikimedia.org/w/api.php'
-PEXELS_URL   = 'https://api.pexels.com/v1/search'
+PEXELS_KEY      = os.environ.get('PEXELS_KEY', '')
+GOOGLE_CSE_KEY  = os.environ.get('GOOGLE_CSE_KEY', '')
+GOOGLE_CSE_ID   = os.environ.get('GOOGLE_CSE_ID', '')
+WIKI_API        = 'https://en.wikipedia.org/w/api.php'
+COMMONS_API     = 'https://commons.wikimedia.org/w/api.php'
+PEXELS_URL      = 'https://api.pexels.com/v1/search'
+GOOGLE_CSE_URL  = 'https://www.googleapis.com/customsearch/v1'
 
 MIN_WIDTH  = 400
 MIN_HEIGHT = 220
@@ -786,6 +789,62 @@ def _pexels_search(query: str, n: int = 4) -> list[dict]:
         return []
 
 
+def _google_cse_search(query: str, page_type: str = 'general',
+                       n: int = 10, start: int = 1) -> list[dict]:
+    """Google Custom Search Engine image search.
+
+    Returns school-specific images from news sites, athletic departments,
+    and official pages — far more relevant than Wikimedia Commons.
+    `start` can be 1, 11, 21 … for pagination (max 100 results via 10 pages).
+    """
+    if not GOOGLE_CSE_KEY or not GOOGLE_CSE_ID:
+        return []
+    params = {
+        'key':        GOOGLE_CSE_KEY,
+        'cx':         GOOGLE_CSE_ID,
+        'q':          query,
+        'searchType': 'image',
+        'imgType':    'photo',
+        'num':        min(n, 10),   # API hard-limits to 10 per request
+        'safe':       'medium',
+        'start':      start,
+    }
+    url = GOOGLE_CSE_URL + '?' + urllib.parse.urlencode(params)
+    req = urllib.request.Request(url, headers={'User-Agent': 'Lane4Recruit/3.0'})
+    try:
+        with urllib.request.urlopen(req, timeout=14) as r:
+            data = json.loads(r.read())
+        results = []
+        for item in data.get('items', []):
+            link = item.get('link', '')
+            if not link or _is_bad_url(link):
+                continue
+            img_meta = item.get('image', {})
+            w = img_meta.get('width', 0)
+            h = img_meta.get('height', 0)
+            if w < MIN_WIDTH or h < MIN_HEIGHT:
+                continue
+            alt  = item.get('title', '')
+            page = img_meta.get('contextLink', '')
+            # Score: resolution-based + Google-quality bonus (1.0 higher than Commons)
+            score = round((w * h) / 1_200_000 + 2.5, 3)
+            results.append({
+                'url':            link,
+                'source':         'google_cse',
+                'width':          w,
+                'height':         h,
+                'score':          score,
+                'page_type':      page_type,
+                'page_url':       page,
+                'alt':            alt,
+                'search_context': query,
+            })
+        return results
+    except Exception as exc:
+        print(f'    [google_cse] error for "{query}": {exc}')
+        return []
+
+
 # ── Main entry point ──────────────────────────────────────────────────────────
 
 def fetch_candidates(school: str, domains_cache: dict | None = None) -> list[dict]:
@@ -815,15 +874,28 @@ def fetch_candidates(school: str, domains_cache: dict | None = None) -> list[dic
         for img in web_imgs:
             _add(img)
     else:
-        print(f'    [web] no domain found — using Wikipedia')
+        print(f'    [web] no domain found — using Wikipedia + Google')
 
-    # ── 2. Wikipedia + Wikimedia Commons (always run for campus quality) ─────
+    # ── 2. Google CSE — school-specific images by category ───────────────────
+    # This is the highest-quality source: returns images from official athletic
+    # department sites, news coverage, and school pages — all school-specific.
+    if GOOGLE_CSE_KEY:
+        print(f'    [google] fetching campus / pool / student images')
+        for q, pt in [
+            (f'{school} campus',                        'campus'),
+            (f'{school} natatorium OR swimming pool',   'swim'),
+            (f'{school} students campus life',          'student_life'),
+        ]:
+            for img in _google_cse_search(q, page_type=pt, n=10):
+                _add(img)
+
+    # ── 3. Wikipedia + Commons (always — supplements both Google and no-Google paths) ──
     wiki_imgs = _wiki_candidates(school)
     wiki_imgs.sort(key=lambda x: x.get('score', 0), reverse=True)
     for img in wiki_imgs:
         _add(img)
 
-    # ── 3. Pexels last resort ────────────────────────────────────────────────
+    # ── 4. Pexels true last resort ────────────────────────────────────────────
     if len(all_candidates) < 4:
         for suffix in [f'{school} campus', f'{school} swimming pool']:
             if len(all_candidates) >= MAX_CANDIDATES:
@@ -839,44 +911,26 @@ def fetch_candidates(school: str, domains_cache: dict | None = None) -> list[dic
     return all_candidates[:MAX_CANDIDATES]
 
 
-# ── "More images" query sets — broader and different from the initial harvest ──
-# Using many variations so repeated presses keep returning fresh results.
-_MORE_QUERIES: dict[str, list[str]] = {
+# Per-category Google CSE queries for "More images" — multiple queries + pagination
+# give consistently fresh results on every press.
+_MORE_GOOGLE_QUERIES: dict[str, list[str]] = {
     'pool': [
-        '{school} swimming pool',
-        '{school} natatorium',
+        '{school} natatorium OR swimming pool',
         '{school} aquatic center',
-        '{school} swimming',
-        '{school} indoor swimming',
-        '{school} aquatics facility',
-        '{school} diving pool',
-        '{school} recreation center',
-        '{school} pool',
-        '{school} aquatics',
+        '{school} swimming pool',
+        '{school} pool facility',
     ],
     'student_life': [
-        '{school} students',
-        '{school} campus life',
-        '{school} student center',
-        '{school} college life',
-        '{school} student union',
-        '{school} campus events',
-        '{school} college students',
-        '{school} student activities',
-        '{school} university students',
-        '{school} campus quad',
+        '{school} students campus life',
+        '{school} student union campus',
+        '{school} college students campus',
+        '{school} campus events students',
     ],
     'campus': [
         '{school} campus',
-        '{school} university building',
-        '{school} campus buildings',
-        '{school} college campus',
-        '{school} university exterior',
-        '{school} campus view',
-        '{school} academic building',
-        '{school} campus entrance',
-        '{school} university',
-        '{school} campus landscape',
+        '{school} campus aerial view',
+        '{school} university buildings',
+        '{school} campus grounds',
     ],
 }
 
@@ -884,76 +938,80 @@ _CATEGORY_PAGE_TYPE = {'pool': 'swim', 'student_life': 'student_life', 'campus':
 
 
 def fetch_candidates_for_category(school: str, category: str) -> list[dict]:
-    """Fetch additional candidates targeted to a specific display category.
+    """Fetch additional candidates for a specific display category.
 
-    Completely separate from fetch_candidates() — uses broad query sets, relaxed
-    filters (no landscape requirement), and Pexels, returning only URLs not already
-    in the manifest.  Guarantees fresh results on repeated presses.
+    Uses Google CSE as the primary source — returns school-specific images from
+    official pages, athletic departments, and news sites.  Falls back to Wikimedia
+    Commons when Google CSE is unavailable.  Deduplicates against the existing
+    manifest so every press returns genuinely new images.
     """
-    # Deduplicate against everything already stored for this school
     existing_urls: set[str] = {c['url'] for c in load_manifest().get(school, [])}
-
-    page_type = _CATEGORY_PAGE_TYPE.get(category, 'campus')
-    raw_queries = _MORE_QUERIES.get(category, _MORE_QUERIES['campus'])
-    queries = [q.format(school=school) for q in raw_queries]
-
+    page_type  = _CATEGORY_PAGE_TYPE.get(category, 'campus')
     new_results: list[dict] = []
     seen: set[str] = set(existing_urls)
 
-    for query in queries:
-        if len(new_results) >= 20:
-            break
-        try:
-            params = {
-                'action': 'query', 'generator': 'search',
-                'gsrnamespace': 6, 'gsrsearch': query,
-                'prop': 'imageinfo', 'iiprop': 'url|size|mime',
-                'gsrlimit': 25, 'format': 'json', 'formatversion': '2',
-            }
-            url = COMMONS_API + '?' + urllib.parse.urlencode(params)
-            req = urllib.request.Request(url, headers={
-                'User-Agent': 'Lane4Recruit/3.0 (swim recruiting; open source)'})
-            with urllib.request.urlopen(req, timeout=14) as r:
-                data = json.loads(r.read())
-            for page in data.get('query', {}).get('pages', []):
-                for info in page.get('imageinfo', []):
-                    if info.get('mime') in ('image/svg+xml', 'image/gif', 'image/bmp'):
-                        continue
-                    img_url = info.get('url', '')
-                    if not img_url or _is_bad_url(img_url) or img_url in seen:
-                        continue
-                    fname = urllib.parse.unquote(img_url).lower()
-                    if any(t in fname for t in HISTORICAL_TOKENS):
-                        continue
-                    if _HIST_YEAR_RE.search(fname):
-                        continue
-                    w = info.get('width', 0)
-                    h = info.get('height', 0)
-                    # Relaxed: just minimum dimensions, NO landscape ratio check —
-                    # user wants options; they'll decide what looks good.
-                    if w < MIN_WIDTH or h < MIN_HEIGHT:
-                        continue
-                    score = round((w * h) / 1_200_000 + 1.5, 3)
-                    seen.add(img_url)
-                    new_results.append({
-                        'url': img_url, 'source': 'wiki_commons',
-                        'width': w, 'height': h, 'score': score,
-                        'page_type': page_type, 'page_url': '',
-                        'search_context': query,
-                    })
-        except Exception:
-            pass
+    def _add_if_new(item: dict):
+        if item.get('url') and item['url'] not in seen:
+            seen.add(item['url'])
+            new_results.append(item)
 
-    # Pexels — completely different source, reliable for "more" requests
-    pexels_queries = queries[:2]  # two most specific queries
-    for pq in pexels_queries:
-        for img in _pexels_search(pq, n=6):
-            if img['url'] not in seen:
-                img['search_context'] = pq
-                seen.add(img['url'])
-                new_results.append(img)
+    queries = [q.format(school=school)
+               for q in _MORE_GOOGLE_QUERIES.get(category, _MORE_GOOGLE_QUERIES['campus'])]
 
-    # Assign display categories (page_type set above ensures correct bucketing)
+    if GOOGLE_CSE_KEY:
+        # ── Google CSE: run each query, then paginate if still below target ──
+        for q in queries:
+            for start in (1, 11):  # two pages = up to 20 results per query
+                for img in _google_cse_search(q, page_type=page_type, n=10, start=start):
+                    _add_if_new(img)
+                if len(new_results) >= 20:
+                    break
+            if len(new_results) >= 20:
+                break
+    else:
+        # ── Fallback: Wikimedia Commons with relaxed filters ─────────────────
+        for q in queries:
+            if len(new_results) >= 20:
+                break
+            try:
+                params = {
+                    'action': 'query', 'generator': 'search',
+                    'gsrnamespace': 6, 'gsrsearch': q,
+                    'prop': 'imageinfo', 'iiprop': 'url|size|mime',
+                    'gsrlimit': 25, 'format': 'json', 'formatversion': '2',
+                }
+                url = COMMONS_API + '?' + urllib.parse.urlencode(params)
+                req = urllib.request.Request(url, headers={
+                    'User-Agent': 'Lane4Recruit/3.0 (swim recruiting; open source)'})
+                with urllib.request.urlopen(req, timeout=14) as r:
+                    data = json.loads(r.read())
+                for page in data.get('query', {}).get('pages', []):
+                    for info in page.get('imageinfo', []):
+                        if info.get('mime') in ('image/svg+xml', 'image/gif', 'image/bmp'):
+                            continue
+                        img_url = info.get('url', '')
+                        if not img_url or _is_bad_url(img_url):
+                            continue
+                        fname = urllib.parse.unquote(img_url).lower()
+                        if any(t in fname for t in HISTORICAL_TOKENS):
+                            continue
+                        if _HIST_YEAR_RE.search(fname):
+                            continue
+                        w = info.get('width', 0)
+                        h = info.get('height', 0)
+                        if w < MIN_WIDTH or h < MIN_HEIGHT:
+                            continue
+                        score = round((w * h) / 1_200_000 + 1.5, 3)
+                        _add_if_new({
+                            'url': img_url, 'source': 'wiki_commons',
+                            'width': w, 'height': h, 'score': score,
+                            'page_type': page_type, 'page_url': '',
+                            'search_context': q,
+                        })
+            except Exception:
+                pass
+
+    # Assign display categories
     for img in new_results:
         img['category'] = _assign_category(img)
 
