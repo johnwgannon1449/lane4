@@ -149,6 +149,11 @@ html, body { height: 100%; font-family: 'Figtree', sans-serif; background: var(-
   font-size: .72rem; font-weight: 700; padding: 2px 8px; border-radius: 20px;
   background: var(--amber-l); color: var(--amber); border: 1.5px solid var(--amber);
 }
+.saved-tag {
+  font-size: .72rem; font-weight: 600; padding: 2px 8px; border-radius: 20px;
+  background: #F0FDF4; color: var(--green); border: 1.5px solid var(--green);
+  flex-shrink: 0;
+}
 
 .section-actions { display: flex; gap: 6px; margin-left: auto; flex-shrink: 0; }
 .sec-btn {
@@ -330,6 +335,7 @@ let CONF_SCHOOLS = [];      // [{name, is_curated, has_candidates, ...}]
 let CONF_IDX     = -1;      // index into CONF_SCHOOLS
 let CANDIDATES   = { campus: [], pool: [], student_life: [] };
 let SELECTIONS   = { campus: [], pool: [], student_life: [] };
+let SAVED_SELS   = { campus: [], pool: [], student_life: [] }; // what was last saved
 let SKIPPED      = { campus: false, pool: false, student_life: false };
 
 const SECTIONS = [
@@ -429,6 +435,7 @@ async function selectSchool(idx) {
   // Reset state
   CANDIDATES = { campus: [], pool: [], student_life: [] };
   SELECTIONS = { campus: [], pool: [], student_life: [] };
+  SAVED_SELS = { campus: [], pool: [], student_life: [] };
   SKIPPED    = { campus: false, pool: false, student_life: false };
 
   renderSidebar();
@@ -461,6 +468,10 @@ async function selectSchool(idx) {
     SELECTIONS.campus       = [...(cur.hero_images || [])];
     SELECTIONS.pool         = [...(cur.pool_images || [])];
     SELECTIONS.student_life = [...(cur.student_life_images || [])];
+    // Track saved state so each section can show "saved" vs "modified"
+    SAVED_SELS.campus       = [...SELECTIONS.campus];
+    SAVED_SELS.pool         = [...SELECTIONS.pool];
+    SAVED_SELS.student_life = [...SELECTIONS.student_life];
 
     renderSchoolView(school);
     document.getElementById('btn-save-next').disabled = false;
@@ -502,14 +513,26 @@ function renderSchoolView(school) {
 
 function renderSection(sec) {
   const { key, label, icon, hint } = sec;
-  const cands = CANDIDATES[key] || [];
-  const sels  = SELECTIONS[key] || [];
-  const skip  = SKIPPED[key];
-  const hasSel = sels.length > 0;
+  const cands   = CANDIDATES[key] || [];
+  const sels    = SELECTIONS[key] || [];
+  const saved   = SAVED_SELS[key] || [];
+  const skip    = SKIPPED[key];
+  const hasSel  = sels.length > 0;
+  const hasSaved = saved.length > 0;
+  // Is modified = selections differ from what was saved
+  const isModified = hasSaved && JSON.stringify([...sels].sort()) !== JSON.stringify([...saved].sort());
 
   const badgeCls = hasSel ? 'has-sel' : 'no-sel';
   const badgeLabel = hasSel ? `${sels.length} selected` : 'none selected';
   const skipTag = skip ? `<span class="skip-tag">Skipped</span>` : '';
+  // "saved" tag appears when this section has prior picks loaded from the curated manifest
+  const savedTag = (!skip && hasSaved)
+    ? `<span class="saved-tag" id="saved-tag-${key}" title="These selections were loaded from a previous curation session">${isModified ? '✏️ modified' : '✓ saved'}</span>`
+    : `<span class="saved-tag" id="saved-tag-${key}" style="display:none"></span>`;
+  // "restore" button appears when modified
+  const restoreBtn = (hasSaved && !skip)
+    ? `<button class="sec-btn" id="restore-btn-${key}" onclick="restoreSection('${key}')" style="${isModified ? '' : 'display:none'}">↩ Restore saved</button>`
+    : '';
 
   return `
   <div class="img-section" id="section-${key}">
@@ -517,8 +540,10 @@ function renderSection(sec) {
       <span class="section-icon">${icon}</span>
       <span class="section-title-text">${label}</span>
       <span class="sel-badge ${badgeCls}" id="badge-${key}">${badgeLabel}</span>
+      ${savedTag}
       ${skipTag}
       <div class="section-actions">
+        ${restoreBtn}
         <button class="sec-btn" id="more-btn-${key}" onclick="askMore('${key}')">↻ More images</button>
         <button class="sec-btn" id="skip-btn-${key}" onclick="skipSection('${key}')" ${skip ? 'disabled' : ''}>
           ${skip ? 'Skipped' : 'Skip this type'}
@@ -576,11 +601,36 @@ function toggleCard(key, idx) {
 }
 
 function refreshBadge(key) {
-  const n = (SELECTIONS[key] || []).length;
+  const sels  = SELECTIONS[key] || [];
+  const saved = SAVED_SELS[key] || [];
+  const n = sels.length;
+
   const badge = document.getElementById(`badge-${key}`);
-  if (!badge) return;
-  badge.textContent = n > 0 ? `${n} selected` : 'none selected';
-  badge.className = `sel-badge ${n > 0 ? 'has-sel' : 'no-sel'}`;
+  if (badge) {
+    badge.textContent = n > 0 ? `${n} selected` : 'none selected';
+    badge.className = `sel-badge ${n > 0 ? 'has-sel' : 'no-sel'}`;
+  }
+
+  // Update saved/modified indicator
+  const tag = document.getElementById(`saved-tag-${key}`);
+  if (tag && saved.length > 0) {
+    const isModified = JSON.stringify([...sels].sort()) !== JSON.stringify([...saved].sort());
+    tag.style.display = '';
+    tag.textContent = isModified ? '✏️ modified' : '✓ saved';
+    // Switch between green (saved) and amber (modified) styling
+    if (isModified) {
+      tag.style.background = 'var(--amber-l)'; tag.style.color = 'var(--amber)'; tag.style.borderColor = 'var(--amber)';
+    } else {
+      tag.style.background = ''; tag.style.color = ''; tag.style.borderColor = '';
+    }
+  }
+
+  // Show/hide restore button
+  const restoreBtn = document.getElementById(`restore-btn-${key}`);
+  if (restoreBtn && saved.length > 0) {
+    const isModified = JSON.stringify([...sels].sort()) !== JSON.stringify([...saved].sort());
+    restoreBtn.style.display = isModified ? '' : 'none';
+  }
 }
 
 // ── Skip section ───────────────────────────────────────────────────────────────
@@ -607,7 +657,22 @@ function skipSection(key) {
   refreshBadge(key);
 }
 
-// ── Ask for more images ────────────────────────────────────────────────────────
+// ── Restore section to saved state ────────────────────────────────────────────
+function restoreSection(key) {
+  const saved = SAVED_SELS[key] || [];
+  SELECTIONS[key] = [...saved];
+
+  // Re-render just this section body to reflect the restored selections
+  const body = document.getElementById(`body-${key}`);
+  const sec  = SECTIONS.find(s => s.key === key);
+  if (body && sec) {
+    body.className = 'section-body';
+    body.innerHTML = renderSectionBody(key, CANDIDATES[key], SELECTIONS[key], sec.hint);
+  }
+  refreshBadge(key);
+}
+
+// ── Ask for more images (per-section — only updates THIS section) ─────────────
 async function askMore(key) {
   if (CONF_IDX < 0) return;
   const school = CONF_SCHOOLS[CONF_IDX];
@@ -655,9 +720,44 @@ async function askMore(key) {
   }
 }
 
+// Refresh all sections — ONE fetch call, results distributed to each section
 async function fetchMoreAll() {
-  for (const sec of SECTIONS) {
-    await askMore(sec.key);
+  if (CONF_IDX < 0) return;
+  const school = CONF_SCHOOLS[CONF_IDX];
+  const allBtns = SECTIONS.map(s => document.getElementById(`more-btn-${s.key}`));
+  const allBodies = SECTIONS.map(s => document.getElementById(`body-${s.key}`));
+
+  allBtns.forEach(b => b && (b.disabled = true));
+  allBodies.forEach(b => b && (b.className = 'section-body loading') && (b.innerHTML = `<div class="spinner"></div><span>Refreshing…</span>`));
+
+  try {
+    const res = await fetch('/api/admin/fetch-candidates', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ school: school.name }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || `Error ${res.status}`);
+
+    // Distribute new candidates to each section
+    for (const sec of SECTIONS) {
+      const newCands = (data.candidates || []).filter(c => (c.category || 'campus') === sec.key);
+      const existingUrls = new Set(CANDIDATES[sec.key].map(c => c.url));
+      newCands.forEach(c => { if (!existingUrls.has(c.url)) CANDIDATES[sec.key].push(c); });
+
+      const body = document.getElementById(`body-${sec.key}`);
+      if (body && !SKIPPED[sec.key]) {
+        body.className = 'section-body';
+        body.innerHTML = renderSectionBody(sec.key, CANDIDATES[sec.key], SELECTIONS[sec.key], sec.hint);
+      }
+    }
+
+    school.has_candidates = data.count > 0;
+    renderSidebar();
+  } catch (e) {
+    allBodies.forEach(b => b && (b.className = 'section-body empty') && (b.innerHTML = `<span style="color:#DC2626">${esc(e.message)}</span>`));
+  } finally {
+    allBtns.forEach(b => b && (b.disabled = false));
   }
 }
 
@@ -680,6 +780,11 @@ async function saveSelections() {
     if (!res.ok) throw new Error(await res.text());
     const total = body.hero_images.length + body.pool_images.length + body.student_life_images.length;
     school.is_curated = total > 0;
+    // Update saved state so sections correctly show "✓ saved" vs "✏️ modified"
+    SAVED_SELS.campus       = [...body.hero_images];
+    SAVED_SELS.pool         = [...body.pool_images];
+    SAVED_SELS.student_life = [...body.student_life_images];
+    SECTIONS.forEach(s => refreshBadge(s.key));
     renderSidebar();
     updateStats();
     updateConfDropdownLabel();
