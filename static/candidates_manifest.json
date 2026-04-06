@@ -1,4 +1,316 @@
 {
   "Air Force": [],
-  "Amherst College": []
+  "Amherst College": [],
+  "Boston College": [
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/e/ed/Boston_College_High_School_sign.jpg",
+      "source": "wiki_commons",
+      "width": 8256,
+      "height": 5504,
+      "score": 39.668,
+      "page_type": "campus",
+      "page_url": "",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/6/6f/Boston_University_shuttle_on_Commonwealth_Avenue_December_2025.jpg",
+      "source": "wiki_commons",
+      "width": 8256,
+      "height": 5504,
+      "score": 39.668,
+      "page_type": "campus",
+      "page_url": "",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/e/e2/Boston_University_Center_for_Computing_and_Data_Sciences_June_2025_1.jpg",
+      "source": "wiki_commons",
+      "width": 8256,
+      "height": 5504,
+      "score": 39.668,
+      "page_type": "campus",
+      "page_url": "",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/4/4f/Boston_College_campus_aerial_from_above_%28Quintin_Soloviev%29.png",
+      "source": "wiki_page",
+      "width": 5272,
+      "height": 3948,
+      "score": 20.814,
+      "page_type": "campus",
+      "page_url": "",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/e/e4/Kilachand_Honors_College_-_Boston_University_-_DSC03072.JPG",
+      "source": "wiki_commons",
+      "width": 4320,
+      "height": 3240,
+      "score": 13.464,
+      "page_type": "campus",
+      "page_url": "",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/5/5b/Ara_-_New_Brighton_Campus%2C_New_Brighton%2C_New_Zealand.jpg",
+      "source": "wiki_commons",
+      "width": 5034,
+      "height": 2517,
+      "score": 12.359,
+      "page_type": "campus",
+      "page_url": "",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/a/a6/Boston_College_Main_Campus_Flower_Beds_-_Spring_2020_12.jpg",
+      "source": "wiki_commons",
+      "width": 4032,
+      "height": 3024,
+      "score": 11.961,
+      "page_type": "campus",
+      "page_url": "",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/b/b2/Boston_College_Main_Campus_Flower_Beds_-_Spring_2020_19.jpg",
+      "source": "wiki_commons",
+      "width": 4032,
+      "height": 3024,
+      "score": 11.961,
+      "page_type": "campus",
+      "page_url": "",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/b/b1/Boston_University_College_of_Engineering_entrance.jpg",
+      "source": "wiki_commons",
+      "width": 3648,
+      "height": 2736,
+      "score": 10.117,
+      "page_type": "campus",
+      "page_url": "",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/b/b2/Boston_University%2C_College_of_General_Studies%2C_871_Commonwealth_Avenue.jpg",
+      "source": "wiki_commons",
+      "width": 3806,
+      "height": 2396,
+      "score": 9.399,
+      "page_type": "campus",
+      "page_url": "",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/b/bc/Simmons_University_Main_College_Building.jpg",
+      "source": "wiki_commons",
+      "width": 3600,
+      "height": 2463,
+      "score": 9.189,
+      "page_type": "campus",
+      "page_url": "",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/9/9d/Boston_University%2C_College_of_Fine_Arts%2C_855_Commonwealth_Avenue.jpg",
+      "source": "wiki_commons",
+      "width": 3577,
+      "height": 2186,
+      "score": 8.316,
+      "page_type": "campus",
+      "page_url": "",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/6/65/Sargent_College%2C_Boston_University%2C_Boston_MA.jpg",
+      "source": "wiki_commons",
+      "width": 3072,
+      "height": 2304,
+      "score": 7.698,
+      "page_type": "campus",
+      "page_url": "",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/7/71/Boston_College_Newton_Campus%2C_Newton_MA.jpg",
+      "source": "wiki_commons",
+      "width": 2816,
+      "height": 2112,
+      "score": 6.756,
+      "page_type": "campus",
+      "page_url": "",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/2/2f/Boston_University_College_of_Arts_and_Sciences.jpg",
+      "source": "wiki_commons",
+      "width": 2974,
+      "height": 1948,
+      "score": 6.628,
+      "page_type": "campus",
+      "page_url": "",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/f/fc/Boson_College_sign.jpg",
+      "source": "wiki_page",
+      "width": 2304,
+      "height": 1728,
+      "score": 3.981,
+      "page_type": "campus",
+      "page_url": "",
+      "category": "campus"
+    },
+    {
+      "url": "https://www.bc.edu/content/bc-web/admission/visit/_jcr_content/par/bc_carousel_slider/carousel-item-1/par/responsive_columns/col3/school_video/image.img.jpg/1751902263124.jpg",
+      "alt": "campus-school-volunteers-1280x792",
+      "width": 0,
+      "height": 0,
+      "page_type": "visit",
+      "page_url": "https://www.bc.edu/visit",
+      "source": "web_visit",
+      "score": 3.7,
+      "category": "campus"
+    },
+    {
+      "url": "https://www.bc.edu/content/bc-web/admission/visit/_jcr_content/par/bc_carousel_slider/carousel-item-0/par/responsive_columns/col1/school_video/image.img.jpg/1751902309364.jpg",
+      "alt": "alc-showdown-850x568",
+      "width": 0,
+      "height": 0,
+      "page_type": "visit",
+      "page_url": "https://www.bc.edu/visit",
+      "source": "web_visit",
+      "score": 3.3,
+      "category": "campus"
+    },
+    {
+      "url": "https://www.bc.edu/content/bc-web/admission/visit/_jcr_content/par/bc_carousel_slider/carousel-item-0/par/responsive_columns/col2/school_video/image.img.jpg/1751902320702.jpg",
+      "alt": "bc-eagles-vs-duke-933x632",
+      "width": 0,
+      "height": 0,
+      "page_type": "visit",
+      "page_url": "https://www.bc.edu/visit",
+      "source": "web_visit",
+      "score": 3.3,
+      "category": "campus"
+    },
+    {
+      "url": "https://www.bc.edu/content/bc-web/admission/visit/_jcr_content/par/bc_carousel_slider/carousel-item-0/par/responsive_columns/col3/school_video_0/image.img.jpg/1751902316997.jpg",
+      "alt": "bc-awaits-1081x717",
+      "width": 0,
+      "height": 0,
+      "page_type": "visit",
+      "page_url": "https://www.bc.edu/visit",
+      "source": "web_visit",
+      "score": 3.3,
+      "category": "campus"
+    },
+    {
+      "url": "https://www.bc.edu/content/bc-web/admission/visit/_jcr_content/par/bc_carousel_slider/carousel-item-1/par/responsive_columns/col1/school_video/image.img.jpg/1751902226178.jpg",
+      "alt": "nursing-in-nicaragua-766-473",
+      "width": 0,
+      "height": 0,
+      "page_type": "visit",
+      "page_url": "https://www.bc.edu/visit",
+      "source": "web_visit",
+      "score": 3.3,
+      "category": "campus"
+    },
+    {
+      "url": "https://www.bc.edu/content/bc-web/admission/visit/_jcr_content/par/bc_carousel_slider/carousel-item-1/par/responsive_columns/col2/school_video_0/image.img.jpg/1751902251928.jpg",
+      "alt": "appalacia-volunteers-915x563",
+      "width": 0,
+      "height": 0,
+      "page_type": "visit",
+      "page_url": "https://www.bc.edu/visit",
+      "source": "web_visit",
+      "score": 3.3,
+      "category": "campus"
+    },
+    {
+      "url": "https://www.bc.edu/content/bc-web/admission/visit/_jcr_content/par/bc_carousel_slider/carousel-item-2/par/responsive_columns/col1/school_video/image.img.jpg/1751902380456.jpg",
+      "alt": "Core Curriculum",
+      "width": 0,
+      "height": 0,
+      "page_type": "visit",
+      "page_url": "https://www.bc.edu/visit",
+      "source": "web_visit",
+      "score": 3.3,
+      "category": "campus"
+    },
+    {
+      "url": "https://www.bc.edu/content/bc-web/admission/visit/_jcr_content/par/bc_carousel_slider/carousel-item-2/par/responsive_columns/col2/school_video_copy/image.img.jpg/1751902411685.jpg",
+      "alt": "Schiller Institute",
+      "width": 0,
+      "height": 0,
+      "page_type": "visit",
+      "page_url": "https://www.bc.edu/visit",
+      "source": "web_visit",
+      "score": 3.3,
+      "category": "campus"
+    }
+  ],
+  "California, University of, Ber": [
+    {
+      "url": "https://images.pexels.com/photos/2217170/pexels-photo-2217170.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "source": "pexels",
+      "width": 6000,
+      "height": 4000,
+      "score": 12.0,
+      "page_type": "general",
+      "page_url": "",
+      "category": "campus"
+    },
+    {
+      "url": "https://images.pexels.com/photos/18854593/pexels-photo-18854593.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "source": "pexels",
+      "width": 5472,
+      "height": 3648,
+      "score": 9.981,
+      "page_type": "general",
+      "page_url": "",
+      "category": "campus"
+    },
+    {
+      "url": "https://images.pexels.com/photos/32569769/pexels-photo-32569769.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "source": "pexels",
+      "width": 5184,
+      "height": 2912,
+      "score": 7.548,
+      "page_type": "general",
+      "page_url": "",
+      "category": "campus"
+    },
+    {
+      "url": "https://images.pexels.com/photos/16767715/pexels-photo-16767715.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "source": "pexels",
+      "width": 4032,
+      "height": 3024,
+      "score": 6.096,
+      "page_type": "general",
+      "page_url": "",
+      "category": "campus"
+    },
+    {
+      "url": "https://images.pexels.com/photos/6012017/pexels-photo-6012017.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "source": "pexels",
+      "width": 3732,
+      "height": 2488,
+      "score": 4.643,
+      "page_type": "general",
+      "page_url": "",
+      "category": "campus"
+    },
+    {
+      "url": "https://images.pexels.com/photos/12560687/pexels-photo-12560687.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "source": "pexels",
+      "width": 3800,
+      "height": 2218,
+      "score": 4.214,
+      "page_type": "general",
+      "page_url": "",
+      "category": "campus"
+    }
+  ]
 }
