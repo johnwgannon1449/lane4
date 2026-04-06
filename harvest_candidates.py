@@ -839,6 +839,28 @@ def fetch_candidates(school: str, domains_cache: dict | None = None) -> list[dic
     return all_candidates[:MAX_CANDIDATES]
 
 
+def fetch_candidates_for_category(school: str, category: str) -> list[dict]:
+    """Fetch fresh candidates targeted to a specific display category.
+
+    Unlike fetch_candidates() which pulls everything and caps at MAX_CANDIDATES,
+    this runs only the targeted Wikimedia Commons search for the requested section,
+    so pool/student-life fetches return relevant images instead of being crowded out
+    by campus images.
+    """
+    if category == 'pool':
+        results = _wiki_commons_pool(school)
+    elif category == 'student_life':
+        results = _wiki_commons_student(school)
+    else:  # campus (default)
+        results = _wiki_commons_campus(school)
+
+    for img in results:
+        img['category'] = _assign_category(img)
+
+    results.sort(key=lambda x: x.get('score', 0), reverse=True)
+    return results
+
+
 # ── Manifest helpers ──────────────────────────────────────────────────────────
 
 def load_manifest() -> dict:

@@ -10,6 +10,7 @@
       "score": 39.668,
       "page_type": "campus",
       "page_url": "",
+      "search_context": "Boston College campus",
       "category": "campus"
     },
     {
@@ -20,6 +21,7 @@
       "score": 39.668,
       "page_type": "campus",
       "page_url": "",
+      "search_context": "Boston College university building",
       "category": "campus"
     },
     {
@@ -30,7 +32,19 @@
       "score": 39.668,
       "page_type": "campus",
       "page_url": "",
+      "search_context": "Boston College university building",
       "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Colleges_and_Universities_-_Boston_College_-_Boston_College_Students%2C_drill_-_NARA_-_26425292.jpg",
+      "source": "wiki_commons",
+      "width": 8119,
+      "height": 5497,
+      "score": 38.692,
+      "page_type": "student_life",
+      "page_url": "",
+      "search_context": "Boston College students",
+      "category": "student_life"
     },
     {
       "url": "https://upload.wikimedia.org/wikipedia/commons/4/4f/Boston_College_campus_aerial_from_above_%28Quintin_Soloviev%29.png",
@@ -50,7 +64,19 @@
       "score": 13.464,
       "page_type": "campus",
       "page_url": "",
+      "search_context": "Boston College university building",
       "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/4/4d/Boston_Public_Library%2C_Copley_Square._Courtyard-_Greek_dance_by_Emerson_College_students_-_DPLA_-_33578900933cf4226a0a6f4068437194.jpg",
+      "source": "wiki_commons",
+      "width": 4180,
+      "height": 3308,
+      "score": 13.023,
+      "page_type": "student_life",
+      "page_url": "",
+      "search_context": "Boston College students",
+      "category": "student_life"
     },
     {
       "url": "https://upload.wikimedia.org/wikipedia/commons/5/5b/Ara_-_New_Brighton_Campus%2C_New_Brighton%2C_New_Zealand.jpg",
@@ -60,6 +86,7 @@
       "score": 12.359,
       "page_type": "campus",
       "page_url": "",
+      "search_context": "Boston College campus",
       "category": "campus"
     },
     {
@@ -70,6 +97,7 @@
       "score": 11.961,
       "page_type": "campus",
       "page_url": "",
+      "search_context": "Boston College campus",
       "category": "campus"
     },
     {
@@ -80,6 +108,7 @@
       "score": 11.961,
       "page_type": "campus",
       "page_url": "",
+      "search_context": "Boston College campus",
       "category": "campus"
     },
     {
@@ -90,6 +119,7 @@
       "score": 10.117,
       "page_type": "campus",
       "page_url": "",
+      "search_context": "Boston College university building",
       "category": "campus"
     },
     {
@@ -100,6 +130,7 @@
       "score": 9.399,
       "page_type": "campus",
       "page_url": "",
+      "search_context": "Boston College university building",
       "category": "campus"
     },
     {
@@ -110,6 +141,7 @@
       "score": 9.189,
       "page_type": "campus",
       "page_url": "",
+      "search_context": "Boston College university building",
       "category": "campus"
     },
     {
@@ -120,6 +152,7 @@
       "score": 8.316,
       "page_type": "campus",
       "page_url": "",
+      "search_context": "Boston College university building",
       "category": "campus"
     },
     {
@@ -130,6 +163,7 @@
       "score": 7.698,
       "page_type": "campus",
       "page_url": "",
+      "search_context": "Boston College university building",
       "category": "campus"
     },
     {
@@ -140,6 +174,7 @@
       "score": 6.756,
       "page_type": "campus",
       "page_url": "",
+      "search_context": "Boston College campus",
       "category": "campus"
     },
     {
@@ -150,6 +185,18 @@
       "score": 6.628,
       "page_type": "campus",
       "page_url": "",
+      "search_context": "Boston College university building",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/b/b4/Boston_University_Police_Department.JPG",
+      "source": "wiki_commons",
+      "width": 2592,
+      "height": 1936,
+      "score": 5.982,
+      "page_type": "campus",
+      "page_url": "",
+      "search_context": "Boston College university building",
       "category": "campus"
     },
     {
@@ -209,39 +256,6 @@
     {
       "url": "https://www.bc.edu/content/bc-web/admission/visit/_jcr_content/par/bc_carousel_slider/carousel-item-1/par/responsive_columns/col1/school_video/image.img.jpg/1751902226178.jpg",
       "alt": "nursing-in-nicaragua-766-473",
-      "width": 0,
-      "height": 0,
-      "page_type": "visit",
-      "page_url": "https://www.bc.edu/visit",
-      "source": "web_visit",
-      "score": 3.3,
-      "category": "campus"
-    },
-    {
-      "url": "https://www.bc.edu/content/bc-web/admission/visit/_jcr_content/par/bc_carousel_slider/carousel-item-1/par/responsive_columns/col2/school_video_0/image.img.jpg/1751902251928.jpg",
-      "alt": "appalacia-volunteers-915x563",
-      "width": 0,
-      "height": 0,
-      "page_type": "visit",
-      "page_url": "https://www.bc.edu/visit",
-      "source": "web_visit",
-      "score": 3.3,
-      "category": "campus"
-    },
-    {
-      "url": "https://www.bc.edu/content/bc-web/admission/visit/_jcr_content/par/bc_carousel_slider/carousel-item-2/par/responsive_columns/col1/school_video/image.img.jpg/1751902380456.jpg",
-      "alt": "Core Curriculum",
-      "width": 0,
-      "height": 0,
-      "page_type": "visit",
-      "page_url": "https://www.bc.edu/visit",
-      "source": "web_visit",
-      "score": 3.3,
-      "category": "campus"
-    },
-    {
-      "url": "https://www.bc.edu/content/bc-web/admission/visit/_jcr_content/par/bc_carousel_slider/carousel-item-2/par/responsive_columns/col2/school_video_copy/image.img.jpg/1751902411685.jpg",
-      "alt": "Schiller Institute",
       "width": 0,
       "height": 0,
       "page_type": "visit",

@@ -5221,23 +5221,90 @@ def api_admin_candidates(school):
 @app.route('/api/admin/fetch-candidates', methods=['POST'])
 @admin_required
 def api_admin_fetch_candidates():
-    body   = request.get_json(silent=True) or {}
-    school = (body.get('school') or '').strip()
+    body     = request.get_json(silent=True) or {}
+    school   = (body.get('school')   or '').strip()
+    category = (body.get('category') or '').strip()  # 'campus'|'pool'|'student_life'|''
     if not school:
         return jsonify({'error': 'missing school'}), 400
     try:
-        from harvest_candidates import fetch_candidates
-        candidates = fetch_candidates(school)
+        if category:
+            # Targeted fetch — only query the Wikimedia Commons search for this category
+            from harvest_candidates import fetch_candidates_for_category
+            new_candidates = fetch_candidates_for_category(school, category)
+        else:
+            from harvest_candidates import fetch_candidates
+            new_candidates = fetch_candidates(school)
+
+        # Merge into manifest (do NOT overwrite — preserve existing candidates)
         manifest = _load_candidates_manifest()
-        manifest[school] = candidates
+        existing = manifest.get(school, [])
+        existing_urls = {c['url'] for c in existing}
+        merged = existing + [c for c in new_candidates if c['url'] not in existing_urls]
+        manifest[school] = merged
         os.makedirs('static', exist_ok=True)
         with open(_CANDIDATES_PATH, 'w', encoding='utf-8') as f:
             json.dump(manifest, f, indent=2, ensure_ascii=False)
-        return jsonify({'ok': True, 'candidates': candidates, 'count': len(candidates)})
+
+        return jsonify({'ok': True, 'candidates': new_candidates, 'count': len(new_candidates)})
     except RuntimeError as e:
         return jsonify({'error': str(e)}), 400
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+
+# ── Pre-fetch tracking ────────────────────────────────────────────────────────
+_prefetch_running: set[str] = set()
+_prefetch_lock = threading.Lock()
+
+
+@app.route('/api/admin/prefetch-conference', methods=['POST'])
+@admin_required
+def api_admin_prefetch_conference():
+    """Background-fetch candidates for every school in a conference that lacks them."""
+    body       = request.get_json(silent=True) or {}
+    conference = (body.get('conference') or '').strip()
+    if not conference:
+        return jsonify({'error': 'missing conference'}), 400
+
+    with _prefetch_lock:
+        if conference in _prefetch_running:
+            return jsonify({'ok': True, 'status': 'already_running', 'conference': conference})
+        _prefetch_running.add(conference)
+
+    def _do_prefetch():
+        try:
+            from harvest_candidates import fetch_candidates, _load_domains, _save_domains
+            manifest = _load_candidates_manifest()
+
+            # Resolve school list for this conference
+            school_conf = {s['school']: s.get('conference', '') for s in EXPLORE_SCHOOLS}
+            try:
+                with open('school_names.json', encoding='utf-8') as f:
+                    all_names = json.load(f)
+            except Exception:
+                all_names = [s['school'] for s in EXPLORE_SCHOOLS]
+            schools_to_fetch = [n for n in all_names
+                                if school_conf.get(n, '') == conference
+                                and not manifest.get(n)]
+
+            domains_cache = _load_domains()
+            for school in schools_to_fetch:
+                try:
+                    print(f'[prefetch:{conference}] {school}')
+                    cands = fetch_candidates(school, domains_cache)
+                    manifest[school] = cands
+                    with open(_CANDIDATES_PATH, 'w', encoding='utf-8') as fh:
+                        json.dump(manifest, fh, indent=2, ensure_ascii=False)
+                    _save_domains(domains_cache)
+                except Exception as exc:
+                    print(f'[prefetch:{conference}] {school} error: {exc}')
+            print(f'[prefetch:{conference}] done — {len(schools_to_fetch)} schools fetched')
+        finally:
+            with _prefetch_lock:
+                _prefetch_running.discard(conference)
+
+    threading.Thread(target=_do_prefetch, daemon=True).start()
+    return jsonify({'ok': True, 'status': 'started', 'conference': conference})
 
 
 @app.route('/api/admin/save', methods=['POST'])

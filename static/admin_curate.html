@@ -400,6 +400,17 @@ async function onConfChange(conf) {
     } else {
       showOverlay('📭', 'No schools found', `No schools found for ${conf}.`);
     }
+
+    // Kick off background pre-fetch for schools that don't yet have candidates.
+    // This is best-effort — errors are silently ignored so the UI stays responsive.
+    const missing = CONF_SCHOOLS.filter(s => !s.has_candidates).length;
+    if (missing > 0) {
+      fetch('/api/admin/prefetch-conference', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ conference: conf }),
+      }).catch(() => {});
+    }
   } catch (e) {
     showOverlay('⚠️', 'Error', e.message);
   }
@@ -766,43 +777,57 @@ function restoreSection(key) {
   refreshBadge(key);
 }
 
-// ── Ask for more images (per-section — only updates THIS section) ─────────────
+// ── Ask for more images (targeted per-section — only runs the category-specific search) ──
 async function askMore(key) {
   if (CONF_IDX < 0) return;
   const school = CONF_SCHOOLS[CONF_IDX];
   const btn = document.getElementById(`more-btn-${key}`);
   const body = document.getElementById(`body-${key}`);
+  const sec  = SECTIONS.find(s => s.key === key);
 
   if (btn) { btn.disabled = true; btn.textContent = '↻ Fetching…'; }
+  // Show spinner only inside this section body, not the others
+  const prevHtml = body ? body.innerHTML : '';
   if (body) {
     body.className = 'section-body loading';
-    body.innerHTML = `<div class="spinner"></div><span>Fetching more images…</span>`;
+    body.innerHTML = `<div class="spinner"></div><span>Fetching ${sec?.label || key} images…</span>`;
   }
 
   try {
+    // Pass category so the backend runs a targeted search (pool/student_life/campus)
+    // instead of the generic full-school fetch which campus images dominate.
     const res = await fetch('/api/admin/fetch-candidates', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ school: school.name }),
+      body: JSON.stringify({ school: school.name, category: key }),
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || `Error ${res.status}`);
 
-    // Merge new candidates for this key
-    const newCands = (data.candidates || []).filter(c => (c.category || 'campus') === key);
+    // All returned candidates are already targeted to this section — just deduplicate
     const existingUrls = new Set(CANDIDATES[key].map(c => c.url));
-    newCands.forEach(c => {
-      if (!existingUrls.has(c.url)) CANDIDATES[key].push(c);
+    let added = 0;
+    (data.candidates || []).forEach(c => {
+      if (!existingUrls.has(c.url)) {
+        CANDIDATES[key].push(c);
+        existingUrls.add(c.url);
+        added++;
+      }
     });
 
-    school.has_candidates = data.count > 0;
-    renderSidebar();
+    if (data.count > 0) school.has_candidates = true;
 
     // Re-render just this section body
-    const sec = SECTIONS.find(s => s.key === key);
     if (body) {
       body.className = 'section-body';
       body.innerHTML = renderSectionBody(key, CANDIDATES[key], SELECTIONS[key], sec?.hint || '');
+    }
+
+    if (added === 0) {
+      const notice = document.createElement('div');
+      notice.style.cssText = 'font-size:.78rem;color:var(--muted);padding:6px 0 2px';
+      notice.textContent = 'No new images found — all results already shown.';
+      document.getElementById(`grid-${key}`)?.after(notice);
     }
   } catch (e) {
     if (body) {
