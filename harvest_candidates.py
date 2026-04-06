@@ -44,7 +44,7 @@ GOOGLE_CSE_URL  = 'https://www.googleapis.com/customsearch/v1'
 
 MIN_WIDTH  = 400
 MIN_HEIGHT = 220
-MAX_CANDIDATES = 24   # 8 per category × 3 categories
+MAX_CANDIDATES = 60   # up to 20 per category × 3 categories
 CRAWL_WORKERS  = 6
 PAGE_TIMEOUT   = 8
 
@@ -883,8 +883,11 @@ def fetch_candidates(school: str, domains_cache: dict | None = None) -> list[dic
         print(f'    [google] fetching campus / pool / student images')
         for q, pt in [
             (f'{school} campus',                        'campus'),
+            (f'{school} university buildings campus',   'campus'),
             (f'{school} natatorium OR swimming pool',   'swim'),
+            (f'{school} aquatic center swimming',       'swim'),
             (f'{school} students campus life',          'student_life'),
+            (f'{school} student union college life',    'student_life'),
         ]:
             for img in _google_cse_search(q, page_type=pt, n=10):
                 _add(img)
