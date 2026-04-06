@@ -72,6 +72,19 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated
 
+
+def admin_required(f):
+    """Separate admin gate — checked via ADMIN_PASSWORD env var, not user accounts."""
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        if not session.get('admin_authed'):
+            # HTML routes → redirect to login page; API routes → 401
+            if request.path.startswith('/api/'):
+                return jsonify({'error': 'Not authenticated'}), 401
+            return redirect('/admin/login')
+        return f(*args, **kwargs)
+    return decorated
+
 # ---------------------------------------------------------------------------
 # AUTH ENDPOINTS
 # ---------------------------------------------------------------------------
@@ -5077,14 +5090,40 @@ def _save_curated_manifest(data: dict):
         json.dump(data, f, indent=2, ensure_ascii=False)
 
 
+@app.route('/admin/login', methods=['GET'])
+def admin_login_page():
+    if session.get('admin_authed'):
+        return redirect('/admin/curate')
+    return send_from_directory('static', 'admin_login.html')
+
+
+@app.route('/api/admin/login', methods=['POST'])
+def api_admin_login():
+    body = request.get_json(silent=True) or {}
+    password = (body.get('password') or '').strip()
+    correct  = os.environ.get('ADMIN_PASSWORD', '')
+    if not correct:
+        return jsonify({'error': 'ADMIN_PASSWORD not configured on server'}), 500
+    if password != correct:
+        return jsonify({'error': 'Incorrect password'}), 401
+    session['admin_authed'] = True
+    return jsonify({'ok': True})
+
+
+@app.route('/api/admin/logout', methods=['POST'])
+def api_admin_logout():
+    session.pop('admin_authed', None)
+    return jsonify({'ok': True})
+
+
 @app.route('/admin/curate')
-@login_required
+@admin_required
 def admin_curate():
     return send_from_directory('static', 'admin_curate.html')
 
 
 @app.route('/api/admin/conferences', methods=['GET'])
-@login_required
+@admin_required
 def api_admin_conferences():
     """Return all conferences with school counts and curated progress."""
     curated = _load_curated_manifest()
@@ -5117,7 +5156,7 @@ def api_admin_conferences():
 
 
 @app.route('/api/admin/schools', methods=['GET'])
-@login_required
+@admin_required
 def api_admin_schools():
     conference_filter = request.args.get('conference', '').strip()
 
@@ -5156,7 +5195,7 @@ def api_admin_schools():
 
 
 @app.route('/api/admin/candidates/<path:school>', methods=['GET'])
-@login_required
+@admin_required
 def api_admin_candidates(school):
     candidates = _load_candidates_manifest()
     curated    = _load_curated_manifest()
@@ -5180,7 +5219,7 @@ def api_admin_candidates(school):
 
 
 @app.route('/api/admin/fetch-candidates', methods=['POST'])
-@login_required
+@admin_required
 def api_admin_fetch_candidates():
     body   = request.get_json(silent=True) or {}
     school = (body.get('school') or '').strip()
@@ -5202,7 +5241,7 @@ def api_admin_fetch_candidates():
 
 
 @app.route('/api/admin/save', methods=['POST'])
-@login_required
+@admin_required
 def api_admin_save():
     body   = request.get_json(silent=True) or {}
     school = (body.get('school') or '').strip()
