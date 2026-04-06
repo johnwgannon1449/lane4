@@ -263,6 +263,39 @@
       "source": "web_visit",
       "score": 3.3,
       "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/e/eb/Boston_College_Quadrangle.jpg",
+      "source": "wiki_commons",
+      "width": 1079,
+      "height": 803,
+      "score": 2.222,
+      "page_type": "student_life",
+      "page_url": "",
+      "search_context": "Boston College students",
+      "category": "student_life"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/1/1e/Burdett_College_students.png",
+      "source": "wiki_commons",
+      "width": 550,
+      "height": 413,
+      "score": 1.689,
+      "page_type": "student_life",
+      "page_url": "",
+      "search_context": "Boston College students",
+      "category": "student_life"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/d/de/Drill_Hall_and_Natatorium%2C_University_of_Georgia%2C_Athens%2C_Ga._%288343897022%29.jpg",
+      "source": "wiki_commons",
+      "width": 1500,
+      "height": 930,
+      "score": 3.163,
+      "page_type": "swim",
+      "page_url": "",
+      "search_context": "Boston College natatorium",
+      "category": "pool"
     }
   ],
   "California, University of, Ber": [
@@ -322,6 +355,1741 @@
       "width": 3800,
       "height": 2218,
       "score": 4.214,
+      "page_type": "general",
+      "page_url": "",
+      "category": "campus"
+    }
+  ],
+  "Duke University": [
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/3/36/Duke_University_in_July_2025_West_Campus_photosphere_1.jpg",
+      "source": "wiki_commons",
+      "width": 8704,
+      "height": 4352,
+      "score": 33.367,
+      "page_type": "campus",
+      "page_url": "",
+      "search_context": "Duke University campus",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/6/6c/Duke_University_in_July_2025_West_Campus_photosphere_2.jpg",
+      "source": "wiki_commons",
+      "width": 8704,
+      "height": 4352,
+      "score": 33.367,
+      "page_type": "campus",
+      "page_url": "",
+      "search_context": "Duke University campus",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/f/fd/20131203_Cameron_Crazies.jpg",
+      "source": "wiki_page",
+      "width": 5184,
+      "height": 3456,
+      "score": 17.916,
+      "page_type": "campus",
+      "page_url": "",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/7/70/Ben_Folds_and_yMusic_read_song_arrangements_by_Duke_University_composition_graduate_students.jpg",
+      "source": "wiki_commons",
+      "width": 4912,
+      "height": 3264,
+      "score": 14.861,
+      "page_type": "student_life",
+      "page_url": "",
+      "search_context": "Duke University students",
+      "category": "student_life"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/3/37/West_Campus_path_at_Duke_University_in_July_2025.jpg",
+      "source": "wiki_commons",
+      "width": 4080,
+      "height": 3072,
+      "score": 12.245,
+      "page_type": "campus",
+      "page_url": "",
+      "search_context": "Duke University campus",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/1/12/Duke_University_Chapel_side_in_July_2025.jpg",
+      "source": "wiki_commons",
+      "width": 4080,
+      "height": 3072,
+      "score": 12.245,
+      "page_type": "campus",
+      "page_url": "",
+      "search_context": "Duke University campus",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/2/2e/Sarah_P._Duke_Gardens_gate.jpg",
+      "source": "wiki_commons",
+      "width": 4080,
+      "height": 3072,
+      "score": 12.245,
+      "page_type": "campus",
+      "page_url": "",
+      "search_context": "Duke University campus",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/f/f3/Davidson_Building%2C_Duke_University_in_July_2025.jpg",
+      "source": "wiki_commons",
+      "width": 4080,
+      "height": 3072,
+      "score": 12.245,
+      "page_type": "campus",
+      "page_url": "",
+      "search_context": "Duke University campus",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/d/d9/Duke_University_Old_Chemistry_Building_in_July_2025.jpg",
+      "source": "wiki_commons",
+      "width": 4080,
+      "height": 3072,
+      "score": 12.245,
+      "page_type": "campus",
+      "page_url": "",
+      "search_context": "Duke University campus",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/0/03/Duke_University_dormitories_in_July_2025.jpg",
+      "source": "wiki_commons",
+      "width": 4080,
+      "height": 3072,
+      "score": 12.245,
+      "page_type": "campus",
+      "page_url": "",
+      "search_context": "Duke University campus",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/c/c0/Allen_Building%2C_West_Campus%2C_Duke_University%2C_Durham%2C_NC_%2848960801602%29.jpg",
+      "source": "wiki_page",
+      "width": 4032,
+      "height": 3024,
+      "score": 12.193,
+      "page_type": "campus",
+      "page_url": "",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/0/06/Epworth_Hall%2C_East_Campus%2C_Duke_University%2C_Durham%2C_NC_%2848961028726%29.jpg",
+      "source": "wiki_commons",
+      "width": 4032,
+      "height": 3024,
+      "score": 11.661,
+      "page_type": "student_life",
+      "page_url": "",
+      "search_context": "Duke University students",
+      "category": "student_life"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/6/66/Jarvis_Hall%2C_East_Campus%2C_Duke_University%2C_Durham%2C_NC_%2848960425573%29.jpg",
+      "source": "wiki_commons",
+      "width": 4032,
+      "height": 3024,
+      "score": 11.661,
+      "page_type": "student_life",
+      "page_url": "",
+      "search_context": "Duke University students",
+      "category": "student_life"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/a/a0/Kilgo_Quad%2C_West_Campus%2C_Duke_University%2C_Durham%2C_NC_%2848960817931%29.jpg",
+      "source": "wiki_commons",
+      "width": 3984,
+      "height": 2986,
+      "score": 11.414,
+      "page_type": "student_life",
+      "page_url": "",
+      "search_context": "Duke University students",
+      "category": "student_life"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/b/b7/Clocktower_Quad%2C_West_Campus%2C_Duke_University%2C_Durham%2C_NC_%2848960675126%29.jpg",
+      "source": "wiki_commons",
+      "width": 3871,
+      "height": 2901,
+      "score": 10.858,
+      "page_type": "student_life",
+      "page_url": "",
+      "search_context": "Duke University students",
+      "category": "student_life"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/b/bc/Duke_Kunshan_Water_Feature.jpg",
+      "source": "wiki_page",
+      "width": 4032,
+      "height": 2688,
+      "score": 10.838,
+      "page_type": "campus",
+      "page_url": "",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Clocktower_Quad%2C_West_Campus%2C_Duke_University%2C_Durham%2C_NC_%2848960676501%29.jpg",
+      "source": "wiki_commons",
+      "width": 3866,
+      "height": 2898,
+      "score": 10.836,
+      "page_type": "student_life",
+      "page_url": "",
+      "search_context": "Duke University students",
+      "category": "student_life"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/d/d4/BSKT005_Cameron_Indoor_Stadium_DiscoverDurham.jpg",
+      "source": "wiki_page",
+      "width": 3745,
+      "height": 2809,
+      "score": 10.52,
+      "page_type": "campus",
+      "page_url": "",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/f/f6/2008-07-24_Duke_University_sanitation_truck.jpg",
+      "source": "wiki_commons",
+      "width": 3888,
+      "height": 2592,
+      "score": 10.198,
+      "page_type": "campus",
+      "page_url": "",
+      "search_context": "Duke University campus",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/4/4b/2008-07-24_Vinik_Building_of_the_Fitzpatrick_Center.jpg",
+      "source": "wiki_page",
+      "width": 3888,
+      "height": 2592,
+      "score": 10.078,
+      "page_type": "campus",
+      "page_url": "",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/0/01/2008-07-24_Lily_pond_at_Duke_Gardens_3.jpg",
+      "source": "wiki_page",
+      "width": 3888,
+      "height": 2592,
+      "score": 10.078,
+      "page_type": "campus",
+      "page_url": "",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/4/41/2008-07-24_Duke_Hospital_PRT_5.jpg",
+      "source": "wiki_page",
+      "width": 3888,
+      "height": 2592,
+      "score": 10.078,
+      "page_type": "campus",
+      "page_url": "",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/2/2b/Duke_University_trees_%28351114226%29.jpg",
+      "source": "wiki_commons",
+      "width": 3008,
+      "height": 2000,
+      "score": 6.813,
+      "page_type": "campus",
+      "page_url": "",
+      "search_context": "Duke University campus",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/7/7c/Chris_Kempczinski%2C_McDonald%E2%80%99s_President_and_CEO.jpg",
+      "source": "wiki_page",
+      "width": 2539,
+      "height": 2539,
+      "score": 6.447,
+      "page_type": "campus",
+      "page_url": "",
+      "category": "campus"
+    }
+  ],
+  "Florida State University": [
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/e/e0/FSU_College_of_Medicine_Smith_Center_at_IRSC_Fort_Pierce%2C_Fl.jpg",
+      "source": "wiki_page",
+      "width": 9134,
+      "height": 5130,
+      "score": 46.857,
+      "page_type": "campus",
+      "page_url": "",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/4/46/Westcott_Building_and_fountain_at_Florida_State_University.jpg",
+      "source": "wiki_commons",
+      "width": 5893,
+      "height": 3934,
+      "score": 21.119,
+      "page_type": "campus",
+      "page_url": "",
+      "search_context": "Florida State University campus",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/0/09/Lawrence_Gonzalez_in_Europe_with_Florida_State_University.jpg",
+      "source": "wiki_commons",
+      "width": 5184,
+      "height": 3456,
+      "score": 16.43,
+      "page_type": "student_life",
+      "page_url": "",
+      "search_context": "Florida State University students",
+      "category": "student_life"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/d/d9/Chittagong_University_Central_Students%27_Union_%2813%29.jpg",
+      "source": "wiki_commons",
+      "width": 5184,
+      "height": 3456,
+      "score": 16.43,
+      "page_type": "student_life",
+      "page_url": "",
+      "search_context": "Florida State University students",
+      "category": "student_life"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/5/52/GX-299_-_Crumpled_architectural_blueprint_detailing_a_residences_exterior_featuring_a_cabana_and_swimming_pool_layout.jpg",
+      "source": "wiki_commons",
+      "width": 3987,
+      "height": 2990,
+      "score": 11.934,
+      "page_type": "swim",
+      "page_url": "",
+      "search_context": "Florida State University swimming pool",
+      "category": "pool"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/b/b3/FSU_e-school.JPG",
+      "source": "wiki_page",
+      "width": 3072,
+      "height": 2304,
+      "score": 7.078,
+      "page_type": "campus",
+      "page_url": "",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/7/77/GX-216_-_White_villa_with_spiral_staircase_palm_trees_and_lounge_chairs_under_bright_sky_pool_visible_in_foreground.jpg",
+      "source": "wiki_commons",
+      "width": 3008,
+      "height": 1998,
+      "score": 7.008,
+      "page_type": "swim",
+      "page_url": "",
+      "search_context": "Florida State University swimming pool",
+      "category": "pool"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/d/d4/GX-214_-_Tropical_palms_sway_beside_a_serene_pool_reflecting_the_bright_white_villas_elegant_balcony_and_expansive_glass_windows.jpg",
+      "source": "wiki_commons",
+      "width": 3011,
+      "height": 1989,
+      "score": 6.991,
+      "page_type": "swim",
+      "page_url": "",
+      "search_context": "Florida State University swimming pool",
+      "category": "pool"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/9/91/GX-213_-_Tropical_palms_sway_beside_a_serene_pool_leading_to_a_white_villa_with_a_curved_staircase_under_clear_blue_skies.jpg",
+      "source": "wiki_commons",
+      "width": 3002,
+      "height": 1994,
+      "score": 6.988,
+      "page_type": "swim",
+      "page_url": "",
+      "search_context": "Florida State University swimming pool",
+      "category": "pool"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/b/be/GX-215_-_White_villa_with_spiral_staircase_and_palm_trees_overlooks_pool_surrounded_by_lush_greenery_under_bright_sky.jpg",
+      "source": "wiki_commons",
+      "width": 3010,
+      "height": 1987,
+      "score": 6.984,
+      "page_type": "swim",
+      "page_url": "",
+      "search_context": "Florida State University swimming pool",
+      "category": "pool"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/9/99/Florida_State_University_Psychology_Courtyard.jpg",
+      "source": "wiki_commons",
+      "width": 2560,
+      "height": 1920,
+      "score": 5.896,
+      "page_type": "campus",
+      "page_url": "",
+      "search_context": "Florida State University campus",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/2/24/Florida_State_University_Doak_Campbell_stadium.jpg",
+      "source": "wiki_commons",
+      "width": 2560,
+      "height": 1920,
+      "score": 5.896,
+      "page_type": "campus",
+      "page_url": "",
+      "search_context": "Florida State University campus",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/1/11/Dunlap_Student_Success_Center_at_Florida_State_University.jpg",
+      "source": "wiki_page",
+      "width": 2560,
+      "height": 1920,
+      "score": 4.915,
+      "page_type": "campus",
+      "page_url": "",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/0/0c/Entry_to_FSU_-_panoramio.jpg",
+      "source": "wiki_page",
+      "width": 2563,
+      "height": 1914,
+      "score": 4.906,
+      "page_type": "campus",
+      "page_url": "",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/6/6a/Florida_State_University_residence_halls.JPG",
+      "source": "wiki_commons",
+      "width": 2048,
+      "height": 1536,
+      "score": 4.421,
+      "page_type": "campus",
+      "page_url": "",
+      "search_context": "Florida State University campus",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/0/0d/FSUStrozier.JPG",
+      "source": "wiki_page",
+      "width": 2272,
+      "height": 1704,
+      "score": 3.871,
+      "page_type": "campus",
+      "page_url": "",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/a/a9/Landis_Green_of_Florida_State_University.jpg",
+      "source": "wiki_commons",
+      "width": 1920,
+      "height": 1280,
+      "score": 3.848,
+      "page_type": "campus",
+      "page_url": "",
+      "search_context": "Florida State University campus",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/d/d7/Westcott_Fountain_of_Florida_State_University.jpg",
+      "source": "wiki_commons",
+      "width": 1920,
+      "height": 1280,
+      "score": 3.848,
+      "page_type": "campus",
+      "page_url": "",
+      "search_context": "Florida State University campus",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/f/fc/Legacy_Fountain_of_Florida_State_University.jpg",
+      "source": "wiki_commons",
+      "width": 1920,
+      "height": 1280,
+      "score": 3.848,
+      "page_type": "campus",
+      "page_url": "",
+      "search_context": "Florida State University campus",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/b/bf/Unconquered_Statue_of_Florida_State_University.jpg",
+      "source": "wiki_commons",
+      "width": 1920,
+      "height": 1280,
+      "score": 3.848,
+      "page_type": "campus",
+      "page_url": "",
+      "search_context": "Florida State University campus",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/a/aa/Landford_Green_of_Florida_State_University.jpg",
+      "source": "wiki_commons",
+      "width": 1920,
+      "height": 1280,
+      "score": 3.848,
+      "page_type": "campus",
+      "page_url": "",
+      "search_context": "Florida State University campus",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/7/75/Landford_Green_Sign_of_Florida_State_University.jpg",
+      "source": "wiki_commons",
+      "width": 1920,
+      "height": 1280,
+      "score": 3.848,
+      "page_type": "campus",
+      "page_url": "",
+      "search_context": "Florida State University campus",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/f/f1/Florida_Police_Officers_Help_Save_Life_of_3-year-old_Found_Floating_in_Pool.webm",
+      "source": "wiki_commons",
+      "width": 1920,
+      "height": 1080,
+      "score": 3.728,
+      "page_type": "swim",
+      "page_url": "",
+      "search_context": "Florida State University swimming pool",
+      "category": "pool"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/c/c7/Florida_Couple_Arrested_After_Passing_Out_on_Beach_And_Losing_Kids.webm",
+      "source": "wiki_commons",
+      "width": 1920,
+      "height": 1080,
+      "score": 3.728,
+      "page_type": "swim",
+      "page_url": "",
+      "search_context": "Florida State University swimming pool",
+      "category": "pool"
+    }
+  ],
+  "Georgia Institute of Technolog": [
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/7/71/College_of_Computing_Building.jpg",
+      "source": "wiki_page",
+      "width": 4032,
+      "height": 2268,
+      "score": 9.145,
+      "page_type": "campus",
+      "page_url": "",
+      "category": "campus"
+    },
+    {
+      "url": "https://www.gatech.edu/themes/custom/gatech/images/majors-degrees_thumb.jpg",
+      "alt": "Majors and Degrees",
+      "width": 2048,
+      "height": 1082,
+      "page_type": "home",
+      "page_url": "https://www.gatech.edu/",
+      "source": "web_home",
+      "score": 4.177,
+      "category": "campus"
+    },
+    {
+      "url": "https://www.gatech.edu/themes/custom/gatech/images/admissions_thumb.jpg",
+      "alt": "Admissions",
+      "width": 2000,
+      "height": 1333,
+      "page_type": "home",
+      "page_url": "https://www.gatech.edu/",
+      "source": "web_home",
+      "score": 3.877,
+      "category": "campus"
+    },
+    {
+      "url": "https://www.gatech.edu/sites/default/files/2022-07/visit-tech.png",
+      "alt": "Visit Georgia Tech",
+      "width": 0,
+      "height": 0,
+      "page_type": "visit",
+      "page_url": "https://www.gatech.edu/about/visit",
+      "source": "web_visit",
+      "score": 3.6,
+      "category": "campus"
+    },
+    {
+      "url": "https://www.gatech.edu/sites/default/files/inline-images/yellowjackets-baseball_0.jpg",
+      "alt": "Georgia Tech's baseball field with the skyline behind it",
+      "width": 0,
+      "height": 0,
+      "page_type": "campus",
+      "page_url": "https://www.gatech.edu/about",
+      "source": "web_campus",
+      "score": 3.2,
+      "category": "campus"
+    },
+    {
+      "url": "https://www.gatech.edu/sites/default/files/inline-images/research-hexagon.png",
+      "alt": "Georgia Tech researchers in scrubs and masks",
+      "width": 569,
+      "height": 646,
+      "page_type": "campus",
+      "page_url": "https://www.gatech.edu/about",
+      "source": "web_campus",
+      "score": 3.045,
+      "category": "campus"
+    },
+    {
+      "url": "https://www.gatech.edu/sites/default/files/inline-images/straight-down-divider.png",
+      "alt": "divider",
+      "width": 0,
+      "height": 0,
+      "page_type": "campus",
+      "page_url": "https://www.gatech.edu/about",
+      "source": "web_campus",
+      "score": 2.8,
+      "category": "campus"
+    },
+    {
+      "url": "https://www.gatech.edu/sites/default/files/inline-images/aerospace.jpg",
+      "alt": "Aerospace Engineering combustion lab",
+      "width": 0,
+      "height": 0,
+      "page_type": "campus",
+      "page_url": "https://www.gatech.edu/about",
+      "source": "web_campus",
+      "score": 2.8,
+      "category": "campus"
+    },
+    {
+      "url": "https://www.gatech.edu/sites/default/files/inline-images/Tech-tower-wreck.jpg",
+      "alt": "Tech Tower and the Wreck",
+      "width": 0,
+      "height": 0,
+      "page_type": "campus",
+      "page_url": "https://www.gatech.edu/about",
+      "source": "web_campus",
+      "score": 2.8,
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/f/f6/Georgia_Tech_College_of_Computing_2025.jpg",
+      "source": "wiki_main",
+      "width": 750,
+      "height": 480,
+      "score": 1.86,
+      "page_type": "campus",
+      "page_url": "",
+      "category": "campus"
+    },
+    {
+      "url": "https://www.gatech.edu/sites/default/files/styles/square_medium_600x600/public/hg_media/2026-20/20260226-Cancer-Delivery-System-Story-6.jpg?h=790be497&itok=u8Qd2Bof",
+      "alt": "",
+      "width": 600,
+      "height": 600,
+      "page_type": "home",
+      "page_url": "https://www.gatech.edu/",
+      "source": "web_home",
+      "score": 1.74,
+      "category": "campus"
+    }
+  ],
+  "Louisville, University of": [
+    {
+      "url": "https://images.pexels.com/photos/2217170/pexels-photo-2217170.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "source": "pexels",
+      "width": 6000,
+      "height": 4000,
+      "score": 12.0,
+      "page_type": "general",
+      "page_url": "",
+      "category": "campus"
+    },
+    {
+      "url": "https://images.pexels.com/photos/32569769/pexels-photo-32569769.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "source": "pexels",
+      "width": 5184,
+      "height": 2912,
+      "score": 7.548,
+      "page_type": "general",
+      "page_url": "",
+      "category": "campus"
+    },
+    {
+      "url": "https://images.pexels.com/photos/16767715/pexels-photo-16767715.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "source": "pexels",
+      "width": 4032,
+      "height": 3024,
+      "score": 6.096,
+      "page_type": "general",
+      "page_url": "",
+      "category": "campus"
+    },
+    {
+      "url": "https://images.pexels.com/photos/35385546/pexels-photo-35385546.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "source": "pexels",
+      "width": 4032,
+      "height": 3024,
+      "score": 6.096,
+      "page_type": "general",
+      "page_url": "",
+      "category": "campus"
+    },
+    {
+      "url": "https://images.pexels.com/photos/31785126/pexels-photo-31785126.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "source": "pexels",
+      "width": 4082,
+      "height": 2294,
+      "score": 4.682,
+      "page_type": "general",
+      "page_url": "",
+      "category": "campus"
+    },
+    {
+      "url": "https://images.pexels.com/photos/6012017/pexels-photo-6012017.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "source": "pexels",
+      "width": 3732,
+      "height": 2488,
+      "score": 4.643,
+      "page_type": "general",
+      "page_url": "",
+      "category": "campus"
+    }
+  ],
+  "North Carolina State Universit": [
+    {
+      "url": "https://images.pexels.com/photos/17792674/pexels-photo-17792674.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "source": "pexels",
+      "width": 5184,
+      "height": 3456,
+      "score": 8.958,
+      "page_type": "general",
+      "page_url": "",
+      "category": "campus"
+    },
+    {
+      "url": "https://images.pexels.com/photos/6755000/pexels-photo-6755000.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "source": "pexels",
+      "width": 5464,
+      "height": 3070,
+      "score": 8.387,
+      "page_type": "general",
+      "page_url": "",
+      "category": "campus"
+    },
+    {
+      "url": "https://images.pexels.com/photos/8688140/pexels-photo-8688140.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "source": "pexels",
+      "width": 4616,
+      "height": 3462,
+      "score": 7.99,
+      "page_type": "general",
+      "page_url": "",
+      "category": "campus"
+    },
+    {
+      "url": "https://images.pexels.com/photos/31785125/pexels-photo-31785125.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "source": "pexels",
+      "width": 4792,
+      "height": 2693,
+      "score": 6.452,
+      "page_type": "general",
+      "page_url": "",
+      "category": "campus"
+    },
+    {
+      "url": "https://images.pexels.com/photos/1371317/pexels-photo-1371317.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "source": "pexels",
+      "width": 4032,
+      "height": 3024,
+      "score": 6.096,
+      "page_type": "general",
+      "page_url": "",
+      "category": "campus"
+    },
+    {
+      "url": "https://images.pexels.com/photos/31785126/pexels-photo-31785126.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "source": "pexels",
+      "width": 4082,
+      "height": 2294,
+      "score": 4.682,
+      "page_type": "general",
+      "page_url": "",
+      "category": "campus"
+    }
+  ],
+  "North Carolina, University of": [
+    {
+      "url": "https://images.pexels.com/photos/36568258/pexels-photo-36568258.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "source": "pexels",
+      "width": 6240,
+      "height": 4160,
+      "score": 12.979,
+      "page_type": "general",
+      "page_url": "",
+      "category": "campus"
+    },
+    {
+      "url": "https://images.pexels.com/photos/31297362/pexels-photo-31297362.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "source": "pexels",
+      "width": 5445,
+      "height": 3630,
+      "score": 9.883,
+      "page_type": "general",
+      "page_url": "",
+      "category": "campus"
+    },
+    {
+      "url": "https://images.pexels.com/photos/35385546/pexels-photo-35385546.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "source": "pexels",
+      "width": 4032,
+      "height": 3024,
+      "score": 6.096,
+      "page_type": "general",
+      "page_url": "",
+      "category": "campus"
+    },
+    {
+      "url": "https://images.pexels.com/photos/19155159/pexels-photo-19155159.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "source": "pexels",
+      "width": 3816,
+      "height": 2544,
+      "score": 4.854,
+      "page_type": "general",
+      "page_url": "",
+      "category": "campus"
+    },
+    {
+      "url": "https://images.pexels.com/photos/31785126/pexels-photo-31785126.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "source": "pexels",
+      "width": 4082,
+      "height": 2294,
+      "score": 4.682,
+      "page_type": "general",
+      "page_url": "",
+      "category": "campus"
+    },
+    {
+      "url": "https://images.pexels.com/photos/6012017/pexels-photo-6012017.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "source": "pexels",
+      "width": 3732,
+      "height": 2488,
+      "score": 4.643,
+      "page_type": "general",
+      "page_url": "",
+      "category": "campus"
+    }
+  ],
+  "Notre Dame, University of": [
+    {
+      "url": "https://images.pexels.com/photos/36568258/pexels-photo-36568258.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "source": "pexels",
+      "width": 6240,
+      "height": 4160,
+      "score": 12.979,
+      "page_type": "general",
+      "page_url": "",
+      "category": "campus"
+    },
+    {
+      "url": "https://images.pexels.com/photos/5604180/pexels-photo-5604180.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "source": "pexels",
+      "width": 6000,
+      "height": 4000,
+      "score": 12.0,
+      "page_type": "general",
+      "page_url": "",
+      "category": "campus"
+    },
+    {
+      "url": "https://images.pexels.com/photos/35385546/pexels-photo-35385546.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "source": "pexels",
+      "width": 4032,
+      "height": 3024,
+      "score": 6.096,
+      "page_type": "general",
+      "page_url": "",
+      "category": "campus"
+    },
+    {
+      "url": "https://images.pexels.com/photos/35427325/pexels-photo-35427325.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "source": "pexels",
+      "width": 3915,
+      "height": 2935,
+      "score": 5.745,
+      "page_type": "general",
+      "page_url": "",
+      "category": "campus"
+    },
+    {
+      "url": "https://images.pexels.com/photos/19155159/pexels-photo-19155159.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "source": "pexels",
+      "width": 3816,
+      "height": 2544,
+      "score": 4.854,
+      "page_type": "general",
+      "page_url": "",
+      "category": "campus"
+    },
+    {
+      "url": "https://images.pexels.com/photos/6012017/pexels-photo-6012017.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "source": "pexels",
+      "width": 3732,
+      "height": 2488,
+      "score": 4.643,
+      "page_type": "general",
+      "page_url": "",
+      "category": "campus"
+    }
+  ],
+  "Pittsburgh, University of": [
+    {
+      "url": "https://images.pexels.com/photos/2217170/pexels-photo-2217170.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "source": "pexels",
+      "width": 6000,
+      "height": 4000,
+      "score": 12.0,
+      "page_type": "general",
+      "page_url": "",
+      "category": "campus"
+    },
+    {
+      "url": "https://images.pexels.com/photos/32569769/pexels-photo-32569769.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "source": "pexels",
+      "width": 5184,
+      "height": 2912,
+      "score": 7.548,
+      "page_type": "general",
+      "page_url": "",
+      "category": "campus"
+    },
+    {
+      "url": "https://images.pexels.com/photos/16767715/pexels-photo-16767715.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "source": "pexels",
+      "width": 4032,
+      "height": 3024,
+      "score": 6.096,
+      "page_type": "general",
+      "page_url": "",
+      "category": "campus"
+    },
+    {
+      "url": "https://images.pexels.com/photos/35385546/pexels-photo-35385546.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "source": "pexels",
+      "width": 4032,
+      "height": 3024,
+      "score": 6.096,
+      "page_type": "general",
+      "page_url": "",
+      "category": "campus"
+    },
+    {
+      "url": "https://images.pexels.com/photos/31785126/pexels-photo-31785126.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "source": "pexels",
+      "width": 4082,
+      "height": 2294,
+      "score": 4.682,
+      "page_type": "general",
+      "page_url": "",
+      "category": "campus"
+    },
+    {
+      "url": "https://images.pexels.com/photos/6012017/pexels-photo-6012017.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "source": "pexels",
+      "width": 3732,
+      "height": 2488,
+      "score": 4.643,
+      "page_type": "general",
+      "page_url": "",
+      "category": "campus"
+    }
+  ],
+  "Southern Methodist University": [
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/6/61/Dallas_Hall_on_the_campus_of_Southern_Methodist_University%2C_Dallas%2C_Texas_LCCN2015630915.jpg",
+      "source": "wiki_page",
+      "width": 7360,
+      "height": 4912,
+      "score": 36.152,
+      "page_type": "campus",
+      "page_url": "",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/5/57/Southern_Methodist_University_July_2016_145_%28Perkins_Chapel%29.jpg",
+      "source": "wiki_page",
+      "width": 6000,
+      "height": 4000,
+      "score": 24.0,
+      "page_type": "campus",
+      "page_url": "",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/0/07/Southern_Methodist_University_July_2016_080_%28Fondren_Library_Center%29.jpg",
+      "source": "wiki_page",
+      "width": 6000,
+      "height": 4000,
+      "score": 24.0,
+      "page_type": "campus",
+      "page_url": "",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/a/a5/Southern_Methodist_University_July_2016_064_%28Gail_O._and_R._Gerald_Turner_Pavilion_and_Blanton_Student_Services_Building%29.jpg",
+      "source": "wiki_page",
+      "width": 6000,
+      "height": 4000,
+      "score": 24.0,
+      "page_type": "campus",
+      "page_url": "",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/6/6f/Southern_Methodist_University_July_2016_014_%28Loyd_Commons%29.jpg",
+      "source": "wiki_page",
+      "width": 6000,
+      "height": 4000,
+      "score": 24.0,
+      "page_type": "campus",
+      "page_url": "",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/3/39/Southern_Methodist_University_July_2016_056_%28Barr_Pool%29.jpg",
+      "source": "wiki_commons",
+      "width": 6000,
+      "height": 4000,
+      "score": 22.0,
+      "page_type": "swim",
+      "page_url": "",
+      "search_context": "Southern Methodist University swimming pool",
+      "category": "pool"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/9/93/Southern_Methodist_University_July_2016_008_%28sign%29.jpg",
+      "source": "wiki_commons",
+      "width": 6000,
+      "height": 4000,
+      "score": 21.8,
+      "page_type": "campus",
+      "page_url": "",
+      "search_context": "Southern Methodist University campus",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/a/ac/Southern_Methodist_University_July_2016_020_%28Crum_Commons%29.jpg",
+      "source": "wiki_commons",
+      "width": 6000,
+      "height": 4000,
+      "score": 21.8,
+      "page_type": "campus",
+      "page_url": "",
+      "search_context": "Southern Methodist University campus",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/5/5e/Southern_Methodist_University_July_2016_045_%28promenade%29.jpg",
+      "source": "wiki_commons",
+      "width": 6000,
+      "height": 4000,
+      "score": 21.8,
+      "page_type": "campus",
+      "page_url": "",
+      "search_context": "Southern Methodist University campus",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/d/d8/Southern_Methodist_University_July_2016_046_%28promenade%29.jpg",
+      "source": "wiki_commons",
+      "width": 6000,
+      "height": 4000,
+      "score": 21.8,
+      "page_type": "campus",
+      "page_url": "",
+      "search_context": "Southern Methodist University campus",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/c/cb/Southern_Methodist_University_July_2016_049_%28promenade%29.jpg",
+      "source": "wiki_commons",
+      "width": 6000,
+      "height": 4000,
+      "score": 21.8,
+      "page_type": "campus",
+      "page_url": "",
+      "search_context": "Southern Methodist University campus",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/7/7d/Southern_Methodist_University_July_2016_069.jpg",
+      "source": "wiki_commons",
+      "width": 6000,
+      "height": 4000,
+      "score": 21.8,
+      "page_type": "campus",
+      "page_url": "",
+      "search_context": "Southern Methodist University campus",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/7/73/Southern_Methodist_University_July_2016_065_%28Blanton_Student_Services_Building%29.jpg",
+      "source": "wiki_commons",
+      "width": 6000,
+      "height": 4000,
+      "score": 21.5,
+      "page_type": "student_life",
+      "page_url": "",
+      "search_context": "Southern Methodist University students",
+      "category": "student_life"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/a/a9/Southern_Methodist_University_July_2016_062_%28Blanton_Student_Services_Building%29.jpg",
+      "source": "wiki_commons",
+      "width": 6000,
+      "height": 4000,
+      "score": 21.5,
+      "page_type": "student_life",
+      "page_url": "",
+      "search_context": "Southern Methodist University students",
+      "category": "student_life"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/3/37/Southern_Methodist_University_July_2016_068_%28Hughes-Trigg_Student_Center%29.jpg",
+      "source": "wiki_commons",
+      "width": 6000,
+      "height": 4000,
+      "score": 21.5,
+      "page_type": "student_life",
+      "page_url": "",
+      "search_context": "Southern Methodist University students",
+      "category": "student_life"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/0/07/Southern_Methodist_University_July_2016_075_%28Blanton_Student_Services_Building%29.jpg",
+      "source": "wiki_commons",
+      "width": 6000,
+      "height": 4000,
+      "score": 21.5,
+      "page_type": "student_life",
+      "page_url": "",
+      "search_context": "Southern Methodist University students",
+      "category": "student_life"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/6/69/Southern_Methodist_University_July_2016_122_%28Meadows_Museum%29.jpg",
+      "source": "wiki_page",
+      "width": 4912,
+      "height": 3275,
+      "score": 16.087,
+      "page_type": "campus",
+      "page_url": "",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/4/45/Armstrong_Commons.jpg",
+      "source": "wiki_page",
+      "width": 5312,
+      "height": 2988,
+      "score": 15.872,
+      "page_type": "campus",
+      "page_url": "",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/c/c8/Dallas_Hall_%28Southern_Methodist_University%29.JPG",
+      "source": "wiki_commons",
+      "width": 5133,
+      "height": 2678,
+      "score": 13.255,
+      "page_type": "campus",
+      "page_url": "",
+      "search_context": "Southern Methodist University campus",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/b/bb/Virginia_Hall_%28Southern_Methodist_University%29.JPG",
+      "source": "wiki_commons",
+      "width": 4735,
+      "height": 2499,
+      "score": 11.661,
+      "page_type": "campus",
+      "page_url": "",
+      "search_context": "Southern Methodist University campus",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/a/a8/Cox_SMU.JPG",
+      "source": "wiki_page",
+      "width": 3072,
+      "height": 2304,
+      "score": 7.078,
+      "page_type": "campus",
+      "page_url": "",
+      "category": "campus"
+    },
+    {
+      "url": "https://www.smu.edu/-/media/site/businessfinance/facilitiesmanagementsustainability/constructions_renovation/front/34128d_0142_hdrpanocomposite_rtv2_final/newcampus/tall.jpg?h=3446&iar=0&w=4496&hash=C93E97008AF973B47C3AD9D402377ACE",
+      "alt": "SMU Campus looking south, with Dallas in Distance",
+      "width": 4496,
+      "height": 3446,
+      "page_type": "campus",
+      "page_url": "https://www.smu.edu/facilities",
+      "source": "web_campus",
+      "score": 6.3,
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/5/53/SMU_Mustang_Band_Hall_Entrance_2004.JPG",
+      "source": "wiki_commons",
+      "width": 2592,
+      "height": 1944,
+      "score": 6.199,
+      "page_type": "swim",
+      "page_url": "",
+      "search_context": "Southern Methodist University natatorium",
+      "category": "pool"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/4/45/Southern_Methodist_University_July_2016_107_%28Dallas_Hall%29-wikivoyage.jpg",
+      "source": "wiki_commons",
+      "width": 6000,
+      "height": 857,
+      "score": 6.085,
+      "page_type": "campus",
+      "page_url": "",
+      "search_context": "Southern Methodist University campus",
+      "category": "campus"
+    }
+  ],
+  "Stanford University": [
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/e/ee/Stanford_Panorama_fixed.jpg",
+      "source": "wiki_commons",
+      "width": 19657,
+      "height": 3805,
+      "score": 64.329,
+      "page_type": "swim",
+      "page_url": "",
+      "search_context": "Stanford University aquatic center",
+      "category": "pool"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/9/92/Lake_Lagunita_Stanford_January_2013_panorama_5.jpg",
+      "source": "wiki_page",
+      "width": 13200,
+      "height": 3000,
+      "score": 39.6,
+      "page_type": "campus",
+      "page_url": "",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/6/60/Rob_Siegel_and_Stanford_Students.jpg",
+      "source": "wiki_commons",
+      "width": 5712,
+      "height": 4284,
+      "score": 21.892,
+      "page_type": "student_life",
+      "page_url": "",
+      "search_context": "Stanford University students",
+      "category": "student_life"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/6/61/Secretary_Blinken_Meets_with_Students_at_Stanford_University_%2851569990569%29.jpg",
+      "source": "wiki_commons",
+      "width": 5439,
+      "height": 3626,
+      "score": 17.935,
+      "page_type": "student_life",
+      "page_url": "",
+      "search_context": "Stanford University students",
+      "category": "student_life"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/5/53/Secretary_Blinken_Meets_with_Students_at_Stanford_University_%2851569548243%29.jpg",
+      "source": "wiki_commons",
+      "width": 5290,
+      "height": 3527,
+      "score": 17.048,
+      "page_type": "student_life",
+      "page_url": "",
+      "search_context": "Stanford University students",
+      "category": "student_life"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/f/f7/Stanford_University_campus_in_2016.jpg",
+      "source": "wiki_commons",
+      "width": 5472,
+      "height": 3078,
+      "score": 15.836,
+      "page_type": "campus",
+      "page_url": "",
+      "search_context": "Stanford University campus",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/9/9d/Stanford_University_from_Hoover_Tower_January_2013_004.jpg",
+      "source": "wiki_commons",
+      "width": 4928,
+      "height": 3264,
+      "score": 15.204,
+      "page_type": "campus",
+      "page_url": "",
+      "search_context": "Stanford University campus",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/3/3b/Stanford_University_campus_from_above.jpg",
+      "source": "wiki_commons",
+      "width": 5226,
+      "height": 3000,
+      "score": 14.865,
+      "page_type": "campus",
+      "page_url": "",
+      "search_context": "Stanford University campus",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/e/e9/Secretary_Blinken_Meets_with_Students_at_Stanford_University_%2851568506322%29.jpg",
+      "source": "wiki_commons",
+      "width": 4890,
+      "height": 3260,
+      "score": 14.784,
+      "page_type": "student_life",
+      "page_url": "",
+      "search_context": "Stanford University students",
+      "category": "student_life"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/b/bb/Claw_Fountain_at_Stanford_Univerisity.JPG",
+      "source": "wiki_page",
+      "width": 4608,
+      "height": 3072,
+      "score": 14.156,
+      "page_type": "campus",
+      "page_url": "",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/0/0d/Stanford_University_from_Hoover_Tower_January_2013_panorama.jpg",
+      "source": "wiki_commons",
+      "width": 6000,
+      "height": 2400,
+      "score": 13.8,
+      "page_type": "campus",
+      "page_url": "",
+      "search_context": "Stanford University campus",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/1/11/Secretary_Blinken_Meets_with_Students_at_Stanford_University_%2851568506047%29.jpg",
+      "source": "wiki_commons",
+      "width": 4594,
+      "height": 3063,
+      "score": 13.226,
+      "page_type": "student_life",
+      "page_url": "",
+      "search_context": "Stanford University students",
+      "category": "student_life"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/5/5d/Secretary_Blinken_Meets_with_Students_at_Stanford_University_%2851569303446%29.jpg",
+      "source": "wiki_commons",
+      "width": 4576,
+      "height": 3050,
+      "score": 13.131,
+      "page_type": "student_life",
+      "page_url": "",
+      "search_context": "Stanford University students",
+      "category": "student_life"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/0/0b/Stanford_University_from_Hoover_Tower_May_2011_003.jpg",
+      "source": "wiki_commons",
+      "width": 4368,
+      "height": 2912,
+      "score": 12.4,
+      "page_type": "campus",
+      "page_url": "",
+      "search_context": "Stanford University campus",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/f/f6/Stanford_University_from_Hoover_Tower_May_2011_004.jpg",
+      "source": "wiki_commons",
+      "width": 4368,
+      "height": 2912,
+      "score": 12.4,
+      "page_type": "campus",
+      "page_url": "",
+      "search_context": "Stanford University campus",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/6/63/Stanford_University_from_Hoover_Tower_May_2011_005.jpg",
+      "source": "wiki_commons",
+      "width": 4368,
+      "height": 2912,
+      "score": 12.4,
+      "page_type": "campus",
+      "page_url": "",
+      "search_context": "Stanford University campus",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/9/94/Stanford_Memorial_Church_May_2011_HDR_1.jpg",
+      "source": "wiki_commons",
+      "width": 4364,
+      "height": 2910,
+      "score": 12.383,
+      "page_type": "campus",
+      "page_url": "",
+      "search_context": "Stanford University campus",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/f/f9/Stanford_University_from_Hoover_Tower_May_2011_001.jpg",
+      "source": "wiki_commons",
+      "width": 4320,
+      "height": 2880,
+      "score": 12.168,
+      "page_type": "campus",
+      "page_url": "",
+      "search_context": "Stanford University campus",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/f/f2/GSPB_urban_hike.jpg",
+      "source": "wiki_page",
+      "width": 4000,
+      "height": 3000,
+      "score": 12.0,
+      "page_type": "campus",
+      "page_url": "",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/9/98/Views_of_Stanford_University_campus_from_Hoover_Tower_01.jpg",
+      "source": "wiki_commons",
+      "width": 4000,
+      "height": 3000,
+      "score": 11.8,
+      "page_type": "campus",
+      "page_url": "",
+      "search_context": "Stanford University campus",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/8/8e/Views_of_Stanford_University_campus_from_Hoover_Tower_04.jpg",
+      "source": "wiki_commons",
+      "width": 4000,
+      "height": 3000,
+      "score": 11.8,
+      "page_type": "campus",
+      "page_url": "",
+      "search_context": "Stanford University campus",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/c/cd/Views_of_Stanford_University_campus_from_Hoover_Tower_03.jpg",
+      "source": "wiki_commons",
+      "width": 4000,
+      "height": 3000,
+      "score": 11.8,
+      "page_type": "campus",
+      "page_url": "",
+      "search_context": "Stanford University campus",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/7/7f/Crothers_Halls_Complex_Stanford_University_2011.jpg",
+      "source": "wiki_commons",
+      "width": 3648,
+      "height": 2736,
+      "score": 9.817,
+      "page_type": "student_life",
+      "page_url": "",
+      "search_context": "Stanford University students",
+      "category": "student_life"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/2/26/Stern_Hall_Stanford_University.jpg",
+      "source": "wiki_commons",
+      "width": 3648,
+      "height": 2736,
+      "score": 9.817,
+      "page_type": "student_life",
+      "page_url": "",
+      "search_context": "Stanford University students",
+      "category": "student_life"
+    }
+  ],
+  "University of Miami (Florida)": [
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/7/7d/Florida_International_University_Parkview_Housing.jpg",
+      "source": "wiki_commons",
+      "width": 5736,
+      "height": 3840,
+      "score": 20.155,
+      "page_type": "campus",
+      "page_url": "",
+      "search_context": "University of Miami (Florida) campus",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/6/65/Main_Gate_University_of_Miami.jpg",
+      "source": "wiki_commons",
+      "width": 4096,
+      "height": 3383,
+      "score": 13.347,
+      "page_type": "campus",
+      "page_url": "",
+      "search_context": "University of Miami (Florida) campus",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/a/a8/Shalala_Student_Center%2C_University_of_Miami.jpg",
+      "source": "wiki_commons",
+      "width": 4032,
+      "height": 3024,
+      "score": 11.661,
+      "page_type": "student_life",
+      "page_url": "",
+      "search_context": "University of Miami (Florida) students",
+      "category": "student_life"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/8/83/FLORIDA_INTERNATIONAL_UNIVERSITY_ON_U.S._41%2C_TAMIAMI_TRAIL_-_NARA_-_544527.jpg",
+      "source": "wiki_commons",
+      "width": 3000,
+      "height": 2027,
+      "score": 6.867,
+      "page_type": "campus",
+      "page_url": "",
+      "search_context": "University of Miami (Florida) campus",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/4/4c/FLORIDA_INTERNATIONAL_UNIVERSITY_ON_U.S._41%2C_TAMIAMI_TRAIL_-_NARA_-_544523.jpg",
+      "source": "wiki_commons",
+      "width": 3000,
+      "height": 2016,
+      "score": 6.84,
+      "page_type": "campus",
+      "page_url": "",
+      "search_context": "University of Miami (Florida) campus",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/3/3e/University_of_Miami_Otto_G._Richter_Library.jpg",
+      "source": "wiki_commons",
+      "width": 2560,
+      "height": 1920,
+      "score": 5.896,
+      "page_type": "campus",
+      "page_url": "",
+      "search_context": "University of Miami (Florida) campus",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/4/4b/University_of_Miami_Lake_Osceola.jpg",
+      "source": "wiki_commons",
+      "width": 1280,
+      "height": 960,
+      "score": 2.824,
+      "page_type": "campus",
+      "page_url": "",
+      "search_context": "University of Miami (Florida) campus",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/0/0f/Albizu_University_Miami_Campus.jpg",
+      "source": "wiki_commons",
+      "width": 1170,
+      "height": 800,
+      "score": 2.58,
+      "page_type": "campus",
+      "page_url": "",
+      "search_context": "University of Miami (Florida) campus",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/8/89/AlbizuMiamiCampus.png",
+      "source": "wiki_commons",
+      "width": 798,
+      "height": 556,
+      "score": 2.17,
+      "page_type": "campus",
+      "page_url": "",
+      "search_context": "University of Miami (Florida) campus",
+      "category": "campus"
+    }
+  ],
+  "VA Tech": [
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/0/05/The_Inn_at_Virginia_Tech_%28Blacksburg%2C_Virginia%29.jpg",
+      "source": "wiki_commons",
+      "width": 5411,
+      "height": 3607,
+      "score": 18.065,
+      "page_type": "campus",
+      "page_url": "",
+      "search_context": "VA Tech campus",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/b/b5/2015_Department_of_Defense_Warrior_Games_150627-A-ZH506-006.jpg",
+      "source": "wiki_commons",
+      "width": 4968,
+      "height": 2828,
+      "score": 13.708,
+      "page_type": "swim",
+      "page_url": "",
+      "search_context": "VA Tech swimming pool",
+      "category": "pool"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/1/13/GCC_Nursing_%26_Health_Tech_Convocation_%2814261071342%29.jpg",
+      "source": "wiki_commons",
+      "width": 3621,
+      "height": 2628,
+      "score": 9.43,
+      "page_type": "student_life",
+      "page_url": "",
+      "search_context": "VA Tech students",
+      "category": "student_life"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/a/a3/Virginia_Tech_Tech_Softball_Park.JPG",
+      "source": "wiki_commons",
+      "width": 3264,
+      "height": 2448,
+      "score": 8.459,
+      "page_type": "campus",
+      "page_url": "",
+      "search_context": "VA Tech campus",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/e/e6/Virginia_Tech_Campus_-_%D5%8E%D5%AB%D5%BB%D5%AB%D5%B6%D5%AB%D5%A1%D5%B5%D5%AB_%D5%BF%D5%A5%D5%AD%D5%B6%D5%B8%D5%AC%D5%B8%D5%A3%D5%AB%D5%A1%D5%AF%D5%A1%D5%B6_%D5%AB%D5%B6%D5%BD%D5%BF%D5%AB%D5%BF%D5%B8%D5%BF%D6%82%D5%AB_%D5%AF%D5%A1%D5%B4%D5%BA%D5%B8%D6%82%D5%BD.jpg",
+      "source": "wiki_commons",
+      "width": 3264,
+      "height": 2448,
+      "score": 8.459,
+      "page_type": "campus",
+      "page_url": "",
+      "search_context": "VA Tech campus",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/2/20/University%2C_Blacksburg%2C_VA%2C_USA_-_panoramio.jpg",
+      "source": "wiki_commons",
+      "width": 3264,
+      "height": 2448,
+      "score": 8.459,
+      "page_type": "campus",
+      "page_url": "",
+      "search_context": "VA Tech university building",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/2/26/Microscope_lab_at_the-_Virginia_Tech%2C_Eastern_Shore_Research_and_Extensions_Center.jpg",
+      "source": "wiki_commons",
+      "width": 4128,
+      "height": 1856,
+      "score": 8.185,
+      "page_type": "campus",
+      "page_url": "",
+      "search_context": "VA Tech campus",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/c/c4/ArlingtonCoVaTechInnovativeCampus.jpg",
+      "source": "wiki_commons",
+      "width": 1250,
+      "height": 900,
+      "score": 2.737,
+      "page_type": "campus",
+      "page_url": "",
+      "search_context": "VA Tech campus",
+      "category": "campus"
+    },
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/5/58/Virginia_Tech_football_practice_field_2003.jpg",
+      "source": "wiki_commons",
+      "width": 1600,
+      "height": 689,
+      "score": 2.719,
+      "page_type": "campus",
+      "page_url": "",
+      "search_context": "VA Tech campus",
+      "category": "campus"
+    }
+  ],
+  "Virginia, University of": [
+    {
+      "url": "https://images.pexels.com/photos/2217170/pexels-photo-2217170.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "source": "pexels",
+      "width": 6000,
+      "height": 4000,
+      "score": 12.0,
+      "page_type": "general",
+      "page_url": "",
+      "category": "campus"
+    },
+    {
+      "url": "https://images.pexels.com/photos/32569769/pexels-photo-32569769.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "source": "pexels",
+      "width": 5184,
+      "height": 2912,
+      "score": 7.548,
+      "page_type": "general",
+      "page_url": "",
+      "category": "campus"
+    },
+    {
+      "url": "https://images.pexels.com/photos/35385546/pexels-photo-35385546.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "source": "pexels",
+      "width": 4032,
+      "height": 3024,
+      "score": 6.096,
+      "page_type": "general",
+      "page_url": "",
+      "category": "campus"
+    },
+    {
+      "url": "https://images.pexels.com/photos/12091126/pexels-photo-12091126.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "source": "pexels",
+      "width": 4000,
+      "height": 3000,
+      "score": 6.0,
+      "page_type": "general",
+      "page_url": "",
+      "category": "campus"
+    },
+    {
+      "url": "https://images.pexels.com/photos/31785126/pexels-photo-31785126.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "source": "pexels",
+      "width": 4082,
+      "height": 2294,
+      "score": 4.682,
+      "page_type": "general",
+      "page_url": "",
+      "category": "campus"
+    },
+    {
+      "url": "https://images.pexels.com/photos/6012017/pexels-photo-6012017.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "source": "pexels",
+      "width": 3732,
+      "height": 2488,
+      "score": 4.643,
       "page_type": "general",
       "page_url": "",
       "category": "campus"
