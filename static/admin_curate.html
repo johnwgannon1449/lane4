@@ -229,6 +229,15 @@ html, body { height: 100%; font-family: 'Figtree', sans-serif; background: var(-
 }
 .img-card.selected .check-badge { display: flex; }
 
+/* Drag-and-drop */
+.img-card { cursor: grab; }
+.img-card.dragging { opacity: .35; outline: 2px dashed var(--border); }
+.section-body.drop-target {
+  outline: 2px dashed var(--green);
+  outline-offset: -4px;
+  background: rgba(22,163,74,.05);
+}
+
 /* ── Bottom nav bar ─────────────────── */
 #bottom-nav {
   display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
@@ -550,7 +559,9 @@ function renderSection(sec) {
         </button>
       </div>
     </div>
-    <div class="section-body ${skip ? 'skipped' : ''}" id="body-${key}">
+    <div class="section-body ${skip ? 'skipped' : ''}" id="body-${key}"
+         ondragover="dragOver(event,'${key}')" ondragleave="dragLeave(event,'${key}')"
+         ondrop="dropCard(event,'${key}')">
       ${skip
         ? `<span>🚫</span><span>Skipped — no suitable images found</span>`
         : renderSectionBody(key, cands, sels, hint)
@@ -574,7 +585,10 @@ function renderSectionBody(key, cands, sels, hint) {
 
 function cardHtml(key, c, i, selected) {
   const cls = selected ? 'selected' : '';
-  return `<div class="img-card ${cls}" id="card-${key}-${i}" onclick="toggleCard('${key}',${i})"
+  return `<div class="img-card ${cls}" id="card-${key}-${i}"
+      draggable="true"
+      ondragstart="dragStart(event,'${key}',${i})"
+      onclick="toggleCard('${key}',${i})"
       title="${esc(c.source)} · ${c.width||0}×${c.height||0}">
     <img class="img-card-img" src="${esc(c.url)}" loading="lazy" alt=""
          onerror="this.closest('.img-card').classList.add('img-error')" />
@@ -598,6 +612,71 @@ function toggleCard(key, idx) {
     document.getElementById(`card-${key}-${idx}`)?.classList.add('selected');
   }
   refreshBadge(key);
+}
+
+// ── Drag-and-drop ──────────────────────────────────────────────────────────────
+let _drag = null;  // { key, idx }
+
+function dragStart(e, key, idx) {
+  _drag = { key, idx };
+  e.dataTransfer.effectAllowed = 'move';
+  // Defer adding class so the browser still renders the ghost
+  setTimeout(() => document.getElementById(`card-${key}-${idx}`)?.classList.add('dragging'), 0);
+}
+
+function dragOver(e, destKey) {
+  if (!_drag || _drag.key === destKey) return;
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  document.getElementById(`body-${destKey}`)?.classList.add('drop-target');
+}
+
+function dragLeave(e, destKey) {
+  // Only remove highlight when truly leaving the section-body (not a child element)
+  if (!e.relatedTarget || !e.currentTarget.contains(e.relatedTarget)) {
+    document.getElementById(`body-${destKey}`)?.classList.remove('drop-target');
+  }
+}
+
+function dropCard(e, destKey) {
+  e.preventDefault();
+  document.getElementById(`body-${destKey}`)?.classList.remove('drop-target');
+  if (!_drag || _drag.key === destKey) { _drag = null; return; }
+  moveCard(_drag.key, _drag.idx, destKey);
+  _drag = null;
+}
+
+function moveCard(srcKey, srcIdx, dstKey) {
+  const srcCands = CANDIDATES[srcKey] || [];
+  const dstCands = CANDIDATES[dstKey] || (CANDIDATES[dstKey] = []);
+  const card = srcCands[srcIdx];
+  if (!card) return;
+
+  // Move candidate
+  srcCands.splice(srcIdx, 1);
+  dstCands.push(card);
+
+  // If card was selected in source, move selection too
+  const srcSels = SELECTIONS[srcKey] || [];
+  const selPos = srcSels.indexOf(card.url);
+  if (selPos >= 0) {
+    srcSels.splice(selPos, 1);
+    (SELECTIONS[dstKey] || (SELECTIONS[dstKey] = [])).push(card.url);
+  }
+
+  // Re-render both section bodies in-place (fast, no full school reload)
+  const srcSection = SECTIONS.find(s => s.key === srcKey);
+  const dstSection = SECTIONS.find(s => s.key === dstKey);
+  if (srcSection) {
+    const b = document.getElementById(`body-${srcKey}`);
+    if (b) b.innerHTML = renderSectionBody(srcKey, CANDIDATES[srcKey], SELECTIONS[srcKey], srcSection.hint);
+  }
+  if (dstSection) {
+    const b = document.getElementById(`body-${dstKey}`);
+    if (b) b.innerHTML = renderSectionBody(dstKey, CANDIDATES[dstKey], SELECTIONS[dstKey], dstSection.hint);
+  }
+  refreshBadge(srcKey);
+  refreshBadge(dstKey);
 }
 
 function refreshBadge(key) {

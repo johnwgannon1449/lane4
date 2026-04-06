@@ -118,7 +118,13 @@ _HIST_YEAR_RE = re.compile(r'(?<![0-9])(1[89]\d{2}|1[0-5]\d{2})(?![0-9])')
 
 # ── Category signals ──────────────────────────────────────────────────────────
 _POOL_URL_TOKENS    = {'swim', 'pool', 'aquatic', 'natator', 'diving', 'aquatics'}
-_STUDENT_URL_TOKENS = {'student-life', 'student_life', 'studentlife', 'students_at'}
+_STUDENT_URL_TOKENS = {'student-life', 'student_life', 'studentlife', 'students_at',
+                       'campus-life', 'campus_life', 'campuslife'}
+# Additional pool-related filename tokens used to filter campus Commons results
+_POOL_FNAME_FILTER  = _POOL_URL_TOKENS | {
+    'recreation', 'natatorium', 'fitness', 'reccenter', 'rec_center',
+    'aquaticcenter', 'crec', 'recsport', 'rec_sport', 'wellness',
+}
 
 BOOST_PAGE_TOKENS   = ['visit', 'campus', 'about', 'traditions', 'landmarks',
                         'student-life', 'facilities', 'aquatics', 'natatorium',
@@ -315,14 +321,29 @@ def _score_image(img: dict) -> float:
 
 
 def _assign_category(img: dict) -> str:
-    """Derive display category from page_type and URL signals."""
-    page_type = img.get('page_type', 'general')
-    url_low   = urllib.parse.unquote(img.get('url', '')).lower()
+    """Derive display category from page_type, URL signals, and search context."""
+    page_type    = img.get('page_type', 'general')
+    url_low      = urllib.parse.unquote(img.get('url', '')).lower()
+    page_url_low = urllib.parse.unquote(img.get('page_url', '')).lower()
+    search_ctx   = img.get('search_context', '').lower()
 
-    if page_type == 'swim' or any(t in url_low for t in _POOL_URL_TOKENS):
+    # page_type='swim' is set explicitly by pool-targeted harvest functions.
+    # Also check filename, page URL, and the originating search query for pool signals —
+    # this catches aquatic facility images whose filenames don't contain pool words.
+    _ctx_pool_tokens = {'swim', 'pool', 'aquatic', 'natator', 'diving'}
+    if (page_type == 'swim'
+            or any(t in url_low      for t in _POOL_URL_TOKENS)
+            or any(t in page_url_low for t in _POOL_URL_TOKENS)
+            or any(t in search_ctx   for t in _ctx_pool_tokens)):
         return 'pool'
-    if any(t in url_low for t in _STUDENT_URL_TOKENS):
+
+    # page_type='student_life' is set by student-life-targeted harvest functions.
+    _ctx_student_tokens = {'student', 'campus life', 'campus_life'}
+    if (page_type == 'student_life'
+            or any(t in url_low    for t in _STUDENT_URL_TOKENS)
+            or any(t in search_ctx for t in _ctx_student_tokens)):
         return 'student_life'
+
     return 'campus'
 
 
@@ -612,10 +633,13 @@ def _wiki_page_images(title: str, limit: int = 25) -> list[dict]:
         return []
 
 
-def _wiki_commons_campus(school: str, limit: int = 12) -> list[dict]:
-    """Search Wikimedia Commons for modern campus images (separate from article images)."""
-    results = []
-    for query in [f'{school} campus', f'{school} university building']:
+def _commons_search(queries: list[str], page_type: str, score_base: float,
+                    limit: int = 12, max_results: int = 8,
+                    exclude_fname_tokens: set | None = None) -> list[dict]:
+    """Generic Wikimedia Commons image search helper, shared by campus/pool/student functions."""
+    results: list[dict] = []
+    exclude = exclude_fname_tokens or set()
+    for query in queries:
         try:
             params = {
                 'action': 'query', 'generator': 'search',
@@ -640,23 +664,68 @@ def _wiki_commons_campus(school: str, limit: int = 12) -> list[dict]:
                         continue
                     if _HIST_YEAR_RE.search(fname):
                         continue
+                    if exclude and any(t in fname for t in exclude):
+                        continue
                     w = info.get('width', 0)
                     h = info.get('height', 0)
                     if w < MIN_WIDTH or h < MIN_HEIGHT:
                         continue
                     if h > 0 and w / h < 1.1:
-                        continue   # require landscape
-                    score = round((w * h) / 1_200_000 + 1.8, 3)
+                        continue
+                    score = round((w * h) / 1_200_000 + score_base, 3)
                     results.append({
                         'url': img_url, 'source': 'wiki_commons',
                         'width': w, 'height': h, 'score': score,
-                        'page_type': 'campus', 'page_url': '',
+                        'page_type': page_type, 'page_url': '',
+                        'search_context': query,
                     })
         except Exception:
             pass
-        if len(results) >= 8:
+        if len(results) >= max_results:
             break
     return results
+
+
+def _wiki_commons_campus(school: str) -> list[dict]:
+    """Search Wikimedia Commons for campus building photos, excluding pool facilities."""
+    return _commons_search(
+        queries=[f'{school} campus', f'{school} university building'],
+        page_type='campus',
+        score_base=1.8,
+        limit=14,
+        max_results=8,
+        # Exclude pool/aquatic facility filenames so they don't leak into campus section
+        exclude_fname_tokens=_POOL_FNAME_FILTER,
+    )
+
+
+def _wiki_commons_pool(school: str) -> list[dict]:
+    """Search Wikimedia Commons specifically for aquatic facility images."""
+    return _commons_search(
+        queries=[
+            f'{school} swimming pool',
+            f'{school} natatorium',
+            f'{school} aquatic center',
+        ],
+        page_type='swim',
+        score_base=2.0,
+        limit=10,
+        max_results=6,
+    )
+
+
+def _wiki_commons_student(school: str) -> list[dict]:
+    """Search Wikimedia Commons for student life images."""
+    return _commons_search(
+        queries=[
+            f'{school} students',
+            f'{school} campus life',
+        ],
+        page_type='student_life',
+        score_base=1.5,
+        limit=10,
+        max_results=5,
+    )
 
 
 def _wiki_candidates(school: str) -> list[dict]:
@@ -669,13 +738,16 @@ def _wiki_candidates(school: str) -> list[dict]:
     if main:
         results.append(main)
     results.extend(_wiki_page_images(wiki_title))
-    # Commons search for better modern campus shots
-    commons = _wiki_commons_campus(school)
+
     seen = {r['url'] for r in results}
-    for img in commons:
-        if img['url'] not in seen:
-            results.append(img)
-            seen.add(img['url'])
+
+    # Three separate purpose-built Commons searches — one per display category
+    for fn in [_wiki_commons_campus, _wiki_commons_pool, _wiki_commons_student]:
+        for img in fn(school):
+            if img['url'] not in seen:
+                results.append(img)
+                seen.add(img['url'])
+
     return results
 
 
