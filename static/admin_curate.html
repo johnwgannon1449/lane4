@@ -467,7 +467,7 @@ async function selectSchool(idx) {
   document.getElementById('btn-save-next').disabled = true;
 
   if (!school.has_candidates) {
-    showFetchPrompt(school.name);
+    autoFetchOnArrival(school.name);
     return;
   }
 
@@ -495,6 +495,9 @@ async function selectSchool(idx) {
 
     renderSchoolView(school);
     document.getElementById('btn-save-next').disabled = false;
+
+    // Background pre-fetch the next school so it's ready when we arrive
+    backgroundPrefetchNext(idx);
   } catch (e) {
     showOverlay('⚠️', 'Error loading images', e.message);
   }
@@ -1010,22 +1013,13 @@ function showOverlay(icon, title, desc, loading = false) {
   </div>`;
 }
 
-function showFetchPrompt(name) {
+// Auto-fetch runs immediately on arrival — no button click needed.
+async function autoFetchOnArrival(schoolName) {
   document.getElementById('main-inner').innerHTML = `
     <div id="state-overlay">
-      <div class="icon">📭</div>
-      <div class="title">No images for ${esc(name)}</div>
-      <div class="desc">Click below to fetch candidate images from Wikipedia, Wikimedia Commons, and the school website.</div>
-      <button class="fetch-btn" onclick="fetchAll('${name.replace(/'/g, "\\'")}')">↻ Fetch images now</button>
+      <div class="spinner" style="width:32px;height:32px;margin-bottom:8px"></div>
+      <div style="color:var(--muted);font-size:.9rem">Loading images for ${esc(schoolName)}…</div>
     </div>`;
-}
-
-async function fetchAll(schoolName) {
-  const body = document.querySelector('#state-overlay');
-  if (body) {
-    body.innerHTML = `<div class="spinner" style="width:32px;height:32px;margin-bottom:8px"></div>
-      <div style="color:var(--muted);font-size:.9rem">Fetching images for ${esc(schoolName)}… (~15s)</div>`;
-  }
   try {
     const res = await fetch('/api/admin/fetch-candidates', {
       method: 'POST',
@@ -1036,10 +1030,36 @@ async function fetchAll(schoolName) {
     if (!res.ok) throw new Error(data.error);
     const school = CONF_SCHOOLS[CONF_IDX];
     if (school) school.has_candidates = data.count > 0;
-    // Re-select school to reload view
     selectSchool(CONF_IDX);
   } catch (e) {
     showOverlay('⚠️', 'Fetch failed', e.message);
+  }
+}
+
+// Fire-and-forget: start fetching the next school in the background while
+// the user is working on the current one so it's ready when they arrive.
+const _prefetchInFlight = new Set();
+async function backgroundPrefetchNext(currentIdx) {
+  const nextIdx = currentIdx + 1;
+  if (nextIdx >= CONF_SCHOOLS.length) return;
+  const next = CONF_SCHOOLS[nextIdx];
+  if (!next || next.has_candidates || _prefetchInFlight.has(next.name)) return;
+  _prefetchInFlight.add(next.name);
+  try {
+    const res = await fetch('/api/admin/fetch-candidates', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ school: next.name }),
+    });
+    const data = await res.json();
+    if (res.ok && data.count > 0) {
+      next.has_candidates = true;
+      renderSidebar();  // update sidebar dot so user can see it's ready
+    }
+  } catch (_) {
+    // silently ignore — will auto-fetch on arrival if needed
+  } finally {
+    _prefetchInFlight.delete(next.name);
   }
 }
 
