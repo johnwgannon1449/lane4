@@ -798,6 +798,65 @@ def _pexels_search(query: str, n: int = 4) -> list[dict]:
         return []
 
 
+def _ddg_image_search(query: str, page_type: str = 'general', n: int = 10) -> list[dict]:
+    """DuckDuckGo image search — free, no API key required.
+
+    Returns real web images (athletic department pages, news sites) that are
+    school-specific. Used as primary fallback when Google CSE is unavailable.
+    """
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:124.0) Gecko/20100101 Firefox/124.0',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        'Accept-Language': 'en-US,en;q=0.5',
+    }
+    try:
+        # Step 1: fetch the search page to obtain the vqd token
+        q_enc = urllib.parse.quote_plus(query)
+        url1 = f'https://duckduckgo.com/?q={q_enc}&iax=images&ia=images'
+        req1 = urllib.request.Request(url1, headers=headers)
+        with urllib.request.urlopen(req1, timeout=12, context=_SSL_CTX) as r:
+            html = r.read().decode('utf-8', errors='ignore')
+        m = re.search(r'vqd=([\d-]+)', html)
+        if not m:
+            return []
+        vqd = m.group(1)
+
+        # Step 2: fetch image results JSON
+        params = {'l': 'us-en', 'o': 'json', 'q': query, 'vqd': vqd, 'f': ',,,,,', 'p': '1'}
+        url2 = 'https://duckduckgo.com/i.js?' + urllib.parse.urlencode(params)
+        req2 = urllib.request.Request(url2, headers={**headers, 'Referer': url1})
+        with urllib.request.urlopen(req2, timeout=12, context=_SSL_CTX) as r:
+            data = json.loads(r.read())
+
+        results = []
+        for item in data.get('results', [])[:n]:
+            link = item.get('image', '')
+            if not link or _is_bad_url(link):
+                continue
+            w = item.get('width', 0)
+            h = item.get('height', 0)
+            if w < MIN_WIDTH or h < MIN_HEIGHT:
+                continue
+            if h > 0 and w / h < 0.5:   # allow near-square but reject extreme portrait
+                continue
+            score = round((w * h) / 1_200_000 + 2.2, 3)
+            results.append({
+                'url':            link,
+                'source':         'ddg_image',
+                'width':          w,
+                'height':         h,
+                'score':          score,
+                'page_type':      page_type,
+                'page_url':       item.get('url', ''),
+                'alt':            item.get('title', ''),
+                'search_context': query,
+            })
+        return results
+    except Exception as exc:
+        print(f'    [ddg] error for "{query}": {exc}')
+        return []
+
+
 def _google_cse_search(query: str, page_type: str = 'general',
                        n: int = 10, start: int = 1) -> list[dict]:
     """Google Custom Search Engine image search.
@@ -885,21 +944,31 @@ def fetch_candidates(school: str, domains_cache: dict | None = None) -> list[dic
     else:
         print(f'    [web] no domain found — using Wikipedia + Google')
 
-    # ── 2. Google CSE — school-specific images by category ───────────────────
-    # This is the highest-quality source: returns images from official athletic
-    # department sites, news coverage, and school pages — all school-specific.
+    # ── 2. Image search — school-specific images by category ─────────────────
+    # Try Google CSE first (best quality); fall back to DuckDuckGo when CSE
+    # quota is exhausted or the cx parameter is misconfigured.
+    _CATEGORY_QUERIES = [
+        (f'{school} campus',                        'campus'),
+        (f'{school} university buildings campus',   'campus'),
+        (f'{school} natatorium OR swimming pool',   'swim'),
+        (f'{school} aquatic center swimming',       'swim'),
+        (f'{school} students campus life',          'student_life'),
+        (f'{school} student union college life',    'student_life'),
+    ]
+    cse_before = len(all_candidates)
     if GOOGLE_CSE_KEY:
         print(f'    [google] fetching campus / pool / student images')
-        for q, pt in [
-            (f'{school} campus',                        'campus'),
-            (f'{school} university buildings campus',   'campus'),
-            (f'{school} natatorium OR swimming pool',   'swim'),
-            (f'{school} aquatic center swimming',       'swim'),
-            (f'{school} students campus life',          'student_life'),
-            (f'{school} student union college life',    'student_life'),
-        ]:
+        for q, pt in _CATEGORY_QUERIES:
             for img in _google_cse_search(q, page_type=pt, n=10):
                 _add(img)
+    if len(all_candidates) == cse_before:
+        # CSE returned nothing — use DDG as the free school-specific fallback
+        print(f'    [ddg] fetching campus / pool / student images')
+        for category, pt in [('campus', 'campus'), ('pool', 'swim'), ('student_life', 'student_life')]:
+            for q_tmpl in _DDG_QUERIES.get(category, []):
+                q = q_tmpl.format(school=school)
+                for img in _ddg_image_search(q, page_type=pt, n=10):
+                    _add(img)
 
     # ── 3. Wikipedia + Commons (always — supplements both Google and no-Google paths) ──
     wiki_imgs = _wiki_candidates(school)
@@ -946,6 +1015,28 @@ _MORE_GOOGLE_QUERIES: dict[str, list[str]] = {
     ],
 }
 
+# DDG queries — no OR operator (DDG treats it literally rather than as boolean)
+_DDG_QUERIES: dict[str, list[str]] = {
+    'pool': [
+        '{school} natatorium swimming pool',
+        '{school} aquatic center pool',
+        '{school} swimming pool facility',
+        '{school} natatorium',
+    ],
+    'student_life': [
+        '{school} students campus life',
+        '{school} college students campus',
+        '{school} student center',
+        '{school} campus quad students',
+    ],
+    'campus': [
+        '{school} campus',
+        '{school} university campus buildings',
+        '{school} campus aerial',
+        '{school} university exterior',
+    ],
+}
+
 _CATEGORY_PAGE_TYPE = {'pool': 'swim', 'student_life': 'student_life', 'campus': 'campus'}
 
 
@@ -971,6 +1062,7 @@ def fetch_candidates_for_category(school: str, category: str) -> list[dict]:
                for q in _MORE_GOOGLE_QUERIES.get(category, _MORE_GOOGLE_QUERIES['campus'])]
 
     # ── Google CSE (primary — best quality when key + cx are valid) ──────────
+    cse_before = len(new_results)
     if GOOGLE_CSE_KEY:
         for q in queries:
             for start in (1, 11):  # two pages = up to 20 results per query
@@ -978,6 +1070,16 @@ def fetch_candidates_for_category(school: str, category: str) -> list[dict]:
                     _add_if_new(img)
                 if len(new_results) >= 20:
                     break
+            if len(new_results) >= 20:
+                break
+
+    # ── DuckDuckGo (free fallback when CSE quota is exhausted/misconfigured) ──
+    if len(new_results) == cse_before:
+        ddg_queries = [q.format(school=school)
+                       for q in _DDG_QUERIES.get(category, _DDG_QUERIES['campus'])]
+        for q in ddg_queries:
+            for img in _ddg_image_search(q, page_type=page_type, n=10):
+                _add_if_new(img)
             if len(new_results) >= 20:
                 break
 
