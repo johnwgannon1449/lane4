@@ -398,6 +398,22 @@ def _title_matches(school: str, title: str) -> bool:
     return all(k in tl for k in kw)
 
 
+def _url_mentions_school(school: str, img: dict) -> bool:
+    """Return True if the image URL or page URL contains the school's key words.
+
+    Used to filter general-DDG pool/student results that might be from the
+    wrong school (e.g. "Clarkson Pool" business instead of Clarkson University).
+    Campus/hero images are less sensitive since wrong-school campus shots are
+    still usable; pool shots must be from the correct school.
+    """
+    kw = _key_words(school)
+    if not kw:
+        return True
+    combined = (img.get('url', '') + ' ' + img.get('page_url', '')).lower()
+    # Any single key word match is sufficient (e.g. 'clarkson' in URL)
+    return any(k in combined for k in kw)
+
+
 def _wiki_direct(title: str) -> str | None:
     try:
         data = _wiki_get({'action': 'query', 'titles': title, 'redirects': 1})
@@ -944,13 +960,36 @@ def fetch_candidates(school: str, domains_cache: dict | None = None) -> list[dic
     else:
         print(f'    [web] no domain found — using Wikipedia + Google')
 
+    # ── 1b. Site-restricted DDG searches — images guaranteed from this school ─
+    # site:school.edu forces DDG to return only images hosted on the school's
+    # own servers, eliminating the "random pool from the wrong school" problem.
+    if domain:
+        # Strip www. so site: covers all subdomains (athletics.duke.edu etc.)
+        raw_host = urllib.parse.urlparse(domain).netloc
+        domain_host = raw_host.removeprefix('www.')
+        _SITE_QUERIES = [
+            (f'site:{domain_host} natatorium swimming pool', 'swim'),
+            (f'site:{domain_host} aquatic center',          'swim'),
+            (f'site:{domain_host} natatorium',              'swim'),
+            (f'site:{domain_host} campus aerial buildings', 'campus'),
+            (f'site:{domain_host} campus visit tour',       'campus'),
+            (f'site:{domain_host} student life campus',     'student_life'),
+            (f'site:{domain_host} students campus life',    'student_life'),
+        ]
+        print(f'    [ddg_site] site-restricted search on {domain_host}')
+        for q, pt in _SITE_QUERIES:
+            for img in _ddg_image_search(q, page_type=pt, n=10):
+                # Boost: definitely from this school's own website
+                img['score'] = round(img.get('score', 2.0) + 1.5, 3)
+                _add(img)
+
     # ── 2. Image search — school-specific images by category ─────────────────
     # Try Google CSE first (best quality); fall back to DuckDuckGo when CSE
     # quota is exhausted or the cx parameter is misconfigured.
     _CATEGORY_QUERIES = [
         (f'{school} campus',                        'campus'),
         (f'{school} university buildings campus',   'campus'),
-        (f'{school} natatorium OR swimming pool',   'swim'),
+        (f'{school} natatorium swimming pool',      'swim'),
         (f'{school} aquatic center swimming',       'swim'),
         (f'{school} students campus life',          'student_life'),
         (f'{school} student union college life',    'student_life'),
@@ -962,12 +1001,16 @@ def fetch_candidates(school: str, domains_cache: dict | None = None) -> list[dic
             for img in _google_cse_search(q, page_type=pt, n=10):
                 _add(img)
     if len(all_candidates) == cse_before:
-        # CSE returned nothing — use DDG as the free school-specific fallback
+        # CSE returned nothing — use quoted DDG as school-specific fallback
         print(f'    [ddg] fetching campus / pool / student images')
         for category, pt in [('campus', 'campus'), ('pool', 'swim'), ('student_life', 'student_life')]:
             for q_tmpl in _DDG_QUERIES.get(category, []):
                 q = q_tmpl.format(school=school)
                 for img in _ddg_image_search(q, page_type=pt, n=10):
+                    # For pool images: penalise (but keep) images where URL/page
+                    # doesn't mention this school — they likely show the wrong pool.
+                    if pt == 'swim' and not _url_mentions_school(school, img):
+                        img['score'] = round(img.get('score', 2.0) - 1.0, 3)
                     _add(img)
 
     # ── 3. Wikipedia + Commons (always — supplements both Google and no-Google paths) ──
@@ -1039,11 +1082,11 @@ _CATEGORY_PAGE_TYPE = {'pool': 'swim', 'student_life': 'student_life', 'campus':
 def fetch_candidates_for_category(school: str, category: str) -> list[dict]:
     """Fetch additional candidates for a specific display category.
 
-    Uses Google CSE as the primary source — returns school-specific images from
-    official pages, athletic departments, and news sites.  Falls back to Wikimedia
-    Commons when Google CSE is unavailable.  Deduplicates against the existing
-    manifest so every press returns genuinely new images.
+    Priority: (1) site-restricted DDG on school domain, (2) Google CSE,
+    (3) general DDG fallback, (4) Wikimedia Commons.  Deduplicates against
+    the existing manifest so every press returns genuinely new images.
     """
+    domains_cache = _load_domains()
     existing_urls: set[str] = {c['url'] for c in load_manifest().get(school, [])}
     page_type  = _CATEGORY_PAGE_TYPE.get(category, 'campus')
     new_results: list[dict] = []
@@ -1057,7 +1100,29 @@ def fetch_candidates_for_category(school: str, category: str) -> list[dict]:
     queries = [q.format(school=school)
                for q in _MORE_GOOGLE_QUERIES.get(category, _MORE_GOOGLE_QUERIES['campus'])]
 
-    # ── Google CSE (primary — best quality when key + cx are valid) ──────────
+    # ── Site-restricted DDG (highest quality — images from school's own site) ─
+    domain = domains_cache.get(school) or get_school_domain(school, domains_cache)
+    if domain:
+        raw_host = urllib.parse.urlparse(domain).netloc
+        domain_host = raw_host.removeprefix('www.')
+        _SITE_Q = {
+            'pool':         [f'site:{domain_host} natatorium swimming pool',
+                             f'site:{domain_host} aquatic center',
+                             f'site:{domain_host} natatorium'],
+            'campus':       [f'site:{domain_host} campus aerial buildings',
+                             f'site:{domain_host} campus visit tour',
+                             f'site:{domain_host} campus'],
+            'student_life': [f'site:{domain_host} student life campus',
+                             f'site:{domain_host} students campus life'],
+        }
+        for q in _SITE_Q.get(category, _SITE_Q['campus']):
+            for img in _ddg_image_search(q, page_type=page_type, n=10):
+                img['score'] = round(img.get('score', 2.0) + 1.5, 3)
+                _add_if_new(img)
+            if len(new_results) >= 15:
+                break
+
+    # ── Google CSE (best quality when key + cx are valid) ────────────────────
     cse_before = len(new_results)
     if GOOGLE_CSE_KEY:
         for q in queries:
@@ -1069,12 +1134,15 @@ def fetch_candidates_for_category(school: str, category: str) -> list[dict]:
             if len(new_results) >= 20:
                 break
 
-    # ── DuckDuckGo (free fallback when CSE quota is exhausted/misconfigured) ──
+    # ── General DDG fallback (quoted school name, last resort) ───────────────
     if len(new_results) == cse_before:
         ddg_queries = [q.format(school=school)
                        for q in _DDG_QUERIES.get(category, _DDG_QUERIES['campus'])]
         for q in ddg_queries:
             for img in _ddg_image_search(q, page_type=page_type, n=10):
+                # Penalise (but keep) pool images not mentioning this school
+                if category == 'pool' and not _url_mentions_school(school, img):
+                    img['score'] = round(img.get('score', 2.0) - 1.0, 3)
                 _add_if_new(img)
             if len(new_results) >= 20:
                 break
