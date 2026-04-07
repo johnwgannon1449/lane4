@@ -276,5 +276,30 @@
       "https://www.davidson.edu/sites/default/files/styles/400x300/public/2023-06/Campus%20Scenes_011.jpg?h=9855f42d&itok=v9ioaGxc"
     ],
     "saved_at": "2026-04-06T21:23:26Z"
+  },
+  "Brown University": {
+    "hero_images": [
+      "https://admission.brown.edu/sites/g/files/dprerj526/files/styles/wide_xlrg/public/2020-01/20191020_COMM_coheamarketing122_1.jpg?h=fcd14cb1&itok=Gb8NUuOa",
+      "https://sites.brown.edu/fleischmannlab/files/2019/10/Brown-university.jpg",
+      "https://admission.brown.edu/sites/default/files/styles/wide_xlrg/public/2020-06/Hosted%20Virtual%20Tour%20photo%20option.jpg?h=1a132070&itok=r5ZpaQLa"
+    ],
+    "pool_images": [
+      "https://upload.wikimedia.org/wikipedia/commons/d/d1/Katherine_Moran_Coleman_Aquatics_Center_at_Brown_University.jpg"
+    ],
+    "student_life_images": [
+      "https://wallpapers.com/images/hd/students-at-brown-university-family-weekend-ihgwikqgufo5p9j5.jpg",
+      "https://precollege.brown.edu/sites/default/files/styles/wide_xlrg/public/2022-12/homepage_laptop_0.jpg?h=a233b7cf&itok=WBeZmS1c",
+      "https://precollege.brown.edu/sites/g/files/dprerj1001/files/styles/wide_xlrg/public/2020-10/CampusShots.jpg?h=ac70ade5&itok=XuyTjztZ"
+    ],
+    "approved_hero_image": "https://admission.brown.edu/sites/g/files/dprerj526/files/styles/wide_xlrg/public/2020-01/20191020_COMM_coheamarketing122_1.jpg?h=fcd14cb1&itok=Gb8NUuOa",
+    "approved_pool_image": "https://upload.wikimedia.org/wikipedia/commons/d/d1/Katherine_Moran_Coleman_Aquatics_Center_at_Brown_University.jpg",
+    "approved_student_life_image": "https://wallpapers.com/images/hd/students-at-brown-university-family-weekend-ihgwikqgufo5p9j5.jpg",
+    "approved_extra_images": [
+      "https://sites.brown.edu/fleischmannlab/files/2019/10/Brown-university.jpg",
+      "https://admission.brown.edu/sites/default/files/styles/wide_xlrg/public/2020-06/Hosted%20Virtual%20Tour%20photo%20option.jpg?h=1a132070&itok=r5ZpaQLa",
+      "https://precollege.brown.edu/sites/default/files/styles/wide_xlrg/public/2022-12/homepage_laptop_0.jpg?h=a233b7cf&itok=WBeZmS1c",
+      "https://precollege.brown.edu/sites/g/files/dprerj1001/files/styles/wide_xlrg/public/2020-10/CampusShots.jpg?h=ac70ade5&itok=XuyTjztZ"
+    ],
+    "saved_at": "2026-04-07T06:25:45Z"
   }
 }

@@ -1,0 +1,283 @@
+CRITICAL CONTEXT
+
+This work is being done inside the existing Lane4 image curator system.
+
+The curator UI, image presentation, and selection workflow are already built and working well.
+Do NOT modify them.
+
+Currently, the curator receives candidate images from a backend retrieval module that uses
+search-key-based image search logic.
+
+THIS TASK REPLACES THAT RETRIEVAL MODULE ONLY.
+
+Think of this as a drop-in replacement for the current image search provider.
+
+Requirements:
+
+• The new system must output the same image object structure currently used by the curator.
+• Do not change the API contract used by the front end.
+• Do not change the curator UI.
+• Do not change the selection / approval workflow.
+• Do not change any code related to display, ranking, or saving selected images.
+
+Only replace the logic responsible for retrieving candidate image URLs.
+
+The curator should continue to work exactly the same way, but receive much better candidate images.
+
+---
+
+GOAL
+
+Improve the quality of the candidate images being sent to the existing curator.
+
+The current system returns too many generic images and misses the obvious signature images that appear prominently on official school websites.
+
+The new system should prioritize retrieving:
+
+• official campus hero images
+• recognizable campus views
+• real student life imagery
+• real swim / pool / natatorium images
+
+Images should feel school-specific and aspirational, not interchangeable or generic.
+
+The goal is better retrieval, not UI changes.
+
+---
+
+CORE STRATEGY
+
+Replace the current search-key-only approach with a **prominence-first retrieval pipeline**.
+
+Step 1 — Use the existing search keys as hints.
+
+Existing buckets remain:
+
+• hero campus
+• student life
+• swim
+
+These buckets guide where we look for images.
+
+Example mapping:
+
+hero campus → homepage, admissions pages, visit pages
+student life → campus life, residential life, student activities pages
+swim → swim team pages, athletics pages, aquatics facility pages
+
+Do NOT remove the bucket concept.
+
+---
+
+Step 2 — Retrieve images from high-value official pages first.
+
+For each school, identify likely high-value pages:
+
+• homepage
+• admissions page
+• visit page
+• campus life page
+• student life page
+• residential life page
+• athletics homepage
+• swimming / diving team page
+• aquatics center page
+• facilities page
+• natatorium page
+• official gallery pages
+
+Extract images from these pages before performing any web image search.
+
+From each page extract:
+
+• hero/banner images
+• large inline images
+• og:image metadata
+• twitter:image metadata
+• gallery images
+• high-resolution srcset images
+
+These sources almost always contain the strongest official images.
+
+---
+
+PROMINENCE HEURISTIC (VERY IMPORTANT)
+
+Add a prominence score for each image.
+
+Images should score highly if they are:
+
+• the hero banner of the page
+• the largest image on the page
+• near the top of the page
+• repeated across multiple official pages
+• used on admissions or visit pages
+• used on athletics or facilities pages
+
+Prominence should be a stronger signal than keyword matching.
+
+The system currently misses the obvious hero images from official sites.
+Fix that.
+
+---
+
+BUCKET TARGETING
+
+Hero Campus
+
+Prefer:
+
+• wide campus aerials
+• iconic quad views
+• signature architecture
+• scenic campus photography
+• strong colorful outdoor shots
+
+Avoid:
+
+• generic brick buildings
+• empty driveways
+• random building entrances
+• bland lawns with no identity
+• dark flat drone images
+
+---
+
+Student Life
+
+Prefer:
+
+• real student activity
+• outdoor campus scenes with students
+• clubs, studying, social spaces
+• residence life images
+• campus interaction scenes
+
+Avoid:
+
+• staged brochure handshake photos
+• classroom close crops
+• generic smiling lineups
+• stock-looking images
+
+---
+
+Swim
+
+Prefer:
+
+• natatorium interiors
+• pool facility shots
+• swim team action
+• block starts or races
+• aquatic center exteriors
+
+Avoid:
+
+• athlete headshots
+• unrelated sports
+• tiny scoreboard crops
+• muddy low-light pool photos
+• generic fitness center imagery
+
+---
+
+ANTI-GENERIC FILTER
+
+Penalize images that look interchangeable across schools.
+
+Examples:
+
+• random administrative buildings
+• empty sidewalks or parking areas
+• generic lawn + building combos
+• flat drone shots with no identity
+• hallways or interior corridors
+• images that could belong to any campus
+
+The result should feel school-specific.
+
+---
+
+FALLBACK SEARCH
+
+If official pages do not produce enough candidates:
+
+Use fallback image search with targeted queries such as:
+
+"{school name} campus"
+"{school name} admissions campus"
+"{school name} student life"
+"{school name} swimming"
+"{school name} natatorium"
+"{school name} aquatic center"
+
+Prioritize results from:
+
+1. official school domain
+2. official athletics domain
+3. official admissions or campus visit domains
+4. other reputable editorial sources
+
+Fallback search must not override official hero images.
+
+---
+
+DEDUPLICATION
+
+Remove duplicates by:
+
+• identical URL
+• normalized URL
+• perceptual similarity
+• same image served at multiple sizes
+
+Keep the highest resolution version.
+
+---
+
+OUTPUT REQUIREMENT
+
+The output must match the existing image objects expected by the curator.
+
+Do not change the structure used by the current UI.
+
+If needed, optional debugging metadata may be included but must not break compatibility:
+
+• source_url
+• source_domain
+• page_title
+• bucket_guess
+• prominence_score
+• retrieval_phase
+
+The existing curator should continue to function without modification.
+
+---
+
+IMPLEMENTATION PRIORITY
+
+1. Improve official page targeting
+2. Add prominence-based image selection
+3. Map bucket types to the correct page types
+4. Add fallback image search only when needed
+5. Preserve the existing API contract and UI integration
+
+---
+
+SUCCESS CRITERIA
+
+Success means:
+
+• better starting images appear in the curator
+• obvious official campus hero images appear more often
+• student life images feel authentic
+• swim images show real facilities or teams
+• fewer generic interchangeable campus images appear
+• the curator UI and workflow remain unchanged
+
+Test on 10 schools and print diagnostics showing:
+
+• which official pages were used
+• which images were chosen because of prominence
+• which buckets still need fallback search

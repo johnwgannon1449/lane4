@@ -59,10 +59,12 @@ PRIORITY_PATHS = [
     ('/swimming',                         'swim'),
     ('/swim',                             'swim'),
     ('/facilities/natatorium',            'swim'),
+    ('/natatorium',                       'swim'),
     ('/visit',                            'visit'),
     ('/admissions/visit',                 'visit'),
     ('/visit-campus',                     'visit'),
     ('/about/visit',                      'visit'),
+    ('/admissions',                       'visit'),
     ('/campus-life',                      'campus'),
     ('/campus-life/',                     'campus'),
     ('/student-life',                     'campus'),
@@ -71,6 +73,11 @@ PRIORITY_PATHS = [
     ('/campus',                           'campus'),
     ('/about',                            'campus'),
     ('/facilities',                       'campus'),
+    ('/residential-life',                 'campus'),
+    ('/res-life',                         'campus'),
+    ('/housing',                          'campus'),
+    ('/photos',                           'campus'),
+    ('/gallery',                          'campus'),
     ('/athletics',                        'athletics'),
     ('/',                                 'home'),
 ]
@@ -182,20 +189,37 @@ def _http_get_text(url: str, timeout: int = PAGE_TIMEOUT) -> str | None:
 # ── HTML img extraction ───────────────────────────────────────────────────────
 
 class _ImgParser(HTMLParser):
-    """Extracts img src, width, height, alt, and srcset from an HTML page."""
+    """Extracts img src, width, height, alt, srcset, and og/twitter meta images."""
     def __init__(self, base_url: str):
         super().__init__(convert_charrefs=True)
         self.base_url = base_url
         self.imgs: list[dict] = []
+        self.og_images: list[str] = []   # og:image / twitter:image URLs
         self._skip = False
         self._skip_tags = {'script', 'style', 'noscript', 'nav', 'footer', 'header'}
         self._depth: dict[str, int] = {}
+        self._img_position = 0           # counts <img> tags seen (for prominence)
 
     def handle_starttag(self, tag: str, attrs):
         if tag in self._skip_tags:
             self._depth[tag] = self._depth.get(tag, 0) + 1
             self._skip = True
             return
+
+        # Capture og:image / twitter:image from <meta> tags (always in <head>)
+        if tag == 'meta':
+            a = dict(attrs)
+            prop    = a.get('property', '').lower()
+            name    = a.get('name', '').lower()
+            content = a.get('content', '')
+            if (prop in ('og:image', 'og:image:secure_url') or
+                    name in ('twitter:image', 'twitter:image:src')):
+                if content and not content.startswith('data:'):
+                    url = urllib.parse.urljoin(self.base_url, content)
+                    if url not in self.og_images:
+                        self.og_images.append(url)
+            return
+
         if self._skip:
             return
         if tag not in ('img', 'source'):
@@ -221,11 +245,15 @@ class _ImgParser(HTMLParser):
             h = int(a.get('height', 0))
         except (ValueError, TypeError):
             w = h = 0
+        self._img_position += 1
+        # Images appearing in the first 4 positions get a prominence bonus
+        prominence = max(0, 5 - self._img_position) if self._img_position <= 4 else 0
         self.imgs.append({
-            'url': url,
-            'alt': a.get('alt', ''),
-            'width':  w,
-            'height': h,
+            'url':        url,
+            'alt':        a.get('alt', ''),
+            'width':      w,
+            'height':     h,
+            'prominence': prominence,
         })
 
     def handle_endtag(self, tag: str):
@@ -282,6 +310,11 @@ def _score_image(img: dict) -> float:
             return 0.0
 
     score = PAGE_TYPE_SCORE.get(page_type, 1.0)
+
+    # Prominence bonus: og:image (prominence=10) or early hero image (prominence 1-4)
+    prominence = img.get('prominence', 0)
+    if prominence > 0:
+        score += min(prominence * 0.5, 4.0)
 
     # Resolution bonus (capped)
     if w > 0 and h > 0:
@@ -537,7 +570,11 @@ def get_school_domain(school: str, domains_cache: dict) -> str | None:
 # ── Official website crawling ─────────────────────────────────────────────────
 
 def _crawl_page(page_url: str, page_type: str) -> list[dict]:
-    """Fetch one page, extract and score all candidate images."""
+    """Fetch one page, extract and score all candidate images.
+
+    og:image / twitter:image meta tags are treated as highest-prominence
+    candidates and prepended to the result list so they sort to the top.
+    """
     html = _http_get_text(page_url)
     if not html:
         return []
@@ -549,6 +586,31 @@ def _crawl_page(page_url: str, page_type: str) -> list[dict]:
 
     seen: set[str] = set()
     results = []
+
+    # ── og:image / twitter:image first (strongest hero signal) ───────────────
+    # These are the page author's explicitly chosen hero images — score them
+    # high enough to surface above generic wiki_commons resolution giants.
+    for og_url in parser.og_images:
+        if not og_url or og_url in seen or _is_bad_url(og_url):
+            continue
+        seen.add(og_url)
+        # Base score: page_type weight × 3 + fixed 8.0 hero bonus.
+        # visit og:image → 3.0×3+8 = 17.0, home og:image → 1.5×3+8 = 12.5
+        base_score = round(PAGE_TYPE_SCORE.get(page_type, 1.0) * 3.0 + 8.0, 3)
+        og_img = {
+            'url':        og_url,
+            'alt':        '',
+            'width':      1200,
+            'height':     630,
+            'prominence': 10,
+            'page_type':  page_type,
+            'page_url':   page_url,
+            'source':     f'web_{page_type}_og',
+            'score':      base_score,
+        }
+        results.append(og_img)
+
+    # ── Regular <img> tags ────────────────────────────────────────────────────
     for img in parser.imgs:
         url = img['url']
         if not url or url in seen:
