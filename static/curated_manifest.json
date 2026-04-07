@@ -69,5 +69,212 @@
     "approved_student_life_image": null,
     "approved_extra_images": [],
     "saved_at": "2026-04-06T18:47:19Z"
+  },
+  "Duquesne University": {
+    "hero_images": [
+      "https://www.duq.edu/images/home-page/awalk-2022-flexcard.jpg"
+    ],
+    "pool_images": [
+      "https://i.pinimg.com/originals/aa/0b/42/aa0b42b625ae5058917bc282ce416e8f.jpg"
+    ],
+    "student_life_images": [
+      "https://www.duq.edu/images/life-at-duquesne/student-services/campus-2023-hero.jpg",
+      "https://www.duq.edu/images/_images/studentlifephoto.jpg",
+      "https://www.duq.edu/images/life-at-duquesne/freshman-development/first-year-development/fast-2023-wysiwyg.jpg",
+      "https://www.sbdc.duq.edu/Files/AlbumImages/thumb/thumb_union.jpg"
+    ],
+    "approved_hero_image": "https://www.duq.edu/images/home-page/awalk-2022-flexcard.jpg",
+    "approved_pool_image": "https://i.pinimg.com/originals/aa/0b/42/aa0b42b625ae5058917bc282ce416e8f.jpg",
+    "approved_student_life_image": "https://www.duq.edu/images/life-at-duquesne/student-services/campus-2023-hero.jpg",
+    "approved_extra_images": [
+      "https://www.duq.edu/images/_images/studentlifephoto.jpg",
+      "https://www.duq.edu/images/life-at-duquesne/freshman-development/first-year-development/fast-2023-wysiwyg.jpg",
+      "https://www.sbdc.duq.edu/Files/AlbumImages/thumb/thumb_union.jpg"
+    ],
+    "saved_at": "2026-04-06T20:44:56Z"
+  },
+  "Fordham University": {
+    "hero_images": [
+      "https://upload.wikimedia.org/wikipedia/commons/7/76/Fordham_University_Keating_Hall.JPG"
+    ],
+    "pool_images": [
+      "https://swimswam.com/wp-content/uploads/2022/09/Fordham-stock-courtesy-Fordham-Athletics-640x360.jpeg"
+    ],
+    "student_life_images": [
+      "https://www.fordham.edu/media/home/commonly-used-images/Students-Cheering-at-Football-Game.jpg",
+      "https://i.pinimg.com/originals/3f/da/7c/3fda7c2cc873fc09c848cfa476ee3354.jpg",
+      "https://i.pinimg.com/736x/06/0a/f0/060af0b3bd3ec5d01413fdbad30df9e8.jpg"
+    ],
+    "approved_hero_image": "https://upload.wikimedia.org/wikipedia/commons/7/76/Fordham_University_Keating_Hall.JPG",
+    "approved_pool_image": "https://swimswam.com/wp-content/uploads/2022/09/Fordham-stock-courtesy-Fordham-Athletics-640x360.jpeg",
+    "approved_student_life_image": "https://www.fordham.edu/media/home/commonly-used-images/Students-Cheering-at-Football-Game.jpg",
+    "approved_extra_images": [
+      "https://i.pinimg.com/originals/3f/da/7c/3fda7c2cc873fc09c848cfa476ee3354.jpg",
+      "https://i.pinimg.com/736x/06/0a/f0/060af0b3bd3ec5d01413fdbad30df9e8.jpg"
+    ],
+    "saved_at": "2026-04-06T20:47:14Z"
+  },
+  "George Mason University": {
+    "hero_images": [
+      "https://i.ytimg.com/vi/BClDwPULQfo/maxresdefault.jpg"
+    ],
+    "pool_images": [
+      "https://recreation.gmu.edu/wp-content/uploads/2022/03/51309280253_3f080bbfe5_o-scaled.jpg"
+    ],
+    "student_life_images": [
+      "https://www.gmu.edu/sites/default/files/styles/feature_image_large/public/2023-07/student%20life%20hp%20bench%20cantwell%2016x9%20230508040.jpg?itok=SbyucsdT",
+      "https://www.edubookings.com/wp-content/uploads/2017/10/George-Mason-University-International-Students-Admissions.jpg",
+      "https://northernvirginiamag.com/wp-content/uploads/2022/08/georgemason.jpg"
+    ],
+    "approved_hero_image": "https://i.ytimg.com/vi/BClDwPULQfo/maxresdefault.jpg",
+    "approved_pool_image": "https://recreation.gmu.edu/wp-content/uploads/2022/03/51309280253_3f080bbfe5_o-scaled.jpg",
+    "approved_student_life_image": "https://www.gmu.edu/sites/default/files/styles/feature_image_large/public/2023-07/student%20life%20hp%20bench%20cantwell%2016x9%20230508040.jpg?itok=SbyucsdT",
+    "approved_extra_images": [
+      "https://www.edubookings.com/wp-content/uploads/2017/10/George-Mason-University-International-Students-Admissions.jpg",
+      "https://northernvirginiamag.com/wp-content/uploads/2022/08/georgemason.jpg"
+    ],
+    "saved_at": "2026-04-06T20:50:58Z"
+  },
+  "George Washington University": {
+    "hero_images": [
+      "https://c8.alamy.com/comp/FYTD0T/george-washington-university-campus-washington-dc-usa-FYTD0T.jpg"
+    ],
+    "pool_images": [
+      "https://images.sidearmdev.com/resize?url=https:%2F%2Fdxbhsrqyrr690.cloudfront.net%2Fsidearm.nextgen.sites%2Fgwsports.com%2Fimages%2F2024%2F3%2F29%2FSWIM_DIVE_022324_FINALS_141.jpg&width=1600&type=jpeg"
+    ],
+    "student_life_images": [
+      "https://gwtoday.gwu.edu/sites/g/files/zaxdzs5401/files/2023-04/sustainability_research_fellows_2023_wla_459a7158.jpeg",
+      "https://www.gwu.edu/sites/g/files/zaxdzs7131/files/styles/de2e/public/2025-12/life_hero.jpg?itok=m1bkgDb8"
+    ],
+    "approved_hero_image": "https://c8.alamy.com/comp/FYTD0T/george-washington-university-campus-washington-dc-usa-FYTD0T.jpg",
+    "approved_pool_image": "https://images.sidearmdev.com/resize?url=https:%2F%2Fdxbhsrqyrr690.cloudfront.net%2Fsidearm.nextgen.sites%2Fgwsports.com%2Fimages%2F2024%2F3%2F29%2FSWIM_DIVE_022324_FINALS_141.jpg&width=1600&type=jpeg",
+    "approved_student_life_image": "https://gwtoday.gwu.edu/sites/g/files/zaxdzs5401/files/2023-04/sustainability_research_fellows_2023_wla_459a7158.jpeg",
+    "approved_extra_images": [
+      "https://www.gwu.edu/sites/g/files/zaxdzs7131/files/styles/de2e/public/2025-12/life_hero.jpg?itok=m1bkgDb8"
+    ],
+    "saved_at": "2026-04-06T20:53:28Z"
+  },
+  "La Salle University": {
+    "hero_images": [
+      "https://www.lasalle.edu/wp-content/uploads/2025/12/Chronicle-article-lead-image-640x343.jpg"
+    ],
+    "pool_images": [
+      "https://images.sidearmdev.com/fit?url=https:%2f%2fdxbhsrqyrr690.cloudfront.net%2fsidearm.nextgen.sites%2flasalle.sidearmsports.com%2fimages%2f2025%2f11%2f24%2fDSC06627.jpg&height=450&width=800&type=jpeg"
+    ],
+    "student_life_images": [
+      "https://www.lasalle.edu/wp-content/uploads/2023/10/About-Education-October2023-640x532.jpg"
+    ],
+    "approved_hero_image": "https://www.lasalle.edu/wp-content/uploads/2025/12/Chronicle-article-lead-image-640x343.jpg",
+    "approved_pool_image": "https://images.sidearmdev.com/fit?url=https:%2f%2fdxbhsrqyrr690.cloudfront.net%2fsidearm.nextgen.sites%2flasalle.sidearmsports.com%2fimages%2f2025%2f11%2f24%2fDSC06627.jpg&height=450&width=800&type=jpeg",
+    "approved_student_life_image": "https://www.lasalle.edu/wp-content/uploads/2023/10/About-Education-October2023-640x532.jpg",
+    "approved_extra_images": [],
+    "saved_at": "2026-04-06T21:16:30Z"
+  },
+  "Saint Louis University": {
+    "hero_images": [
+      "https://upload.wikimedia.org/wikipedia/commons/3/31/DuBourg_Hall%2C_Saint_Louis_University%2C_Grand_Avenue%2C_Midtown%2C_St._Louis%2C_MO_-_53229754023.jpg"
+    ],
+    "pool_images": [
+      "https://www.slu.edu.ph/wp-content/uploads/2025/09/aquatics-facility-1-1200x600.png"
+    ],
+    "student_life_images": [
+      "https://npr.brightspotcdn.com/dims4/default/cffbb71/2147483647/strip/true/crop/3000x2050+0+0/resize/1760x1202!/quality/90/?url=http%3A%2F%2Fnpr-brightspot.s3.amazonaws.com%2Fc1%2F30%2Fd90f2afc4c0d8631c9e62f4008bd%2F10132021-bm-slu-file-03.JPG",
+      "https://studentsforlife.org/wp-content/uploads/2024/05/Image-7_Stephanie-Stone.jpg"
+    ],
+    "approved_hero_image": "https://upload.wikimedia.org/wikipedia/commons/3/31/DuBourg_Hall%2C_Saint_Louis_University%2C_Grand_Avenue%2C_Midtown%2C_St._Louis%2C_MO_-_53229754023.jpg",
+    "approved_pool_image": "https://www.slu.edu.ph/wp-content/uploads/2025/09/aquatics-facility-1-1200x600.png",
+    "approved_student_life_image": "https://npr.brightspotcdn.com/dims4/default/cffbb71/2147483647/strip/true/crop/3000x2050+0+0/resize/1760x1202!/quality/90/?url=http%3A%2F%2Fnpr-brightspot.s3.amazonaws.com%2Fc1%2F30%2Fd90f2afc4c0d8631c9e62f4008bd%2F10132021-bm-slu-file-03.JPG",
+    "approved_extra_images": [
+      "https://studentsforlife.org/wp-content/uploads/2024/05/Image-7_Stephanie-Stone.jpg"
+    ],
+    "saved_at": "2026-04-06T21:18:18Z"
+  },
+  "St Bonaventure University": {
+    "hero_images": [
+      "https://d13b2ieg84qqce.cloudfront.net/4f10633795264bc68f217d2de4b877d0c97220eb.jpg",
+      "https://www.advantagearchives.com/wp-content/uploads/2024/01/st-bonaventure-university-1.jpg",
+      "https://wnymedia.s3.us-east-2.amazonaws.com/wp-content/uploads/2019/04/28092707/St-Bonaventure-University-Feature-Image-2.png"
+    ],
+    "pool_images": [
+      "https://i.ytimg.com/vi/meTYsf1vyNQ/maxresdefault.jpg"
+    ],
+    "student_life_images": [
+      "https://live.staticflickr.com/65535/53037613961_e572aa8ffa_b.jpg",
+      "https://www.sbu.edu/images/default-source/academics/experiential-learning/study-abroad/sorrento-italy/sorrento-livingcd4c1fdbffdd6061b4a4ff0000c5c4e8.jpg?sfvrsn=9e2282ea_0",
+      "https://live.staticflickr.com/65535/53038006655_3f244ab8bd_b.jpg"
+    ],
+    "approved_hero_image": "https://d13b2ieg84qqce.cloudfront.net/4f10633795264bc68f217d2de4b877d0c97220eb.jpg",
+    "approved_pool_image": "https://i.ytimg.com/vi/meTYsf1vyNQ/maxresdefault.jpg",
+    "approved_student_life_image": "https://live.staticflickr.com/65535/53037613961_e572aa8ffa_b.jpg",
+    "approved_extra_images": [
+      "https://www.advantagearchives.com/wp-content/uploads/2024/01/st-bonaventure-university-1.jpg",
+      "https://wnymedia.s3.us-east-2.amazonaws.com/wp-content/uploads/2019/04/28092707/St-Bonaventure-University-Feature-Image-2.png",
+      "https://www.sbu.edu/images/default-source/academics/experiential-learning/study-abroad/sorrento-italy/sorrento-livingcd4c1fdbffdd6061b4a4ff0000c5c4e8.jpg?sfvrsn=9e2282ea_0",
+      "https://live.staticflickr.com/65535/53038006655_3f244ab8bd_b.jpg"
+    ],
+    "saved_at": "2026-04-06T21:19:10Z"
+  },
+  "University of Rhode Island": {
+    "hero_images": [
+      "https://i.vimeocdn.com/video/2077702172-8766ba933027773d792fc9fb405de046b7a6eb86a9458176563d7a3a9d3bc501-d",
+      "https://i.vimeocdn.com/video/1947836286-cd5682a919f4eeeae7b237f173fbd6690999ceb8b39149207633b8956ec7a7e1-d"
+    ],
+    "pool_images": [
+      "https://www.uri.edu/wp-content/uploads/home/2018/05/aquatics.jpg"
+    ],
+    "student_life_images": [
+      "https://www.uri.edu/wp-content/uploads/home/2024/03/campus-life_hero-v3.jpg",
+      "https://www.uri.edu/wp-content/uploads/home/2021/04/Three-students-springwalk-NL-007.jpg",
+      "https://www.uri.edu/wp-content/uploads/home/2018/04/movein2.jpg"
+    ],
+    "approved_hero_image": "https://i.vimeocdn.com/video/2077702172-8766ba933027773d792fc9fb405de046b7a6eb86a9458176563d7a3a9d3bc501-d",
+    "approved_pool_image": "https://www.uri.edu/wp-content/uploads/home/2018/05/aquatics.jpg",
+    "approved_student_life_image": "https://www.uri.edu/wp-content/uploads/home/2024/03/campus-life_hero-v3.jpg",
+    "approved_extra_images": [
+      "https://i.vimeocdn.com/video/1947836286-cd5682a919f4eeeae7b237f173fbd6690999ceb8b39149207633b8956ec7a7e1-d",
+      "https://www.uri.edu/wp-content/uploads/home/2021/04/Three-students-springwalk-NL-007.jpg",
+      "https://www.uri.edu/wp-content/uploads/home/2018/04/movein2.jpg"
+    ],
+    "saved_at": "2026-04-06T21:20:48Z"
+  },
+  "University of Richmond": {
+    "hero_images": [
+      "https://upload.wikimedia.org/wikipedia/commons/2/2f/Jepson_School_of_Leadership_Studies.jpg",
+      "https://www.unigo.com/wp-content/uploads/2020/03/university-of-richmond-233374-xlarge_building.jpg"
+    ],
+    "pool_images": [
+      "https://d1gtq9mqg5x3oe.cloudfront.net/hermes/images/_articles/photography/urnow/2020/08-august/gouger-ncaa/promo/gouger-promo-3840x2160.jpg"
+    ],
+    "student_life_images": [
+      "https://d1gtq9mqg5x3oe.cloudfront.net/hermes/images/livinglearning/about/index/hero/URCSIStaff-hero.jpg",
+      "https://3.bp.blogspot.com/-bLHROTNsK0g/XJkkY1WAaJI/AAAAAAAAIHQ/aePZWkNJDrkR0iBe8aaD7mVel2PKJBpTgCLcBGAs/s1600/Student%2BUnion%2BOsborne%2BLongue%2BWide.jpg"
+    ],
+    "approved_hero_image": "https://upload.wikimedia.org/wikipedia/commons/2/2f/Jepson_School_of_Leadership_Studies.jpg",
+    "approved_pool_image": "https://d1gtq9mqg5x3oe.cloudfront.net/hermes/images/_articles/photography/urnow/2020/08-august/gouger-ncaa/promo/gouger-promo-3840x2160.jpg",
+    "approved_student_life_image": "https://d1gtq9mqg5x3oe.cloudfront.net/hermes/images/livinglearning/about/index/hero/URCSIStaff-hero.jpg",
+    "approved_extra_images": [
+      "https://www.unigo.com/wp-content/uploads/2020/03/university-of-richmond-233374-xlarge_building.jpg",
+      "https://3.bp.blogspot.com/-bLHROTNsK0g/XJkkY1WAaJI/AAAAAAAAIHQ/aePZWkNJDrkR0iBe8aaD7mVel2PKJBpTgCLcBGAs/s1600/Student%2BUnion%2BOsborne%2BLongue%2BWide.jpg"
+    ],
+    "saved_at": "2026-04-06T21:23:35Z"
+  },
+  "Davidson College": {
+    "hero_images": [
+      "https://www.visitnc.com/sites/default/files/styles/scale_1920/public/migrated_images/Davidson_College_Chambers_Building_in_Daytime.58eaf9e7.jpg?itok=t80HKv3g"
+    ],
+    "pool_images": [
+      "https://images.sidearmdev.com/convert?url=https:%2F%2Fd1dt5ds10ckjgn.cloudfront.net%2Fimages%2F2025%2F2%2F1%2FDSC_8490.jpg&type=webp"
+    ],
+    "student_life_images": [
+      "https://nsjonline.com/wp-content/uploads/2017/08/15068_davidson_college_campus_02o.jpg",
+      "https://www.davidson.edu/sites/default/files/styles/400x300/public/2023-06/Campus%20Scenes_011.jpg?h=9855f42d&itok=v9ioaGxc"
+    ],
+    "approved_hero_image": "https://www.visitnc.com/sites/default/files/styles/scale_1920/public/migrated_images/Davidson_College_Chambers_Building_in_Daytime.58eaf9e7.jpg?itok=t80HKv3g",
+    "approved_pool_image": "https://images.sidearmdev.com/convert?url=https:%2F%2Fd1dt5ds10ckjgn.cloudfront.net%2Fimages%2F2025%2F2%2F1%2FDSC_8490.jpg&type=webp",
+    "approved_student_life_image": "https://nsjonline.com/wp-content/uploads/2017/08/15068_davidson_college_campus_02o.jpg",
+    "approved_extra_images": [
+      "https://www.davidson.edu/sites/default/files/styles/400x300/public/2023-06/Campus%20Scenes_011.jpg?h=9855f42d&itok=v9ioaGxc"
+    ],
+    "saved_at": "2026-04-06T21:23:26Z"
   }
 }
