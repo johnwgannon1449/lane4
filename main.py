@@ -1,6 +1,6 @@
 import os, json, re, time, threading
 import urllib.request, urllib.parse
-from flask import Flask, request, jsonify, send_from_directory, session
+from flask import Flask, request, jsonify, send_from_directory, session, redirect
 from dotenv import load_dotenv
 from functools import wraps
 import psycopg2
