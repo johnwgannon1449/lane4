@@ -1770,9 +1770,14 @@ async function boot() {
 }
 
 function _syncAdminNav() {
-  const el = document.getElementById('nav-admin-link');
-  if (!el) return;
-  el.style.display = (CURRENT_USER && CURRENT_USER.is_admin) ? '' : 'none';
+  const link = document.getElementById('nav-admin-link');
+  if (!link || !CURRENT_USER) return;
+  const email = (CURRENT_USER.email || '').toLowerCase().trim();
+  if (email === 'johngannon@pacesupply.com') {
+    link.style.display = 'inline-block';
+  } else {
+    link.style.display = 'none';
+  }
 }
 
 async function afterAuthBoot() {
