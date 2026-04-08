@@ -79,39 +79,63 @@ def _init_db():
                 CREATE TABLE IF NOT EXISTS admins (
                     id            SERIAL PRIMARY KEY,
                     email         TEXT UNIQUE NOT NULL,
-                    password_hash TEXT NOT NULL,
+                    password_hash TEXT,
                     created_by    TEXT,
                     created_at    TIMESTAMPTZ DEFAULT NOW()
                 )
+            """)
+            # Safe migrations for existing deployments
+            cur.execute("""
+                ALTER TABLE admins
+                    ADD COLUMN IF NOT EXISTS active BOOLEAN NOT NULL DEFAULT TRUE
+            """)
+            cur.execute("""
+                ALTER TABLE admins
+                    ALTER COLUMN password_hash DROP NOT NULL
             """)
         conn.commit()
 
 
 def _bootstrap_initial_admin():
-    """Create johngannon@pacesupply.com as the initial admin if no admins exist.
-    Uses ADMIN_PASSWORD env var as the initial password.
-    Safe to call on every startup — no-ops if admins already exist.
+    """Ensure johngannon@pacesupply.com is always an active admin (idempotent).
+    Also sets a password_hash if ADMIN_PASSWORD env var is provided (for the
+    legacy /admin/curate login system).  Safe to call on every startup.
     """
     bootstrap_email = 'johngannon@pacesupply.com'
-    initial_password = os.environ.get('ADMIN_PASSWORD', '')
-    if not initial_password:
-        print('[admin bootstrap] ADMIN_PASSWORD not set — skipping bootstrap')
-        return
     try:
         with get_db() as conn:
             with conn.cursor() as cur:
-                cur.execute('SELECT COUNT(*) FROM admins')
-                count = cur.fetchone()[0]
-                if count == 0:
+                # Ensure the seed admin always exists and is active
+                cur.execute("""
+                    INSERT INTO admins (email, active, created_by)
+                    VALUES (%s, TRUE, 'bootstrap')
+                    ON CONFLICT (email) DO UPDATE SET active = TRUE
+                """, (bootstrap_email,))
+                # Optionally attach a password for the legacy curator login
+                initial_password = os.environ.get('ADMIN_PASSWORD', '')
+                if initial_password:
                     pw_hash = generate_password_hash(initial_password)
                     cur.execute(
-                        'INSERT INTO admins (email, password_hash, created_by) VALUES (%s, %s, %s) ON CONFLICT DO NOTHING',
-                        (bootstrap_email, pw_hash, 'bootstrap')
+                        'UPDATE admins SET password_hash = %s WHERE email = %s AND password_hash IS NULL',
+                        (pw_hash, bootstrap_email)
                     )
-                    print(f'[admin bootstrap] Created initial admin: {bootstrap_email}')
+                print(f'[admin bootstrap] Seed admin verified: {bootstrap_email}')
             conn.commit()
     except Exception as e:
         print(f'[admin bootstrap] Error: {e}')
+
+
+def _is_user_admin(email: str) -> bool:
+    """Return True if the email is an active admin in the admins table."""
+    if not email:
+        return False
+    try:
+        with get_db() as conn:
+            with conn.cursor() as cur:
+                cur.execute('SELECT 1 FROM admins WHERE email = %s AND active = TRUE', (email,))
+                return cur.fetchone() is not None
+    except Exception:
+        return False
 
 def login_required(f):
     @wraps(f)
@@ -133,17 +157,15 @@ def admin_required(f):
         return f(*args, **kwargs)
     return decorated
 
-_USER_ADMIN_EMAIL = 'johngannon@pacesupply.com'
-
 def user_admin_required(f):
-    """Gate: user must be logged in AND be the designated admin email."""
+    """Gate: user must be logged in AND appear in the admins table (active=TRUE)."""
     @wraps(f)
     def decorated(*args, **kwargs):
         if 'user_id' not in session:
             if request.path.startswith('/api/'):
                 return jsonify({'error': 'Not authenticated'}), 401
             return redirect('/')
-        if session.get('email') != _USER_ADMIN_EMAIL:
+        if not _is_user_admin(session.get('email', '')):
             if request.path.startswith('/api/'):
                 return jsonify({'error': 'Forbidden'}), 403
             return 'Forbidden', 403
@@ -206,7 +228,13 @@ def auth_logout():
 def auth_me():
     if 'user_id' not in session:
         return jsonify({'authenticated': False}), 401
-    return jsonify({'authenticated': True, 'email': session.get('email'), 'user_id': session['user_id']})
+    email = session.get('email', '')
+    return jsonify({
+        'authenticated': True,
+        'email':         email,
+        'user_id':       session['user_id'],
+        'is_admin':      _is_user_admin(email),
+    })
 
 # ---------------------------------------------------------------------------
 # DATA SYNC ENDPOINTS
@@ -5466,6 +5494,50 @@ def ua_approve():
         student_life_images[0] if student_life_images else None,
     )
     return jsonify({'ok': True, 'school': school})
+
+
+@app.route('/api/ua/admins', methods=['GET'])
+@user_admin_required
+def ua_list_admins():
+    """Return all admin records for the admin management UI."""
+    try:
+        with get_db() as conn:
+            with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+                cur.execute("""
+                    SELECT email, active, created_by,
+                           TO_CHAR(created_at AT TIME ZONE 'UTC', 'YYYY-MM-DD HH24:MI') AS created_at
+                    FROM admins
+                    ORDER BY created_at
+                """)
+                rows = [dict(r) for r in cur.fetchall()]
+        return jsonify(rows)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/ua/admins/create', methods=['POST'])
+@user_admin_required
+def ua_create_admin():
+    """Add a new active admin by email (no password required for user-admin access)."""
+    body  = request.get_json(silent=True) or {}
+    email = (body.get('email') or '').strip().lower()
+    if not email or '@' not in email or '.' not in email.split('@')[-1]:
+        return jsonify({'error': 'Valid email required'}), 400
+    created_by = session.get('email', 'unknown')
+    try:
+        with get_db() as conn:
+            with conn.cursor() as cur:
+                cur.execute("""
+                    INSERT INTO admins (email, active, created_by)
+                    VALUES (%s, TRUE, %s)
+                    ON CONFLICT (email) DO UPDATE SET active = TRUE
+                    RETURNING email
+                """, (email, created_by))
+                result = cur.fetchone()
+            conn.commit()
+        return jsonify({'ok': True, 'email': result[0]})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 
 @app.route('/admin/login', methods=['GET'])

@@ -1561,7 +1561,7 @@ async function authSubmit() {
       btn.textContent = AUTH_MODE === 'register' ? 'Create Account →' : 'Sign In →';
       return;
     }
-    CURRENT_USER = { email: data.email };
+    CURRENT_USER = { email: data.email, is_admin: data.is_admin || false };
     hideAuth();
     await afterAuthBoot();
   } catch(e) {
@@ -1645,7 +1645,7 @@ async function boot() {
     if (res.ok) {
       const data = await res.json();
       if (data.authenticated) {
-        CURRENT_USER = { email: data.email };
+        CURRENT_USER = { email: data.email, is_admin: data.is_admin || false };
       }
     }
   } catch(_) {}
@@ -1658,11 +1658,10 @@ async function boot() {
   await afterAuthBoot();
 }
 
-const ADMIN_EMAIL = 'johngannon@pacesupply.com';
 function _syncAdminNav() {
   const el = document.getElementById('nav-admin-link');
   if (!el) return;
-  el.style.display = (CURRENT_USER && CURRENT_USER.email === ADMIN_EMAIL) ? '' : 'none';
+  el.style.display = (CURRENT_USER && CURRENT_USER.is_admin) ? '' : 'none';
 }
 
 async function afterAuthBoot() {

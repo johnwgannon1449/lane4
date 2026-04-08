@@ -174,6 +174,28 @@ header {
 .status-msg { font-size: 0.82rem; color: var(--muted); padding: 0.75rem 0; }
 .status-msg.ok  { color: var(--green); }
 .status-msg.err { color: var(--red); }
+
+/* ── Admins panel ───────────────────────────────────────────────────── */
+.view-hidden { display: none !important; }
+#admins-panel { padding: 1.75rem; max-width: 560px; }
+.admins-heading { font-family: 'Fraunces', serif; font-size: 1.15rem; font-weight: 700; margin-bottom: 0.25rem; }
+.admins-sub { font-size: 0.82rem; color: var(--muted); margin-bottom: 1.25rem; }
+.admin-table { width: 100%; border-collapse: collapse; font-size: 0.83rem; }
+.admin-table th { text-align: left; padding: 0.45rem 0.6rem; border-bottom: 2px solid var(--border); color: var(--muted); font-weight: 600; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; }
+.admin-table td { padding: 0.6rem 0.6rem; border-bottom: 1px solid var(--border); }
+.admin-table tr:last-child td { border-bottom: none; }
+.admin-active-badge { display: inline-block; font-size: 0.7rem; font-weight: 700; padding: 1px 7px; border-radius: 99px; }
+.admin-active-badge.active { background: var(--green-l); color: var(--green); }
+.admin-active-badge.inactive { background: var(--red-l); color: var(--red); }
+.add-admin-form { display: flex; gap: 0.6rem; margin-top: 1.25rem; }
+.add-admin-input { flex: 1; padding: 8px 10px; border: 1.5px solid var(--border); border-radius: 8px; font-family: 'Figtree', sans-serif; font-size: 0.84rem; outline: none; }
+.add-admin-input:focus { border-color: var(--blue); }
+.btn-add-admin { padding: 8px 16px; background: var(--blue); color: #fff; border: none; border-radius: 8px; font-family: 'Figtree', sans-serif; font-size: 0.84rem; font-weight: 600; cursor: pointer; }
+.btn-add-admin:hover { background: var(--blue-d); }
+.btn-add-admin:disabled { opacity: 0.6; cursor: default; }
+.admins-msg { font-size: 0.82rem; margin-top: 0.75rem; min-height: 1.2rem; }
+.admins-msg.ok  { color: var(--green); }
+.admins-msg.err { color: var(--red); }
 </style>
 </head>
 <body>
@@ -182,11 +204,16 @@ header {
   <a class="logo" href="/">Lane<span>4</span></a>
   <div class="header-right">
     <span class="badge">ADMIN</span>
+    <button id="btn-toggle-admins" onclick="toggleAdminsPanel()"
+      style="font-family:'Figtree',sans-serif;font-size:0.8rem;font-weight:600;background:none;border:1.5px solid var(--border);border-radius:7px;padding:4px 12px;cursor:pointer;color:var(--muted);">
+      Manage Admins
+    </button>
     <a class="back-link" href="/">← Back to app</a>
   </div>
 </header>
 
-<div class="layout">
+<!-- ── Image manager view ────────────────────────────────────────── -->
+<div id="view-schools" class="layout">
 
   <!-- ── Sidebar: school list ─────────────────────────────────── -->
   <aside class="sidebar">
@@ -207,6 +234,23 @@ header {
 
 </div>
 
+<!-- ── Admins management view ───────────────────────────────────── -->
+<div id="admins-panel" class="view-hidden">
+  <div class="admins-heading">Admin Management</div>
+  <div class="admins-sub">Users with admin access to this panel. Anyone listed here can access /admin.</div>
+  <table class="admin-table" id="admins-table">
+    <thead>
+      <tr><th>Email</th><th>Status</th><th>Added by</th><th>Date</th></tr>
+    </thead>
+    <tbody id="admins-tbody"><tr><td colspan="4" style="color:var(--muted);padding:0.75rem 0.6rem;">Loading…</td></tr></tbody>
+  </table>
+  <form class="add-admin-form" onsubmit="addAdmin(event)">
+    <input class="add-admin-input" id="new-admin-email" type="email" placeholder="new@example.com" required />
+    <button class="btn-add-admin" type="submit" id="btn-add-admin">Add Admin</button>
+  </form>
+  <div class="admins-msg" id="admins-msg"></div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -216,6 +260,77 @@ let FILTER_CAT    = 'all';
 let PENDING_HERO  = null;
 let PENDING_POOL  = null;
 let PENDING_STUDENT = null;
+
+// ── Admins panel ──────────────────────────────────────────────────────
+let _adminsOpen = false;
+
+function toggleAdminsPanel() {
+  _adminsOpen = !_adminsOpen;
+  const btn       = document.getElementById('btn-toggle-admins');
+  const schools   = document.getElementById('view-schools');
+  const adminsDiv = document.getElementById('admins-panel');
+  if (_adminsOpen) {
+    schools.classList.add('view-hidden');
+    adminsDiv.classList.remove('view-hidden');
+    btn.textContent = '← Image Manager';
+    loadAdmins();
+  } else {
+    adminsDiv.classList.add('view-hidden');
+    schools.classList.remove('view-hidden');
+    btn.textContent = 'Manage Admins';
+  }
+}
+
+async function loadAdmins() {
+  const tbody = document.getElementById('admins-tbody');
+  tbody.innerHTML = '<tr><td colspan="4" style="color:var(--muted);padding:0.6rem;">Loading…</td></tr>';
+  try {
+    const res  = await fetch('/api/ua/admins');
+    const rows = await res.json();
+    if (!Array.isArray(rows) || rows.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="4" style="color:var(--muted);padding:0.6rem;">No admins found.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = rows.map(r => `
+      <tr>
+        <td>${esc(r.email)}</td>
+        <td><span class="admin-active-badge ${r.active ? 'active' : 'inactive'}">${r.active ? 'Active' : 'Inactive'}</span></td>
+        <td style="color:var(--muted)">${esc(r.created_by || '—')}</td>
+        <td style="color:var(--muted)">${esc(r.created_at || '')}</td>
+      </tr>`).join('');
+  } catch(e) {
+    tbody.innerHTML = `<tr><td colspan="4" style="color:var(--red);">Failed to load: ${esc(e.message)}</td></tr>`;
+  }
+}
+
+async function addAdmin(evt) {
+  evt.preventDefault();
+  const input  = document.getElementById('new-admin-email');
+  const btn    = document.getElementById('btn-add-admin');
+  const msgEl  = document.getElementById('admins-msg');
+  const email  = input.value.trim();
+  if (!email) return;
+  btn.disabled    = true;
+  msgEl.className = 'admins-msg';
+  msgEl.textContent = '';
+  try {
+    const res  = await fetch('/api/ua/admins/create', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Unknown error');
+    msgEl.className   = 'admins-msg ok';
+    msgEl.textContent = `${data.email} added as admin.`;
+    input.value = '';
+    loadAdmins();
+  } catch(e) {
+    msgEl.className   = 'admins-msg err';
+    msgEl.textContent = 'Error: ' + e.message;
+  } finally {
+    btn.disabled = false;
+  }
+}
 
 // ── Boot ──────────────────────────────────────────────────────────────
 async function boot() {
