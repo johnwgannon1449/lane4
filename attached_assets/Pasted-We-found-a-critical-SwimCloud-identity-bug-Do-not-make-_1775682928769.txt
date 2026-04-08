@@ -1,0 +1,73 @@
+We found a critical SwimCloud identity bug.
+
+Do not make broad changes yet.
+First diagnose exactly where the swimmer identity is getting mixed up.
+
+Observed behavior:
+
+* User searched for James Gannon
+* Search appeared to find the correct team/context
+* But the proposed import modal showed:
+  "Brett Nagle · Top 10 events..."
+* The imported times were wrong
+
+This suggests the app is mixing up swimmer identity between:
+
+* search results
+* user click selection
+* propose/import route
+* profile parsing
+
+Audit and trace the full identity path.
+
+Answer these questions clearly:
+
+1. In the frontend, when a user clicks a SwimCloud search result, what exact swimmer identifier is passed forward?
+
+   * show the function
+   * show the payload
+   * show where it is stored
+
+2. When `/api/swimcloud/propose` is called, what exact swimmer ID is being sent from the browser?
+
+3. On the backend, what exact parameter does `/api/swimcloud/propose` use to fetch the swimmer profile/times?
+
+4. Is there any place where the selected swimmer object can get mixed up by:
+
+   * wrong array index
+   * stale modal state
+   * inline onclick HTML
+   * reused global variable
+   * wrong field mapping
+   * cached previous selection
+
+5. Verify whether the search results UI is displaying one swimmer but passing a different swimmer_id on click.
+
+6. Verify whether the backend parser could land on the wrong swimmer after search/profile fetch.
+
+7. Reproduce the full path:
+   search result shown
+   → clicked result
+   → browser payload sent
+   → backend lookup
+   → swimmer profile returned
+   → modal title rendered
+
+8. Identify the exact root cause of why "Brett Nagle" could appear when selecting James Gannon.
+
+If possible, add temporary logging to show:
+
+* displayed swimmer name in search results
+* clicked swimmer_id
+* propose request swimmer_id
+* backend resolved swimmer name
+* modal rendered swimmer name
+
+Then provide:
+
+* exact file(s) involved
+* exact bug found
+* safest minimal fix
+
+This is a targeted SwimCloud identity audit.
+Do not make unrelated changes.
