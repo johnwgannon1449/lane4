@@ -21,9 +21,24 @@ import re
 _STANDARDS: dict | None = None
 _STANDARDS_PATH = os.path.join(os.path.dirname(__file__), "static", "usa_motivational_times_17_18_scy.json")
 
-# Ordered anchors (A-level, dict-key) — from slowest to fastest
-_ANCHOR_KEYS = ["B", "A", "AA", "AAA", "AAAA"]
-_ANCHOR_SCORES = [0, 1, 2, 3, 4]
+# Ordered anchors (A-level, dict-key) — slowest to fastest.
+# BB is intentionally excluded: it is stored in the JSON for reference only
+# and must never be used as an interpolation rung.
+_ANCHOR_KEYS   = ["B", "A", "AA", "AAA", "AAAA"]
+_ANCHOR_SCORES = [0,   1,   2,    3,     4     ]
+
+# Map caller-supplied gender strings → JSON top-level keys ("boys" / "girls").
+# Both the traditional "men"/"women" and the new "boys"/"girls" spellings are accepted.
+_GENDER_KEY: dict[str, str] = {
+    "men":   "boys",
+    "boys":  "boys",
+    "male":  "boys",
+    "m":     "boys",
+    "women": "girls",
+    "girls": "girls",
+    "female":"girls",
+    "f":     "girls",
+}
 
 
 def load_standards() -> dict:
@@ -31,9 +46,7 @@ def load_standards() -> dict:
     global _STANDARDS
     if _STANDARDS is None:
         with open(_STANDARDS_PATH, "r", encoding="utf-8") as f:
-            raw = json.load(f)
-        # raw has 'men' and 'women' sub-dicts
-        _STANDARDS = raw
+            _STANDARDS = json.load(f)
     return _STANDARDS
 
 
@@ -68,7 +81,7 @@ def a_score(event: str, t_sec: float, gender: str, standards: dict) -> float:
     Returns a float; 0=B, 1=A, 2=AA, 3=AAA, 4=AAAA. Can exceed 4 or be negative.
     Returns -999 if event/gender not found in standards.
     """
-    gender_key = "men" if "men" in gender.lower() else "women"
+    gender_key = _GENDER_KEY.get(gender.lower().strip(), "boys")
     ev_std = standards.get(gender_key, {}).get(event)
     if not ev_std:
         return -999.0

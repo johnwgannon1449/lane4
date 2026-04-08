@@ -336,6 +336,8 @@ def sc_propose():
         from motivational_ranking import rank_swimcloud_bests
 
         scy_bests, profile_info, seed_prs = get_swimmer_scy_bests(swimmer_id)
+        # Prefer gender detected from SwimCloud records; fall back to caller-supplied param
+        effective_gender = profile_info.get("gender") or gender
         if not scy_bests:
             return jsonify({
                 'swimmer': profile_info,
@@ -344,7 +346,7 @@ def sc_propose():
                 'warning': 'No SCY times found for this swimmer on SwimCloud.',
             })
 
-        top10 = rank_swimcloud_bests(scy_bests, gender, n=10)
+        top10 = rank_swimcloud_bests(scy_bests, effective_gender, n=10)
         return jsonify({'swimmer': profile_info, 'proposed': top10, 'seed_prs': seed_prs})
     except Exception as e:
         print(f'[swimcloud/propose] {e}')

@@ -332,6 +332,22 @@ def extract_scy_bests(raw_times: list[dict]) -> dict[str, dict]:
     return bests
 
 
+def detect_gender_from_raw(raw_times: list[dict]) -> str | None:
+    """
+    Detect swimmer gender from SwimCloud fastest_times records.
+
+    SwimCloud encodes gender in the 'eventgender' field as 'M' or 'F'.
+    Returns 'men' or 'women' (matching Lane4 convention), or None if unknown.
+    """
+    for rec in raw_times:
+        eg = str(rec.get("eventgender", "")).strip().upper()
+        if eg == "M":
+            return "men"
+        if eg == "F":
+            return "women"
+    return None
+
+
 def get_swimmer_scy_bests(swimmer_id: str) -> tuple[dict, dict, list]:
     """
     High-level function: fetch and extract SCY best times + raw profile info
@@ -339,7 +355,8 @@ def get_swimmer_scy_bests(swimmer_id: str) -> tuple[dict, dict, list]:
 
     Returns (scy_bests, profile_info, seed_prs)
       scy_bests:   {event_name: {time, time_sec, course}} for supported SCY events
-      profile_info:{swimmer_id, display_name, team, grad_year, profile_url}
+      profile_info:{swimmer_id, display_name, team, grad_year, profile_url, gender}
+                   gender is 'men', 'women', or None
       seed_prs:    list of seed-time candidates that passed all filters
     """
     raw          = fetch_fastest_times(swimmer_id)
@@ -348,4 +365,6 @@ def get_swimmer_scy_bests(swimmer_id: str) -> tuple[dict, dict, list]:
     seed_prs     = extract_seed_prs(raw, scy_bests)
     if not profile_info.get("display_name"):
         profile_info["swimmer_id"] = swimmer_id
+    # Attach gender detected from the raw result records (more reliable than profile API)
+    profile_info["gender"] = detect_gender_from_raw(raw)
     return scy_bests, profile_info, seed_prs

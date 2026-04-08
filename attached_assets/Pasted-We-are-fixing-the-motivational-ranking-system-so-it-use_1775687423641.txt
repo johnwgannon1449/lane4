@@ -1,0 +1,350 @@
+We are fixing the motivational ranking system so it uses the correct USA Swimming 17–18 SCY standards for BOTH boys and girls.
+
+Do not overcomplicate this. Replace the standards dataset with the full table below and ensure the same scoring logic works for both genders.
+
+---
+
+## SCORING MODEL
+
+Use these anchors:
+
+B = 0
+A = 1
+AA = 2
+AAA = 3
+AAAA = 4
+
+BB exists in the dataset but must NOT be treated as a scoring rung.
+
+Interpolation must only occur between:
+
+B → A → AA → AAA → AAAA
+
+Never interpolate through BB.
+
+---
+
+## FULL 17–18 SCY STANDARDS
+
+Store both genders in the same dataset.
+
+Example structure:
+
+{
+"boys": { ... },
+"girls": { ... }
+}
+
+---
+
+## BOYS 17–18 SCY
+
+50 Free
+AAAA 20.69
+AAA 21.69
+AA 22.59
+A 23.59
+BB 25.59
+B 27.59
+
+100 Free
+AAAA 45.29
+AAA 47.39
+AA 49.59
+A 51.69
+BB 55.99
+B 1:00.29
+
+200 Free
+AAAA 1:40.19
+AAA 1:44.99
+AA 1:49.69
+A 1:54.49
+BB 2:03.99
+B 2:13.59
+
+500 Free
+AAAA 4:32.39
+AAA 4:45.39
+AA 4:58.39
+A 5:11.39
+BB 5:37.29
+B 6:03.19
+
+1000 Free
+AAAA 9:30.19
+AAA 9:57.29
+AA 10:24.49
+A 10:51.59
+BB 11:45.89
+B 12:40.19
+
+1650 Free
+AAAA 15:51.79
+AAA 16:37.09
+AA 17:22.39
+A 18:07.69
+BB 19:38.39
+B 21:08.99
+
+50 Back
+AAAA 23.09
+AAA 24.19
+AA 25.29
+A 26.39
+BB 28.59
+B 30.79
+
+100 Back
+AAAA 48.89
+AAA 51.29
+AA 53.59
+A 55.89
+BB 1:00.59
+B 1:05.19
+
+200 Back
+AAAA 1:47.89
+AAA 1:53.09
+AA 1:58.19
+A 2:03.29
+BB 2:13.59
+B 2:23.89
+
+50 Breast
+AAAA 26.59
+AAA 27.89
+AA 29.09
+A 30.39
+BB 32.89
+B 35.39
+
+100 Breast
+AAAA 55.99
+AAA 58.69
+AA 1:01.39
+A 1:03.99
+BB 1:09.39
+B 1:14.69
+
+200 Breast
+AAAA 2:01.69
+AAA 2:07.49
+AA 2:13.29
+A 2:19.09
+BB 2:30.69
+B 2:42.29
+
+50 Fly
+AAAA 22.99
+AAA 23.99
+AA 25.09
+A 26.19
+BB 28.39
+B 30.59
+
+100 Fly
+AAAA 49.09
+AAA 51.39
+AA 53.69
+A 56.09
+BB 1:00.79
+B 1:05.39
+
+200 Fly
+AAAA 1:49.79
+AAA 1:55.09
+AA 2:00.29
+A 2:05.49
+BB 2:15.99
+B 2:26.39
+
+200 IM
+AAAA 1:50.59
+AAA 1:55.89
+AA 2:01.09
+A 2:06.39
+BB 2:16.89
+B 2:27.39
+
+400 IM
+AAAA 3:57.99
+AAA 4:09.39
+AA 4:20.69
+A 4:31.99
+BB 4:54.69
+B 5:17.39
+
+---
+
+## GIRLS 17–18 SCY
+
+50 Free
+AAAA 23.49
+AAA 24.69
+AA 25.79
+A 26.89
+BB 29.09
+B 31.39
+
+100 Free
+AAAA 51.09
+AAA 53.49
+AA 55.89
+A 58.39
+BB 1:03.19
+B 1:08.09
+
+200 Free
+AAAA 1:50.39
+AAA 1:55.69
+AA 2:00.89
+A 2:06.19
+BB 2:16.69
+B 2:27.19
+
+500 Free
+AAAA 4:57.39
+AAA 5:11.59
+AA 5:25.69
+A 5:39.89
+BB 6:08.19
+B 6:36.49
+
+1000 Free
+AAAA 10:19.59
+AAA 10:49.09
+AA 11:18.59
+A 11:48.09
+BB 12:47.09
+B 13:46.09
+
+1650 Free
+AAAA 17:05.39
+AAA 17:54.29
+AA 18:43.09
+A 19:31.89
+BB 21:09.59
+B 22:47.19
+
+50 Back
+AAAA 25.99
+AAA 27.19
+AA 28.39
+A 29.69
+BB 32.19
+B 34.59
+
+100 Back
+AAAA 54.99
+AAA 57.69
+AA 1:00.29
+A 1:02.89
+BB 1:08.09
+B 1:13.39
+
+200 Back
+AAAA 1:59.09
+AAA 2:04.79
+AA 2:10.39
+A 2:16.09
+BB 2:27.39
+B 2:38.79
+
+50 Breast
+AAAA 30.29
+AAA 31.69
+AA 33.19
+A 34.59
+BB 37.49
+B 40.39
+
+100 Breast
+AAAA 1:03.59
+AAA 1:06.69
+AA 1:09.69
+A 1:12.69
+BB 1:18.79
+B 1:24.79
+
+200 Breast
+AAAA 2:18.49
+AAA 2:25.09
+AA 2:31.69
+A 2:38.29
+BB 2:51.49
+B 3:04.69
+
+50 Fly
+AAAA 25.89
+AAA 27.09
+AA 28.29
+A 29.59
+BB 31.99
+B 34.49
+
+100 Fly
+AAAA 55.19
+AAA 57.79
+AA 1:00.39
+A 1:03.09
+BB 1:08.29
+B 1:13.59
+
+200 Fly
+AAAA 2:02.09
+AAA 2:07.89
+AA 2:13.69
+A 2:19.49
+BB 2:31.19
+B 2:42.79
+
+200 IM
+AAAA 2:02.69
+AAA 2:08.49
+AA 2:14.39
+A 2:20.19
+BB 2:31.89
+B 2:43.59
+
+400 IM
+AAAA 4:22.99
+AAA 4:35.49
+AA 4:47.99
+A 5:00.59
+BB 5:25.59
+B 5:50.69
+
+---
+
+## GENDER DETECTION
+
+When importing from SwimCloud:
+
+1. Detect swimmer gender from the SwimCloud profile if available.
+2. If gender = male → use boys standards.
+3. If gender = female → use girls standards.
+4. If gender cannot be determined → default to the gender associated with the SwimCloud profile data.
+
+Do NOT ask the user for gender if SwimCloud already provides it.
+
+---
+
+## VALIDATION
+
+After installing the new table and fixing interpolation:
+
+Test:
+
+James Gannon
+1650 Free SCY
+16:06.59
+
+Expected: score between AAA and AAAA (~3.6A range).
+
+Return:
+
+* file(s) updated
+* confirmation that both boys and girls tables are now installed
+* confirmation that BB is ignored in scoring
+* confirmation that SwimCloud gender detection is working
