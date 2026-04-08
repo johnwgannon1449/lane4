@@ -1210,49 +1210,56 @@ def fetch_candidates_for_category(school: str, category: str) -> list[dict]:
             if len(new_results) >= 24:
                 break
 
-    # ── Wikimedia Commons (always runs — supplements CSE or replaces it) ──────
-    # No aspect-ratio filter here: pool shots are often near-square, and the
-    # user needs real options when CSE fails or quota is exhausted.
-    for q in queries:
-        if len(new_results) >= 36:
-            break
-        try:
-            params = {
-                'action': 'query', 'generator': 'search',
-                'gsrnamespace': 6, 'gsrsearch': q,
-                'prop': 'imageinfo', 'iiprop': 'url|size|mime',
-                'gsrlimit': 25, 'format': 'json', 'formatversion': '2',
-            }
-            url = COMMONS_API + '?' + urllib.parse.urlencode(params)
-            req = urllib.request.Request(url, headers={
-                'User-Agent': 'Lane4Recruit/3.0 (swim recruiting; open source)'})
-            with urllib.request.urlopen(req, timeout=14) as r:
-                data = json.loads(r.read())
-            for page in data.get('query', {}).get('pages', []):
-                for info in page.get('imageinfo', []):
-                    if info.get('mime') in ('image/svg+xml', 'image/gif', 'image/bmp'):
-                        continue
-                    img_url = info.get('url', '')
-                    if not img_url or _is_bad_url(img_url):
-                        continue
-                    fname = urllib.parse.unquote(img_url).lower()
-                    if any(t in fname for t in HISTORICAL_TOKENS):
-                        continue
-                    if _HIST_YEAR_RE.search(fname):
-                        continue
-                    w = info.get('width', 0)
-                    h = info.get('height', 0)
-                    if w < MIN_WIDTH or h < MIN_HEIGHT:
-                        continue
-                    score = round((w * h) / 1_200_000 + 1.5, 3)
-                    _add_if_new({
-                        'url': img_url, 'source': 'wiki_commons',
-                        'width': w, 'height': h, 'score': score,
-                        'page_type': page_type, 'page_url': '',
-                        'search_context': q,
-                    })
-        except Exception:
-            pass
+    # ── Wikimedia Commons (campus only — supplements DDG results) ────────────
+    # Pool and student_life are skipped here: Commons returns generic hotel/resort
+    # pool photos and unrelated student images that don't match any specific school.
+    # For pool/student_life, DDG site-restricted + DDG fallback are the reliable sources.
+    if category == 'campus':
+        school_kw = _key_words(school)
+        for q in queries:
+            if len(new_results) >= 36:
+                break
+            try:
+                params = {
+                    'action': 'query', 'generator': 'search',
+                    'gsrnamespace': 6, 'gsrsearch': q,
+                    'prop': 'imageinfo', 'iiprop': 'url|size|mime',
+                    'gsrlimit': 25, 'format': 'json', 'formatversion': '2',
+                }
+                url = COMMONS_API + '?' + urllib.parse.urlencode(params)
+                req = urllib.request.Request(url, headers={
+                    'User-Agent': 'Lane4Recruit/3.0 (swim recruiting; open source)'})
+                with urllib.request.urlopen(req, timeout=14) as r:
+                    data = json.loads(r.read())
+                for page in data.get('query', {}).get('pages', []):
+                    for info in page.get('imageinfo', []):
+                        if info.get('mime') in ('image/svg+xml', 'image/gif', 'image/bmp'):
+                            continue
+                        img_url = info.get('url', '')
+                        if not img_url or _is_bad_url(img_url):
+                            continue
+                        fname = urllib.parse.unquote(img_url).lower()
+                        if any(t in fname for t in HISTORICAL_TOKENS):
+                            continue
+                        if _HIST_YEAR_RE.search(fname):
+                            continue
+                        # Skip Commons campus images that don't mention this school —
+                        # they are unrelated campus shots that happen to rank for the query.
+                        if school_kw and not any(k in fname for k in school_kw):
+                            continue
+                        w = info.get('width', 0)
+                        h = info.get('height', 0)
+                        if w < MIN_WIDTH or h < MIN_HEIGHT:
+                            continue
+                        score = round((w * h) / 1_200_000 + 1.5, 3)
+                        _add_if_new({
+                            'url': img_url, 'source': 'wiki_commons',
+                            'width': w, 'height': h, 'score': score,
+                            'page_type': page_type, 'page_url': '',
+                            'search_context': q,
+                        })
+            except Exception:
+                pass
 
     # Assign display categories
     for img in new_results:

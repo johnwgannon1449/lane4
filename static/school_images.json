@@ -304,5 +304,47 @@
       "swim": "curated",
       "student_life": "curated"
     }
+  },
+  "Georgia Institute of Technolog": {
+    "hero": "https://www.gatech.edu/themes/custom/gatech/images/admissions_thumb.jpg",
+    "swim": "https://c1.staticflickr.com/3/2159/5744624737_027d8973d2_b.jpg",
+    "student_life": "https://www.gatech.edu/themes/custom/gatech/images/prospective-students_thumb.jpg",
+    "is_fallback": {
+      "hero": false,
+      "swim": false,
+      "student_life": false
+    },
+    "source_pages": {
+      "hero": "curated",
+      "swim": "curated",
+      "student_life": "curated"
+    }
+  },
+  "Louisville, University of": {
+    "hero": "https://img.freepik.com/premium-photo/university-louisville-campus-exploring-entrance-landmarks-this-famous-kentucky_817921-19999.jpg?w=2000",
+    "swim": "https://images.sidearmdev.com/resize?url=https:%2F%2Fdxbhsrqyrr690.cloudfront.net%2Fsidearm.nextgen.sites%2Fgocards.com%2Fimages%2F2019%2F6%2F11%2Fwright3.jpg&height=300",
+    "is_fallback": {
+      "hero": false,
+      "swim": false
+    },
+    "source_pages": {
+      "hero": "curated",
+      "swim": "curated"
+    }
+  },
+  "North Carolina State Universit": {
+    "hero": "https://as2.ftcdn.net/v2/jpg/09/57/12/45/1000_F_957124542_RCFzqHNAXJIOYDZfX0BEhWeUF3TVYFP1.jpg",
+    "swim": "http://www.edmondsonpa.com/wp-content/uploads/2016/04/Csaey_Natatorium_3.jpg",
+    "student_life": "https://www.ncsu.edu/wp-content/uploads/2021/12/MAH4006-1024x576.jpg",
+    "is_fallback": {
+      "hero": false,
+      "swim": false,
+      "student_life": false
+    },
+    "source_pages": {
+      "hero": "curated",
+      "swim": "curated",
+      "student_life": "curated"
+    }
   }
 }

@@ -380,5 +380,78 @@
       "https://news.fsu.edu/wp-content/uploads/2023/09/StudentLife-3.jpg"
     ],
     "saved_at": "2026-04-08T01:32:36Z"
+  },
+  "Georgia Institute of Technolog": {
+    "hero_images": [
+      "https://www.gatech.edu/themes/custom/gatech/images/admissions_thumb.jpg",
+      "https://www.gatech.edu/sites/default/files/inline-images/Tech-tower-wreck.jpg",
+      "https://www.commonapp.org/static/b9429b5e83e85049978022fd586e792e/georgia-institute-technology_578.jpg",
+      "https://st4.depositphotos.com/1171396/25448/i/1600/depositphotos_254485712-stock-photo-atlanta-march-tech-tower-georgia.jpg",
+      "https://datausa.io/api/profile/university/georgia-institute-of-technology-main-campus/splash"
+    ],
+    "pool_images": [
+      "https://c1.staticflickr.com/3/2159/5744624737_027d8973d2_b.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/e/eb/Swimming_pool_maintenance_in_Perth%2C_Western_Australia%2C_May_2021_01.jpg"
+    ],
+    "student_life_images": [
+      "https://www.gatech.edu/themes/custom/gatech/images/prospective-students_thumb.jpg",
+      "https://news.fsu.edu/wp-content/uploads/2024/08/Freshman-Story-Feature.jpg",
+      "https://studentaffairs.uga.edu/wp-content/uploads/2022/08/20220829_MLC_DMK_MARCM_002_lower.jpg"
+    ],
+    "approved_hero_image": "https://www.gatech.edu/themes/custom/gatech/images/admissions_thumb.jpg",
+    "approved_pool_image": "https://c1.staticflickr.com/3/2159/5744624737_027d8973d2_b.jpg",
+    "approved_student_life_image": "https://www.gatech.edu/themes/custom/gatech/images/prospective-students_thumb.jpg",
+    "approved_extra_images": [
+      "https://www.gatech.edu/sites/default/files/inline-images/Tech-tower-wreck.jpg",
+      "https://www.commonapp.org/static/b9429b5e83e85049978022fd586e792e/georgia-institute-technology_578.jpg",
+      "https://st4.depositphotos.com/1171396/25448/i/1600/depositphotos_254485712-stock-photo-atlanta-march-tech-tower-georgia.jpg",
+      "https://datausa.io/api/profile/university/georgia-institute-of-technology-main-campus/splash",
+      "https://upload.wikimedia.org/wikipedia/commons/e/eb/Swimming_pool_maintenance_in_Perth%2C_Western_Australia%2C_May_2021_01.jpg",
+      "https://news.fsu.edu/wp-content/uploads/2024/08/Freshman-Story-Feature.jpg",
+      "https://studentaffairs.uga.edu/wp-content/uploads/2022/08/20220829_MLC_DMK_MARCM_002_lower.jpg"
+    ],
+    "saved_at": "2026-04-08T02:16:19Z"
+  },
+  "Louisville, University of": {
+    "hero_images": [
+      "https://img.freepik.com/premium-photo/university-louisville-campus-exploring-entrance-landmarks-this-famous-kentucky_817921-19999.jpg?w=2000",
+      "https://www.csoinc.net/wp-content/uploads/2020/02/LouisvilleResHall_7.jpg",
+      "https://abroadcube.com/assets/images/institutions/university-of-louisville-main-campus-1693386191.jpg"
+    ],
+    "pool_images": [
+      "https://images.sidearmdev.com/resize?url=https:%2F%2Fdxbhsrqyrr690.cloudfront.net%2Fsidearm.nextgen.sites%2Fgocards.com%2Fimages%2F2019%2F6%2F11%2Fwright3.jpg&height=300",
+      "https://s3.amazonaws.com/cstest/teams/174/louisville-university-of-facility-ralph-wright-natatorium-8d3a.JPG.400x0_q85.jpg"
+    ],
+    "student_life_images": [],
+    "approved_hero_image": "https://img.freepik.com/premium-photo/university-louisville-campus-exploring-entrance-landmarks-this-famous-kentucky_817921-19999.jpg?w=2000",
+    "approved_pool_image": "https://images.sidearmdev.com/resize?url=https:%2F%2Fdxbhsrqyrr690.cloudfront.net%2Fsidearm.nextgen.sites%2Fgocards.com%2Fimages%2F2019%2F6%2F11%2Fwright3.jpg&height=300",
+    "approved_student_life_image": null,
+    "approved_extra_images": [
+      "https://www.csoinc.net/wp-content/uploads/2020/02/LouisvilleResHall_7.jpg",
+      "https://abroadcube.com/assets/images/institutions/university-of-louisville-main-campus-1693386191.jpg",
+      "https://s3.amazonaws.com/cstest/teams/174/louisville-university-of-facility-ralph-wright-natatorium-8d3a.JPG.400x0_q85.jpg"
+    ],
+    "saved_at": "2026-04-08T02:17:35Z"
+  },
+  "North Carolina State Universit": {
+    "hero_images": [
+      "https://as2.ftcdn.net/v2/jpg/09/57/12/45/1000_F_957124542_RCFzqHNAXJIOYDZfX0BEhWeUF3TVYFP1.jpg"
+    ],
+    "pool_images": [
+      "http://www.edmondsonpa.com/wp-content/uploads/2016/04/Csaey_Natatorium_3.jpg"
+    ],
+    "student_life_images": [
+      "https://www.ncsu.edu/wp-content/uploads/2021/12/MAH4006-1024x576.jpg",
+      "https://spaces4learning.com/-/media/EDU/S4L/Images/2020/05/DPA_Talley_StudentUnion_41.jpg",
+      "https://www.coopercarry.com/wp-content/uploads/2018/07/Talley-Student-Union-NC-State-5.jpg"
+    ],
+    "approved_hero_image": "https://as2.ftcdn.net/v2/jpg/09/57/12/45/1000_F_957124542_RCFzqHNAXJIOYDZfX0BEhWeUF3TVYFP1.jpg",
+    "approved_pool_image": "http://www.edmondsonpa.com/wp-content/uploads/2016/04/Csaey_Natatorium_3.jpg",
+    "approved_student_life_image": "https://www.ncsu.edu/wp-content/uploads/2021/12/MAH4006-1024x576.jpg",
+    "approved_extra_images": [
+      "https://spaces4learning.com/-/media/EDU/S4L/Images/2020/05/DPA_Talley_StudentUnion_41.jpg",
+      "https://www.coopercarry.com/wp-content/uploads/2018/07/Talley-Student-Union-NC-State-5.jpg"
+    ],
+    "saved_at": "2026-04-08T02:19:07Z"
   }
 }

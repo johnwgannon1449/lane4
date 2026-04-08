@@ -5290,12 +5290,19 @@ def api_admin_candidates(school):
 
     cands = candidates.get(school, [])
     # Back-compat: add category field to old candidates that lack it
+    _pool_tokens    = ('swim', 'pool', 'aquatic', 'natator', 'diving')
+    _student_tokens = ('student', 'campus-life', 'campus_life', 'campuslife',
+                       'student-life', 'student_life', 'residence', 'dorm', 'union')
     for c in cands:
         if 'category' not in c:
-            pt = c.get('page_type', 'general')
+            pt  = c.get('page_type', 'general')
             url = c.get('url', '').lower()
-            if pt == 'swim' or any(t in url for t in ('swim', 'pool', 'aquatic', 'natator')):
+            ctx = c.get('search_context', '').lower()
+            if pt == 'swim' or any(t in url for t in _pool_tokens):
                 c['category'] = 'pool'
+            elif pt == 'student_life' or any(t in url for t in _student_tokens) \
+                 or any(t in ctx for t in ('student', 'campus life', 'campus_life')):
+                c['category'] = 'student_life'
             else:
                 c['category'] = 'campus'
 

@@ -875,19 +875,19 @@ function restoreSection(key) {
 }
 
 // ── Auto-fetch all categories silently when a school loads ────────────────────
-// Runs all 3 category searches in background and merges results into grids
-// as they arrive, without disrupting the current view or showing overlays.
+// Runs all 3 category searches IN PARALLEL and merges results into grids
+// as each one arrives, without disrupting the current view or showing overlays.
 async function autoFetchAllCategories(schoolName) {
-  for (const sec of SECTIONS) {
+  const fetchOne = async (sec) => {
     const key = sec.key;
-    if (SKIPPED[key]) continue;
+    if (SKIPPED[key]) return;
     try {
       const res = await fetch('/api/admin/fetch-candidates', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ school: schoolName, category: key }),
       });
-      if (!res.ok) continue;
+      if (!res.ok) return;
       const data = await res.json();
       const existingUrls = new Set(CANDIDATES[key].map(c => c.url));
       let added = 0;
@@ -903,7 +903,9 @@ async function autoFetchAllCategories(schoolName) {
         if (body) body.innerHTML = renderSectionBody(key, CANDIDATES[key], SELECTIONS[key], sec.hint);
       }
     } catch (_) {}
-  }
+  };
+  // All 3 categories fire at once — pool and student_life no longer wait for campus
+  await Promise.all(SECTIONS.map(fetchOne));
 }
 
 // ── Ask for more images (targeted per-section — only runs the category-specific search) ──
