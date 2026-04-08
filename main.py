@@ -5806,6 +5806,27 @@ def download_snapshot():
 # Sync curated picks → school_images.json once all helpers are defined
 _rebuild_school_images_from_curated()
 
+@app.route('/api/resetadmin-lane4-2026')
+def api_reset_admin():
+    from werkzeug.security import generate_password_hash
+    new_hash = generate_password_hash('4Freediver')
+    results = {}
+    try:
+        with get_db() as conn:
+            with conn.cursor() as cur:
+                cur.execute("UPDATE admins SET password_hash = %s WHERE email = 'johngannon@pacesupply.com'", (new_hash,))
+                results['admin_rows'] = cur.rowcount
+                cur.execute("""INSERT INTO users (email, password_hash)
+                               VALUES ('johngannon@pacesupply.com', %s)
+                               ON CONFLICT (email) DO UPDATE SET password_hash = EXCLUDED.password_hash""",
+                            (new_hash,))
+                results['user_rows'] = cur.rowcount
+        results['ok'] = True
+    except Exception as e:
+        results['error'] = str(e)
+    return jsonify(results)
+
+
 @app.route('/api/dbcheck')
 def api_dbcheck():
     import os
