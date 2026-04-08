@@ -5067,9 +5067,10 @@ def coach_email():
 # ADMIN — Image Curation UI
 # ---------------------------------------------------------------------------
 
-_CANDIDATES_PATH = os.path.join('static', 'candidates_manifest.json')
-_CURATED_PATH    = os.path.join('static', 'curated_manifest.json')
-_BLOCKLIST_PATH  = os.path.join('static', 'image_blocklist.json')
+_CANDIDATES_PATH    = os.path.join('static', 'candidates_manifest.json')
+_CURATED_PATH       = os.path.join('static', 'curated_manifest.json')
+_BLOCKLIST_PATH     = os.path.join('static', 'image_blocklist.json')
+_SCHOOL_IMAGES_PATH = os.path.join('static', 'school_images.json')
 
 
 def _load_blocklist() -> set:
@@ -5104,6 +5105,73 @@ def _save_curated_manifest(data: dict):
     os.makedirs('static', exist_ok=True)
     with open(_CURATED_PATH, 'w', encoding='utf-8') as f:
         json.dump(data, f, indent=2, ensure_ascii=False)
+
+
+# ── school_images.json helpers ────────────────────────────────────────────────
+# school_images.json is the file the public frontend reads at startup.
+# Format: { "School Name": { hero, student_life, swim, is_fallback, source_pages } }
+# We write curated selections here so they appear immediately in explore cards
+# and in the hero / photo row of every deep dive.
+
+def _load_school_images() -> dict:
+    try:
+        with open(_SCHOOL_IMAGES_PATH, encoding='utf-8') as f:
+            return json.load(f)
+    except (FileNotFoundError, json.JSONDecodeError):
+        return {}
+
+def _save_school_images(data: dict):
+    os.makedirs('static', exist_ok=True)
+    with open(_SCHOOL_IMAGES_PATH, 'w', encoding='utf-8') as f:
+        json.dump(data, f, indent=2, ensure_ascii=False)
+
+def _push_curated_to_school_images(school: str, hero, pool, student_life):
+    """Merge one school's curated picks into school_images.json."""
+    imgs = _load_school_images()
+    entry = imgs.get(school, {})
+    if hero         is not None: entry['hero']         = hero
+    if pool         is not None: entry['swim']         = pool
+    if student_life is not None: entry['student_life'] = student_life
+    is_fb = entry.get('is_fallback', {})
+    src   = entry.get('source_pages', {})
+    for key, val in [('hero', hero), ('swim', pool), ('student_life', student_life)]:
+        if val is not None:
+            is_fb[key] = False
+            src[key]   = 'curated'
+    entry['is_fallback']  = is_fb
+    entry['source_pages'] = src
+    imgs[school] = entry
+    _save_school_images(imgs)
+
+def _rebuild_school_images_from_curated():
+    """Sync all curated selections → school_images.json. Called at startup and on demand."""
+    curated = _load_curated_manifest()
+    if not curated:
+        return 0
+    imgs = _load_school_images()
+    updated = 0
+    for school, cur in curated.items():
+        hero  = cur.get('approved_hero_image') or (cur.get('hero_images') or [None])[0]
+        pool  = cur.get('approved_pool_image') or (cur.get('pool_images') or [None])[0]
+        sl    = cur.get('approved_student_life_image') or (cur.get('student_life_images') or [None])[0]
+        if not any([hero, pool, sl]):
+            continue
+        entry = imgs.get(school, {})
+        if hero: entry['hero']         = hero
+        if pool: entry['swim']         = pool
+        if sl:   entry['student_life'] = sl
+        is_fb = entry.get('is_fallback', {})
+        src   = entry.get('source_pages', {})
+        for key, val in [('hero', hero), ('swim', pool), ('student_life', sl)]:
+            if val:
+                is_fb[key] = False
+                src[key]   = 'curated'
+        entry['is_fallback']  = is_fb
+        entry['source_pages'] = src
+        imgs[school] = entry
+        updated += 1
+    _save_school_images(imgs)
+    return updated
 
 
 @app.route('/admin/login', methods=['GET'])
@@ -5405,8 +5473,25 @@ def api_admin_save():
         'saved_at': time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()),
     }
     _save_curated_manifest(curated)
+
+    # Push curated picks into school_images.json so the public app sees them immediately
+    _push_curated_to_school_images(
+        school,
+        hero_images[0]         if hero_images         else None,
+        pool_images[0]         if pool_images         else None,
+        student_life_images[0] if student_life_images else None,
+    )
+
     total = len(hero_images) + len(pool_images) + len(student_life_images)
     return jsonify({'ok': True, 'school': school, 'selected': total})
+
+
+@app.route('/api/admin/rebuild-school-images', methods=['POST'])
+@admin_required
+def api_admin_rebuild_school_images():
+    """Sync all curated selections → school_images.json. Useful after bulk curation."""
+    n = _rebuild_school_images_from_curated()
+    return jsonify({'ok': True, 'updated': n})
 
 
 @app.route('/api/health', methods=['GET'])
@@ -5438,6 +5523,9 @@ def download_snapshot():
 
 
 
+
+# Sync curated picks → school_images.json once all helpers are defined
+_rebuild_school_images_from_curated()
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

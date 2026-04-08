@@ -43,5 +43,266 @@
       "student_life": "admissions",
       "swim": "athletics"
     }
+  },
+  "Boston College": {
+    "hero": "https://upload.wikimedia.org/wikipedia/commons/b/bc/Simmons_University_Main_College_Building.jpg",
+    "swim": "https://images.pexels.com/photos/7513420/pexels-photo-7513420.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+    "student_life": "https://images.pexels.com/photos/5604180/pexels-photo-5604180.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+    "is_fallback": {
+      "hero": false,
+      "swim": false,
+      "student_life": false
+    },
+    "source_pages": {
+      "hero": "curated",
+      "swim": "curated",
+      "student_life": "curated"
+    }
+  },
+  "Bard College": {
+    "hero": "https://www.bard.edu/about/index.php?action=getfile&id=5652977&disposition=inline&type=image",
+    "student_life": "https://www.bard.edu/campus/index.php?action=getfile&id=1785862&disposition=inline&type=image",
+    "is_fallback": {
+      "hero": false,
+      "student_life": false
+    },
+    "source_pages": {
+      "hero": "curated",
+      "student_life": "curated"
+    }
+  },
+  "Clarkson University": {
+    "hero": "https://upload.wikimedia.org/wikipedia/commons/9/9f/OldMain%282009%29.jpg",
+    "student_life": "https://www.clarkson.edu/sites/default/files/2023-07/movein-hero-1600x900.jpg",
+    "is_fallback": {
+      "hero": false,
+      "student_life": false
+    },
+    "source_pages": {
+      "hero": "curated",
+      "student_life": "curated"
+    }
+  },
+  "Bryant University": {
+    "hero": "https://www.bryant.edu/sites/web2024/files/styles/webp/public/img/home-vision-2030-nav-belc-290x163.jpg.webp?itok=cNHgKCvT",
+    "swim": "https://i.ytimg.com/vi/XiX3ygcs8Hs/maxresdefault.jpg",
+    "is_fallback": {
+      "hero": false,
+      "swim": false
+    },
+    "source_pages": {
+      "hero": "curated",
+      "swim": "curated"
+    }
+  },
+  "Duquesne University": {
+    "hero": "https://www.duq.edu/images/home-page/awalk-2022-flexcard.jpg",
+    "swim": "https://i.pinimg.com/originals/aa/0b/42/aa0b42b625ae5058917bc282ce416e8f.jpg",
+    "student_life": "https://www.duq.edu/images/life-at-duquesne/student-services/campus-2023-hero.jpg",
+    "is_fallback": {
+      "hero": false,
+      "swim": false,
+      "student_life": false
+    },
+    "source_pages": {
+      "hero": "curated",
+      "swim": "curated",
+      "student_life": "curated"
+    }
+  },
+  "Fordham University": {
+    "hero": "https://upload.wikimedia.org/wikipedia/commons/7/76/Fordham_University_Keating_Hall.JPG",
+    "swim": "https://swimswam.com/wp-content/uploads/2022/09/Fordham-stock-courtesy-Fordham-Athletics-640x360.jpeg",
+    "student_life": "https://www.fordham.edu/media/home/commonly-used-images/Students-Cheering-at-Football-Game.jpg",
+    "is_fallback": {
+      "hero": false,
+      "swim": false,
+      "student_life": false
+    },
+    "source_pages": {
+      "hero": "curated",
+      "swim": "curated",
+      "student_life": "curated"
+    }
+  },
+  "George Mason University": {
+    "hero": "https://i.ytimg.com/vi/BClDwPULQfo/maxresdefault.jpg",
+    "swim": "https://recreation.gmu.edu/wp-content/uploads/2022/03/51309280253_3f080bbfe5_o-scaled.jpg",
+    "student_life": "https://www.gmu.edu/sites/default/files/styles/feature_image_large/public/2023-07/student%20life%20hp%20bench%20cantwell%2016x9%20230508040.jpg?itok=SbyucsdT",
+    "is_fallback": {
+      "hero": false,
+      "swim": false,
+      "student_life": false
+    },
+    "source_pages": {
+      "hero": "curated",
+      "swim": "curated",
+      "student_life": "curated"
+    }
+  },
+  "George Washington University": {
+    "hero": "https://c8.alamy.com/comp/FYTD0T/george-washington-university-campus-washington-dc-usa-FYTD0T.jpg",
+    "swim": "https://images.sidearmdev.com/resize?url=https:%2F%2Fdxbhsrqyrr690.cloudfront.net%2Fsidearm.nextgen.sites%2Fgwsports.com%2Fimages%2F2024%2F3%2F29%2FSWIM_DIVE_022324_FINALS_141.jpg&width=1600&type=jpeg",
+    "student_life": "https://gwtoday.gwu.edu/sites/g/files/zaxdzs5401/files/2023-04/sustainability_research_fellows_2023_wla_459a7158.jpeg",
+    "is_fallback": {
+      "hero": false,
+      "swim": false,
+      "student_life": false
+    },
+    "source_pages": {
+      "hero": "curated",
+      "swim": "curated",
+      "student_life": "curated"
+    }
+  },
+  "La Salle University": {
+    "hero": "https://www.lasalle.edu/wp-content/uploads/2025/12/Chronicle-article-lead-image-640x343.jpg",
+    "swim": "https://images.sidearmdev.com/fit?url=https:%2f%2fdxbhsrqyrr690.cloudfront.net%2fsidearm.nextgen.sites%2flasalle.sidearmsports.com%2fimages%2f2025%2f11%2f24%2fDSC06627.jpg&height=450&width=800&type=jpeg",
+    "student_life": "https://www.lasalle.edu/wp-content/uploads/2023/10/About-Education-October2023-640x532.jpg",
+    "is_fallback": {
+      "hero": false,
+      "swim": false,
+      "student_life": false
+    },
+    "source_pages": {
+      "hero": "curated",
+      "swim": "curated",
+      "student_life": "curated"
+    }
+  },
+  "Saint Louis University": {
+    "hero": "https://upload.wikimedia.org/wikipedia/commons/3/31/DuBourg_Hall%2C_Saint_Louis_University%2C_Grand_Avenue%2C_Midtown%2C_St._Louis%2C_MO_-_53229754023.jpg",
+    "swim": "https://www.slu.edu.ph/wp-content/uploads/2025/09/aquatics-facility-1-1200x600.png",
+    "student_life": "https://npr.brightspotcdn.com/dims4/default/cffbb71/2147483647/strip/true/crop/3000x2050+0+0/resize/1760x1202!/quality/90/?url=http%3A%2F%2Fnpr-brightspot.s3.amazonaws.com%2Fc1%2F30%2Fd90f2afc4c0d8631c9e62f4008bd%2F10132021-bm-slu-file-03.JPG",
+    "is_fallback": {
+      "hero": false,
+      "swim": false,
+      "student_life": false
+    },
+    "source_pages": {
+      "hero": "curated",
+      "swim": "curated",
+      "student_life": "curated"
+    }
+  },
+  "St Bonaventure University": {
+    "hero": "https://d13b2ieg84qqce.cloudfront.net/4f10633795264bc68f217d2de4b877d0c97220eb.jpg",
+    "swim": "https://i.ytimg.com/vi/meTYsf1vyNQ/maxresdefault.jpg",
+    "student_life": "https://live.staticflickr.com/65535/53037613961_e572aa8ffa_b.jpg",
+    "is_fallback": {
+      "hero": false,
+      "swim": false,
+      "student_life": false
+    },
+    "source_pages": {
+      "hero": "curated",
+      "swim": "curated",
+      "student_life": "curated"
+    }
+  },
+  "University of Rhode Island": {
+    "hero": "https://i.vimeocdn.com/video/2077702172-8766ba933027773d792fc9fb405de046b7a6eb86a9458176563d7a3a9d3bc501-d",
+    "swim": "https://www.uri.edu/wp-content/uploads/home/2018/05/aquatics.jpg",
+    "student_life": "https://www.uri.edu/wp-content/uploads/home/2024/03/campus-life_hero-v3.jpg",
+    "is_fallback": {
+      "hero": false,
+      "swim": false,
+      "student_life": false
+    },
+    "source_pages": {
+      "hero": "curated",
+      "swim": "curated",
+      "student_life": "curated"
+    }
+  },
+  "University of Richmond": {
+    "hero": "https://upload.wikimedia.org/wikipedia/commons/2/2f/Jepson_School_of_Leadership_Studies.jpg",
+    "swim": "https://d1gtq9mqg5x3oe.cloudfront.net/hermes/images/_articles/photography/urnow/2020/08-august/gouger-ncaa/promo/gouger-promo-3840x2160.jpg",
+    "student_life": "https://d1gtq9mqg5x3oe.cloudfront.net/hermes/images/livinglearning/about/index/hero/URCSIStaff-hero.jpg",
+    "is_fallback": {
+      "hero": false,
+      "swim": false,
+      "student_life": false
+    },
+    "source_pages": {
+      "hero": "curated",
+      "swim": "curated",
+      "student_life": "curated"
+    }
+  },
+  "Davidson College": {
+    "hero": "https://www.visitnc.com/sites/default/files/styles/scale_1920/public/migrated_images/Davidson_College_Chambers_Building_in_Daytime.58eaf9e7.jpg?itok=t80HKv3g",
+    "swim": "https://images.sidearmdev.com/convert?url=https:%2F%2Fd1dt5ds10ckjgn.cloudfront.net%2Fimages%2F2025%2F2%2F1%2FDSC_8490.jpg&type=webp",
+    "student_life": "https://nsjonline.com/wp-content/uploads/2017/08/15068_davidson_college_campus_02o.jpg",
+    "is_fallback": {
+      "hero": false,
+      "swim": false,
+      "student_life": false
+    },
+    "source_pages": {
+      "hero": "curated",
+      "swim": "curated",
+      "student_life": "curated"
+    }
+  },
+  "Brown University": {
+    "hero": "https://admission.brown.edu/sites/g/files/dprerj526/files/styles/wide_xlrg/public/2020-01/20191020_COMM_coheamarketing122_1.jpg?h=fcd14cb1&itok=Gb8NUuOa",
+    "swim": "https://upload.wikimedia.org/wikipedia/commons/d/d1/Katherine_Moran_Coleman_Aquatics_Center_at_Brown_University.jpg",
+    "student_life": "https://wallpapers.com/images/hd/students-at-brown-university-family-weekend-ihgwikqgufo5p9j5.jpg",
+    "is_fallback": {
+      "hero": false,
+      "swim": false,
+      "student_life": false
+    },
+    "source_pages": {
+      "hero": "curated",
+      "swim": "curated",
+      "student_life": "curated"
+    }
+  },
+  "Dartmouth College": {
+    "hero": "https://home.dartmouth.edu/sites/home/files/styles/cta_1x_410x260/public/2021-04/20201015_aerial_eb_061.jpg?h=c44fcfa1&itok=GR0WCDQa",
+    "swim": "https://images.sidearmdev.com/resize?url=https:%2F%2Fdxbhsrqyrr690.cloudfront.net%2Fsidearm.nextgen.sites%2Fdartmouthsports.com%2Fimages%2F2022%2F2%2F4%2FKarl_Michael_Pool2_Ramsden22_DA.jpg&width=1600&type=jpeg",
+    "student_life": "https://home.dartmouth.edu/sites/home/files/styles/cta_1x_410x260/public/2023-08/Streetfest-Sheba-beam-lert-23x-242-2.jpg?h=10d202d3&itok=i9_9y2RB",
+    "is_fallback": {
+      "hero": false,
+      "swim": false,
+      "student_life": false
+    },
+    "source_pages": {
+      "hero": "curated",
+      "swim": "curated",
+      "student_life": "curated"
+    }
+  },
+  "Duke University": {
+    "hero": "https://upload.wikimedia.org/wikipedia/commons/0/03/Duke_University_dormitories_in_July_2025.jpg",
+    "swim": "https://images.sidearmdev.com/resize?url=https:%2F%2Fgoduke.com%2Fimages%2F2022%2F4%2F13%2Fswim_generic_photo.jpg&width=1600",
+    "student_life": "https://students.duke.edu/wp-content/uploads/2023/02/20220829_fdoc_west001-2-scaled.jpg",
+    "is_fallback": {
+      "hero": false,
+      "swim": false,
+      "student_life": false
+    },
+    "source_pages": {
+      "hero": "curated",
+      "swim": "curated",
+      "student_life": "curated"
+    }
+  },
+  "Florida State University": {
+    "hero": "https://upload.wikimedia.org/wikipedia/commons/4/46/Westcott_Building_and_fountain_at_Florida_State_University.jpg",
+    "swim": "https://images.sidearmdev.com/resize?url=https%3A%2F%2Fdxbhsrqyrr690.cloudfront.net%2Fsidearm.nextgen.sites%2Ffsuni.sidearmsports.com%2Fimages%2F2026%2F1%2F5%2FMarcom-092625.jpg&height=300&type=webp",
+    "student_life": "https://news.fsu.edu/wp-content/uploads/2024/08/Freshman-Story-Feature.jpg",
+    "is_fallback": {
+      "hero": false,
+      "swim": false,
+      "student_life": false
+    },
+    "source_pages": {
+      "hero": "curated",
+      "swim": "curated",
+      "student_life": "curated"
+    }
   }
 }
