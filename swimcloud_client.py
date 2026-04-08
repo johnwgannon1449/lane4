@@ -135,10 +135,26 @@ def search_swimmers(name: str) -> list[dict]:
 
 def fetch_profile_info(swimmer_id: str) -> dict:
     """
-    Fetch structured profile info for a swimmer (name, team, grad year).
-    Uses the /api/swimmers/search/ endpoint with the swimmer ID.
-    Falls back gracefully on error.
+    Fetch structured profile info for a swimmer.
+    Uses /api/swimmers/search/?swimmer_id=X and, if available,
+    /api/swimmers/{id}/ for richer metadata.
+    Falls back gracefully on any error; no field is required.
+
+    Returned keys:
+      swimmer_id, display_name, team, grad_year, profile_url,
+      club_team, high_school, lsc
+    (gender is populated separately from raw fastest_times records)
     """
+    _fallback = {
+        "swimmer_id":   swimmer_id,
+        "display_name": "",
+        "team":         "",
+        "grad_year":    None,
+        "profile_url":  _BASE + "/swimmer/" + swimmer_id + "/",
+        "club_team":    None,
+        "high_school":  None,
+        "lsc":          None,
+    }
     try:
         url = _BASE + "/api/swimmers/search/"
         r = _get(url, params={"swimmer_id": swimmer_id})
@@ -147,22 +163,35 @@ def fetch_profile_info(swimmer_id: str) -> dict:
         if results:
             rec = results[0]
             if str(rec.get("id", "")) == str(swimmer_id):
-                return {
+                info = {
                     "swimmer_id":   str(rec.get("id", swimmer_id)),
                     "display_name": rec.get("display_name") or rec.get("name", ""),
                     "team":         rec.get("primary_team", "") or "",
                     "grad_year":    rec.get("gradhs"),
                     "profile_url":  _BASE + "/swimmer/" + str(swimmer_id) + "/",
+                    # Additional enrichment fields — present only if SwimCloud returns them
+                    "club_team":    rec.get("primary_team") or rec.get("club_team") or None,
+                    "high_school":  rec.get("high_school") or rec.get("highschool") or None,
+                    "lsc":          rec.get("lsc") or rec.get("lsc_name") or None,
                 }
+                # Try the swimmer detail endpoint for any extra metadata
+                try:
+                    detail_url = _BASE + f"/api/swimmers/{swimmer_id}/"
+                    dr = _get(detail_url)
+                    if dr.status_code == 200:
+                        d = dr.json()
+                        if not info["high_school"]:
+                            info["high_school"] = d.get("high_school") or d.get("highschool") or None
+                        if not info["lsc"]:
+                            info["lsc"] = d.get("lsc") or d.get("lsc_name") or None
+                        if not info["club_team"]:
+                            info["club_team"] = d.get("primary_team") or d.get("club_team") or None
+                except Exception:
+                    pass
+                return info
     except Exception:
         pass
-    return {
-        "swimmer_id":  swimmer_id,
-        "display_name": "",
-        "team":         "",
-        "grad_year":    None,
-        "profile_url":  _BASE + "/swimmer/" + swimmer_id + "/",
-    }
+    return _fallback
 
 
 def fetch_fastest_times(swimmer_id: str) -> list[dict]:

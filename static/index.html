@@ -4419,13 +4419,29 @@ async function scAcceptImport(swimmer, proposed) {
 
   // Update JAMES swimcloud metadata
   if (!JAMES.swimcloud) JAMES.swimcloud = {};
-  JAMES.swimcloud.swimmer_id      = swimmer.swimmer_id;
-  JAMES.swimcloud.display_name    = swimmer.display_name || '';
-  JAMES.swimcloud.team            = swimmer.team         || '';
-  JAMES.swimcloud.grad_year       = swimmer.grad_year    || null;
-  JAMES.swimcloud.profile_url     = swimmer.profile_url  || '';
-  JAMES.swimcloud.last_sync_at    = now;
-  JAMES.swimcloud.accepted_events = acceptedEvents;
+  JAMES.swimcloud.swimmer_id         = swimmer.swimmer_id;
+  JAMES.swimcloud.display_name       = swimmer.display_name    || '';
+  JAMES.swimcloud.team               = swimmer.team            || '';
+  JAMES.swimcloud.grad_year          = swimmer.grad_year       || null;
+  JAMES.swimcloud.profile_url        = swimmer.profile_url     || '';
+  JAMES.swimcloud.last_sync_at       = now;
+  JAMES.swimcloud.accepted_events    = acceptedEvents;
+  // Enrichment fields — stored whenever SwimCloud provides them
+  JAMES.swimcloud.gender             = swimmer.gender          || null;
+  JAMES.swimcloud.club_team          = swimmer.club_team       || swimmer.team || null;
+  JAMES.swimcloud.high_school        = swimmer.high_school     || null;
+  JAMES.swimcloud.graduation_year    = swimmer.grad_year       || null;
+  JAMES.swimcloud.lsc                = swimmer.lsc             || null;
+  JAMES.swimcloud.last_swimcloud_sync = now;
+
+  // Backfill top-level JAMES profile fields — only if currently empty/default
+  if (swimmer.gender) {
+    const sc_gender = swimmer.gender;  // 'men' or 'women'
+    if (!JAMES.gender || JAMES.gender === 'men') JAMES.gender = sc_gender;
+  }
+  if (swimmer.grad_year && !JAMES.gradYear) {
+    JAMES.gradYear = String(swimmer.grad_year);
+  }
 
   // Merge times into JAMES.times — only update an event if the SwimCloud time
   // is strictly faster than whatever the user already has (manual entry wins ties).
