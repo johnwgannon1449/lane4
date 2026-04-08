@@ -464,9 +464,26 @@ def _url_mentions_school(school: str, img: dict) -> bool:
     kw = _key_words(_search_name(school))   # use natural name, no commas
     if not kw:
         return True
-    combined = (img.get('url', '') + ' ' + img.get('page_url', '')).lower()
+    combined = (img.get('url', '') + ' ' + img.get('page_url', '') + ' ' + (img.get('alt') or '')).lower()
     # Any single key word match is sufficient (e.g. 'clarkson' in URL)
     return any(k in combined for k in kw)
+
+
+def _fname_matches_school(school: str, url: str) -> bool:
+    """ALL key words of the search name must appear in the decoded filename.
+
+    Prevents cross-school contamination in Wikimedia Commons results where
+    the search API returns wrong-school images (e.g. a photo of the "Duke of
+    Mecklenburg" appearing in Duke University's pool search).
+
+    This is stricter than _url_mentions_school (which accepts any single match)
+    because Commons filenames nearly always embed the full institution name.
+    """
+    fname = urllib.parse.unquote(url.split('/')[-1]).lower().replace('_', ' ').replace('-', ' ')
+    kw = _key_words(_search_name(school))
+    if not kw:
+        return True
+    return all(k in fname for k in kw)
 
 
 def _wiki_direct(title: str) -> str | None:
@@ -862,12 +879,29 @@ def _wiki_candidates(school: str) -> list[dict]:
 
     seen = {r['url'] for r in results}
 
-    # Three separate purpose-built Commons searches — one per display category
-    for fn in [_wiki_commons_campus, _wiki_commons_pool, _wiki_commons_student]:
-        for img in fn(school):
-            if img['url'] not in seen:
-                results.append(img)
-                seen.add(img['url'])
+    # Three separate purpose-built Commons searches — one per display category.
+    # Use _search_name so inverted names ('Notre Dame, University of') become
+    # 'University of Notre Dame' before being sent to the Commons search API.
+    sq = _search_name(school)
+    for fn, pt in [(_wiki_commons_campus, 'campus'),
+                   (_wiki_commons_pool,   'swim'),
+                   (_wiki_commons_student,'student_life')]:
+        for img in fn(sq):
+            url = img.get('url', '')
+            if not url or url in seen:
+                continue
+            # Strict filename check: all school keywords must appear in the
+            # Commons filename to prevent cross-school contamination
+            # (e.g. "Duke of Mecklenburg" → rhinoceros photo appearing for Duke Univ).
+            if not _fname_matches_school(school, url):
+                continue
+            # Pool images additionally need a pool-related token in the filename
+            if pt == 'swim':
+                fname_low = urllib.parse.unquote(url.split('/')[-1]).lower()
+                if not any(t in fname_low for t in _POOL_URL_TOKENS):
+                    continue
+            results.append(img)
+            seen.add(url)
 
     return results
 
@@ -1062,12 +1096,14 @@ def fetch_candidates(school: str, domains_cache: dict | None = None) -> list[dic
         domain_host = raw_host.removeprefix('www.')
         _SITE_QUERIES = [
             (f'site:{domain_host} natatorium swimming pool', 'swim'),
-            (f'site:{domain_host} aquatic center',          'swim'),
-            (f'site:{domain_host} natatorium',              'swim'),
-            (f'site:{domain_host} campus aerial buildings', 'campus'),
-            (f'site:{domain_host} campus visit tour',       'campus'),
-            (f'site:{domain_host} student life campus',     'student_life'),
-            (f'site:{domain_host} students campus life',    'student_life'),
+            (f'site:{domain_host} aquatic center',           'swim'),
+            (f'site:{domain_host} natatorium',               'swim'),
+            (f'site:{domain_host} swimming diving',          'swim'),
+            (f'site:{domain_host} swim team aquatics',       'swim'),
+            (f'site:{domain_host} campus aerial buildings',  'campus'),
+            (f'site:{domain_host} campus visit tour',        'campus'),
+            (f'site:{domain_host} student life campus',      'student_life'),
+            (f'site:{domain_host} students campus life',     'student_life'),
         ]
         print(f'    [ddg_site] site-restricted search on {domain_host}')
         for q, pt in _SITE_QUERIES:
@@ -1100,9 +1136,9 @@ def fetch_candidates(school: str, domains_cache: dict | None = None) -> list[dic
             for q_tmpl in _DDG_QUERIES.get(category, []):
                 q = q_tmpl.format(school=sq)
                 for img in _ddg_image_search(q, page_type=pt, n=10):
-                    # For pool images: penalise (but keep) images where URL/page
-                    # doesn't mention this school — they likely show the wrong pool.
-                    if pt == 'swim' and not _url_mentions_school(school, img):
+                    # Penalise (but keep) images where URL/page/alt doesn't
+                    # mention this school — wrong pool, wrong campus, wrong school.
+                    if not _url_mentions_school(school, img):
                         img['score'] = round(img.get('score', 2.0) - 1.0, 3)
                     _add(img)
 
@@ -1110,6 +1146,10 @@ def fetch_candidates(school: str, domains_cache: dict | None = None) -> list[dic
     wiki_imgs = _wiki_candidates(school)
     wiki_imgs.sort(key=lambda x: x.get('score', 0), reverse=True)
     for img in wiki_imgs:
+        # Penalise wiki/commons images where the school name isn't in URL/alt —
+        # these are likely misfiled or cross-school images.
+        if not _url_mentions_school(school, img):
+            img['score'] = round(img.get('score', 2.0) * 0.5, 3)
         _add(img)
 
     # Pexels removed — it returns the same stock photos for every school,
@@ -1131,6 +1171,8 @@ _MORE_GOOGLE_QUERIES: dict[str, list[str]] = {
         '{school} aquatic center',
         '{school} swimming pool',
         '{school} pool facility',
+        '{school} swimming diving facility',
+        '{school} aquatics swim team',
     ],
     'student_life': [
         '{school} students campus life',
@@ -1154,6 +1196,9 @@ _DDG_QUERIES: dict[str, list[str]] = {
         '"{school}" aquatic center',
         '"{school}" swimming pool',
         '"{school}" natatorium',
+        '"{school}" swimming diving pool',
+        '"{school}" aquatics swimming',
+        '"{school}" swim team pool facility',
     ],
     'student_life': [
         '"{school}" students campus life',
@@ -1204,7 +1249,9 @@ def fetch_candidates_for_category(school: str, category: str) -> list[dict]:
         _SITE_Q = {
             'pool':         [f'site:{domain_host} natatorium swimming pool',
                              f'site:{domain_host} aquatic center',
-                             f'site:{domain_host} natatorium'],
+                             f'site:{domain_host} natatorium',
+                             f'site:{domain_host} swimming diving',
+                             f'site:{domain_host} swim team aquatics'],
             'campus':       [f'site:{domain_host} campus aerial buildings',
                              f'site:{domain_host} campus visit tour',
                              f'site:{domain_host} campus'],
@@ -1236,8 +1283,8 @@ def fetch_candidates_for_category(school: str, category: str) -> list[dict]:
                        for q in _DDG_QUERIES.get(category, _DDG_QUERIES['campus'])]
         for q in ddg_queries:
             for img in _ddg_image_search(q, page_type=page_type, n=10):
-                # Penalise (but keep) pool images not mentioning this school
-                if category == 'pool' and not _url_mentions_school(school, img):
+                # Penalise (but keep) images not mentioning this school
+                if not _url_mentions_school(school, img):
                     img['score'] = round(img.get('score', 2.0) - 1.0, 3)
                 _add_if_new(img)
             if len(new_results) >= 24:

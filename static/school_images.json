@@ -388,5 +388,62 @@
       "hero": "curated",
       "student_life": "curated"
     }
+  },
+  "Southern Methodist University": {
+    "swim": "https://assets.simpleviewinc.com/simpleview/image/fetch/c_fill,h_524,q_50,w_786/https://assets.simpleviewinc.com/simpleview/image/upload/crm/southernbleacher/smu-aquatic-1-87235fd35056a36_872361e9-5056-a36a-0bcb05ef75c99dde.jpg",
+    "student_life": "https://www.smu.edu/-/media/Site/StudentAffairs/FSL/Home/FSL_Leaders.jpg?h=1472&iar=0&w=2616&hash=5911220D922392486EC780405B3ED0C0",
+    "is_fallback": {
+      "swim": false,
+      "student_life": false
+    },
+    "source_pages": {
+      "swim": "curated",
+      "student_life": "curated"
+    }
+  },
+  "Stanford University": {
+    "hero": "https://media.istockphoto.com/id/1282845414/photo/usa-stanford-university-editorial.jpg?s=612x612&w=0&k=20&c=c42pY5HABj9I6jM8Z0GuYs0bdvgIBoZeqmk9Ayf8B20=",
+    "swim": "http://www.rhorii.com/Stanford/Stanford-Swim-stadium-PICT5426.JPG",
+    "student_life": "https://www.stanford.edu/wp-content/uploads/2025/05/Campus-life-scaled.png",
+    "is_fallback": {
+      "hero": false,
+      "swim": false,
+      "student_life": false
+    },
+    "source_pages": {
+      "hero": "curated",
+      "swim": "curated",
+      "student_life": "curated"
+    }
+  },
+  "University of Miami (Florida)": {
+    "hero": "https://academicful.com/wp-content/uploads/2023/01/miami-uni.jpg",
+    "swim": "https://www.uschool.nova.edu/uploaded/photos/Aquatics_Center.jpg",
+    "student_life": "https://studentlife.ufl.edu/wp-content/uploads/2021/08/190125_DSO_UF23Stock_0405_Amy-Xie-2.jpg_web-2.jpg",
+    "is_fallback": {
+      "hero": false,
+      "swim": false,
+      "student_life": false
+    },
+    "source_pages": {
+      "hero": "curated",
+      "swim": "curated",
+      "student_life": "curated"
+    }
+  },
+  "VA Tech": {
+    "hero": "https://www.vt.edu/content/dam/vt_edu/admissions/images/tour/galleries/torg/torg1.jpg.transform/xl-medium/image.jpg",
+    "swim": "https://swimswam.com/wp-content/uploads/2020/06/Virginia-Tech-swim-dive-photo-from-Twitter-768x512.jpg",
+    "student_life": "https://virginiatech.sportswar.com/wp-content/uploads/sites/15/2023/10/JLF_231014_WF_VT_003.jpg",
+    "is_fallback": {
+      "hero": false,
+      "swim": false,
+      "student_life": false
+    },
+    "source_pages": {
+      "hero": "curated",
+      "swim": "curated",
+      "student_life": "curated"
+    }
   }
 }
