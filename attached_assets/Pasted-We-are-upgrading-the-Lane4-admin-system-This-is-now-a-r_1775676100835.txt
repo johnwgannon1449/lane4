@@ -1,0 +1,162 @@
+We are upgrading the Lane4 admin system.
+
+This is now a real internal admin function, not a hardcoded one-off.
+
+Read carefully:
+
+* Do **not** change swim logic, admissions logic, search logic, onboarding, or deployment config
+* Do **not** redesign the whole app
+* Keep the current image curation system working
+* We are only formalizing **admin management** and keeping admin features limited to:
+
+  1. image curation
+  2. admin creation / admin listing
+
+## Goal
+
+Replace the current single-email hardcoded admin access with a proper admin system.
+
+### Desired behavior
+
+1. I should automatically be the **first admin**
+2. From the admin tab, I should be able to:
+
+   * create a new admin by entering an email address
+   * view the current list of admins
+3. For now, the only admin-only functions should be:
+
+   * image curation
+   * creating/viewing admins
+
+## Current expectation
+
+Right now admin access is hardcoded around my email.
+
+We want to replace that with a persistent admin table / admin records system.
+
+My email should still seed as the first admin automatically if needed.
+
+Use:
+`johngannon@pacesupply.com`
+
+## Requirements
+
+### 1. Persistent admin storage
+
+Create or use a persistent admin store in the database.
+
+Recommended shape:
+
+* id
+* email
+* created_at
+* created_by (nullable for bootstrap)
+* active boolean
+
+If a suitable table already exists, adapt it cleanly instead of duplicating systems.
+
+### 2. Bootstrap first admin
+
+On startup or admin init, ensure:
+
+`johngannon@pacesupply.com`
+
+exists as an active admin.
+
+Do this safely and idempotently.
+No duplicate rows.
+
+### 3. Replace hardcoded admin gate
+
+Update the admin authorization logic so admin access checks the persistent admin store, not a hardcoded email compare.
+
+Any current admin-only routes should use the new admin check.
+
+### 4. Admin UI controls
+
+In the existing admin tab/page, add a simple admin management section.
+
+Keep it minimal and functional.
+
+Include:
+
+#### Create New Admin
+
+* text input for email
+* button: `Create New Admin`
+
+Behavior:
+
+* validate email format
+* normalize email to lowercase + trim whitespace
+* prevent duplicates
+* save new admin
+* show success/error message
+
+#### View Admins
+
+Show current admins list with at least:
+
+* email
+* created_at
+* active status
+
+No fancy styling needed.
+Keep it clean and practical.
+
+### 5. Admin routes / API
+
+Add only the minimal endpoints needed.
+
+Suggested endpoints:
+
+* GET `/api/admin/list`
+* POST `/api/admin/create`
+
+Or keep naming consistent with the existing admin namespace if there is already a pattern.
+
+All of these routes must be admin-protected.
+
+### 6. Keep scope tight
+
+Do not add:
+
+* role hierarchy
+* delete admin
+* edit admin
+* audit log UI
+* permissions matrix
+* invitations
+* password flows
+
+This is a lightweight internal admin system.
+
+### 7. Preserve current admin functionality
+
+The current image manager / image curator must continue to work.
+
+The new admin system should simply control access to the admin tab and admin-only endpoints.
+
+### 8. Report back clearly
+
+When done, report:
+
+1. files changed
+2. database table/schema added or updated
+3. how first-admin bootstrap works
+4. what routes were added or changed
+5. how admin auth now works
+6. what UI was added to the admin tab
+7. any migration notes / risks
+
+## Important
+
+Be conservative.
+This app is live.
+
+Do not break the existing admin image workflow.
+Do not expand scope beyond real admin management for:
+
+* image curation
+* admin creation
+* admin listing

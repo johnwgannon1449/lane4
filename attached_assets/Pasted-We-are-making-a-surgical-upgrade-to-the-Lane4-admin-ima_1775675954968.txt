@@ -1,0 +1,261 @@
+We are making a **surgical upgrade** to the Lane4 admin image candidate pipeline.
+
+Read this carefully:
+
+* Do **not** redesign the app
+* Do **not** touch auth, onboarding, database, deployment, swim logic, admissions logic, school search, or deep dives
+* Do **not** rebuild the admin UI
+* Do **not** change the existing approve/save workflow
+* Do **not** break current manifests
+
+We are only improving the backend image discovery pipeline that feeds the admin Image Curator.
+
+## What we now know
+
+The current candidate pipeline is centered in:
+
+* `harvest_candidates.py`
+
+The request path is:
+
+* `/api/ua/fetch-candidates`
+* `main.py` route
+* `harvest_candidates.py: fetch_candidates(school, ...)`
+* results merged into `static/candidates_manifest.json`
+
+Current sources include:
+
+* official school website crawl
+* site-restricted DuckDuckGo search on school domain
+* DuckDuckGo general fallback
+* Wikipedia / Wikimedia fallback
+
+Google CSE code exists but is inactive because keys are not set.
+Pexels code exists but is dead code and should remain unused unless explicitly requested later.
+
+## Goal
+
+Improve the **quality of candidate images** that appear in the admin curator so I start with a much stronger pile of images to curate from.
+
+The problem is not that I can’t curate.
+The problem is that the pipeline is still returning too much junk.
+
+We want significantly better candidates for:
+
+* campus
+* pool
+* student_life
+
+while preserving the current route structure and manifest behavior.
+
+---
+
+# TASK
+
+Upgrade `harvest_candidates.py` in place.
+
+Keep the current API shape compatible with the existing admin UI.
+
+## 1. Make category-specific discovery much smarter
+
+Right now category assignment exists, but discovery is still too broad.
+
+Improve discovery so each category is gathered with stronger source intent.
+
+### campus should strongly favor:
+
+* admissions
+* visit
+* about campus
+* campus gallery
+* homepage hero/gallery
+* official photo/media pages
+
+### pool should strongly favor:
+
+* athletics facilities pages
+* natatorium pages
+* aquatic center pages
+* swim & dive facility pages
+* official athletics venue/gallery pages
+
+Important:
+For `pool`, prefer **facility / venue images** over generic swim action shots whenever possible.
+
+A pool deck, natatorium interior, aquatic center exterior, facility signage, or venue gallery image is more useful than a random swimmer race photo.
+
+### student_life should strongly favor:
+
+* student life
+* residential life
+* campus experience
+* student activities
+* official lifestyle/gallery pages
+
+Do this by improving:
+
+* page selection
+* query construction
+* scoring
+* category matching
+
+Do not just relabel the same weak images.
+
+---
+
+## 2. Tighten official-domain sourcing
+
+Official-domain results should dominate.
+
+Improve the crawl of official school / athletics pages first.
+
+Keep fallbacks, but demote them.
+
+### Desired order of trust:
+
+1. official school site and official athletics site
+2. site-restricted search on official domains
+3. general web fallback
+4. Wikipedia / Wikimedia fallback
+
+Wikipedia/Wikimedia should help only when official sources are thin, not flood the candidate pool.
+
+If needed, cap how many fallback candidates can survive per category.
+
+---
+
+## 3. Reject junk much harder
+
+Strengthen filtering so the pipeline is much less likely to return:
+
+* logos
+* seals
+* maps
+* icons
+* renderings
+* placeholders
+* tiny images
+* distorted banners
+* obvious CMS thumbnail derivatives
+* black and white / historical images
+* generic headshots / portraits
+* irrelevant action images
+* duplicate or near-duplicate assets
+
+In particular:
+
+### Add stronger penalties or rejection for:
+
+* URL tokens like `thumb`, `thumbnail`, `small`, `medium`, `crop`, `banner`, `header`, `tile`, `card`, `sprite`, `logo`, `seal`, `map`, `placeholder`, `rendering`
+* suspicious aspect ratios that indicate banners or page chrome
+* very low resolution images even if they technically pass the current minimum
+* image URLs that look like transformed/cropped derivatives when a larger original is available
+
+Do not become so aggressive that we kill all candidates.
+Be smart, not reckless.
+
+---
+
+## 4. Improve scoring quality, not just filtering
+
+Upgrade scoring so high-quality school-representative images rise to the top.
+
+Use these inputs more effectively where available:
+
+* source tier
+* page type
+* image dimensions
+* aspect ratio
+* URL/file name tokens
+* alt text / title
+* surrounding page context
+* category-specific keyword match
+* facility-vs-action preference for pool
+* official-domain preference
+* prominence on page
+* full-size/original asset preference over transformed thumbnail derivatives
+
+### Important nuance:
+
+For `campus`, scenic and visually representative campus images should beat generic building close-ups.
+
+For `student_life`, real student-on-campus scenes should beat bland marketing fragments.
+
+For `pool`, actual natatorium / aquatic center images should beat random competition shots unless no facility image exists.
+
+---
+
+## 5. Improve dedupe
+
+Do better than exact-URL dedupe where possible.
+
+Add lightweight near-duplicate suppression using signals like:
+
+* same base filename
+* same image with different query params / CMS transforms
+* same source asset served at multiple sizes
+
+Do not add heavy external dependencies unless absolutely necessary.
+
+Keep it practical and safe.
+
+---
+
+## 6. Preserve compatibility
+
+Must remain compatible with:
+
+* `/api/ua/fetch-candidates`
+* `/api/ua/candidates/<school>`
+* current admin curator behavior
+* `static/candidates_manifest.json`
+* curated manifests
+* current save/approve flow
+
+If you add metadata fields, that is fine.
+Do not require a frontend rewrite.
+
+---
+
+## 7. Clean up dead weight carefully
+
+If there is clearly dead image-pipeline code that is no longer used, you may clean it up **only if safe**.
+
+Examples:
+
+* dead helper functions not called anywhere
+* old unused source hooks
+
+But do not do a risky cleanup spree.
+Priority is better candidate quality, not code golf.
+
+---
+
+## 8. Be conservative and explainable
+
+This app is live.
+Make targeted, understandable improvements.
+
+Add concise comments around any more sophisticated new logic.
+
+Avoid overengineering.
+
+---
+
+# DELIVERABLES
+
+When finished, report back with:
+
+1. exact files changed
+2. exact functions changed
+3. what discovery improvements were made
+4. what filtering improvements were made
+5. what scoring improvements were made
+6. whether fallback sources were capped/demoted
+7. whether any endpoint behavior changed
+8. whether manifest format changed
+9. any risks or edge cases I should know about
+
+Do not start on SwimCloud.
+Do not touch other systems.
+This task is only the image candidate pipeline.
