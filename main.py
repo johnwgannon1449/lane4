@@ -3,8 +3,12 @@ import urllib.request, urllib.parse
 from flask import Flask, request, jsonify, send_from_directory, session, redirect
 from dotenv import load_dotenv
 from functools import wraps
-import psycopg2
-import psycopg2.extras
+try:
+    import psycopg2
+    import psycopg2.extras
+    _HAS_PSYCOPG2 = True
+except ImportError:
+    _HAS_PSYCOPG2 = False
 from werkzeug.security import generate_password_hash, check_password_hash
 
 load_dotenv()
@@ -38,7 +42,12 @@ LANE4_DEEP_DIVE_PROMPT = _load_deep_dive_prompt()
 # DATABASE
 # ---------------------------------------------------------------------------
 def get_db():
-    return psycopg2.connect(os.environ['DATABASE_URL'])
+    if not _HAS_PSYCOPG2:
+        raise RuntimeError('psycopg2 not available — admin auth disabled')
+    db_url = os.environ.get('DATABASE_URL')
+    if not db_url:
+        raise RuntimeError('DATABASE_URL not set — admin auth disabled')
+    return psycopg2.connect(db_url)
 
 def _init_db():
     """Create tables if they don't exist (safe to run on every startup)."""

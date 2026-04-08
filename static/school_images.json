@@ -419,38 +419,4 @@
       "student_life": "curated"
     }
   }
-}    "swim": "curated",
-      "student_life": "curated"
-    }
-  },
-  "VA Tech": {
-    "hero": "https://www.vt.edu/content/dam/vt_edu/admissions/images/tour/galleries/torg/torg1.jpg.transform/xl-medium/image.jpg",
-    "swim": "https://swimswam.com/wp-content/uploads/2020/06/Virginia-Tech-swim-dive-photo-from-Twitter-768x512.jpg",
-    "student_life": "https://virginiatech.sportswar.com/wp-content/uploads/sites/15/2023/10/JLF_231014_WF_VT_003.jpg",
-    "is_fallback": {
-      "hero": false,
-      "swim": false,
-      "student_life": false
-    },
-    "source_pages": {
-      "hero": "curated",
-      "swim": "curated",
-      "student_life": "curated"
-    }
-  },
-  "Pittsburgh, University of": {
-    "hero": "https://media.istockphoto.com/id/1473994844/photo/buildings-on-carnegie-mellon-university-and-the-university-of-pittsburgh.jpg?s=612x612&w=0&k=20&c=1rRtOW80gWrW7itgRmh7CgeW6272lTD20BPfcy__AQQ=",
-    "swim": "https://admissions.pitt.edu/wp-content/uploads/2023/07/rec14.jpg",
-    "student_life": "https://www.utimes.pitt.edu/sites/default/files/social-image/Studentarrival.jpg",
-    "is_fallback": {
-      "hero": false,
-      "swim": false,
-      "student_life": false
-    },
-    "source_pages": {
-      "hero": "curated",
-      "swim": "curated",
-      "student_life": "curated"
-    }
-  }
 }
