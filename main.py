@@ -47,7 +47,7 @@ def get_db():
     db_url = os.environ.get('DATABASE_URL')
     if not db_url:
         raise RuntimeError('DATABASE_URL not set — admin auth disabled')
-    return psycopg2.connect(db_url)
+    return psycopg2.connect(db_url, connect_timeout=10)
 
 def _init_db():
     """Create tables if they don't exist (safe to run on every startup)."""
@@ -2595,11 +2595,16 @@ def _float(v):
         return None
 
 load_data()
-try:
-    _init_db()
-    _bootstrap_initial_admin()
-except Exception as _db_init_err:
-    print(f'[startup] DB init warning: {_db_init_err} — admin auth may be unavailable')
+
+def _init_db_background():
+    try:
+        _init_db()
+        _bootstrap_initial_admin()
+        print('[startup] DB init complete.')
+    except Exception as _e:
+        print(f'[startup] DB init warning: {_e} — admin auth may be unavailable')
+
+threading.Thread(target=_init_db_background, daemon=True).start()
 
 # ---------------------------------------------------------------------------
 # Scoring engine — all formulas from Swimmer_Calcs (workbook authoritative)
