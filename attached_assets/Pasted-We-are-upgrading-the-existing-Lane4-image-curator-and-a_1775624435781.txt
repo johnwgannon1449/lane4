@@ -1,0 +1,466 @@
+We are upgrading the existing Lane4 image curator and admin system.
+
+IMPORTANT:
+This is not a rewrite.
+Keep the existing curator, existing architecture, and current product intact.
+Make focused, surgical upgrades inside the current codebase.
+
+==================================================
+CURRENT SYSTEM TO PRESERVE
+==========================
+
+Keep the existing overall structure:
+
+harvest_candidates.py
+→ static/candidates_manifest.json
+→ Flask admin/API routes
+→ existing front-end app
+→ curator UI
+
+The current curator already exists and works.
+Do NOT replace it with a new app.
+Do NOT redesign the UI from scratch.
+Do NOT break existing saved curator data.
+
+We are enhancing:
+
+1. background preloading
+2. candidate quality and storage
+3. ordered winner-aware selections
+4. admin auth and admin management
+
+==================================================
+PART 1 — REAL ADMIN SYSTEM
+==========================
+
+Replace the current simple password-only admin gate with a real admin system.
+
+Requirements:
+
+1. Admins are identified by email address.
+
+2. Bootstrap rule:
+   The initial admin must be:
+   [johngannon@pacesupply.com](mailto:johngannon@pacesupply.com)
+
+3. Only admins can access admin features.
+
+4. Only admins can create other admins.
+
+5. Once someone is logged in as an admin, they should see an Admin tab in the app.
+
+6. Inside the Admin tab, show:
+
+* the curator
+* a simple admin management area for creating new admins
+
+7. We do NOT need a large admin dashboard.
+   The only admin functions right now are:
+
+* image curator
+* create new admins
+
+8. Other than existing admins, nobody can create admins.
+
+9. Preserve secure session handling.
+
+10. Do not store passwords in plaintext.
+
+Implementation guidance:
+
+* use a persisted admin user store
+* admins should be represented by email
+* if there is already an existing site login/auth system, integrate with it instead of creating a weird parallel identity system
+* if the app currently lacks proper user auth, implement a minimal secure admin auth flow suitable for the existing app
+* ensure admin sessions are checked on admin routes and admin UI visibility
+
+Back-compat:
+
+* if the current admin login route exists, it can be replaced or upgraded
+* migrate carefully so admin routes still work once the new auth is in place
+
+Admin UI requirement:
+
+* when an admin is logged in, an Admin tab appears
+* inside Admin:
+
+  * “Image Curator”
+  * “Manage Admins”
+* Manage Admins can be simple:
+
+  * list current admins
+  * add a new admin by email
+* only admins can access it
+
+==================================================
+PART 2 — CONFERENCE-WIDE BACKGROUND PRELOAD
+===========================================
+
+When I select a conference in the dropdown, start a true background preload job for all schools in that conference.
+
+Goal:
+By the time I click into schools, their candidates should already be loaded and ready.
+
+Requirements:
+
+* preload all schools in the selected conference in the background
+* do not block the UI
+* fill all three image buckets per school:
+
+  * campus
+  * pool
+  * student_life
+* target 16 good candidates per bucket per school
+* if a bucket already has enough good candidates, skip unnecessary work
+* prevent duplicate preload jobs for the same conference
+* use sensible concurrency
+* update readiness flags so schools become “ready” when usable candidates exist
+
+Desired user experience:
+
+* I choose a conference
+* background preloading begins immediately
+* when I click school to school, images show up fast from preloaded candidates
+
+==================================================
+PART 3 — TARGET COUNTS
+======================
+
+For each school, aim for:
+
+* 16 campus candidates
+* 16 pool candidates
+* 16 student_life candidates
+
+These must be GOOD candidates, not filler.
+
+Implement category-aware fill behavior:
+
+* if campus has 16 strong candidates, do not keep stuffing more into it
+* if pool is weak, keep working pool
+* if student_life is weak, keep working student_life
+
+This logic should apply to:
+
+* conference preload
+* per-school fetch
+* “More images” by category
+* refresh/rebuild actions
+
+==================================================
+PART 4 — STOP STALE CANDIDATE ACCUMULATION
+==========================================
+
+Right now old candidates can persist forever and weak images can remain stored.
+
+Fix this.
+
+Required behavior:
+
+* whenever candidates are fetched, re-evaluate the full pool for that school/category
+* dedupe by URL
+* rescore
+* sort best-first
+* trim to a bounded pool per category
+* do not allow endless accumulation of stale junk
+
+Store a clean, high-quality candidate pool, not a junk drawer.
+
+Recommended storage limit:
+
+* keep best 24 or 32 per category max
+* show the top set in the curator
+* preserve quality, not volume
+
+This should apply to:
+
+* targeted category fetch
+* full-school fetch
+* conference preload
+
+Also provide a safe way to rebuild stale candidates for a school or a conference if needed.
+
+==================================================
+PART 5 — WINNER-AWARE MULTI-SELECTION
+=====================================
+
+The curator should support multiple selected images in a category.
+
+New rule:
+
+* the first selected image in a category is the WINNER
+* winner status is order-based
+* winner must be stored and restored
+
+Behavior example:
+
+* select A, then B, then C
+* ordered selection list = [A, B, C]
+* winner = A
+
+If A is deselected:
+
+* ordered selection list = [B, C]
+* winner = B
+
+If A is selected again later:
+
+* ordered selection list = [B, C, A]
+* winner remains B unless B is removed
+
+Apply this to:
+
+* campus / hero
+* pool
+* student_life too if easiest for consistency
+
+Important:
+I may select multiple hero images and multiple pool images.
+The first selected is the true winner and will be used differently later, especially hero winner #1.
+
+==================================================
+PART 6 — SAVE / RESTORE WINNER DATA
+===================================
+
+Persist winner-aware ordered selections.
+
+Recommended saved structure:
+
+{
+"school": "...",
+"hero_images": [...ordered hero urls...],
+"pool_images": [...ordered pool urls...],
+"student_life_images": [...ordered student life urls...],
+"hero_winner": first hero image or null,
+"pool_winner": first pool image or null,
+"student_life_winner": first student life image or null
+}
+
+Requirements:
+
+* do not break old curated records
+* if winner fields are missing, infer from first image in ordered list
+* preserve backward compatibility with any existing selected_in_order logic
+* restore saved order correctly so winner state survives reload
+
+==================================================
+PART 7 — MINIMAL CURATOR UI UPGRADES
+====================================
+
+Do NOT redesign the curator.
+
+Only make small targeted UI changes:
+
+1. In each section, visually mark the current winner:
+
+* “Winner”
+* or “#1”
+
+2. If easy, other selected images can show:
+
+* “#2”
+* “#3”
+* etc.
+
+3. Winner should update immediately when deselected.
+
+4. Keep drag/drop and ban interactions intact.
+
+5. Keep the existing layout and general behavior intact.
+
+==================================================
+PART 8 — HARVESTER QUALITY IMPROVEMENTS
+=======================================
+
+Upgrade harvest_candidates.py carefully.
+
+Keep the current official-site-first concept, but improve retrieval quality.
+
+Required upgrades:
+
+A. Prefer prominent official hero images
+
+* extract and score og:image
+* extract and score twitter:image
+* strongly boost homepage, admissions, and visit-page hero imagery
+* strongly boost large images high on a page
+
+B. Improve pool / aquatics targeting
+
+* better detect natatorium, aquatics, pool, and facility imagery
+* use page context, page URL, surrounding text, and page type more heavily
+* do not rely only on filename tokens
+
+C. Keep cross-school duplicate suppression
+
+D. Continue filtering obvious junk
+
+* logos
+* maps
+* placeholders
+* tiny images
+* historical photos
+* generic repeated filler
+
+E. Prefer school-specific imagery over interchangeable campus filler
+
+==================================================
+PART 9 — FETCH LOGIC / PERFORMANCE
+==================================
+
+Refine the existing fetch logic.
+
+Desired behavior:
+
+* on conference select:
+  start conference-wide background preload
+* on school select:
+  load immediately from manifest if candidates are already ready
+* if a bucket is below target count, fetch only what is missing
+* do not repeatedly append junk when a bucket is already healthy
+
+“More images” should:
+
+* fetch only the requested category
+* merge cleanly
+* dedupe
+* rescore
+* trim to best pool
+* not endlessly accumulate weak candidates
+
+“Refresh all images” should:
+
+* refetch all categories
+* rebuild the stored candidate pool cleanly
+* preserve best candidates only
+
+Optimize for fast switching between schools after conference preload.
+
+==================================================
+PART 10 — ADMIN TAB + ACCESS CONTROL
+====================================
+
+Once an admin is logged in:
+
+* show an Admin tab in the app navigation
+
+Inside Admin:
+
+1. Image Curator
+2. Manage Admins
+
+Manage Admins requirements:
+
+* list existing admin emails
+* add new admin by email
+* only admins can do this
+* keep the UI simple and clean
+* do not overbuild
+
+If a user is not an admin:
+
+* they should not see the Admin tab
+* they should not be able to access admin routes directly
+
+==================================================
+PART 11 — DATA / BACK-COMPAT / MIGRATION
+========================================
+
+Do not break existing curator data.
+
+Requirements:
+
+* old saved selections should continue to load
+* if winner fields are missing, infer winner from ordered arrays
+* if current admin password flow exists, migrate safely to the new admin model
+* if needed, create a one-time bootstrap path that ensures [johngannon@pacesupply.com](mailto:johngannon@pacesupply.com) becomes the first admin
+
+Also add any needed migration for stale candidate manifests so old junk does not continue polluting results.
+
+==================================================
+PART 12 — DIAGNOSTICS
+=====================
+
+Add useful backend diagnostics/logging for:
+
+* conference preload progress
+* candidate counts per school/category
+* whether target 16 was reached
+* how many candidates were trimmed
+* whether official hero metadata produced results
+* whether weak stale candidates were removed
+
+No major new diagnostics UI is needed unless trivial.
+
+==================================================
+PART 13 — FILES LIKELY TO TOUCH
+===============================
+
+Modify the existing code directly in likely files such as:
+
+* harvest_candidates.py
+* the Flask admin/auth/routes file
+* static/admin_curate.html script section
+* any existing app navigation / auth visibility code
+* any persistence file/model for admins
+
+Do not rewrite unrelated parts of Lane4.
+
+==================================================
+PART 14 — ACCEPTANCE CRITERIA
+=============================
+
+This task is complete when all of the following are true:
+
+AUTH / ADMIN
+
+* [johngannon@pacesupply.com](mailto:johngannon@pacesupply.com) is the initial admin
+* only admins can access admin functionality
+* only admins can create new admins
+* logged-in admins see an Admin tab
+* Admin contains Curator + Manage Admins
+
+CURATOR / PRELOAD
+
+* selecting a conference starts background preload for all schools in that conference
+* each school aims for 16 strong candidates per category
+* switching schools is usually immediate because candidates are already preloaded
+* stale weak candidates no longer persist forever
+* candidate pools are deduped, rescored, trimmed, and bounded
+
+WINNER LOGIC
+
+* multiple hero images can be selected
+* multiple pool images can be selected
+* first selected image is the winner
+* deselecting the winner promotes the next selected image automatically
+* winner state is saved and restored
+* winner is visually obvious in the curator
+
+QUALITY
+
+* official hero images appear more often
+* pool/facility images improve
+* generic repeated campus filler is reduced
+
+==================================================
+PART 15 — OUTPUT I WANT FROM YOU
+================================
+
+After making the changes, give me:
+
+1. A concise summary of what changed
+2. Exact files modified
+3. Any migration or bootstrap notes
+4. Any one-time manual steps I should run
+5. A short testing checklist for:
+
+   * admin login/access
+   * creating a new admin
+   * conference preload
+   * school switching speed
+   * winner selection behavior
+   * stale candidate cleanup
+   * hero/pool quality improvements
+
+Please implement this carefully inside the existing Lane4 codebase, not as a new separate system.

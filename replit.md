@@ -349,6 +349,40 @@ The `*_flags` columns carry raw annotation suffixes stripped from time tokens (e
 CCIW Men 200 Fly: true data ceiling — only 11 swimmers entered; target anchor depth (16) is not achievable from source data.
 MPSF and PCSC improvements: `_detect_column_splits` fallback pass fixed distance-event pages where split-row times partially fill the column gap, reducing the observable gap from the required 3 bins to 2 consecutive empty bins.
 
+## Image Curator Admin System
+
+### Auth
+- Admin login at `https://lane4-recruit.replit.app/admin/login` — email + password (no longer env-var password-only)
+- Initial admin: `johngannon@pacesupply.com` — password bootstrapped from `ADMIN_PASSWORD` env var at first startup
+- Admins table in PostgreSQL (`admins`: id, email, password_hash, created_by, created_at)
+- Session key: `session['admin_email']` — `admin_required` decorator checks this
+- New admin management endpoints: `GET /api/admin/list-admins`, `POST /api/admin/create-admin`
+- `GET /api/admin/me` → `{is_admin, email}` — used by frontend for admin tab visibility
+
+### Curator UI (`https://lane4-recruit.replit.app/admin/curate`)
+- Conference-by-conference workflow with sidebar school list
+- Three sections per school: Campus Hero, Aquatics Facility, Student Life
+- **Winner-aware selection**: first selected image shows "Winner" badge (amber), subsequent show "#2", "#3" etc.
+- Clicking winner deselects it and promotes #2 automatically
+- **⚙ Admins** button in header opens Manage Admins panel (list + create new admins)
+- **Sign out** button in header
+- Conference background preload: on conference select, triggers server-side background fetch for all schools
+- Per-category target: 16 good candidates per bucket; prefetch skips full buckets
+- Candidate pool trimmed to best 24 per category to prevent stale accumulation
+
+### Key Files
+- `harvest_candidates.py` — all image search, scoring, category assignment, dedup logic
+- `static/candidates_manifest.json` — harvested candidates cache (per school, per category, scored)
+- `static/curated_manifest.json` — admin selections (hero_images, pool_images, student_life_images arrays)
+- `static/school_images.json` — public frontend image data (pushed from curated on save)
+- `static/image_blocklist.json` — globally banned URLs
+- `static/school_domains.json` — cached school .edu domains (built from Wikipedia extlinks)
+
+### Candidate Pool Rules
+- `_rescore_and_trim_by_category(candidates, per_cat_limit=24)` — dedupes, sorts best-first, trims
+- `_category_counts(candidates)` — returns `{campus, pool, student_life}` counts
+- Prefetch skips categories already at ≥ 16 good candidates
+
 ## User Preferences
 - **Always give full URLs** when referencing pages, endpoints, or routes (e.g. `https://lane4-recruit.replit.app/admin/curate`, not just `/admin/curate`)
 

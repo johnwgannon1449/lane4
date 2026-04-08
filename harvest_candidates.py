@@ -1051,6 +1051,54 @@ def _google_cse_search(query: str, page_type: str = 'general',
         return []
 
 
+# ── Pool management helpers ───────────────────────────────────────────────────
+
+def _category_counts(candidates: list[dict]) -> dict[str, int]:
+    """Return count of candidates per category for a school's pool."""
+    counts: dict[str, int] = {'campus': 0, 'pool': 0, 'student_life': 0}
+    for c in candidates:
+        cat = c.get('category', 'campus')
+        if cat in counts:
+            counts[cat] += 1
+    return counts
+
+
+def _rescore_and_trim_by_category(
+    candidates: list[dict],
+    per_cat_limit: int = 24,
+) -> list[dict]:
+    """Dedupe by URL, sort best-first within each category, trim to per_cat_limit each.
+    Prevents indefinite accumulation of stale/weak images in the manifest.
+    """
+    seen_urls: set[str] = set()
+    by_cat: dict[str, list[dict]] = {'campus': [], 'pool': [], 'student_life': []}
+    other: list[dict] = []
+
+    for c in candidates:
+        url = c.get('url', '')
+        if not url or url in seen_urls:
+            continue
+        seen_urls.add(url)
+        cat = c.get('category', 'campus')
+        if cat in by_cat:
+            by_cat[cat].append(c)
+        else:
+            other.append(c)
+
+    result: list[dict] = []
+    total_trimmed = 0
+    for cat, items in by_cat.items():
+        items.sort(key=lambda x: x.get('score', 0), reverse=True)
+        trimmed_count = max(0, len(items) - per_cat_limit)
+        if trimmed_count:
+            print(f'    [trim] {cat}: kept {per_cat_limit}/{len(items)} (removed {trimmed_count} weak)')
+            total_trimmed += trimmed_count
+        result.extend(items[:per_cat_limit])
+
+    result.extend(other)
+    return result
+
+
 # ── Main entry point ──────────────────────────────────────────────────────────
 
 def fetch_candidates(school: str, domains_cache: dict | None = None) -> list[dict]:

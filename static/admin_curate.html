@@ -218,16 +218,74 @@ html, body { height: 100%; font-family: 'Figtree', sans-serif; background: var(-
 }
 .img-card:hover .img-src { opacity: 1; }
 
-/* Green check badge (top-right) */
+/* Winner / order badge (top-right) */
 .check-badge {
   position: absolute; top: 6px; right: 6px;
-  width: 22px; height: 22px; border-radius: 50%;
+  min-width: 26px; height: 22px; border-radius: 11px;
+  padding: 0 5px;
   background: var(--green); color: #fff;
   display: none; align-items: center; justify-content: center;
-  font-size: .85rem; font-weight: 700;
-  box-shadow: 0 2px 6px rgba(0,0,0,.25);
+  font-size: .72rem; font-weight: 700; letter-spacing: -.01em;
+  box-shadow: 0 2px 6px rgba(0,0,0,.3);
 }
 .img-card.selected .check-badge { display: flex; }
+.img-card.winner .check-badge {
+  background: #D97706; /* amber — winner stands out */
+  font-size: .75rem;
+}
+
+/* Manage Admins panel */
+#manage-admins-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,.4);
+  display: none; align-items: center; justify-content: center;
+  z-index: 300;
+}
+#manage-admins-overlay.open { display: flex; }
+#manage-admins-panel {
+  background: #fff; border-radius: 16px; padding: 32px 32px 28px;
+  width: 100%; max-width: 480px; box-shadow: 0 20px 60px rgba(0,0,0,.22);
+  max-height: 90vh; overflow-y: auto;
+}
+#manage-admins-panel h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 18px; }
+.admin-list { border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 20px; }
+.admin-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px; border-bottom: 1px solid var(--border);
+  font-size: .83rem;
+}
+.admin-row:last-child { border-bottom: none; }
+.admin-row .em { flex: 1; font-weight: 500; }
+.admin-row .by { color: var(--muted); font-size: .76rem; }
+.create-admin-form { display: flex; flex-direction: column; gap: 10px; }
+.create-admin-form label { font-size: .8rem; font-weight: 600; color: #374151; }
+.create-admin-form input {
+  width: 100%; height: 38px; padding: 0 10px;
+  border: 1px solid var(--border); border-radius: 8px;
+  font-family: inherit; font-size: .88rem; color: var(--text); outline: none;
+}
+.create-admin-form input:focus { border-color: var(--blue); }
+.create-admin-form .form-row { display: flex; gap: 10px; }
+.create-admin-form .form-row input { flex: 1; }
+#create-admin-err {
+  color: #DC2626; font-size: .8rem; background: #FEF2F2;
+  padding: 8px 10px; border-radius: 7px; border: 1px solid #FECACA;
+  display: none;
+}
+#create-admin-ok {
+  color: var(--green); font-size: .8rem; background: var(--green-l);
+  padding: 8px 10px; border-radius: 7px; border: 1px solid #bbf7d0;
+  display: none;
+}
+.panel-actions { display: flex; gap: 10px; margin-top: 14px; justify-content: flex-end; }
+.panel-btn {
+  height: 36px; padding: 0 18px; border-radius: 8px; border: 1px solid var(--border);
+  background: #fff; font-family: inherit; font-size: .84rem; font-weight: 500;
+  cursor: pointer; color: var(--text); transition: background .12s;
+}
+.panel-btn:hover { background: var(--bg); }
+.panel-btn.primary { background: var(--blue); border-color: var(--blue); color: #fff; font-weight: 600; }
+.panel-btn.primary:hover { background: var(--blue-d); }
+.panel-btn:disabled { opacity: .5; cursor: not-allowed; }
 
 /* Ban button (top-left) — permanently block an image */
 .ban-btn {
@@ -337,8 +395,37 @@ html, body { height: 100%; font-family: 'Figtree', sans-serif; background: var(-
     <span id="save-indicator">✓ Saved</span>
     <button class="hdr-btn" id="btn-prev" onclick="prevSchool()" disabled>← Prev</button>
     <button class="hdr-btn primary" id="btn-save-next" onclick="saveAndNext()" disabled>Save &amp; Next →</button>
+    <button class="hdr-btn" onclick="openManageAdmins()" title="Manage Admins">⚙ Admins</button>
+    <button class="hdr-btn" onclick="adminLogout()" title="Sign out" style="color:#DC2626;border-color:#FECACA">Sign out</button>
   </div>
 </header>
+
+<!-- Manage Admins Panel -->
+<div id="manage-admins-overlay" onclick="if(event.target===this) closeManageAdmins()">
+  <div id="manage-admins-panel">
+    <h3>Manage Admins</h3>
+    <div class="admin-list" id="admin-list-body">
+      <div class="admin-row" style="color:var(--muted)">Loading…</div>
+    </div>
+    <div style="font-size:.82rem;font-weight:600;color:#374151;margin-bottom:10px">Add New Admin</div>
+    <div class="create-admin-form">
+      <div>
+        <label>Email</label>
+        <input type="email" id="new-admin-email" placeholder="new.admin@example.com" />
+      </div>
+      <div>
+        <label>Password (min 8 chars)</label>
+        <input type="password" id="new-admin-pw" placeholder="Temporary password" />
+      </div>
+      <div id="create-admin-err"></div>
+      <div id="create-admin-ok"></div>
+    </div>
+    <div class="panel-actions">
+      <button class="panel-btn" onclick="closeManageAdmins()">Close</button>
+      <button class="panel-btn primary" id="create-admin-btn" onclick="createAdmin()">Add Admin</button>
+    </div>
+  </div>
+</div>
 
 <div id="layout">
   <aside id="sidebar"
@@ -635,12 +722,19 @@ function renderSectionBody(key, cands, sels, hint) {
   }
   return `<p style="font-size:.76rem;color:var(--muted);margin-bottom:10px">${hint}</p>
     <div class="img-grid" id="grid-${key}">
-      ${cands.map((c, i) => cardHtml(key, c, i, sels.includes(c.url))).join('')}
+      ${cands.map((c, i) => {
+        const pos = sels.indexOf(c.url);  // -1 = not selected, 0 = winner, 1+ = #2 #3 …
+        return cardHtml(key, c, i, pos);
+      }).join('')}
     </div>`;
 }
 
-function cardHtml(key, c, i, selected) {
-  const cls = selected ? 'selected' : '';
+// pos: -1 = not selected, 0 = winner (#1), 1 = #2, 2 = #3, …
+function cardHtml(key, c, i, pos) {
+  const selected = pos >= 0;
+  const isWinner = pos === 0;
+  const cls = [selected ? 'selected' : '', isWinner ? 'winner' : ''].join(' ').trim();
+  const badgeLabel = !selected ? '' : pos === 0 ? 'Winner' : `#${pos + 1}`;
   const urlEsc = esc(c.url).replace(/'/g, "\\'");
   return `<div class="img-card ${cls}" id="card-${key}-${i}"
       draggable="true"
@@ -651,7 +745,7 @@ function cardHtml(key, c, i, selected) {
     <img class="img-card-img" src="${esc(c.url)}" loading="lazy" alt=""
          onerror="this.closest('.img-card').classList.add('img-error')" />
     <div class="img-src">${esc(c.source)}</div>
-    <div class="check-badge">✓</div>
+    <div class="check-badge">${badgeLabel}</div>
     <button class="ban-btn" title="Never show this image again (any school)"
       onclick="event.stopPropagation(); banImage('${urlEsc}')">🚫</button>
   </div>`;
@@ -663,15 +757,34 @@ function toggleCard(key, idx) {
   if (!c) return;
 
   const sels = SELECTIONS[key];
-  const pos = sels.indexOf(c.url);
+  const pos  = sels.indexOf(c.url);
   if (pos >= 0) {
     sels.splice(pos, 1);
-    document.getElementById(`card-${key}-${idx}`)?.classList.remove('selected');
   } else {
     sels.push(c.url);
-    document.getElementById(`card-${key}-${idx}`)?.classList.add('selected');
   }
+
+  // Re-render just the grid so all winner/order badges update correctly
+  _refreshGrid(key);
   refreshBadge(key);
+}
+
+// Re-render card elements inside the grid for a section (preserves scroll, skips full re-render)
+function _refreshGrid(key) {
+  const cands = CANDIDATES[key] || [];
+  const sels  = SELECTIONS[key] || [];
+  const grid  = document.getElementById(`grid-${key}`);
+  if (!grid) return;
+  cands.forEach((c, i) => {
+    const el = document.getElementById(`card-${key}-${i}`);
+    if (!el) return;
+    const pos = sels.indexOf(c.url);
+    const selected  = pos >= 0;
+    const isWinner  = pos === 0;
+    el.className = ['img-card', selected ? 'selected' : '', isWinner ? 'winner' : ''].join(' ').trim();
+    const badge = el.querySelector('.check-badge');
+    if (badge) badge.textContent = !selected ? '' : isWinner ? 'Winner' : `#${pos + 1}`;
+  });
 }
 
 // ── Ban image (global blocklist) ──────────────────────────────────────────────
@@ -1204,6 +1317,7 @@ async function backgroundPrefetchNext(currentIdx) {
 // ── Keyboard shortcuts ────────────────────────────────────────────────────────
 document.addEventListener('keydown', e => {
   if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
+  if (e.key === 'Escape') { closeManageAdmins(); return; }
   if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); saveAndNext(); return; }
   if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); nextSchool(); return; }
   if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   { e.preventDefault(); prevSchool(); return; }
@@ -1211,6 +1325,83 @@ document.addEventListener('keydown', e => {
 
 function esc(s) {
   return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── Admin Management ──────────────────────────────────────────────────────────
+async function openManageAdmins() {
+  document.getElementById('manage-admins-overlay').classList.add('open');
+  document.getElementById('create-admin-err').style.display = 'none';
+  document.getElementById('create-admin-ok').style.display  = 'none';
+  document.getElementById('new-admin-email').value = '';
+  document.getElementById('new-admin-pw').value    = '';
+  await loadAdminList();
+}
+
+function closeManageAdmins() {
+  document.getElementById('manage-admins-overlay').classList.remove('open');
+}
+
+async function loadAdminList() {
+  const body = document.getElementById('admin-list-body');
+  body.innerHTML = '<div class="admin-row" style="color:var(--muted)">Loading…</div>';
+  try {
+    const res  = await fetch('/api/admin/list-admins');
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Failed');
+    if (!data.length) {
+      body.innerHTML = '<div class="admin-row" style="color:var(--muted)">No admins found.</div>';
+      return;
+    }
+    body.innerHTML = data.map(a => `
+      <div class="admin-row">
+        <span class="em">${esc(a.email)}</span>
+        <span class="by">by ${esc(a.created_by || 'bootstrap')}</span>
+      </div>`).join('');
+  } catch (e) {
+    body.innerHTML = `<div class="admin-row" style="color:#DC2626">${esc(e.message)}</div>`;
+  }
+}
+
+async function createAdmin() {
+  const email = (document.getElementById('new-admin-email').value || '').trim();
+  const pw    = document.getElementById('new-admin-pw').value || '';
+  const errEl = document.getElementById('create-admin-err');
+  const okEl  = document.getElementById('create-admin-ok');
+  const btn   = document.getElementById('create-admin-btn');
+
+  errEl.style.display = 'none';
+  okEl.style.display  = 'none';
+
+  if (!email || !pw) {
+    errEl.textContent = 'Email and password are required.';
+    errEl.style.display = 'block';
+    return;
+  }
+  btn.disabled = true; btn.textContent = 'Adding…';
+  try {
+    const res  = await fetch('/api/admin/create-admin', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password: pw }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Failed');
+    okEl.textContent = `Admin created: ${email}`;
+    okEl.style.display = 'block';
+    document.getElementById('new-admin-email').value = '';
+    document.getElementById('new-admin-pw').value    = '';
+    await loadAdminList();
+  } catch (e) {
+    errEl.textContent = e.message;
+    errEl.style.display = 'block';
+  } finally {
+    btn.disabled = false; btn.textContent = 'Add Admin';
+  }
+}
+
+async function adminLogout() {
+  await fetch('/api/admin/logout', { method: 'POST' });
+  window.location.href = '/admin/login';
 }
 </script>
 </body>

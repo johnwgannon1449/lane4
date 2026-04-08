@@ -62,7 +62,43 @@ def _init_db():
                     UNIQUE (user_id, data_key)
                 )
             """)
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS admins (
+                    id            SERIAL PRIMARY KEY,
+                    email         TEXT UNIQUE NOT NULL,
+                    password_hash TEXT NOT NULL,
+                    created_by    TEXT,
+                    created_at    TIMESTAMPTZ DEFAULT NOW()
+                )
+            """)
         conn.commit()
+
+
+def _bootstrap_initial_admin():
+    """Create johngannon@pacesupply.com as the initial admin if no admins exist.
+    Uses ADMIN_PASSWORD env var as the initial password.
+    Safe to call on every startup — no-ops if admins already exist.
+    """
+    bootstrap_email = 'johngannon@pacesupply.com'
+    initial_password = os.environ.get('ADMIN_PASSWORD', '')
+    if not initial_password:
+        print('[admin bootstrap] ADMIN_PASSWORD not set — skipping bootstrap')
+        return
+    try:
+        with get_db() as conn:
+            with conn.cursor() as cur:
+                cur.execute('SELECT COUNT(*) FROM admins')
+                count = cur.fetchone()[0]
+                if count == 0:
+                    pw_hash = generate_password_hash(initial_password)
+                    cur.execute(
+                        'INSERT INTO admins (email, password_hash, created_by) VALUES (%s, %s, %s) ON CONFLICT DO NOTHING',
+                        (bootstrap_email, pw_hash, 'bootstrap')
+                    )
+                    print(f'[admin bootstrap] Created initial admin: {bootstrap_email}')
+            conn.commit()
+    except Exception as e:
+        print(f'[admin bootstrap] Error: {e}')
 
 def login_required(f):
     @wraps(f)
@@ -74,11 +110,10 @@ def login_required(f):
 
 
 def admin_required(f):
-    """Separate admin gate — checked via ADMIN_PASSWORD env var, not user accounts."""
+    """Gate that requires an active admin session (email-based DB auth)."""
     @wraps(f)
     def decorated(*args, **kwargs):
-        if not session.get('admin_authed'):
-            # HTML routes → redirect to login page; API routes → 401
+        if not session.get('admin_email'):
             if request.path.startswith('/api/'):
                 return jsonify({'error': 'Not authenticated'}), 401
             return redirect('/admin/login')
@@ -2438,6 +2473,7 @@ def _float(v):
 
 load_data()
 _init_db()
+_bootstrap_initial_admin()
 
 # ---------------------------------------------------------------------------
 # Scoring engine — all formulas from Swimmer_Calcs (workbook authoritative)
@@ -5176,28 +5212,90 @@ def _rebuild_school_images_from_curated():
 
 @app.route('/admin/login', methods=['GET'])
 def admin_login_page():
-    if session.get('admin_authed'):
+    if session.get('admin_email'):
         return redirect('/admin/curate')
     return send_from_directory('static', 'admin_login.html')
 
 
 @app.route('/api/admin/login', methods=['POST'])
 def api_admin_login():
-    body = request.get_json(silent=True) or {}
+    body     = request.get_json(silent=True) or {}
+    email    = (body.get('email') or '').strip().lower()
     password = (body.get('password') or '').strip()
-    correct  = os.environ.get('ADMIN_PASSWORD', '')
-    if not correct:
-        return jsonify({'error': 'ADMIN_PASSWORD not configured on server'}), 500
-    if password != correct:
-        return jsonify({'error': 'Incorrect password'}), 401
-    session['admin_authed'] = True
-    return jsonify({'ok': True})
+    if not email or not password:
+        return jsonify({'error': 'Email and password required'}), 400
+    try:
+        with get_db() as conn:
+            with conn.cursor() as cur:
+                cur.execute('SELECT password_hash FROM admins WHERE email = %s', (email,))
+                row = cur.fetchone()
+        if not row or not check_password_hash(row[0], password):
+            return jsonify({'error': 'Incorrect email or password'}), 401
+        session['admin_email'] = email
+        return jsonify({'ok': True, 'email': email})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 
 @app.route('/api/admin/logout', methods=['POST'])
 def api_admin_logout():
-    session.pop('admin_authed', None)
+    session.pop('admin_email', None)
     return jsonify({'ok': True})
+
+
+@app.route('/api/admin/me', methods=['GET'])
+def api_admin_me():
+    """Return current admin session info — used by frontend to show/hide Admin tab."""
+    email = session.get('admin_email')
+    if not email:
+        return jsonify({'is_admin': False})
+    return jsonify({'is_admin': True, 'email': email})
+
+
+@app.route('/api/admin/list-admins', methods=['GET'])
+@admin_required
+def api_admin_list_admins():
+    """List all admin accounts."""
+    try:
+        with get_db() as conn:
+            with conn.cursor() as cur:
+                cur.execute('SELECT email, created_by, created_at FROM admins ORDER BY created_at')
+                rows = cur.fetchall()
+        return jsonify([
+            {'email': r[0], 'created_by': r[1] or 'bootstrap', 'created_at': str(r[2])}
+            for r in rows
+        ])
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/admin/create-admin', methods=['POST'])
+@admin_required
+def api_admin_create_admin():
+    """Create a new admin account. Only existing admins can do this."""
+    body     = request.get_json(silent=True) or {}
+    email    = (body.get('email') or '').strip().lower()
+    password = (body.get('password') or '').strip()
+    if not email or '@' not in email:
+        return jsonify({'error': 'A valid email address is required'}), 400
+    if len(password) < 8:
+        return jsonify({'error': 'Password must be at least 8 characters'}), 400
+    creator  = session.get('admin_email', 'unknown')
+    pw_hash  = generate_password_hash(password)
+    try:
+        with get_db() as conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    'INSERT INTO admins (email, password_hash, created_by) VALUES (%s, %s, %s)',
+                    (email, pw_hash, creator)
+                )
+            conn.commit()
+        print(f'[admin] {creator} created new admin: {email}')
+        return jsonify({'ok': True, 'email': email})
+    except psycopg2.errors.UniqueViolation:
+        return jsonify({'error': 'An admin with that email already exists'}), 409
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 
 @app.route('/admin/curate')
@@ -5336,7 +5434,6 @@ def api_admin_fetch_candidates():
         return jsonify({'error': 'missing school'}), 400
     try:
         if category:
-            # Targeted fetch — only query the Wikimedia Commons search for this category
             from harvest_candidates import fetch_candidates_for_category
             new_candidates = fetch_candidates_for_category(school, category)
         else:
@@ -5348,16 +5445,19 @@ def api_admin_fetch_candidates():
         if blocklist:
             new_candidates = [c for c in new_candidates if c.get('url', '') not in blocklist]
 
-        # Merge into manifest (do NOT overwrite — preserve existing candidates)
+        # Merge with existing, dedupe by URL, rescore, trim to best 24 per category
+        from harvest_candidates import _rescore_and_trim_by_category
         manifest = _load_candidates_manifest()
         existing = manifest.get(school, [])
         existing_urls = {c['url'] for c in existing}
         merged = existing + [c for c in new_candidates if c['url'] not in existing_urls]
-        manifest[school] = merged
+        trimmed = _rescore_and_trim_by_category(merged, per_cat_limit=24)
+        manifest[school] = trimmed
         os.makedirs('static', exist_ok=True)
         with open(_CANDIDATES_PATH, 'w', encoding='utf-8') as f:
             json.dump(manifest, f, indent=2, ensure_ascii=False)
 
+        # Return only the newly-fetched candidates for the UI merge
         return jsonify({'ok': True, 'candidates': new_candidates, 'count': len(new_candidates)})
     except RuntimeError as e:
         return jsonify({'error': str(e)}), 400
@@ -5412,34 +5512,71 @@ def api_admin_prefetch_conference():
             return jsonify({'ok': True, 'status': 'already_running', 'conference': conference})
         _prefetch_running.add(conference)
 
+    TARGET_PER_CAT = 16
+
     def _do_prefetch():
         try:
-            from harvest_candidates import fetch_candidates, _load_domains, _save_domains
+            from harvest_candidates import (
+                fetch_candidates, fetch_candidates_for_category,
+                _load_domains, _save_domains,
+                _rescore_and_trim_by_category, _category_counts,
+            )
             manifest = _load_candidates_manifest()
+            blocklist = _load_blocklist()
 
-            # Resolve school list for this conference
             school_conf = {s['school']: s.get('conference', '') for s in EXPLORE_SCHOOLS}
             try:
                 with open('school_names.json', encoding='utf-8') as f:
                     all_names = json.load(f)
             except Exception:
                 all_names = [s['school'] for s in EXPLORE_SCHOOLS]
-            schools_to_fetch = [n for n in all_names
-                                if school_conf.get(n, '') == conference
-                                and not manifest.get(n)]
+            conf_schools = [n for n in all_names if school_conf.get(n, '') == conference]
 
             domains_cache = _load_domains()
-            for school in schools_to_fetch:
+            fetched_count = 0
+
+            for school in conf_schools:
                 try:
-                    print(f'[prefetch:{conference}] {school}')
-                    cands = fetch_candidates(school, domains_cache)
-                    manifest[school] = cands
+                    existing = manifest.get(school, [])
+                    counts   = _category_counts(existing)
+                    cats_needed = [
+                        cat for cat in ('campus', 'pool', 'student_life')
+                        if counts.get(cat, 0) < TARGET_PER_CAT
+                    ]
+                    if not cats_needed:
+                        print(f'[prefetch:{conference}] {school} — all categories full, skipping')
+                        continue
+
+                    print(f'[prefetch:{conference}] {school} — needs {cats_needed} (counts: {counts})')
+                    new_cands: list = []
+
+                    if len(cats_needed) == 3 and not existing:
+                        # Full fetch is more efficient for a blank school
+                        new_cands = fetch_candidates(school, domains_cache)
+                    else:
+                        for cat in cats_needed:
+                            cat_new = fetch_candidates_for_category(school, cat)
+                            new_cands.extend(cat_new)
+
+                    if blocklist:
+                        new_cands = [c for c in new_cands if c.get('url', '') not in blocklist]
+
+                    existing_urls = {c['url'] for c in existing}
+                    merged = existing + [c for c in new_cands if c['url'] not in existing_urls]
+                    trimmed = _rescore_and_trim_by_category(merged, per_cat_limit=24)
+                    manifest[school] = trimmed
+                    _save_domains(domains_cache)
+
+                    final_counts = _category_counts(trimmed)
+                    print(f'[prefetch:{conference}] {school} — stored {len(trimmed)} ({final_counts})')
+
                     with open(_CANDIDATES_PATH, 'w', encoding='utf-8') as fh:
                         json.dump(manifest, fh, indent=2, ensure_ascii=False)
-                    _save_domains(domains_cache)
+                    fetched_count += 1
                 except Exception as exc:
                     print(f'[prefetch:{conference}] {school} error: {exc}')
-            print(f'[prefetch:{conference}] done — {len(schools_to_fetch)} schools fetched')
+
+            print(f'[prefetch:{conference}] done — {fetched_count}/{len(conf_schools)} schools fetched')
         finally:
             with _prefetch_lock:
                 _prefetch_running.discard(conference)

@@ -27,14 +27,15 @@ body {
 .logo { font-size: 1.3rem; font-weight: 700; color: #2563EB; margin-bottom: 4px; }
 .logo span { color: #0F172A; }
 .subtitle { font-size: .83rem; color: #64748B; margin-bottom: 28px; }
+.field { margin-bottom: 16px; }
 label { display: block; font-size: .8rem; font-weight: 600; color: #374151; margin-bottom: 6px; }
-input[type=password] {
+input[type=email], input[type=password] {
   width: 100%; height: 42px; padding: 0 12px;
   border: 1px solid #E2E8F0; border-radius: 9px;
   font-family: inherit; font-size: .9rem; color: #0F172A;
   outline: none; transition: border-color .15s;
 }
-input[type=password]:focus { border-color: #2563EB; }
+input[type=email]:focus, input[type=password]:focus { border-color: #2563EB; }
 .error {
   margin-top: 10px; padding: 10px 12px;
   background: #FEF2F2; border: 1px solid #FECACA;
@@ -42,7 +43,7 @@ input[type=password]:focus { border-color: #2563EB; }
   display: none;
 }
 button {
-  margin-top: 18px; width: 100%; height: 44px;
+  margin-top: 8px; width: 100%; height: 44px;
   background: #2563EB; color: #fff; border: none;
   border-radius: 10px; font-family: inherit; font-size: .95rem;
   font-weight: 600; cursor: pointer; transition: background .15s;
@@ -54,29 +55,41 @@ button:disabled { opacity: .5; cursor: not-allowed; }
 <body>
 <div class="card">
   <div class="logo">Lane<span>4</span></div>
-  <div class="subtitle">Image Curation — Admin Access</div>
+  <div class="subtitle">Image Curation — Admin Login</div>
 
-  <label for="pw">Password</label>
-  <input type="password" id="pw" placeholder="Enter admin password" autofocus
-         onkeydown="if(event.key==='Enter') login()" />
+  <div class="field">
+    <label for="em">Email</label>
+    <input type="email" id="em" placeholder="admin@example.com" autofocus
+           onkeydown="if(event.key==='Enter') login()" />
+  </div>
+  <div class="field">
+    <label for="pw">Password</label>
+    <input type="password" id="pw" placeholder="Password"
+           onkeydown="if(event.key==='Enter') login()" />
+  </div>
   <div class="error" id="err"></div>
   <button id="btn" onclick="login()">Sign in</button>
 </div>
 
 <script>
 async function login() {
-  const pw  = document.getElementById('pw').value;
-  const btn = document.getElementById('btn');
-  const err = document.getElementById('err');
+  const email = document.getElementById('em').value.trim();
+  const pw    = document.getElementById('pw').value;
+  const btn   = document.getElementById('btn');
+  const err   = document.getElementById('err');
   err.style.display = 'none';
+  if (!email || !pw) {
+    err.textContent = 'Email and password are required.';
+    err.style.display = 'block';
+    return;
+  }
   btn.disabled = true;
   btn.textContent = 'Signing in…';
-
   try {
     const res = await fetch('/api/admin/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ password: pw }),
+      body: JSON.stringify({ email, password: pw }),
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || 'Login failed');
