@@ -1,0 +1,105 @@
+We are enhancing the SwimCloud import process to automatically enrich the Lane4 user profile with additional swimmer metadata.
+
+Do not change unrelated systems.
+
+---
+
+GOAL
+
+When a swimmer links their SwimCloud profile, automatically capture and store additional profile fields so the Lane4 user profile is mostly complete without manual input.
+
+---
+
+FIELDS TO EXTRACT FROM SWIMCLOUD
+
+When fetching the SwimCloud swimmer profile, extract the following if available:
+
+1. swimmer_name
+2. swimcloud_id (already stored)
+3. gender
+4. club_team
+5. high_school (if present)
+6. graduation_year / class_year
+7. LSC (local swim committee / region) if present
+
+Do NOT fail the import if any field is missing.
+
+---
+
+PROFILE STORAGE
+
+Add the following optional fields to the Lane4 user profile model if they do not already exist:
+
+profile.swimcloud_id
+profile.gender
+profile.club_team
+profile.high_school
+profile.graduation_year
+profile.lsc
+
+These fields should be nullable.
+
+---
+
+SYNC TIMESTAMP
+
+Also store:
+
+profile.last_swimcloud_sync
+
+Set this to the current timestamp whenever a SwimCloud import or sync occurs.
+
+---
+
+IMPORT FLOW
+
+After the user selects their swimmer identity during SwimCloud linking:
+
+1. Fetch swimmer profile data.
+2. Extract the fields listed above.
+3. Update the Lane4 user profile with the data.
+4. Do not overwrite existing user-entered values unless they are empty.
+
+Example rule:
+
+If profile.high_school already exists → keep it.
+If profile.high_school is empty → populate from SwimCloud.
+
+---
+
+GENDER HANDLING
+
+Use the gender field from SwimCloud to determine which motivational standards table to use:
+
+male → boys standards
+female → girls standards
+
+Do not ask the user for gender if SwimCloud provides it.
+
+---
+
+FAILSAFE
+
+If gender cannot be determined from SwimCloud:
+
+leave profile.gender null
+fall back to the existing default behavior
+
+---
+
+UI IMPACT
+
+Do not change the current SwimCloud linking UI.
+
+This change should only enrich the stored profile data behind the scenes.
+
+---
+
+RETURN
+
+After implementation report:
+
+1. files modified
+2. fields added to the profile schema
+3. confirmation that imports still work
+4. confirmation that missing SwimCloud fields do not break the import
