@@ -44,7 +44,7 @@ GOOGLE_CSE_URL  = 'https://www.googleapis.com/customsearch/v1'
 
 MIN_WIDTH  = 400
 MIN_HEIGHT = 220
-MAX_CANDIDATES = 60   # up to 20 per category × 3 categories
+MAX_CANDIDATES = 80   # up to ~24 per category × 3 categories
 CRAWL_WORKERS  = 6
 PAGE_TIMEOUT   = 8
 
@@ -780,11 +780,11 @@ def _commons_search(queries: list[str], page_type: str, score_base: float,
 def _wiki_commons_campus(school: str) -> list[dict]:
     """Search Wikimedia Commons for campus building photos, excluding pool facilities."""
     return _commons_search(
-        queries=[f'{school} campus', f'{school} university building'],
+        queries=[f'{school} campus', f'{school} university building', f'{school} campus aerial'],
         page_type='campus',
         score_base=1.8,
-        limit=14,
-        max_results=8,
+        limit=20,
+        max_results=20,
         # Exclude pool/aquatic facility filenames so they don't leak into campus section
         exclude_fname_tokens=_POOL_FNAME_FILTER,
     )
@@ -801,8 +801,8 @@ def _wiki_commons_pool(school: str) -> list[dict]:
         ],
         page_type='swim',
         score_base=2.0,
-        limit=15,
-        max_results=10,
+        limit=20,
+        max_results=20,
         min_ratio=0.6,  # pool shots are often near-square — accept them
     )
 
@@ -814,11 +814,12 @@ def _wiki_commons_student(school: str) -> list[dict]:
             f'{school} students',
             f'{school} campus life',
             f'{school} student center',
+            f'{school} student activities',
         ],
         page_type='student_life',
         score_base=1.5,
-        limit=15,
-        max_results=8,
+        limit=20,
+        max_results=20,
         min_ratio=0.75,
     )
 
@@ -1181,7 +1182,7 @@ def fetch_candidates_for_category(school: str, category: str) -> list[dict]:
             for img in _ddg_image_search(q, page_type=page_type, n=10):
                 img['score'] = round(img.get('score', 2.0) + 1.5, 3)
                 _add_if_new(img)
-            if len(new_results) >= 15:
+            if len(new_results) >= 24:
                 break
 
     # ── Google CSE (best quality when key + cx are valid) ────────────────────
@@ -1191,9 +1192,9 @@ def fetch_candidates_for_category(school: str, category: str) -> list[dict]:
             for start in (1, 11):  # two pages = up to 20 results per query
                 for img in _google_cse_search(q, page_type=page_type, n=10, start=start):
                     _add_if_new(img)
-                if len(new_results) >= 20:
+                if len(new_results) >= 24:
                     break
-            if len(new_results) >= 20:
+            if len(new_results) >= 24:
                 break
 
     # ── General DDG fallback (quoted school name, last resort) ───────────────
@@ -1206,14 +1207,14 @@ def fetch_candidates_for_category(school: str, category: str) -> list[dict]:
                 if category == 'pool' and not _url_mentions_school(school, img):
                     img['score'] = round(img.get('score', 2.0) - 1.0, 3)
                 _add_if_new(img)
-            if len(new_results) >= 20:
+            if len(new_results) >= 24:
                 break
 
     # ── Wikimedia Commons (always runs — supplements CSE or replaces it) ──────
     # No aspect-ratio filter here: pool shots are often near-square, and the
     # user needs real options when CSE fails or quota is exhausted.
     for q in queries:
-        if len(new_results) >= 30:
+        if len(new_results) >= 36:
             break
         try:
             params = {
