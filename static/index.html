@@ -683,6 +683,19 @@
           </select>
         </div>
       </div>
+      <div class="ob-row">
+        <div class="ob-field">
+          <label>I compete in</label>
+          <select class="ob-input" id="ob-gender">
+            <option value="men">Men's events</option>
+            <option value="women">Women's events</option>
+          </select>
+        </div>
+        <div class="ob-field">
+          <label>Swimcloud profile URL <span class="ob-optional">(optional)</span></label>
+          <input class="ob-input" id="ob-swimcloud-url" type="url" placeholder="https://www.swimcloud.com/swimmer/…" autocomplete="off" />
+        </div>
+      </div>
       <div id="ob-name-err" class="ob-err"></div>
     </div>
 
@@ -692,6 +705,12 @@
       <div id="ob-times-list"></div>
       <button class="ob-add-btn" onclick="obAddTimeRow()">+ Add another event</button>
       <div id="ob-times-err" class="ob-err"></div>
+      <div style="margin-top:0.75rem;">
+        <button class="ob-add-btn" id="ob-rank-btn" onclick="obRankEvents()" style="background:var(--accent,#0057b8);color:#fff;border:none;padding:0.4rem 1rem;border-radius:6px;font-size:0.82rem;cursor:pointer;">
+          See how my events rank →
+        </button>
+      </div>
+      <div id="ob-rank-result" style="margin-top:0.6rem;display:none;"></div>
     </div>
 
     <div class="ob-section">
@@ -1186,6 +1205,8 @@ function loadFromStorage() {
     if (JAMES && !JAMES.academicGoal) {
       JAMES.academicGoal = (VIBE_STATE && VIBE_STATE.academic) || '';
     }
+    if (JAMES && !JAMES.gender)       JAMES.gender       = 'men';
+    if (JAMES && !JAMES.swimcloudUrl) JAMES.swimcloudUrl = '';
     const op = localStorage.getItem(LS_OTHERPREFS);
     if (op !== null) OTHER_PREFS = op;
     const prefs = localStorage.getItem(LS_PREFS);
@@ -1243,6 +1264,63 @@ function hideOnboarding() {
   document.getElementById('onboarding-overlay').style.display = 'none';
 }
 
+async function obRankEvents() {
+  const btn = document.getElementById('ob-rank-btn');
+  const resultDiv = document.getElementById('ob-rank-result');
+  const times = {};
+  document.querySelectorAll('[id^="ob-row-"]').forEach(row => {
+    const idx = row.id.replace('ob-row-', '');
+    const ev  = document.getElementById('ob-event-' + idx)?.value;
+    const t   = document.getElementById('ob-time-'  + idx)?.value?.trim();
+    if (ev && t) times[ev] = t;
+  });
+  if (Object.keys(times).length === 0) {
+    resultDiv.style.display = 'block';
+    resultDiv.innerHTML = '<div style="color:var(--muted);font-size:0.82rem;">Add at least one event and time first.</div>';
+    return;
+  }
+  const gender = document.getElementById('ob-gender')?.value || 'men';
+  btn.disabled = true;
+  btn.textContent = 'Ranking…';
+  try {
+    const resp = await fetch('/api/rank-events', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({times, gender}),
+    });
+    const data = await resp.json();
+    if (!data.ok || !data.ranked?.length) {
+      resultDiv.style.display = 'block';
+      resultDiv.innerHTML = '<div style="color:var(--muted);font-size:0.82rem;">No events matched USA Swimming standards — check your times.</div>';
+      return;
+    }
+    const tierColors = {'AAAA+':'#8B5CF6','AAA':'#2563EB','AA':'#059669','A':'#D97706','B/BB':'#6B7280','Sub-B':'#9CA3AF'};
+    const rows = data.ranked.slice(0, 8).map((r, i) => {
+      const color = tierColors[r.tier] || '#6B7280';
+      const star  = r.top5 ? '★ ' : '';
+      return `<tr>
+        <td style="padding:3px 8px;font-size:0.8rem;font-weight:${r.top5?700:400};">${star}${r.event}</td>
+        <td style="padding:3px 8px;font-size:0.8rem;color:var(--muted);">${r.time}</td>
+        <td style="padding:3px 8px;">
+          <span style="font-size:0.78rem;font-weight:700;color:${color};background:${color}18;padding:2px 7px;border-radius:10px;">${r.a_label}</span>
+          <span style="font-size:0.75rem;color:var(--muted);margin-left:4px;">${r.tier}</span>
+        </td>
+      </tr>`;
+    }).join('');
+    resultDiv.style.display = 'block';
+    resultDiv.innerHTML = `
+      <div style="font-size:0.82rem;font-weight:600;margin-bottom:0.4rem;color:var(--text);">Your events ranked by strength (★ = suggested top 5):</div>
+      <table style="border-collapse:collapse;width:100%;">${rows}</table>
+      <div style="font-size:0.72rem;color:var(--muted);margin-top:0.4rem;">Based on USA Swimming 17–18 SCY motivational standards.</div>`;
+  } catch (e) {
+    resultDiv.style.display = 'block';
+    resultDiv.innerHTML = '<div style="color:var(--muted);font-size:0.82rem;">Ranking unavailable — continue with manual entry.</div>';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'See how my events rank →';
+  }
+}
+
 async function submitOnboarding() {
   const nameEl    = document.getElementById('ob-name');
   const gradEl    = document.getElementById('ob-gradyear');
@@ -1255,13 +1333,15 @@ async function submitOnboarding() {
   nameErr.textContent  = '';
   timesErr.textContent = '';
 
-  const name     = nameEl.value.trim();
-  const gradYear = gradEl.value;
-  const gpa      = parseFloat(gpaEl.value) || 0;
-  const sat      = parseInt(satEl.value)   || 0;
-  const mathSat  = parseInt(document.getElementById('ob-math-sat')?.value) || 0;
-  const act      = parseInt(document.getElementById('ob-act')?.value) || 0;
-  const apCount  = parseInt(document.getElementById('ob-ap-count')?.value) || 0;
+  const name         = nameEl.value.trim();
+  const gradYear     = gradEl.value;
+  const gender       = document.getElementById('ob-gender')?.value || 'men';
+  const swimcloudUrl = (document.getElementById('ob-swimcloud-url')?.value || '').trim();
+  const gpa          = parseFloat(gpaEl.value) || 0;
+  const sat          = parseInt(satEl.value)   || 0;
+  const mathSat      = parseInt(document.getElementById('ob-math-sat')?.value) || 0;
+  const act          = parseInt(document.getElementById('ob-act')?.value) || 0;
+  const apCount      = parseInt(document.getElementById('ob-ap-count')?.value) || 0;
 
   if (!name) {
     nameErr.textContent = 'Please enter a first name.';
@@ -1301,6 +1381,8 @@ async function submitOnboarding() {
   JAMES = {
     name,
     gradYear,
+    gender:       gender,
+    swimcloudUrl: swimcloudUrl || '',
     gpa:      gpa     || 0,
     sat:      sat     || 0,
     mathSat:  mathSat || 0,
@@ -1553,9 +1635,9 @@ async function loadFromServer() {
     if (!Array.isArray(JAMES.potentialMajors)) {
       JAMES.potentialMajors = [JAMES.primaryMajor, JAMES.secondaryMajor].filter(Boolean);
     }
-    if (!JAMES.academicGoal) {
-      JAMES.academicGoal = (VIBE_STATE && VIBE_STATE.academic) || '';
-    }
+    if (!JAMES.academicGoal)    JAMES.academicGoal    = (VIBE_STATE && VIBE_STATE.academic) || '';
+    if (!JAMES.gender)          JAMES.gender          = 'men';
+    if (!JAMES.swimcloudUrl)    JAMES.swimcloudUrl    = '';
     return true;
   } catch(e) { console.warn('Server load failed', e); return false; }
 }
@@ -3483,6 +3565,17 @@ function renderStats() {
           ${apOptions}
         </select>
       </div>
+      <div class="stat-edit-field">
+        <label>I compete in</label>
+        <select id="edit-gender">
+          <option value="men"   ${(JAMES.gender||'men')==='men'   ? 'selected':''}>Men's events</option>
+          <option value="women" ${(JAMES.gender||'men')==='women' ? 'selected':''}>Women's events</option>
+        </select>
+      </div>
+      <div class="stat-edit-field">
+        <label>Swimcloud profile URL <span style="font-weight:400;font-size:0.78em;color:var(--muted);">optional</span></label>
+        <input id="edit-swimcloud-url" type="url" value="${esc(JAMES.swimcloudUrl||'')}" placeholder="https://www.swimcloud.com/swimmer/…">
+      </div>
       <div class="stat-edit-field" style="grid-column:1/-1;">
         <label>Potential majors <span style="font-weight:400;font-size:0.78em;color:var(--muted);">select up to 2 — shapes the academic section of your deep dives</span></label>
         <div id="major-picker"></div>
@@ -3517,6 +3610,11 @@ async function saveStats() {
   const apVal = parseInt(document.getElementById('edit-ap-count')?.value);
   if (apVal >= 1 && apVal <= 16) JAMES.apCount = apVal;
   else if (apVal === 0) JAMES.apCount = 0;
+
+  const genderEdit = document.getElementById('edit-gender')?.value;
+  if (genderEdit) JAMES.gender = genderEdit;
+  const scUrlEdit = (document.getElementById('edit-swimcloud-url')?.value || '').trim();
+  JAMES.swimcloudUrl = scUrlEdit;
 
   // Ensure potentialMajors array exists and primaryMajor/secondaryMajor are synced from it
   if (!Array.isArray(JAMES.potentialMajors)) JAMES.potentialMajors = [];

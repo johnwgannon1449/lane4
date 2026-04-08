@@ -1,0 +1,311 @@
+We are implementing several upgrades to Lane4.
+
+This prompt introduces:
+
+1. Swimcloud profile import during onboarding
+2. Event strength ranking using USA Swimming motivational standards
+3. Conference-wide image preloading improvements
+4. Winner-aware image selection
+5. Candidate cleanup logic
+6. A proper admin system
+
+IMPORTANT:
+Do not rewrite the entire application.
+Modify the existing architecture carefully.
+
+Existing components must remain functional.
+
+---
+
+## PART 1 — ADMIN SYSTEM
+
+Implement a real admin system.
+
+Admins are identified by email.
+
+Initial admin:
+[johngannon@pacesupply.com](mailto:johngannon@pacesupply.com)
+
+Rules:
+
+• Only admins can access admin features
+• Only admins can create other admins
+• Admins can promote other admins
+• Non-admins cannot see admin features
+
+Add an Admin tab visible only to logged-in admins.
+
+Inside the Admin tab:
+
+1. Image Curator
+2. Manage Admins
+
+Manage Admins page must allow:
+
+• view admin list
+• add admin by email
+• remove admin
+
+Persist admins in a secure database table.
+
+Do not store plaintext passwords.
+
+Use the existing authentication/session system.
+
+---
+
+## PART 2 — SWIMCLOUD ONBOARDING
+
+Add optional Swimcloud integration during profile creation.
+
+Goal:
+Allow swimmers to quickly import their strongest events.
+
+Flow:
+
+Step 1:
+User enters full name.
+
+Step 2:
+Search Swimcloud swimmers by name.
+
+Return possible matches with:
+
+• name
+• club
+• graduation year
+• profile URL
+
+Example:
+
+John Smith — Palo Alto Stanford Aquatics — Class of 2027
+John Smith — Irvine Novaquatics — Class of 2026
+
+User selects their profile.
+
+Step 3:
+Retrieve swims from the Swimcloud profile.
+
+Extract:
+
+• event
+• best time
+• course
+
+Group swims by event and keep best time.
+
+---
+
+## PART 3 — USA SWIMMING MOTIVATIONAL STANDARDS
+
+Create a dataset:
+
+usa_motivational_times_17_18_scy.json
+
+For each event include:
+
+B
+BB
+A
+AA
+AAA
+AAAA
+
+Example structure:
+
+{
+"100_free": {
+"B": 52.59,
+"BB": 49.99,
+"A": 47.59,
+"AA": 45.49,
+"AAA": 43.79,
+"AAAA": 42.29
+}
+}
+
+Use official USA Swimming 17-18 SCY standards.
+
+---
+
+## PART 4 — EVENT STRENGTH USING "NUMBER OF As"
+
+Convert swimmer time to a continuous A-score.
+
+Definition:
+
+0A = B time
+1A = A time
+2A = AA time
+3A = AAA time
+4A = AAAA time
+
+Compute fractional position between levels.
+
+Example:
+
+If swimmer is halfway between AA and AAA:
+
+score = 2.5A
+
+If faster than AAAA:
+
+score > 4A
+
+Algorithm:
+
+1. Identify which two standards the swimmer time falls between.
+2. Compute fractional distance between them.
+3. Convert to A-score.
+
+Example:
+
+AA = 1:58
+AAA = 1:50
+
+Swimmer = 1:54
+
+score = 2 + (AA_time - swimmer_time)/(AA_time - AAA_time)
+
+Store the computed A-score internally.
+
+---
+
+## PART 5 — EVENT RANKING
+
+Rank events by A-score descending.
+
+Higher score = stronger event.
+
+Select:
+
+Top 8 events internally
+Display top 5 to the swimmer
+
+Example output:
+
+500 Free — 2.8A
+200 Free — 2.4A
+200 IM — 2.1A
+100 Free — 1.8A
+1650 Free — 1.7A
+
+User can accept or edit.
+
+---
+
+## PART 6 — IMPORT INTO LANE4 PROFILE
+
+When user confirms:
+
+Store in profile:
+
+• event
+• best time
+• course
+• swimcloud_profile_url
+
+Do NOT store A-scores permanently.
+
+A-scores are only used for ranking.
+
+---
+
+## PART 7 — IMAGE CURATOR UPGRADES
+
+Enhance existing image curator.
+
+Changes:
+
+• allow multiple hero images
+• allow multiple pool images
+
+The first selected image is the winner.
+
+Winner logic:
+
+Example:
+
+User selects:
+
+A, B, C
+
+Winner = A
+
+If A removed:
+
+Winner = B
+
+Persist ordered selections.
+
+Store:
+
+hero_images
+pool_images
+student_life_images
+hero_winner
+pool_winner
+student_life_winner
+
+Maintain backward compatibility.
+
+---
+
+## PART 8 — CONFERENCE IMAGE PRELOAD
+
+When a conference is selected:
+
+Start background preload of all schools.
+
+Target per school:
+
+16 campus images
+16 pool images
+16 student life images
+
+Ensure candidate pools are preloaded so switching schools is fast.
+
+---
+
+## PART 9 — CANDIDATE CLEANUP
+
+Fix stale candidate accumulation.
+
+When new images are fetched:
+
+• dedupe by URL
+• rescore
+• keep best candidates
+• limit pool size
+
+Maximum:
+
+32 candidates per category.
+
+---
+
+## PART 10 — PERFORMANCE
+
+Ensure:
+
+• conference preload runs in background
+• UI is not blocked
+• school switching is instant
+
+Avoid redundant fetches when enough candidates exist.
+
+---
+
+## PART 11 — TESTING
+
+Verify:
+
+Swimcloud onboarding works
+Events ranked by A-score
+Top 5 events suggested correctly
+Image curator winner logic works
+Conference image preload works
+Admin system works
+Existing users unaffected
+
+Provide a summary of modified files and testing instructions.
