@@ -613,6 +613,82 @@
     .danger-zone { border-top: 1.5px solid var(--border); padding-top: 1.25rem; margin-top: 1rem; }
     .btn-danger { background: var(--red-l); color: var(--red); border: 1.5px solid #FECACA; }
     .btn-danger:hover { background: #FEE2E2; }
+
+    /* ── SWIMCLOUD UI ────────────────────────────────────────────── */
+    .sc-linked-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 0.72rem; font-weight: 700; background: #EFF6FF; color: #1D4ED8;
+      border: 1px solid #BFDBFE; border-radius: 99px; padding: 2px 10px; margin-bottom: 0.6rem;
+    }
+    .sc-linked-badge .dot { width: 7px; height: 7px; border-radius: 50%; background: #1D4ED8; }
+    .sc-linked-row { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 0.3rem; }
+    .sc-linked-name { font-size: 0.92rem; font-weight: 600; color: var(--navy); }
+    .sc-linked-team { font-size: 0.8rem; color: var(--muted); margin-bottom: 0.4rem; }
+    .sc-sync-line   { font-size: 0.75rem; color: var(--muted); }
+    .sc-unlink-btn  { font-size: 0.72rem; color: var(--muted); border: none; background: none; cursor: pointer; padding: 0; text-decoration: underline; }
+    .sc-unlink-btn:hover { color: var(--red); }
+    .sc-link-prompt { font-size: 0.85rem; color: var(--muted); }
+    .sc-link-btn {
+      margin-top: 0.65rem; padding: 7px 18px; font-size: 0.84rem; font-weight: 600;
+      background: var(--blue); color: #fff; border: none; border-radius: 8px; cursor: pointer;
+    }
+    .sc-link-btn:hover { background: #1D4ED8; }
+
+    /* Modal shared */
+    #sc-modal-overlay, #sc-pr-overlay {
+      position: fixed; inset: 0; z-index: 1500;
+      background: rgba(15,23,42,.55); display: flex;
+      align-items: flex-start; justify-content: center;
+      padding: 3vh 1rem 4rem; overflow-y: auto;
+    }
+    .sc-modal-card {
+      background: #fff; border-radius: 16px; padding: 1.75rem 1.75rem 1.5rem;
+      width: 100%; max-width: 480px; box-shadow: 0 16px 64px rgba(0,0,0,.18);
+    }
+    .sc-modal-title { font-family: 'Fraunces', serif; font-size: 1.15rem; font-weight: 700; color: var(--navy); margin-bottom: 0.2rem; }
+    .sc-modal-sub   { font-size: 0.82rem; color: var(--muted); margin-bottom: 1.1rem; }
+    .sc-search-row  { display: flex; gap: 0.5rem; margin-bottom: 0.85rem; }
+    .sc-search-input {
+      flex: 1; padding: 9px 12px; border: 1.5px solid var(--border); border-radius: 8px;
+      font-family: 'Figtree', sans-serif; font-size: 0.9rem; outline: none;
+    }
+    .sc-search-input:focus { border-color: var(--blue); }
+    .sc-search-btn {
+      padding: 9px 16px; background: var(--blue); color: #fff; border: none;
+      border-radius: 8px; font-size: 0.84rem; font-weight: 600; cursor: pointer;
+    }
+    .sc-search-btn:hover  { background: #1D4ED8; }
+    .sc-search-btn:disabled { opacity: 0.6; cursor: default; }
+    .sc-result-list { display: flex; flex-direction: column; gap: 0.45rem; margin-bottom: 0.75rem; max-height: 320px; overflow-y: auto; }
+    .sc-result-item {
+      border: 1.5px solid var(--border); border-radius: 10px; padding: 0.65rem 0.9rem;
+      cursor: pointer; transition: border-color 0.12s, background 0.12s;
+    }
+    .sc-result-item:hover  { border-color: var(--blue); background: #EFF6FF; }
+    .sc-result-name  { font-weight: 600; font-size: 0.88rem; color: var(--navy); }
+    .sc-result-meta  { font-size: 0.76rem; color: var(--muted); margin-top: 2px; }
+    .sc-propose-table { width: 100%; border-collapse: collapse; font-size: 0.83rem; margin: 0.5rem 0 1rem; }
+    .sc-propose-table th { text-align: left; padding: 0.35rem 0.5rem; border-bottom: 2px solid var(--border); font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; font-weight: 600; }
+    .sc-propose-table td { padding: 0.45rem 0.5rem; border-bottom: 1px solid var(--border); }
+    .sc-propose-table tr:last-child td { border-bottom: none; }
+    .sc-a-score { font-size: 0.75rem; color: var(--muted); }
+    .sc-action-row { display: flex; gap: 0.5rem; margin-top: 0.75rem; }
+    .sc-accept-btn {
+      flex: 1; padding: 10px; background: var(--green); color: #fff; border: none;
+      border-radius: 9px; font-size: 0.9rem; font-weight: 700; cursor: pointer;
+    }
+    .sc-accept-btn:hover { background: #15803D; }
+    .sc-cancel-btn {
+      padding: 10px 18px; background: var(--bg); color: var(--muted);
+      border: 1.5px solid var(--border); border-radius: 9px; font-size: 0.88rem; cursor: pointer;
+    }
+    .sc-cancel-btn:hover { background: var(--border); }
+    .sc-modal-msg { font-size: 0.8rem; margin-top: 0.5rem; min-height: 1.1rem; }
+    .sc-modal-msg.err { color: var(--red); }
+    .sc-modal-msg.ok  { color: var(--green); }
+    .sc-pr-badge { display:inline-block; font-size:0.7rem; font-weight:700; background:#F0FDF4; color:#16A34A; border:1px solid #BBF7D0; border-radius:99px; padding:1px 8px; margin-bottom:0.6rem; }
+    .sc-pr-diff-new { color: var(--green); font-weight: 600; }
+    .sc-pr-diff-old { color: var(--muted); font-size: 0.78rem; text-decoration: line-through; }
   </style>
 </head>
 <body>
@@ -754,6 +830,20 @@
   </div>
 </div>
 
+<!-- ── SwimCloud search / import modal ─────────────────────── -->
+<div id="sc-modal-overlay" style="display:none;" onclick="if(event.target===this)scCloseModal()">
+  <div class="sc-modal-card">
+    <div id="sc-modal-content"></div>
+  </div>
+</div>
+
+<!-- ── SwimCloud PR notification modal ─────────────────────── -->
+<div id="sc-pr-overlay" style="display:none;" onclick="if(event.target===this)scDismissPR()">
+  <div class="sc-modal-card">
+    <div id="sc-pr-content"></div>
+  </div>
+</div>
+
 <nav>
   <span class="logo">Lane<span class="logo-dot">4</span></span>
   <div class="nav-tabs">
@@ -861,6 +951,15 @@
       <div id="times-edit-panel" style="display:none;"></div>
     </div>
 
+
+    <!-- ── SwimCloud Integration ──────────────────────────────── -->
+    <div class="section-label" style="margin-top:1rem;">SwimCloud Times</div>
+    <div class="card" id="sc-card" style="margin-bottom:1.5rem;padding:1rem 1.1rem;">
+      <div id="sc-status-inner">
+        <span class="sc-link-prompt">Link your SwimCloud profile to auto-import your best times ranked by motivational standards.</span><br/>
+        <button class="sc-link-btn" onclick="scOpenSearch()">Link SwimCloud Profile</button>
+      </div>
+    </div>
 
     <div class="section-label" style="margin-top:2rem;">
       Preferences
@@ -1716,6 +1815,8 @@ async function afterAuthBoot() {
   renderReminders();
   updateBadges();
   renderLoggedInUser();
+  // Non-blocking: check SwimCloud for new PRs if swimmer is linked
+  setTimeout(() => checkSwimCloudPRs(), 2000);
 }
 
 // ════════════════════════════════════════════════════════════════
@@ -3778,6 +3879,7 @@ function renderProfile() {
   renderStats();
   renderMajorPickerProfile();
   renderTimes();
+  renderSwimCloud();
   renderVibeQuestions();
   renderPreferences();
 }
@@ -4059,6 +4161,311 @@ function addToBrowseList(school) {
     updateBadges();
   }
   renderAllSchools();
+}
+
+// ════════════════════════════════════════════════════════════════
+// SWIMCLOUD INTEGRATION
+// ════════════════════════════════════════════════════════════════
+
+function renderSwimCloud() {
+  const inner = document.getElementById('sc-status-inner');
+  if (!inner) return;
+  const sc = (JAMES && JAMES.swimcloud) || null;
+  if (!sc || !sc.swimmer_id) {
+    inner.innerHTML = `
+      <span class="sc-link-prompt">Link your SwimCloud profile to auto-import your best times ranked by motivational standards.</span><br/>
+      <button class="sc-link-btn" onclick="scOpenSearch()">Link SwimCloud Profile</button>`;
+    return;
+  }
+  const lastSync = sc.last_sync_at
+    ? 'Last synced ' + new Date(sc.last_sync_at).toLocaleDateString('en-US', {month:'short',day:'numeric',year:'numeric'})
+    : 'Not yet synced';
+  inner.innerHTML = `
+    <div class="sc-linked-badge"><span class="dot"></span> SwimCloud Linked</div>
+    <div class="sc-linked-row">
+      <span class="sc-linked-name">${esc(sc.display_name || sc.swimmer_id)}</span>
+      <button class="sc-unlink-btn" onclick="scUnlink()">Unlink</button>
+    </div>
+    ${sc.team ? `<div class="sc-linked-team">${esc(sc.team)}</div>` : ''}
+    <div class="sc-sync-line">${esc(lastSync)}
+      &nbsp;·&nbsp;<a href="${esc(sc.profile_url || '')}" target="_blank" rel="noopener" style="font-size:0.75rem;color:var(--blue);">View profile</a>
+      &nbsp;·&nbsp;<button class="sc-unlink-btn" style="color:var(--blue);" onclick="scManualSync()">Re-sync now</button>
+    </div>`;
+}
+
+// ── Search flow ──────────────────────────────────────────────────
+
+function scOpenSearch() {
+  const modal = document.getElementById('sc-modal-content');
+  if (!modal) return;
+  modal.innerHTML = `
+    <div class="sc-modal-title">Link SwimCloud Profile</div>
+    <div class="sc-modal-sub">Enter the swimmer's full name to search SwimCloud.</div>
+    <div class="sc-search-row">
+      <input class="sc-search-input" id="sc-name-input" type="text" placeholder="e.g. Alex Johnson"
+        onkeydown="if(event.key==='Enter')scSearch()" />
+      <button class="sc-search-btn" id="sc-search-btn" onclick="scSearch()">Search</button>
+    </div>
+    <div id="sc-search-results"></div>
+    <div class="sc-modal-msg" id="sc-modal-msg"></div>
+    <div style="margin-top:0.75rem;">
+      <button class="sc-cancel-btn" onclick="scCloseModal()">Cancel</button>
+    </div>`;
+  document.getElementById('sc-modal-overlay').style.display = 'flex';
+  setTimeout(() => {
+    const inp = document.getElementById('sc-name-input');
+    if (inp) inp.focus();
+  }, 50);
+}
+
+async function scSearch() {
+  const inp  = document.getElementById('sc-name-input');
+  const btn  = document.getElementById('sc-search-btn');
+  const msg  = document.getElementById('sc-modal-msg');
+  const res  = document.getElementById('sc-search-results');
+  if (!inp) return;
+  const q = inp.value.trim();
+  if (!q) { if (msg) { msg.className='sc-modal-msg err'; msg.textContent='Enter a name.'; } return; }
+  btn.disabled = true; btn.textContent = 'Searching…';
+  if (msg) { msg.className='sc-modal-msg'; msg.textContent=''; }
+  if (res) res.innerHTML = '';
+  try {
+    const r = await fetch('/api/swimcloud/search?q=' + encodeURIComponent(q));
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.error || 'Search failed');
+    const results = d.results || [];
+    if (!results.length) {
+      if (res) res.innerHTML = `<div style="font-size:0.82rem;color:var(--muted);padding:0.5rem 0;">No SwimCloud profiles found for "${esc(q)}". Try a different spelling or add a middle initial.</div>`;
+    } else {
+      if (res) res.innerHTML = `
+        <div style="font-size:0.76rem;color:var(--muted);margin-bottom:0.4rem;">${results.length} result${results.length>1?'s':''} — select the correct swimmer</div>
+        <div class="sc-result-list">
+          ${results.map(r => `
+            <div class="sc-result-item" onclick='scSelectSwimmer(${JSON.stringify(r.swimmer_id)},${JSON.stringify(r.display_name)},${JSON.stringify(r.team)},${JSON.stringify(r.grad_year)},${JSON.stringify(r.location)},${JSON.stringify(r.profile_url)})'>
+              <div class="sc-result-name">${esc(r.display_name)}</div>
+              <div class="sc-result-meta">${[r.team, r.location, r.grad_year ? 'Class of ' + r.grad_year : ''].filter(Boolean).join(' · ')}</div>
+            </div>`).join('')}
+        </div>`;
+    }
+  } catch(e) {
+    if (msg) { msg.className='sc-modal-msg err'; msg.textContent='Error: ' + e.message; }
+  } finally {
+    btn.disabled = false; btn.textContent = 'Search';
+  }
+}
+
+// ── Proposal flow ────────────────────────────────────────────────
+
+async function scSelectSwimmer(swimmerId, displayName, team, gradYear, location, profileUrl) {
+  const modal = document.getElementById('sc-modal-content');
+  if (!modal) return;
+  modal.innerHTML = `
+    <div class="sc-modal-title">Importing Times</div>
+    <div class="sc-modal-sub">Fetching SwimCloud times for <strong>${esc(displayName)}</strong>…</div>
+    <div style="color:var(--muted);font-size:0.85rem;">Ranking by USA Swimming 17-18 SCY motivational standards…</div>`;
+  try {
+    const gender = (JAMES && JAMES.gender) || 'men';
+    const r = await fetch(`/api/swimcloud/propose?swimmer_id=${encodeURIComponent(swimmerId)}&gender=${encodeURIComponent(gender)}`);
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.error || 'Failed to fetch times');
+    const swimmer  = d.swimmer  || { swimmer_id: swimmerId, display_name: displayName, team, profile_url: profileUrl };
+    const proposed = d.proposed || [];
+    scShowProposal(swimmer, proposed, d.warning);
+  } catch(e) {
+    modal.innerHTML += `<div class="sc-modal-msg err" style="margin-top:0.75rem;">Error: ${esc(e.message)}</div>
+      <div style="margin-top:0.75rem;"><button class="sc-cancel-btn" onclick="scOpenSearch()">← Back</button></div>`;
+  }
+}
+
+function scShowProposal(swimmer, proposed, warning) {
+  const modal = document.getElementById('sc-modal-content');
+  if (!modal) return;
+  const gender = (JAMES && JAMES.gender) || 'men';
+  const swMeta = swimmer.team ? `${esc(swimmer.display_name)} · ${esc(swimmer.team)}` : esc(swimmer.display_name);
+  const tableRows = proposed.length
+    ? proposed.map(ev => `<tr>
+        <td>${esc(ev.event)}</td>
+        <td><strong>${esc(ev.time)}</strong> <span style="font-size:0.72rem;color:var(--muted);">SCY</span></td>
+        <td class="sc-a-score">${ev.a_score >= 0 ? ev.a_score.toFixed(2) + 'A' : 'n/a'}</td>
+      </tr>`).join('')
+    : `<tr><td colspan="3" style="color:var(--muted);padding:0.5rem 0;">No SCY events found.</td></tr>`;
+  modal.innerHTML = `
+    <div class="sc-modal-title">Review Proposed Times</div>
+    <div class="sc-modal-sub">${swMeta} · Top 10 events ranked by ${gender === 'women' ? 'women' : 'men'}'s 17-18 SCY motivational standards</div>
+    ${warning ? `<div style="font-size:0.8rem;color:var(--amber);margin-bottom:0.6rem;">${esc(warning)}</div>` : ''}
+    <table class="sc-propose-table">
+      <thead><tr><th>Event</th><th>Best SCY Time</th><th>Rank</th></tr></thead>
+      <tbody>${tableRows}</tbody>
+    </table>
+    ${proposed.length ? `
+    <div style="font-size:0.78rem;color:var(--muted);margin-bottom:0.75rem;">These times will be imported into your Lane4 profile. Your scores will recalculate.</div>
+    <div class="sc-action-row">
+      <button class="sc-accept-btn" onclick='scAcceptImport(${JSON.stringify(swimmer)},${JSON.stringify(proposed)})'>Accept &amp; Import Times</button>
+      <button class="sc-cancel-btn" onclick="scOpenSearch()">Back</button>
+    </div>` : `
+    <div class="sc-action-row">
+      <button class="sc-cancel-btn" onclick="scCloseModal()">Close</button>
+    </div>`}
+    <div class="sc-modal-msg" id="sc-modal-msg"></div>`;
+}
+
+async function scAcceptImport(swimmer, proposed) {
+  if (!JAMES) return;
+  const now = new Date().toISOString();
+
+  // Build accepted_events map
+  const acceptedEvents = {};
+  const timesUpdate    = {};
+  proposed.forEach(ev => {
+    acceptedEvents[ev.event] = { time: ev.time, time_sec: ev.time_sec, course: ev.course || 'SCY' };
+    timesUpdate[ev.event]    = ev.time;
+  });
+
+  // Update JAMES
+  if (!JAMES.swimcloud) JAMES.swimcloud = {};
+  JAMES.swimcloud.swimmer_id   = swimmer.swimmer_id;
+  JAMES.swimcloud.display_name = swimmer.display_name || '';
+  JAMES.swimcloud.team         = swimmer.team         || '';
+  JAMES.swimcloud.grad_year    = swimmer.grad_year    || null;
+  JAMES.swimcloud.profile_url  = swimmer.profile_url  || '';
+  JAMES.swimcloud.last_sync_at = now;
+  JAMES.swimcloud.accepted_events = acceptedEvents;
+
+  // Merge times into JAMES.times
+  if (!JAMES.times) JAMES.times = {};
+  Object.assign(JAMES.times, timesUpdate);
+
+  saveToStorage();
+  await pushToServer();
+
+  scCloseModal();
+  renderProfile();
+  renderSwimCloud();
+  await refreshScores();
+
+  // Brief confirmation
+  const inner = document.getElementById('sc-status-inner');
+  if (inner) {
+    const note = document.createElement('div');
+    note.style.cssText = 'font-size:0.8rem;color:var(--green);margin-top:0.4rem;';
+    note.textContent = `${proposed.length} times imported from SwimCloud.`;
+    inner.appendChild(note);
+    setTimeout(() => note.remove(), 4000);
+  }
+}
+
+function scCloseModal() {
+  const ov = document.getElementById('sc-modal-overlay');
+  if (ov) ov.style.display = 'none';
+}
+
+// ── Unlink ───────────────────────────────────────────────────────
+
+async function scUnlink() {
+  if (!confirm('Unlink SwimCloud? The times that were imported will remain in your profile, but future syncs will stop.')) return;
+  if (JAMES && JAMES.swimcloud) {
+    JAMES.swimcloud = null;
+  }
+  saveToStorage();
+  await pushToServer();
+  renderSwimCloud();
+}
+
+// ── Manual re-sync ───────────────────────────────────────────────
+
+async function scManualSync() {
+  if (!JAMES || !JAMES.swimcloud || !JAMES.swimcloud.swimmer_id) return;
+  // Temporarily clear last_sync_at so check-prs runs immediately
+  const origSync = JAMES.swimcloud.last_sync_at;
+  JAMES.swimcloud.last_sync_at = null;
+  const result = await scRunPRCheck(true);
+  if (!result) {
+    // No new times: restore the sync time
+    JAMES.swimcloud.last_sync_at = origSync;
+    const inner = document.getElementById('sc-status-inner');
+    if (inner) {
+      renderSwimCloud();
+      const note = document.createElement('div');
+      note.style.cssText = 'font-size:0.8rem;color:var(--muted);margin-top:0.4rem;';
+      note.textContent = 'No new times found on SwimCloud.';
+      inner.appendChild(note);
+      setTimeout(() => note.remove(), 3000);
+    }
+  }
+}
+
+// ── 48-hour PR check ─────────────────────────────────────────────
+
+async function checkSwimCloudPRs() {
+  if (!JAMES || !JAMES.swimcloud || !JAMES.swimcloud.swimmer_id) return;
+  await scRunPRCheck(false);
+}
+
+async function scRunPRCheck(force) {
+  const gender = (JAMES && JAMES.gender) || 'men';
+  try {
+    const r = await fetch(`/api/swimcloud/check-prs?gender=${encodeURIComponent(gender)}`);
+    if (!r.ok) return false;
+    const d = await r.json();
+    if (!d.linked) return false;
+    // Update last_sync_at from server's confirmed sync time
+    if (d.sync_timestamp && JAMES && JAMES.swimcloud) {
+      JAMES.swimcloud.last_sync_at = d.sync_timestamp;
+      saveToStorage();
+      pushToServer();
+    }
+    if (d.has_new_prs && d.new_prs && d.new_prs.length > 0) {
+      scShowPRModal(d);
+      return true;
+    }
+    return false;
+  } catch(e) {
+    console.warn('[SwimCloud PR check]', e);
+    return false;
+  }
+}
+
+// ── PR modal ─────────────────────────────────────────────────────
+
+function scShowPRModal(prData) {
+  const overlay = document.getElementById('sc-pr-overlay');
+  const content = document.getElementById('sc-pr-content');
+  if (!overlay || !content) return;
+  const newPRs = prData.new_prs || [];
+  const rows = newPRs.map(ev => {
+    const oldTime = ev.old_time ? `<span class="sc-pr-diff-old">${esc(ev.old_time)}</span> → ` : '';
+    return `<tr>
+      <td>${esc(ev.event)}</td>
+      <td>${oldTime}<span class="sc-pr-diff-new">${esc(ev.time)}</span></td>
+      <td class="sc-a-score">${ev.a_score >= 0 ? ev.a_score.toFixed(2) + 'A' : ''}</td>
+    </tr>`;
+  }).join('');
+  const proposed = prData.proposed || [];
+  const swimmer  = prData.swimmer  || {};
+  content.innerHTML = `
+    <div class="sc-pr-badge">NEW SWIMCLOUD TIMES</div>
+    <div class="sc-modal-title">Congrats on new PRs!</div>
+    <div class="sc-modal-sub">SwimCloud shows improved times. Want to update your Lane4 profile?</div>
+    <table class="sc-propose-table" style="margin-bottom:0.75rem;">
+      <thead><tr><th>Event</th><th>Best SCY Time</th><th>Rank</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+    <div style="font-size:0.76rem;color:var(--muted);margin-bottom:0.9rem;">Accepting updates your Lane4 times and rescores all schools.</div>
+    <div class="sc-action-row">
+      <button class="sc-accept-btn" onclick='scAcceptPRs(${JSON.stringify(proposed)},${JSON.stringify(swimmer)})'>Update My Times</button>
+      <button class="sc-cancel-btn" onclick="scDismissPR()">Not Now</button>
+    </div>`;
+  overlay.style.display = 'flex';
+}
+
+async function scAcceptPRs(proposed, swimmer) {
+  await scAcceptImport(swimmer || (JAMES && JAMES.swimcloud) || {}, proposed);
+  scDismissPR();
+}
+
+function scDismissPR() {
+  const ov = document.getElementById('sc-pr-overlay');
+  if (ov) ov.style.display = 'none';
 }
 
 // ════════════════════════════════════════════════════════════════

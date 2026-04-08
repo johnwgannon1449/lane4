@@ -1,0 +1,364 @@
+We are adding the full **SwimCloud identity + time import + PR sync flow** to Lane4.
+
+Read carefully.
+
+This is a real product feature.
+Implement it carefully inside the existing architecture.
+Do **not** rewrite the app.
+
+Do **not** change:
+
+* admissions logic
+* school search logic
+* deep dive generation
+* image curator
+* admin system
+* auth/session system
+* deployment config
+
+We are only adding the SwimCloud swimmer-link and time-import system.
+
+---
+
+# GOAL
+
+Allow a swimmer to:
+
+1. enter their name
+2. search SwimCloud swimmers by name
+3. choose the correct profile using club/team + grad year/age disambiguation
+4. link that SwimCloud swimmer to their Lane4 account using **SwimCloud swimmer ID**
+5. import SwimCloud times
+6. rank events using USA Swimming motivational-times logic
+7. load the strongest profile times into Lane4
+8. display those imported times in the user profile
+9. re-check SwimCloud every 48 hours at login
+10. if new PRs exist, prompt the user to accept them before Lane4 updates stored times
+
+This should be user-controlled.
+Do not silently overwrite user times.
+
+---
+
+# PRODUCT LOGIC
+
+## A. Identity flow
+
+During onboarding or profile setup, add optional SwimCloud linking.
+
+Flow:
+
+### Step 1
+
+User enters full name.
+
+### Step 2
+
+Search SwimCloud swimmers by name.
+
+Return likely matches with as much disambiguation info as available, such as:
+
+* full name
+* club/team
+* graduation year
+* age
+* location if available
+* SwimCloud profile URL if useful for debugging
+* canonical SwimCloud swimmer ID
+
+### Step 3
+
+User selects the correct swimmer.
+
+### Step 4
+
+Store the linked swimmer using:
+
+* `swimcloud_swimmer_id`
+
+Do **not** use the old URL field as the canonical identifier.
+If an old SwimCloud URL field exists, keep backward compatibility if needed, but new logic should rely on swimmer ID.
+
+---
+
+## B. Time import flow
+
+Once a swimmer is selected:
+
+1. pull SwimCloud times from that swimmer profile
+2. extract all available swims
+3. normalize events
+4. group by event
+5. keep the **best time per event**
+6. use those best-event times for ranking
+
+For each kept event, store at least:
+
+* event
+* best time
+* course
+* source = SwimCloud
+* SwimCloud-linked timestamp / sync timestamp if useful
+
+---
+
+## C. Motivational-times ranking logic
+
+Use USA Swimming 17-18 SCY motivational standards as the ranking engine.
+
+There should be a dataset such as:
+
+* `usa_motivational_times_17_18_scy.json`
+
+For each event include:
+
+* B
+* BB
+* A
+* AA
+* AAA
+* AAAA
+
+Use this dataset to compute a continuous event-strength score.
+
+### A-score definition
+
+Use these anchors:
+
+* 0A = B time
+* 1A = A time
+* 2A = AA time
+* 3A = AAA time
+* 4A = AAAA time
+
+Compute the swimmer’s fractional position between levels.
+
+Example:
+If a swimmer is halfway between AA and AAA, score = 2.5A.
+
+If faster than AAAA, allow score > 4A.
+
+Use the existing logic shape from prior planning:
+
+1. identify which standards the swimmer time falls between
+2. compute fractional position
+3. convert to A-score
+
+Do not permanently store A-scores in the user profile.
+They are used only to rank candidate events for import/update decisions.
+
+---
+
+## D. Which events should be loaded into Lane4
+
+We are not loading every event into the Lane4 profile.
+
+Use this rule:
+
+1. rank all best-per-event swims by A-score descending
+2. select the **top 10 events**
+3. stage those top 10 events for user review
+4. show them clearly in the UI before final acceptance
+
+The user should be able to review the proposed imported times.
+
+Important:
+We are **not** choosing the swimmer’s 10 fastest raw swims.
+We are choosing the swimmer’s **10 strongest events relative to motivational standards**.
+
+That distinction matters.
+
+---
+
+## E. Acceptance flow
+
+After ranking and selecting the proposed top 10:
+
+Show the user a confirmation UI with the proposed imported times.
+
+Include enough information to make it trustworthy:
+
+* event
+* best time
+* course
+* source = SwimCloud
+
+Prompt them to accept the import.
+
+Only after acceptance should these times migrate into the Lane4 profile.
+
+If the user declines or exits, do not overwrite their current profile times.
+
+---
+
+## F. Profile display
+
+Once accepted, imported times should appear in the user profile/settings area as their current Lane4 times.
+
+Also show that the account is linked to SwimCloud.
+
+Display at least:
+
+* linked status
+* swimmer name
+* maybe team/club if available
+* last sync time
+
+Keep this clean and practical.
+
+---
+
+## G. 48-hour PR refresh at login
+
+Add a login-time sync check.
+
+When a linked SwimCloud user logs in:
+
+1. check whether at least 48 hours have passed since the last SwimCloud sync
+2. if not, do nothing
+3. if yes, fetch SwimCloud times again
+4. recompute best-per-event swims
+5. rerun A-score ranking
+6. compare against the user’s currently accepted Lane4 times
+
+If there are no new PRs or meaningful improvements, do nothing.
+
+If there are new PRs / improved event bests that would affect the imported Lane4 times, prompt the user.
+
+Prompt language can be similar to:
+
+**CONGRATS ON NEW PR’S — MIGRATE IN NEW TIMES TO LANE4?**
+
+Only update stored Lane4 times after the user accepts.
+
+Do not silently overwrite.
+
+---
+
+## H. Update decision logic for later syncs
+
+For the 48-hour sync check:
+
+* compare new SwimCloud best times against the currently accepted Lane4 imported times
+* identify improved event bests / new PRs
+* rerank the event set using the same top-10 A-score logic
+* show the user the proposed updated set before applying changes
+
+This means the accepted Lane4 event set can evolve over time if their strongest event mix changes.
+
+That is intended.
+
+---
+
+# IMPLEMENTATION REQUIREMENTS
+
+## 1. Audit current code first
+
+Before coding, inspect the current codebase and find:
+
+* where onboarding/profile setup currently lives
+* where profile times are stored
+* whether any old SwimCloud URL field still exists
+* whether any previous SwimCloud scaffolding already exists
+* where login/session boot happens
+* where user profile/settings UI lives
+
+Then implement against the real architecture.
+Do not build a disconnected subsystem.
+
+## 2. Use SwimCloud swimmer ID as canonical
+
+New linkage must rely on:
+
+* `swimcloud_swimmer_id`
+
+You may also store:
+
+* `swimcloud_profile_url`
+* `swimcloud_display_name`
+* `swimcloud_team`
+* `swimcloud_grad_year`
+* `last_swimcloud_sync_at`
+
+But the true link key is the swimmer ID.
+
+## 3. Keep database changes clean
+
+Add whatever user-profile fields or tables are needed cleanly and conservatively.
+
+If a separate linked-swimmer or sync table is cleaner than stuffing everything into one place, that is fine.
+
+But do not overengineer.
+
+## 4. Make scraping/fetching robust
+
+If SwimCloud has no formal API for this flow, implement the cleanest robust public-profile retrieval method available in the existing environment.
+
+Be careful about:
+
+* parsing search results
+* parsing swimmer profile pages
+* event normalization
+* course parsing
+* duplicate swim rows
+* malformed/missing data
+
+## 5. Preserve existing users
+
+Existing users without SwimCloud linked should remain unaffected.
+
+This must be optional.
+
+## 6. Keep UI clean
+
+No giant redesign.
+Add the minimum good UI needed to:
+
+* search by name
+* choose swimmer
+* review imported top 10
+* accept import
+* later accept PR updates
+
+## 7. Do not silently mutate user data
+
+Every initial import or later PR migration must require user acceptance.
+
+---
+
+# DELIVERABLES
+
+When finished, report back with:
+
+1. files changed
+2. database/schema changes
+3. where SwimCloud search logic lives
+4. where swimmer profile parsing logic lives
+5. where motivational ranking logic lives
+6. how top-10 selection works
+7. how acceptance flow works
+8. how 48-hour sync works
+9. what UI screens/components were added or changed
+10. any risks, assumptions, or edge cases
+
+---
+
+# TESTING
+
+Verify at minimum:
+
+1. user can search SwimCloud by name
+2. multiple same-name candidates are shown with club/year disambiguation
+3. user can select a swimmer and link account
+4. times are imported correctly
+5. best time per event is chosen correctly
+6. A-score ranking works
+7. top 10 events are proposed correctly
+8. user must explicitly accept initial import
+9. linked status appears in profile
+10. 48-hour sync does not run too often
+11. new PRs trigger a user prompt
+12. user must explicitly accept updated times before Lane4 changes
+13. non-linked users are unaffected
+
+Implement this carefully and keep the rest of the app stable.
