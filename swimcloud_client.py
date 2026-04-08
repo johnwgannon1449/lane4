@@ -175,6 +175,116 @@ def fetch_fastest_times(swimmer_id: str) -> list[dict]:
     return r.json()
 
 
+# ── Seed-PR filter constants ────────────────────────────────────────────────
+
+_MIN_SEED_IMPROVEMENT = 0.15   # seconds — ignore trivially small differences
+
+# Maximum believable improvement (eventtime − seedtime) per event.
+# Seeds claiming bigger drops are treated as junk/typo entries.
+_MAX_SEED_DROP: dict[str, float] = {
+    "50 Free":    0.7,  "50 Back":    0.7,  "50 Breast":  0.7,  "50 Fly":    0.7,
+    "100 Free":   1.2,  "100 Back":   1.2,  "100 Breast": 1.2,  "100 Fly":   1.2,
+    "200 Free":   2.0,  "200 Back":   2.0,  "200 Breast": 2.0,  "200 Fly":   2.0,
+    "200 IM":     2.0,
+    "400 IM":     4.0,  "500 Free":   4.0,
+    "1000 Free":  8.0,
+    "1650 Free": 12.0,
+}
+
+
+def _seed_is_placeholder(seed_raw: str) -> bool:
+    """
+    Return True if the seed looks like a rounded placeholder rather than a real swim.
+
+    Rejects:
+      - no decimal part (e.g. "50")
+      - decimal == "00" (e.g. "1:44.00", "55.00")
+      - decimal == "50" (e.g. "1:44.50", "55.50")
+    """
+    s = str(seed_raw).strip()
+    if "." not in s:
+        return True
+    hundredths = s.split(".")[-1]
+    return hundredths in ("00", "50")
+
+
+def extract_seed_prs(raw_times: list[dict], scy_bests: dict) -> list[dict]:
+    """
+    Identify seedtime values that may represent faster swims not captured in
+    SwimCloud's verified results, applying a conservative multi-stage filter.
+
+    Steps:
+      1. Reject placeholder seeds (.00, .50, no decimal)
+      2. Only consider seeds strictly faster than the verified eventtime
+      3. Require at least 0.15 s improvement (ignore noise)
+      4. Reject implausible drops (per _MAX_SEED_DROP)
+
+    Returns a list sorted by improvement descending. These must never be
+    auto-imported — they require explicit user confirmation.
+    """
+    potential: list[dict] = []
+
+    for rec in raw_times:
+        if rec.get("eventcourse") != "Y":
+            continue
+        if not rec.get("legal", True):
+            continue
+
+        dist   = rec.get("eventdistance")
+        stroke = str(rec.get("eventstroke", ""))
+        key    = (dist, stroke)
+        event  = _EVENT_MAP.get(key)
+        if not event:
+            continue
+
+        et_raw = rec.get("eventtime")
+        st_raw = rec.get("seedtime")
+        if not et_raw or not st_raw:
+            continue
+
+        # Step 1 — placeholder filter
+        if _seed_is_placeholder(st_raw):
+            continue
+
+        try:
+            et_sec = float(et_raw)
+            st_sec = float(st_raw)
+        except (TypeError, ValueError):
+            continue
+
+        if et_sec <= 0 or st_sec <= 0:
+            continue
+
+        # Step 2 — seed must be strictly faster
+        if st_sec >= et_sec:
+            continue
+
+        # Step 3 — minimum significant improvement
+        improvement = et_sec - st_sec
+        if improvement < _MIN_SEED_IMPROVEMENT:
+            continue
+
+        # Step 4 — plausibility cap
+        max_drop = _MAX_SEED_DROP.get(event)
+        if max_drop is None or improvement > max_drop:
+            continue
+
+        best = scy_bests.get(event, {})
+        potential.append({
+            "event":         event,
+            "verified_time": best.get("time", sec_to_time_str(et_sec)),
+            "verified_sec":  best.get("time_sec", et_sec),
+            "seed_time":     sec_to_time_str(st_sec),
+            "seed_sec":      st_sec,
+            "improvement":   round(improvement, 2),
+            "meet":          rec.get("name") or rec.get("meet_name") or "",
+            "date":          rec.get("dateofswim") or "",
+        })
+
+    potential.sort(key=lambda x: x["improvement"], reverse=True)
+    return potential
+
+
 def extract_scy_bests(raw_times: list[dict]) -> dict[str, dict]:
     """
     From SwimCloud raw time records, extract SCY best times for Lane4-supported events.
@@ -222,17 +332,20 @@ def extract_scy_bests(raw_times: list[dict]) -> dict[str, dict]:
     return bests
 
 
-def get_swimmer_scy_bests(swimmer_id: str) -> tuple[dict, dict]:
+def get_swimmer_scy_bests(swimmer_id: str) -> tuple[dict, dict, list]:
     """
-    High-level function: fetch and extract SCY best times + raw profile info.
+    High-level function: fetch and extract SCY best times + raw profile info
+    + potential seed PRs.
 
-    Returns (scy_bests, profile_info)
-      scy_bests: {event_name: {time, time_sec, course}} for supported SCY events
-      profile_info: {swimmer_id, display_name, team, grad_year, profile_url}
+    Returns (scy_bests, profile_info, seed_prs)
+      scy_bests:   {event_name: {time, time_sec, course}} for supported SCY events
+      profile_info:{swimmer_id, display_name, team, grad_year, profile_url}
+      seed_prs:    list of seed-time candidates that passed all filters
     """
-    raw = fetch_fastest_times(swimmer_id)
-    scy_bests = extract_scy_bests(raw)
+    raw          = fetch_fastest_times(swimmer_id)
+    scy_bests    = extract_scy_bests(raw)
     profile_info = fetch_profile_info(swimmer_id)
+    seed_prs     = extract_seed_prs(raw, scy_bests)
     if not profile_info.get("display_name"):
         profile_info["swimmer_id"] = swimmer_id
-    return scy_bests, profile_info
+    return scy_bests, profile_info, seed_prs

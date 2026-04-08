@@ -1,0 +1,183 @@
+We are enhancing the SwimCloud import system to optionally surface **seed times that may represent hidden PRs**, but we must do this carefully to avoid showing junk data.
+
+This feature must be conservative and credibility-focused.
+
+Seed times must NEVER auto-import. They are only shown as **Potential Faster Time (Unverified)** and require explicit user confirmation.
+
+Do not change existing verified result import logic.
+
+---
+
+GOAL
+
+Surface plausible seed times that may represent faster swims not recorded in SwimCloud's verified results.
+
+But filter aggressively so we do not show garbage data.
+
+---
+
+DATA CONTEXT
+
+From the SwimCloud API we receive records that may contain:
+
+* eventtime (verified race result)
+* seedtime (declared meet entry)
+
+Verified import currently uses:
+
+eventtime → preferred
+seedtime → fallback
+
+That logic remains unchanged.
+
+This feature only inspects **seedtime values that are faster than the verified eventtime**.
+
+---
+
+STEP 1 — BASIC VALIDITY FILTERS
+
+Reject seed times that look like placeholders.
+
+Reject if:
+
+1. Decimal portion equals `.00`
+2. Decimal portion equals `.50`
+3. Decimal missing
+4. Value is zero or invalid
+
+Examples to reject:
+
+1:44.00
+55.00
+1:44.50
+
+---
+
+STEP 2 — ONLY CONSIDER FASTER SEEDS
+
+If:
+
+seedtime >= eventtime
+
+Ignore.
+
+We only consider seeds that are faster than the verified time.
+
+---
+
+STEP 3 — MINIMUM SIGNIFICANT IMPROVEMENT
+
+Ignore tiny differences.
+
+Only consider seeds where:
+
+eventtime - seedtime >= 0.15 seconds
+
+---
+
+STEP 4 — PLAUSIBILITY LIMIT
+
+Reject seeds that imply unrealistic drops.
+
+Use these maximum improvements:
+
+50 → 0.7 seconds
+100 → 1.2 seconds
+200 → 2.0 seconds
+400/500 → 4.0 seconds
+1000 → 8.0 seconds
+1650 → 12.0 seconds
+
+If:
+
+(eventtime - seedtime) > max_drop_for_event
+
+Reject.
+
+---
+
+STEP 5 — BUILD POTENTIAL PR LIST
+
+After filters, create a list:
+
+potential_seed_prs
+
+Each entry should contain:
+
+* event
+* verified_time
+* seed_time
+* improvement
+* meet context if available
+
+---
+
+STEP 6 — UI PRESENTATION
+
+In the SwimCloud import review screen add a new section:
+
+"Potential Faster Times Detected"
+
+Example:
+
+200 Free
+Verified: 1:44.65
+Seed: 1:43.62
+Improvement: 1.03s
+Source: Meet entry seed (unverified)
+
+Important UI rules:
+
+* visually distinct from verified times
+* clearly labeled **Unverified**
+* cannot auto-import
+* user must manually confirm
+
+Buttons:
+
+Use Seed Time
+Ignore
+
+---
+
+STEP 7 — USER CONFIRMATION
+
+If user chooses "Use Seed Time":
+
+* replace the eventtime with the seedtime
+* mark this event record:
+
+source = "seed_confirmed"
+
+---
+
+STEP 8 — SAFETY
+
+Seed times must never influence:
+
+* automatic event ranking
+* school scoring
+* recruiting fit calculations
+
+until the user explicitly accepts them.
+
+---
+
+STEP 9 — TEST WITH REAL DATA
+
+Use the swimmer James Gannon.
+
+Verify that:
+
+200 Free seed 1:43.62 vs verified 1:44.65 passes filters and appears.
+
+Confirm that obviously rounded seeds (e.g. 1:44.00 or 1:44.50) are rejected.
+
+---
+
+Return:
+
+* files modified
+* filtering logic implemented
+* example potential seed PR output
+* confirmation that verified import behavior remains unchanged

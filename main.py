@@ -335,16 +335,17 @@ def sc_propose():
         from swimcloud_client import get_swimmer_scy_bests
         from motivational_ranking import rank_swimcloud_bests
 
-        scy_bests, profile_info = get_swimmer_scy_bests(swimmer_id)
+        scy_bests, profile_info, seed_prs = get_swimmer_scy_bests(swimmer_id)
         if not scy_bests:
             return jsonify({
                 'swimmer': profile_info,
                 'proposed': [],
+                'seed_prs': [],
                 'warning': 'No SCY times found for this swimmer on SwimCloud.',
             })
 
         top10 = rank_swimcloud_bests(scy_bests, gender, n=10)
-        return jsonify({'swimmer': profile_info, 'proposed': top10})
+        return jsonify({'swimmer': profile_info, 'proposed': top10, 'seed_prs': seed_prs})
     except Exception as e:
         print(f'[swimcloud/propose] {e}')
         return jsonify({'error': 'SwimCloud time fetch failed', 'detail': str(e)}), 502
@@ -388,7 +389,7 @@ def sc_check_prs():
         from swimcloud_client import get_swimmer_scy_bests
         from motivational_ranking import rank_swimcloud_bests
 
-        scy_bests, profile_info = get_swimmer_scy_bests(swimmer_id)
+        scy_bests, profile_info, _seed_prs = get_swimmer_scy_bests(swimmer_id)
         sync_ts = datetime.datetime.now(datetime.timezone.utc).isoformat()
 
         if not scy_bests:

@@ -689,6 +689,18 @@
     .sc-pr-badge { display:inline-block; font-size:0.7rem; font-weight:700; background:#F0FDF4; color:#16A34A; border:1px solid #BBF7D0; border-radius:99px; padding:1px 8px; margin-bottom:0.6rem; }
     .sc-pr-diff-new { color: var(--green); font-weight: 600; }
     .sc-pr-diff-old { color: var(--muted); font-size: 0.78rem; text-decoration: line-through; }
+    .sc-seed-pr-section { border: 1px solid #F59E0B; border-radius: 8px; padding: 0.7rem 0.8rem; margin: 0.8rem 0 0.5rem; background: #FFFBEB; }
+    .sc-seed-pr-header { font-size: 0.78rem; font-weight: 700; color: #92400E; margin-bottom: 0.25rem; }
+    .sc-seed-pr-sub { font-size: 0.72rem; color: #78350F; margin-bottom: 0.55rem; line-height: 1.4; }
+    .sc-seed-pr-table { width: 100%; border-collapse: collapse; font-size: 0.79rem; }
+    .sc-seed-pr-table th { text-align: left; padding: 0.28rem 0.4rem; border-bottom: 1px solid #FDE68A; font-size: 0.68rem; color: #92400E; text-transform: uppercase; letter-spacing: 0.04em; font-weight: 600; }
+    .sc-seed-pr-table td { padding: 0.32rem 0.4rem; border-bottom: 1px solid #FEF3C7; vertical-align: middle; }
+    .sc-seed-pr-table tr:last-child td { border-bottom: none; }
+    .sc-seed-unverified { font-size: 0.62rem; font-weight: 700; background: #FEF3C7; color: #92400E; border: 1px solid #FCD34D; border-radius: 99px; padding: 1px 5px; display: inline-block; vertical-align: middle; margin-left: 3px; }
+    .sc-use-seed-btn { font-size: 0.7rem; padding: 0.18rem 0.5rem; background: #F59E0B; color: #fff; border: none; border-radius: 4px; cursor: pointer; margin-right: 3px; }
+    .sc-use-seed-btn:hover { background: #D97706; }
+    .sc-ignore-seed-btn { font-size: 0.7rem; padding: 0.18rem 0.5rem; background: transparent; color: var(--muted); border: 1px solid var(--border); border-radius: 4px; cursor: pointer; }
+    .sc-ignore-seed-btn:hover { background: var(--border); }
   </style>
 </head>
 <body>
@@ -4172,6 +4184,7 @@ function addToBrowseList(school) {
 let _SC_RESULTS          = [];   // search result list, indexed by onclick
 let _SC_PENDING_SWIMMER  = null; // swimmer object awaiting proposal accept
 let _SC_PENDING_PROPOSED = [];   // proposed top-10 awaiting proposal accept
+let _SC_SEED_PRS         = [];   // potential seed PRs awaiting user decision
 let _SC_PR_SWIMMER       = null; // swimmer object awaiting PR accept
 let _SC_PR_PROPOSED      = [];   // proposed top-10 awaiting PR accept
 
@@ -4301,19 +4314,20 @@ async function scSelectSwimmer(swimmerId, displayName, team, gradYear, location,
       ? { ...d.swimmer, display_name: d.swimmer.display_name || displayName }
       : { swimmer_id: swimmerId, display_name: displayName, team, profile_url: profileUrl };
     const proposed = d.proposed || [];
-    scShowProposal(swimmer, proposed, d.warning);
+    scShowProposal(swimmer, proposed, d.warning, d.seed_prs || []);
   } catch(e) {
     modal.innerHTML += `<div class="sc-modal-msg err" style="margin-top:0.75rem;">Error: ${esc(e.message)}</div>
       <div style="margin-top:0.75rem;"><button class="sc-cancel-btn" onclick="scOpenSearch()">← Back</button></div>`;
   }
 }
 
-function scShowProposal(swimmer, proposed, warning) {
+function scShowProposal(swimmer, proposed, warning, seedPrs) {
   const modal = document.getElementById('sc-modal-content');
   if (!modal) return;
   // Store for safe argument-free onclick — avoids apostrophe injection
   _SC_PENDING_SWIMMER  = swimmer;
   _SC_PENDING_PROPOSED = proposed;
+  _SC_SEED_PRS         = Array.isArray(seedPrs) ? seedPrs.slice() : [];
   const gender = (JAMES && JAMES.gender) || 'men';
   const swMeta = swimmer.team ? `${esc(swimmer.display_name)} · ${esc(swimmer.team)}` : esc(swimmer.display_name);
   const tableRows = proposed.length
@@ -4323,6 +4337,27 @@ function scShowProposal(swimmer, proposed, warning) {
         <td class="sc-a-score">${ev.a_score >= 0 ? ev.a_score.toFixed(2) + 'A' : 'n/a'}</td>
       </tr>`).join('')
     : `<tr><td colspan="3" style="color:var(--muted);padding:0.5rem 0;">No SCY events found.</td></tr>`;
+  const seedSection = _SC_SEED_PRS.length ? `
+    <div class="sc-seed-pr-section">
+      <div class="sc-seed-pr-header">⚠ Potential Faster Times Detected</div>
+      <div class="sc-seed-pr-sub">These seed times may represent faster actual swims not recorded in SwimCloud. Each is unverified — confirm individually before import.</div>
+      <table class="sc-seed-pr-table">
+        <thead><tr><th>Event</th><th>Verified</th><th>Seed (Unverified)</th><th>Δ</th><th></th></tr></thead>
+        <tbody>
+          ${_SC_SEED_PRS.map((pr, i) => `
+            <tr id="sc-seed-pr-row-${i}">
+              <td><strong>${esc(pr.event)}</strong></td>
+              <td style="color:var(--muted)">${esc(pr.verified_time)}</td>
+              <td><strong>${esc(pr.seed_time)}</strong><span class="sc-seed-unverified">UNVERIFIED</span></td>
+              <td style="color:#D97706;white-space:nowrap">−${pr.improvement.toFixed(2)}s</td>
+              <td style="white-space:nowrap">
+                <button class="sc-use-seed-btn" onclick="scAcceptSeedPR(${i})">Use Seed</button>
+                <button class="sc-ignore-seed-btn" onclick="scIgnoreSeedPR(${i})">Ignore</button>
+              </td>
+            </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>` : '';
   modal.innerHTML = `
     <div class="sc-modal-title">Review Proposed Times</div>
     <div class="sc-modal-sub">${swMeta} · Top 10 events ranked by ${gender === 'women' ? 'women' : 'men'}'s 17-18 SCY motivational standards</div>
@@ -4331,6 +4366,7 @@ function scShowProposal(swimmer, proposed, warning) {
       <thead><tr><th>Event</th><th>Best SCY Time</th><th>Rank</th></tr></thead>
       <tbody>${tableRows}</tbody>
     </table>
+    ${seedSection}
     ${proposed.length ? `
     <div style="font-size:0.78rem;color:var(--muted);margin-bottom:0.75rem;">These times will be imported into your Lane4 profile. Your scores will recalculate.</div>
     <div class="sc-action-row">
@@ -4341,6 +4377,34 @@ function scShowProposal(swimmer, proposed, warning) {
       <button class="sc-cancel-btn" onclick="scCloseModal()">Close</button>
     </div>`}
     <div class="sc-modal-msg" id="sc-modal-msg"></div>`;
+}
+
+// ── Seed PR handlers ─────────────────────────────────────────────
+
+function scAcceptSeedPR(i) {
+  const pr = _SC_SEED_PRS[i];
+  if (!pr) return;
+  // Fold into pending proposed: replace matching event or append
+  const idx = _SC_PENDING_PROPOSED.findIndex(e => e.event === pr.event);
+  const entry = {
+    event:    pr.event,
+    time:     pr.seed_time,
+    time_sec: pr.seed_sec,
+    course:   'SCY',
+    a_score:  idx >= 0 ? _SC_PENDING_PROPOSED[idx].a_score : -1,
+    source:   'seed_confirmed',
+  };
+  if (idx >= 0) { _SC_PENDING_PROPOSED[idx] = entry; }
+  else          { _SC_PENDING_PROPOSED.push(entry); }
+  _SC_SEED_PRS[i] = null;
+  const row = document.getElementById('sc-seed-pr-row-' + i);
+  if (row) row.innerHTML = `<td colspan="5" style="color:var(--green);font-size:0.78rem;padding:0.3rem 0.4rem;">✓ ${esc(pr.event)}: will import ${esc(pr.seed_time)} on accept</td>`;
+}
+
+function scIgnoreSeedPR(i) {
+  _SC_SEED_PRS[i] = null;
+  const row = document.getElementById('sc-seed-pr-row-' + i);
+  if (row) row.style.display = 'none';
 }
 
 async function scAcceptImport(swimmer, proposed) {
