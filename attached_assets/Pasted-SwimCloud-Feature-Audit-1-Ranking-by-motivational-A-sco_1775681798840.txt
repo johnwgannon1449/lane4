@@ -1,0 +1,113 @@
+SwimCloud Feature Audit
+1. Ranking by motivational A-score (not raw time)
+✅ Correct.
+
+motivational_ranking.py → rank_swimcloud_bests() (line 179) sorts exclusively by a_score descending. Raw time plays no role in ordering. The A-score is fractionally interpolated between the B/A/AA/AAA/AAAA standard thresholds, so a swimmer's best event by motivational rank correctly heads the list even if it isn't their fastest raw event.
+
+Events with a_score <= -500 (unknown event/gender in the standards table) are dropped entirely, which is correct.
+
+2. Best time per event selected before ranking
+✅ Correct, with one data-quality caveat.
+
+swimcloud_client.py → extract_scy_bests() iterates every record and keeps the lowest time_sec seen per event (lines 211–217). Multiple records for the same event are all examined and the global best wins.
+
+Caveat: For each individual record, seedtime is preferred over eventtime (line 201). In the swim world, seedtime is the entry seed declared when registering for a meet, which can be a swimmer's old PR if their new PR was swum just before the entry deadline. If seedtime = 52.0 and the actual eventtime = 51.5 for that same record, the code captures 52.0 for that record — but the true best is 51.5. Because all records are iterated, a later meet's eventtime would eventually correct this. Not a definitive bug, but a marginal under-reporting risk on recent improvements. No fix strictly required.
+
+3. Course handling — no LCM/SCM contamination
+✅ Correct.
+
+Line 188: if rec.get("eventcourse") != "Y": continue — hard filter, no exceptions. Only Yards (SCY) records enter the pipeline. Every item in scy_bests carries "course": "SCY" and that flag propagates through to proposed and accepted_events. No meters data can reach the top-10 list or JAMES.times.
+
+4. Accepting initial import — safety of merge into existing profile
+⚠️ Bug (medium priority).
+
+scAcceptImport() (line 4336):
+
+Object.assign(JAMES.times, timesUpdate);
+This merges SwimCloud times on top of whatever is in JAMES.times, always overwriting for events present in the proposal. There is no "keep the better time" comparison. If a swimmer manually entered 100 Free: 49.5 (a local meet time not yet on SwimCloud) and SwimCloud proposes 100 Free: 51.0 (an older recorded best), the faster manual entry is silently replaced.
+
+The proposal modal shows no diff against existing Lane4 times, so the user has no visual warning.
+
+Recommended fix: Before overwriting, compare against JAMES.times[ev.event] and keep the faster value (or at minimum show the user a before/after diff in the proposal table).
+
+5. PR updates only touch intended events
+✅ Correct.
+
+scAcceptPRs → scAcceptImport(swimmer, proposed) where proposed is the full refreshed top 10. The merge is:
+
+Object.assign(JAMES.times, timesUpdate);  // merges top-10 only
+JAMES.swimcloud.accepted_events = acceptedEvents;  // replaces map with top-10
+Events outside the top 10 are untouched in JAMES.times. Events inside the top 10 are updated. This is correct and intentional.
+
+One minor side-effect: accepted_events is replaced wholesale each time. If event K was in a previous top 10, then fell to #11 (a different event improved), then returns to top 10 later at the same time, it would appear as a new PR in the next check (because old_t is None — not in accepted_events). However, since SwimCloud best times are monotonically non-decreasing, the only way K re-enters the top 10 is if K's time improved — making the PR flag legitimate. This edge case resolves itself correctly.
+
+6. Dismiss PR modal — no repeated loop
+✅ Correct.
+
+In scRunPRCheck() (line 4412):
+
+if (d.sync_timestamp && JAMES && JAMES.swimcloud) {
+  JAMES.swimcloud.last_sync_at = d.sync_timestamp;
+  saveToStorage();
+  pushToServer();
+}
+The sync_timestamp is committed before the PR modal is shown. Whether the user accepts or dismisses, last_sync_at is already set to the current time and saved to the server. The 48-hour gate will apply on next login regardless of the modal choice. No loop.
+
+Minor: pushToServer() is not awaited here (fire-and-forget). If the browser closes in the next millisecond the server update is lost, but saveToStorage() to localStorage still ran, protecting the gate for the current browser session.
+
+7. Unlink does not delete accepted times
+✅ Correct.
+
+scUnlink() (line 4364):
+
+JAMES.swimcloud = null;
+Only the SwimCloud metadata object is nulled. JAMES.times is untouched. All previously imported times survive unlinking. The confirm dialog text correctly tells the user this.
+
+8. Failed search/fetch fails gracefully
+✅ Correct across all three routes.
+
+Route	Backend failure	Frontend handling
+/api/swimcloud/search	Returns 502 + {error}	catch(e) shows error in modal, search button re-enables
+/api/swimcloud/propose	Returns 502 + {error}	catch(e) appends error text + "← Back" button
+/api/swimcloud/check-prs	Returns 200 + {has_new_prs: false, reason: 'fetch_error'}	Silently does nothing (correct for background check)
+SwimCloud session initialization (_get_session) silently swallows connection errors and still returns a Session object. Subsequent API calls may fail; those failures propagate to route-level try/except correctly.
+
+9. Same-name swimmer disambiguation
+⚠️ Partial gap (medium priority) — and a real HTML injection bug.
+
+Disambiguation metadata: Search results show name, team, and location. grad_year is always None in the initial search results (line 125 of swimcloud_client.py); it only becomes available after the swimmer is selected and fetch_profile_info is called. If two swimmers have the same name from the same club with no distinguishing location, the user is left guessing.
+
+HTML injection bug (high priority): The search results onclick handler is built as:
+
+onclick='scSelectSwimmer(${JSON.stringify(r.swimmer_id)},${JSON.stringify(r.display_name)},${JSON.stringify(r.team)},...)'
+The HTML attribute uses single-quote delimiters. JSON.stringify produces double-quoted JSON strings and does not escape single quotes inside string values. If a swimmer's name, team, or location contains an apostrophe (e.g., "O'Brien Aquatics", "St. Mary's"), the generated HTML becomes:
+
+onclick='scSelectSwimmer("123","Jane Smith","O'Brien Aquatics",...)'
+The single quote inside the attribute value terminates the attribute early, breaking the onclick handler for that result row. The swimmer becomes unselectable. In a worst case, unusual characters could inject executable HTML.
+
+Recommended fix: Replace the onclick pattern with a data-attribute approach or a JavaScript map (store result objects in a module-level array, reference by index in onclick).
+
+10. Existing non-linked users unaffected
+✅ Correct.
+
+checkSwimCloudPRs() (line 4400) guards immediately:
+
+if (!JAMES || !JAMES.swimcloud || !JAMES.swimcloud.swimmer_id) return;
+The backend /api/swimcloud/check-prs returns {linked: false} when no swimmer_id is stored. renderSwimCloud() shows only the "Link" button. No requests are made, no UI changes, no interference with the rest of the profile for non-linked users.
+
+Summary
+#	Item	Status	Severity
+1	A-score ranking	✅ Correct	—
+2	Best time selection	✅ Correct (seedtime caveat noted)	Low
+3	Course isolation (SCY only)	✅ Correct	—
+4	Initial import merge — no "keep faster time" logic	⚠️ Bug	Medium
+5	PR accept scope	✅ Correct	—
+6	Dismiss prevents re-loop	✅ Correct	—
+7	Unlink preserves times	✅ Correct	—
+8	Graceful error handling	✅ Correct	—
+9	Disambiguation — grad_year missing in search; apostrophe breaks onclick	⚠️ Bug	High (apostrophe) / Low (grad year)
+10	Non-linked users unaffected	✅ Correct	—
+Two follow-up fixes recommended before this feature is user-facing:
+
+High — Fix the onclick injection in search results (apostrophes in name/team/location break the handler). Use a data-attribute + JS lookup pattern instead of inline JSON.stringify.
+Medium — In scAcceptImport, compare incoming SwimCloud times against existing JAMES.times per event and keep the faster value rather than always overwriting.
