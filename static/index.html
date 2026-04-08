@@ -4167,6 +4167,28 @@ function addToBrowseList(school) {
 // SWIMCLOUD INTEGRATION
 // ════════════════════════════════════════════════════════════════
 
+// Module-level state — avoids apostrophe/quote injection through inline
+// JSON.stringify in HTML attributes. All onclick handlers reference these.
+let _SC_RESULTS          = [];   // search result list, indexed by onclick
+let _SC_PENDING_SWIMMER  = null; // swimmer object awaiting proposal accept
+let _SC_PENDING_PROPOSED = [];   // proposed top-10 awaiting proposal accept
+let _SC_PR_SWIMMER       = null; // swimmer object awaiting PR accept
+let _SC_PR_PROPOSED      = [];   // proposed top-10 awaiting PR accept
+
+// Parse a Lane4 time string ("1:32.40" or "52.50") to seconds.
+// Returns null on failure.
+function _scTimeSec(t) {
+  if (!t || typeof t !== 'string') return null;
+  const s = t.trim();
+  if (s.includes(':')) {
+    const [m, sec] = s.split(':', 2);
+    const v = parseInt(m, 10) * 60 + parseFloat(sec);
+    return isNaN(v) ? null : v;
+  }
+  const v = parseFloat(s);
+  return isNaN(v) ? null : v;
+}
+
 function renderSwimCloud() {
   const inner = document.getElementById('sc-status-inner');
   if (!inner) return;
@@ -4234,14 +4256,15 @@ async function scSearch() {
     const d = await r.json();
     if (!r.ok) throw new Error(d.error || 'Search failed');
     const results = d.results || [];
+    _SC_RESULTS = results;  // store for safe index-based onclick access
     if (!results.length) {
       if (res) res.innerHTML = `<div style="font-size:0.82rem;color:var(--muted);padding:0.5rem 0;">No SwimCloud profiles found for "${esc(q)}". Try a different spelling or add a middle initial.</div>`;
     } else {
       if (res) res.innerHTML = `
         <div style="font-size:0.76rem;color:var(--muted);margin-bottom:0.4rem;">${results.length} result${results.length>1?'s':''} — select the correct swimmer</div>
         <div class="sc-result-list">
-          ${results.map(r => `
-            <div class="sc-result-item" onclick='scSelectSwimmer(${JSON.stringify(r.swimmer_id)},${JSON.stringify(r.display_name)},${JSON.stringify(r.team)},${JSON.stringify(r.grad_year)},${JSON.stringify(r.location)},${JSON.stringify(r.profile_url)})'>
+          ${results.map((r, i) => `
+            <div class="sc-result-item" onclick="scPickResult(${i})">
               <div class="sc-result-name">${esc(r.display_name)}</div>
               <div class="sc-result-meta">${[r.team, r.location, r.grad_year ? 'Class of ' + r.grad_year : ''].filter(Boolean).join(' · ')}</div>
             </div>`).join('')}
@@ -4255,6 +4278,12 @@ async function scSearch() {
 }
 
 // ── Proposal flow ────────────────────────────────────────────────
+
+function scPickResult(i) {
+  const r = _SC_RESULTS[i];
+  if (!r) return;
+  scSelectSwimmer(r.swimmer_id, r.display_name, r.team, r.grad_year, r.location, r.profile_url);
+}
 
 async function scSelectSwimmer(swimmerId, displayName, team, gradYear, location, profileUrl) {
   const modal = document.getElementById('sc-modal-content');
@@ -4280,6 +4309,9 @@ async function scSelectSwimmer(swimmerId, displayName, team, gradYear, location,
 function scShowProposal(swimmer, proposed, warning) {
   const modal = document.getElementById('sc-modal-content');
   if (!modal) return;
+  // Store for safe argument-free onclick — avoids apostrophe injection
+  _SC_PENDING_SWIMMER  = swimmer;
+  _SC_PENDING_PROPOSED = proposed;
   const gender = (JAMES && JAMES.gender) || 'men';
   const swMeta = swimmer.team ? `${esc(swimmer.display_name)} · ${esc(swimmer.team)}` : esc(swimmer.display_name);
   const tableRows = proposed.length
@@ -4300,7 +4332,7 @@ function scShowProposal(swimmer, proposed, warning) {
     ${proposed.length ? `
     <div style="font-size:0.78rem;color:var(--muted);margin-bottom:0.75rem;">These times will be imported into your Lane4 profile. Your scores will recalculate.</div>
     <div class="sc-action-row">
-      <button class="sc-accept-btn" onclick='scAcceptImport(${JSON.stringify(swimmer)},${JSON.stringify(proposed)})'>Accept &amp; Import Times</button>
+      <button class="sc-accept-btn" onclick="scAcceptPending()">Accept &amp; Import Times</button>
       <button class="sc-cancel-btn" onclick="scOpenSearch()">Back</button>
     </div>` : `
     <div class="sc-action-row">
@@ -4313,27 +4345,33 @@ async function scAcceptImport(swimmer, proposed) {
   if (!JAMES) return;
   const now = new Date().toISOString();
 
-  // Build accepted_events map
+  // Build accepted_events map — always records the SwimCloud time for PR tracking.
   const acceptedEvents = {};
-  const timesUpdate    = {};
   proposed.forEach(ev => {
     acceptedEvents[ev.event] = { time: ev.time, time_sec: ev.time_sec, course: ev.course || 'SCY' };
-    timesUpdate[ev.event]    = ev.time;
   });
 
-  // Update JAMES
+  // Update JAMES swimcloud metadata
   if (!JAMES.swimcloud) JAMES.swimcloud = {};
-  JAMES.swimcloud.swimmer_id   = swimmer.swimmer_id;
-  JAMES.swimcloud.display_name = swimmer.display_name || '';
-  JAMES.swimcloud.team         = swimmer.team         || '';
-  JAMES.swimcloud.grad_year    = swimmer.grad_year    || null;
-  JAMES.swimcloud.profile_url  = swimmer.profile_url  || '';
-  JAMES.swimcloud.last_sync_at = now;
+  JAMES.swimcloud.swimmer_id      = swimmer.swimmer_id;
+  JAMES.swimcloud.display_name    = swimmer.display_name || '';
+  JAMES.swimcloud.team            = swimmer.team         || '';
+  JAMES.swimcloud.grad_year       = swimmer.grad_year    || null;
+  JAMES.swimcloud.profile_url     = swimmer.profile_url  || '';
+  JAMES.swimcloud.last_sync_at    = now;
   JAMES.swimcloud.accepted_events = acceptedEvents;
 
-  // Merge times into JAMES.times
+  // Merge times into JAMES.times — only update an event if the SwimCloud time
+  // is strictly faster than whatever the user already has (manual entry wins ties).
   if (!JAMES.times) JAMES.times = {};
-  Object.assign(JAMES.times, timesUpdate);
+  let updated = 0;
+  proposed.forEach(ev => {
+    const existingSec = _scTimeSec(JAMES.times[ev.event]);
+    if (existingSec === null || ev.time_sec < existingSec) {
+      JAMES.times[ev.event] = ev.time;
+      updated++;
+    }
+  });
 
   saveToStorage();
   await pushToServer();
@@ -4348,9 +4386,12 @@ async function scAcceptImport(swimmer, proposed) {
   if (inner) {
     const note = document.createElement('div');
     note.style.cssText = 'font-size:0.8rem;color:var(--green);margin-top:0.4rem;';
-    note.textContent = `${proposed.length} times imported from SwimCloud.`;
+    const kept = proposed.length - updated;
+    note.textContent = updated === proposed.length
+      ? `${updated} times imported from SwimCloud.`
+      : `${updated} times imported from SwimCloud (${kept} already faster in your profile — kept).`;
     inner.appendChild(note);
-    setTimeout(() => note.remove(), 4000);
+    setTimeout(() => note.remove(), 5000);
   }
 }
 
@@ -4440,8 +4481,9 @@ function scShowPRModal(prData) {
       <td class="sc-a-score">${ev.a_score >= 0 ? ev.a_score.toFixed(2) + 'A' : ''}</td>
     </tr>`;
   }).join('');
-  const proposed = prData.proposed || [];
-  const swimmer  = prData.swimmer  || {};
+  // Store for safe argument-free onclick — avoids apostrophe injection
+  _SC_PR_PROPOSED = prData.proposed || [];
+  _SC_PR_SWIMMER  = prData.swimmer  || {};
   content.innerHTML = `
     <div class="sc-pr-badge">NEW SWIMCLOUD TIMES</div>
     <div class="sc-modal-title">Congrats on new PRs!</div>
@@ -4452,14 +4494,19 @@ function scShowPRModal(prData) {
     </table>
     <div style="font-size:0.76rem;color:var(--muted);margin-bottom:0.9rem;">Accepting updates your Lane4 times and rescores all schools.</div>
     <div class="sc-action-row">
-      <button class="sc-accept-btn" onclick='scAcceptPRs(${JSON.stringify(proposed)},${JSON.stringify(swimmer)})'>Update My Times</button>
+      <button class="sc-accept-btn" onclick="scAcceptPRsPending()">Update My Times</button>
       <button class="sc-cancel-btn" onclick="scDismissPR()">Not Now</button>
     </div>`;
   overlay.style.display = 'flex';
 }
 
-async function scAcceptPRs(proposed, swimmer) {
-  await scAcceptImport(swimmer || (JAMES && JAMES.swimcloud) || {}, proposed);
+// Argument-free dispatchers — state is pre-stored in module-level vars above.
+async function scAcceptPending() {
+  await scAcceptImport(_SC_PENDING_SWIMMER || {}, _SC_PENDING_PROPOSED || []);
+}
+
+async function scAcceptPRsPending() {
+  await scAcceptImport(_SC_PR_SWIMMER || (JAMES && JAMES.swimcloud) || {}, _SC_PR_PROPOSED || []);
   scDismissPR();
 }
 
