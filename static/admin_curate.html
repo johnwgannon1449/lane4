@@ -229,6 +229,18 @@ html, body { height: 100%; font-family: 'Figtree', sans-serif; background: var(-
 }
 .img-card.selected .check-badge { display: flex; }
 
+/* Ban button (top-left) — permanently block an image */
+.ban-btn {
+  position: absolute; top: 6px; left: 6px;
+  width: 22px; height: 22px; border-radius: 50%;
+  background: rgba(0,0,0,.55); color: #fff;
+  display: none; align-items: center; justify-content: center;
+  font-size: .7rem; cursor: pointer; border: none; padding: 0;
+  box-shadow: 0 2px 6px rgba(0,0,0,.3); z-index: 10;
+  line-height: 1;
+}
+.img-card:hover .ban-btn { display: flex; }
+
 /* Drag-and-drop */
 .img-card { cursor: grab; }
 .img-card.dragging { opacity: .35; outline: 2px dashed var(--border); }
@@ -496,6 +508,9 @@ async function selectSchool(idx) {
     renderSchoolView(school);
     document.getElementById('btn-save-next').disabled = false;
 
+    // Automatically fetch more images for all 3 categories in background
+    autoFetchAllCategories(school.name);
+
     // Background pre-fetch the next school so it's ready when we arrive
     backgroundPrefetchNext(idx);
   } catch (e) {
@@ -599,6 +614,7 @@ function renderSectionBody(key, cands, sels, hint) {
 
 function cardHtml(key, c, i, selected) {
   const cls = selected ? 'selected' : '';
+  const urlEsc = esc(c.url).replace(/'/g, "\\'");
   return `<div class="img-card ${cls}" id="card-${key}-${i}"
       draggable="true"
       ondragstart="dragStart(event,'${key}',${i})"
@@ -609,6 +625,8 @@ function cardHtml(key, c, i, selected) {
          onerror="this.closest('.img-card').classList.add('img-error')" />
     <div class="img-src">${esc(c.source)}</div>
     <div class="check-badge">✓</div>
+    <button class="ban-btn" title="Never show this image again (any school)"
+      onclick="event.stopPropagation(); banImage('${urlEsc}')">🚫</button>
   </div>`;
 }
 
@@ -627,6 +645,33 @@ function toggleCard(key, idx) {
     document.getElementById(`card-${key}-${idx}`)?.classList.add('selected');
   }
   refreshBadge(key);
+}
+
+// ── Ban image (global blocklist) ──────────────────────────────────────────────
+async function banImage(url) {
+  try {
+    const res = await fetch('/api/admin/blocklist', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ url }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || `Error ${res.status}`);
+
+    // Remove from every section immediately without re-fetching
+    for (const sec of SECTIONS) {
+      const idx = CANDIDATES[sec.key].findIndex(c => c.url === url);
+      if (idx < 0) continue;
+      CANDIDATES[sec.key].splice(idx, 1);
+      const si = SELECTIONS[sec.key].indexOf(url);
+      if (si >= 0) SELECTIONS[sec.key].splice(si, 1);
+      const body = document.getElementById(`body-${sec.key}`);
+      if (body) body.innerHTML = renderSectionBody(sec.key, CANDIDATES[sec.key], SELECTIONS[sec.key], SECTIONS.find(s => s.key === sec.key)?.hint || '');
+      refreshBadge(sec.key);
+    }
+  } catch (e) {
+    alert('Could not ban image: ' + e.message);
+  }
 }
 
 // ── Drag-and-drop ──────────────────────────────────────────────────────────────
@@ -778,6 +823,38 @@ function restoreSection(key) {
     body.innerHTML = renderSectionBody(key, CANDIDATES[key], SELECTIONS[key], sec.hint);
   }
   refreshBadge(key);
+}
+
+// ── Auto-fetch all categories silently when a school loads ────────────────────
+// Runs all 3 category searches in background and merges results into grids
+// as they arrive, without disrupting the current view or showing overlays.
+async function autoFetchAllCategories(schoolName) {
+  for (const sec of SECTIONS) {
+    const key = sec.key;
+    if (SKIPPED[key]) continue;
+    try {
+      const res = await fetch('/api/admin/fetch-candidates', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ school: schoolName, category: key }),
+      });
+      if (!res.ok) continue;
+      const data = await res.json();
+      const existingUrls = new Set(CANDIDATES[key].map(c => c.url));
+      let added = 0;
+      (data.candidates || []).forEach(c => {
+        if (!existingUrls.has(c.url)) {
+          CANDIDATES[key].push(c);
+          existingUrls.add(c.url);
+          added++;
+        }
+      });
+      if (added > 0) {
+        const body = document.getElementById(`body-${key}`);
+        if (body) body.innerHTML = renderSectionBody(key, CANDIDATES[key], SELECTIONS[key], sec.hint);
+      }
+    } catch (_) {}
+  }
 }
 
 // ── Ask for more images (targeted per-section — only runs the category-specific search) ──

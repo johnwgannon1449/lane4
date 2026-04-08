@@ -301,5 +301,84 @@
       "https://precollege.brown.edu/sites/g/files/dprerj1001/files/styles/wide_xlrg/public/2020-10/CampusShots.jpg?h=ac70ade5&itok=XuyTjztZ"
     ],
     "saved_at": "2026-04-07T06:25:45Z"
+  },
+  "Dartmouth College": {
+    "hero_images": [
+      "https://home.dartmouth.edu/sites/home/files/styles/cta_1x_410x260/public/2021-04/20201015_aerial_eb_061.jpg?h=c44fcfa1&itok=GR0WCDQa",
+      "https://upload.wikimedia.org/wikipedia/commons/e/ec/Dartmouth_College_campus_2007-10-20_09.JPG"
+    ],
+    "pool_images": [
+      "https://images.sidearmdev.com/resize?url=https:%2F%2Fdxbhsrqyrr690.cloudfront.net%2Fsidearm.nextgen.sites%2Fdartmouthsports.com%2Fimages%2F2022%2F2%2F4%2FKarl_Michael_Pool2_Ramsden22_DA.jpg&width=1600&type=jpeg",
+      "https://recreation.dartmouth.edu/sites/recreation.prod/files/styles/slide/public/recreation_dartmouth/images/pool.png?itok=yCOwfk-j"
+    ],
+    "student_life_images": [
+      "https://home.dartmouth.edu/sites/home/files/styles/cta_1x_410x260/public/2023-08/Streetfest-Sheba-beam-lert-23x-242-2.jpg?h=10d202d3&itok=i9_9y2RB",
+      "https://home.dartmouth.edu/sites/home/files/styles/3_2_lg/public/2024-06/20240604-Ice-Cream-kl-2.jpg?h=c6980913&itok=Dqw9e8ye"
+    ],
+    "approved_hero_image": "https://home.dartmouth.edu/sites/home/files/styles/cta_1x_410x260/public/2021-04/20201015_aerial_eb_061.jpg?h=c44fcfa1&itok=GR0WCDQa",
+    "approved_pool_image": "https://images.sidearmdev.com/resize?url=https:%2F%2Fdxbhsrqyrr690.cloudfront.net%2Fsidearm.nextgen.sites%2Fdartmouthsports.com%2Fimages%2F2022%2F2%2F4%2FKarl_Michael_Pool2_Ramsden22_DA.jpg&width=1600&type=jpeg",
+    "approved_student_life_image": "https://home.dartmouth.edu/sites/home/files/styles/cta_1x_410x260/public/2023-08/Streetfest-Sheba-beam-lert-23x-242-2.jpg?h=10d202d3&itok=i9_9y2RB",
+    "approved_extra_images": [
+      "https://upload.wikimedia.org/wikipedia/commons/e/ec/Dartmouth_College_campus_2007-10-20_09.JPG",
+      "https://recreation.dartmouth.edu/sites/recreation.prod/files/styles/slide/public/recreation_dartmouth/images/pool.png?itok=yCOwfk-j",
+      "https://home.dartmouth.edu/sites/home/files/styles/3_2_lg/public/2024-06/20240604-Ice-Cream-kl-2.jpg?h=c6980913&itok=Dqw9e8ye"
+    ],
+    "saved_at": "2026-04-07T06:41:09Z"
+  },
+  "Duke University": {
+    "hero_images": [
+      "https://upload.wikimedia.org/wikipedia/commons/0/03/Duke_University_dormitories_in_July_2025.jpg"
+    ],
+    "pool_images": [
+      "https://images.sidearmdev.com/resize?url=https:%2F%2Fgoduke.com%2Fimages%2F2022%2F4%2F13%2Fswim_generic_photo.jpg&width=1600",
+      "https://images.sidearmdev.com/resize?url=https:%2F%2Fdxbhsrqyrr690.cloudfront.net%2Fsidearm.nextgen.sites%2Fgoduke.com%2Fimages%2F2022%2F4%2F13%2Fswim_generic_photo.jpg&height=300&type=webp",
+      "https://dukeswimcamps.com/wp-content/uploads/2024/11/DSDT_duke_aruba_groff_202401030001-1024x683.jpg",
+      "https://www.legat.com/wp-content/uploads/2021/03/FMC-Natatorium-Ty-Warner-Park-featured.jpg"
+    ],
+    "student_life_images": [
+      "https://students.duke.edu/wp-content/uploads/2023/02/20220829_fdoc_west001-2-scaled.jpg",
+      "https://admissions.duke.edu/wp-content/uploads/2019/08/a-desk.jpg",
+      "https://students.duke.edu/wp-content/uploads/2022/07/242105826_10159471746569153_2370435464856577417_n.jpeg",
+      "https://students.duke.edu/wp-content/uploads/2025/06/20240826b_fdoc017-800x600.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/8/85/West_Union%2C_West_Campus%2C_Duke_University%2C_Durham%2C_NC_%2848961037512%29.jpg"
+    ],
+    "approved_hero_image": "https://upload.wikimedia.org/wikipedia/commons/0/03/Duke_University_dormitories_in_July_2025.jpg",
+    "approved_pool_image": "https://images.sidearmdev.com/resize?url=https:%2F%2Fgoduke.com%2Fimages%2F2022%2F4%2F13%2Fswim_generic_photo.jpg&width=1600",
+    "approved_student_life_image": "https://students.duke.edu/wp-content/uploads/2023/02/20220829_fdoc_west001-2-scaled.jpg",
+    "approved_extra_images": [
+      "https://images.sidearmdev.com/resize?url=https:%2F%2Fdxbhsrqyrr690.cloudfront.net%2Fsidearm.nextgen.sites%2Fgoduke.com%2Fimages%2F2022%2F4%2F13%2Fswim_generic_photo.jpg&height=300&type=webp",
+      "https://dukeswimcamps.com/wp-content/uploads/2024/11/DSDT_duke_aruba_groff_202401030001-1024x683.jpg",
+      "https://www.legat.com/wp-content/uploads/2021/03/FMC-Natatorium-Ty-Warner-Park-featured.jpg",
+      "https://admissions.duke.edu/wp-content/uploads/2019/08/a-desk.jpg",
+      "https://students.duke.edu/wp-content/uploads/2022/07/242105826_10159471746569153_2370435464856577417_n.jpeg",
+      "https://students.duke.edu/wp-content/uploads/2025/06/20240826b_fdoc017-800x600.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/8/85/West_Union%2C_West_Campus%2C_Duke_University%2C_Durham%2C_NC_%2848961037512%29.jpg"
+    ],
+    "saved_at": "2026-04-08T01:30:51Z"
+  },
+  "Florida State University": {
+    "hero_images": [
+      "https://upload.wikimedia.org/wikipedia/commons/4/46/Westcott_Building_and_fountain_at_Florida_State_University.jpg"
+    ],
+    "pool_images": [
+      "https://images.sidearmdev.com/resize?url=https%3A%2F%2Fdxbhsrqyrr690.cloudfront.net%2Fsidearm.nextgen.sites%2Ffsuni.sidearmsports.com%2Fimages%2F2026%2F1%2F5%2FMarcom-092625.jpg&height=300&type=webp",
+      "https://images.sidearmdev.com/resize?url=https://dxbhsrqyrr690.cloudfront.net/sidearm.nextgen.sites/fsuni.sidearmsports.com/images/2023/6/27/Morcom_Aquatics_Center.jpg&height=300",
+      "https://images.sidearmdev.com/resize?url=https:%2F%2Fseminoles.com%2Fimages%2F2019%2F04%2F1920x1080_Template-8.jpg&width=1600",
+      "https://i.ytimg.com/vi/ScWH8OvlvpU/maxresdefault.jpg"
+    ],
+    "student_life_images": [
+      "https://news.fsu.edu/wp-content/uploads/2024/08/Freshman-Story-Feature.jpg",
+      "https://news.fsu.edu/wp-content/uploads/2023/09/StudentLife-3.jpg"
+    ],
+    "approved_hero_image": "https://upload.wikimedia.org/wikipedia/commons/4/46/Westcott_Building_and_fountain_at_Florida_State_University.jpg",
+    "approved_pool_image": "https://images.sidearmdev.com/resize?url=https%3A%2F%2Fdxbhsrqyrr690.cloudfront.net%2Fsidearm.nextgen.sites%2Ffsuni.sidearmsports.com%2Fimages%2F2026%2F1%2F5%2FMarcom-092625.jpg&height=300&type=webp",
+    "approved_student_life_image": "https://news.fsu.edu/wp-content/uploads/2024/08/Freshman-Story-Feature.jpg",
+    "approved_extra_images": [
+      "https://images.sidearmdev.com/resize?url=https://dxbhsrqyrr690.cloudfront.net/sidearm.nextgen.sites/fsuni.sidearmsports.com/images/2023/6/27/Morcom_Aquatics_Center.jpg&height=300",
+      "https://images.sidearmdev.com/resize?url=https:%2F%2Fseminoles.com%2Fimages%2F2019%2F04%2F1920x1080_Template-8.jpg&width=1600",
+      "https://i.ytimg.com/vi/ScWH8OvlvpU/maxresdefault.jpg",
+      "https://news.fsu.edu/wp-content/uploads/2023/09/StudentLife-3.jpg"
+    ],
+    "saved_at": "2026-04-08T01:32:36Z"
   }
 }

@@ -5069,6 +5069,22 @@ def coach_email():
 
 _CANDIDATES_PATH = os.path.join('static', 'candidates_manifest.json')
 _CURATED_PATH    = os.path.join('static', 'curated_manifest.json')
+_BLOCKLIST_PATH  = os.path.join('static', 'image_blocklist.json')
+
+
+def _load_blocklist() -> set:
+    try:
+        with open(_BLOCKLIST_PATH, encoding='utf-8') as f:
+            return set(json.load(f))
+    except (FileNotFoundError, json.JSONDecodeError):
+        return set()
+
+
+def _save_blocklist(bl: set):
+    os.makedirs('static', exist_ok=True)
+    with open(_BLOCKLIST_PATH, 'w', encoding='utf-8') as f:
+        json.dump(sorted(bl), f, indent=2)
+
 
 def _load_candidates_manifest():
     try:
@@ -5215,7 +5231,12 @@ def api_admin_candidates(school):
             else:
                 c['category'] = 'campus'
 
-    # Cross-school dedup: hide images that appear in 3+ OTHER schools — these
+    # Filter globally blocklisted images
+    blocklist = _load_blocklist()
+    if blocklist:
+        cands = [c for c in cands if c.get('url', '') not in blocklist]
+
+    # Cross-school dedup: hide images that appear in 2+ OTHER schools — these
     # are generic stock/commons images that aren't school-specific.
     url_schools: dict[str, int] = {}
     for s, imgs in candidates.items():
@@ -5225,7 +5246,7 @@ def api_admin_candidates(school):
             u = img.get('url', '')
             if u:
                 url_schools[u] = url_schools.get(u, 0) + 1
-    cands = [c for c in cands if url_schools.get(c.get('url', ''), 0) < 3]
+    cands = [c for c in cands if url_schools.get(c.get('url', ''), 0) < 2]
 
     return jsonify({'candidates': cands, 'curated': cur})
 
@@ -5247,6 +5268,11 @@ def api_admin_fetch_candidates():
             from harvest_candidates import fetch_candidates
             new_candidates = fetch_candidates(school)
 
+        # Filter globally blocklisted images
+        blocklist = _load_blocklist()
+        if blocklist:
+            new_candidates = [c for c in new_candidates if c.get('url', '') not in blocklist]
+
         # Merge into manifest (do NOT overwrite — preserve existing candidates)
         manifest = _load_candidates_manifest()
         existing = manifest.get(school, [])
@@ -5262,6 +5288,34 @@ def api_admin_fetch_candidates():
         return jsonify({'error': str(e)}), 400
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/admin/blocklist', methods=['POST'])
+@admin_required
+def api_admin_blocklist():
+    """Add an image URL to the global never-show-again blocklist and scrub it from all manifests."""
+    body = request.get_json(silent=True) or {}
+    url  = (body.get('url') or '').strip()
+    if not url:
+        return jsonify({'error': 'missing url'}), 400
+
+    bl = _load_blocklist()
+    bl.add(url)
+    _save_blocklist(bl)
+
+    # Scrub from all school manifests immediately
+    manifest = _load_candidates_manifest()
+    changed = False
+    for s in manifest:
+        before = len(manifest[s])
+        manifest[s] = [c for c in manifest[s] if c.get('url') != url]
+        if len(manifest[s]) != before:
+            changed = True
+    if changed:
+        with open(_CANDIDATES_PATH, 'w', encoding='utf-8') as f:
+            json.dump(manifest, f, indent=2, ensure_ascii=False)
+
+    return jsonify({'ok': True, 'blocked_count': len(bl)})
 
 
 # ── Pre-fetch tracking ────────────────────────────────────────────────────────
