@@ -146,13 +146,14 @@ def fetch_profile_info(swimmer_id: str) -> dict:
         results = data.get("results", [])
         if results:
             rec = results[0]
-            return {
-                "swimmer_id":  str(rec.get("id", swimmer_id)),
-                "display_name": rec.get("display_name") or rec.get("name", ""),
-                "team":         rec.get("primary_team", "") or "",
-                "grad_year":    rec.get("gradhs"),
-                "profile_url":  _BASE + "/swimmer/" + str(swimmer_id) + "/",
-            }
+            if str(rec.get("id", "")) == str(swimmer_id):
+                return {
+                    "swimmer_id":   str(rec.get("id", swimmer_id)),
+                    "display_name": rec.get("display_name") or rec.get("name", ""),
+                    "team":         rec.get("primary_team", "") or "",
+                    "grad_year":    rec.get("gradhs"),
+                    "profile_url":  _BASE + "/swimmer/" + str(swimmer_id) + "/",
+                }
     except Exception:
         pass
     return {
