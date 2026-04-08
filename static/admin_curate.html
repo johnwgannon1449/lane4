@@ -249,6 +249,23 @@ html, body { height: 100%; font-family: 'Figtree', sans-serif; background: var(-
   outline-offset: -4px;
   background: rgba(22,163,74,.05);
 }
+/* Sidebar ban-zone — lights up red when dragging a card over it */
+#sidebar.ban-target {
+  background: rgba(220,38,38,.08);
+  outline: 3px dashed #dc2626;
+  outline-offset: -6px;
+}
+#sidebar.ban-target::after {
+  content: '🚫 Drop to ban';
+  position: sticky;
+  top: 50%;
+  display: flex;
+  justify-content: center;
+  color: #dc2626;
+  font-weight: 700;
+  font-size: .9rem;
+  pointer-events: none;
+}
 
 /* ── Bottom nav bar ─────────────────── */
 #bottom-nav {
@@ -324,7 +341,10 @@ html, body { height: 100%; font-family: 'Figtree', sans-serif; background: var(-
 </header>
 
 <div id="layout">
-  <aside id="sidebar">
+  <aside id="sidebar"
+         ondragover="sidebarDragOver(event)"
+         ondragleave="sidebarDragLeave(event)"
+         ondrop="sidebarDrop(event)">
     <div id="school-list"><div style="padding:20px;text-align:center;color:var(--muted);font-size:.8rem">Select a conference</div></div>
     <div id="school-stats"></div>
   </aside>
@@ -690,7 +710,36 @@ function dragEnd(e, key, idx) {
   // Always clean up — fires on drop, cancel, or Escape
   document.getElementById(`card-${key}-${idx}`)?.classList.remove('dragging');
   document.querySelectorAll('.section-body.drop-target').forEach(b => b.classList.remove('drop-target'));
+  document.getElementById('sidebar')?.classList.remove('ban-target');
   _drag = null;
+}
+
+// ── Sidebar = ban zone ─────────────────────────────────────────────────────────
+function sidebarDragOver(e) {
+  if (!_drag && !e.dataTransfer.types.includes('application/json')) return;
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  document.getElementById('sidebar').classList.add('ban-target');
+}
+
+function sidebarDragLeave(e) {
+  const sb = document.getElementById('sidebar');
+  if (!sb.contains(e.relatedTarget)) {
+    sb.classList.remove('ban-target');
+  }
+}
+
+async function sidebarDrop(e) {
+  e.preventDefault();
+  document.getElementById('sidebar').classList.remove('ban-target');
+  let src = null;
+  try { src = JSON.parse(e.dataTransfer.getData('application/json')); } catch (_) {}
+  if (!src) src = _drag;
+  _drag = null;
+  if (!src) return;
+  const cand = CANDIDATES[src.key]?.[src.idx];
+  if (!cand) return;
+  await banImage(cand.url);
 }
 
 function dragOver(e, destKey) {
