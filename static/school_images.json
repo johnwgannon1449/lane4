@@ -361,5 +361,32 @@
       "swim": "curated",
       "student_life": "curated"
     }
+  },
+  "North Carolina, University of": {
+    "hero": "https://wallpapers.com/images/hd/university-of-north-carolina-charlotte-campus-1kcioyredpxe80yr.jpg",
+    "swim": "https://swimswam.com/wp-content/uploads/2019/01/KouryNatatorium_-courtesy-North-Carolina-Athletics.jpg",
+    "student_life": "https://uncw.edu/about/media/images/hero/about-uncw.jpg",
+    "is_fallback": {
+      "hero": false,
+      "swim": false,
+      "student_life": false
+    },
+    "source_pages": {
+      "hero": "curated",
+      "swim": "curated",
+      "student_life": "curated"
+    }
+  },
+  "Notre Dame, University of": {
+    "hero": "https://upload.wikimedia.org/wikipedia/commons/1/16/Golden_Dome_frontal.jpg",
+    "student_life": "https://upload.wikimedia.org/wikipedia/commons/0/01/2004_Notre_Dame-Navy_Game.jpg",
+    "is_fallback": {
+      "hero": false,
+      "student_life": false
+    },
+    "source_pages": {
+      "hero": "curated",
+      "student_life": "curated"
+    }
   }
 }

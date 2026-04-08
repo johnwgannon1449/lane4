@@ -469,5 +469,53 @@
     "approved_student_life_image": "https://www.universityofcalifornia.edu/sites/default/files/uc-berkeley-us-news-1.jpg",
     "approved_extra_images": [],
     "saved_at": "2026-04-08T02:31:44Z"
+  },
+  "North Carolina, University of": {
+    "hero_images": [
+      "https://wallpapers.com/images/hd/university-of-north-carolina-charlotte-campus-1kcioyredpxe80yr.jpg",
+      "https://hga.com/wp-content/uploads/2019/09/University-of-North-Carolina-Chapel-Hill-Caudill-Lab-exterior-1.jpg"
+    ],
+    "pool_images": [
+      "https://swimswam.com/wp-content/uploads/2019/01/KouryNatatorium_-courtesy-North-Carolina-Athletics.jpg",
+      "https://chapelboromedia.s3.amazonaws.com/uploads/2020/12/21142000/koury-natatorium-1280x640.jpg"
+    ],
+    "student_life_images": [
+      "https://uncw.edu/about/media/images/hero/about-uncw.jpg",
+      "https://www.uncg.edu/wp-content/uploads/2022/11/PIC21042_Party-Like-a-Rawkstar_004_RS-1.jpg",
+      "https://media.licdn.com/dms/image/v2/C4D1BAQGNTBGdfGk5xw/company-background_10000/company-background_10000/0/1583735481069/university_of_north_carolina_at_chapel_hill_cover?e=2147483647&v=beta&t=XJy1RwnHMYlnRtwxIKDUhE3e36sWElXz4_qZZdVxU7c",
+      "https://media2.s-nbcnews.com/j/newscms/2018_46/2649296/181116-student-campus-loan-debt-cs-1244p_9a4c2eec0fb41f9a87a6a7c87678ae6b.fit-760w.jpg"
+    ],
+    "approved_hero_image": "https://wallpapers.com/images/hd/university-of-north-carolina-charlotte-campus-1kcioyredpxe80yr.jpg",
+    "approved_pool_image": "https://swimswam.com/wp-content/uploads/2019/01/KouryNatatorium_-courtesy-North-Carolina-Athletics.jpg",
+    "approved_student_life_image": "https://uncw.edu/about/media/images/hero/about-uncw.jpg",
+    "approved_extra_images": [
+      "https://hga.com/wp-content/uploads/2019/09/University-of-North-Carolina-Chapel-Hill-Caudill-Lab-exterior-1.jpg",
+      "https://chapelboromedia.s3.amazonaws.com/uploads/2020/12/21142000/koury-natatorium-1280x640.jpg",
+      "https://www.uncg.edu/wp-content/uploads/2022/11/PIC21042_Party-Like-a-Rawkstar_004_RS-1.jpg",
+      "https://media.licdn.com/dms/image/v2/C4D1BAQGNTBGdfGk5xw/company-background_10000/company-background_10000/0/1583735481069/university_of_north_carolina_at_chapel_hill_cover?e=2147483647&v=beta&t=XJy1RwnHMYlnRtwxIKDUhE3e36sWElXz4_qZZdVxU7c",
+      "https://media2.s-nbcnews.com/j/newscms/2018_46/2649296/181116-student-campus-loan-debt-cs-1244p_9a4c2eec0fb41f9a87a6a7c87678ae6b.fit-760w.jpg"
+    ],
+    "saved_at": "2026-04-08T02:45:48Z"
+  },
+  "Notre Dame, University of": {
+    "hero_images": [
+      "https://upload.wikimedia.org/wikipedia/commons/1/16/Golden_Dome_frontal.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/6/65/Main_Building_University_of_Notre_Dame.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/6/60/University_of_Notre_Dame%27s_God_Quad.JPG"
+    ],
+    "pool_images": [],
+    "student_life_images": [
+      "https://upload.wikimedia.org/wikipedia/commons/0/01/2004_Notre_Dame-Navy_Game.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/5/51/Notre_Dame_Stadium%2C_University_of_Notre_Dame%2C_South_Bend%2C_Indiana_%2811045936713%29.jpg"
+    ],
+    "approved_hero_image": "https://upload.wikimedia.org/wikipedia/commons/1/16/Golden_Dome_frontal.jpg",
+    "approved_pool_image": null,
+    "approved_student_life_image": "https://upload.wikimedia.org/wikipedia/commons/0/01/2004_Notre_Dame-Navy_Game.jpg",
+    "approved_extra_images": [
+      "https://upload.wikimedia.org/wikipedia/commons/6/65/Main_Building_University_of_Notre_Dame.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/6/60/University_of_Notre_Dame%27s_God_Quad.JPG",
+      "https://upload.wikimedia.org/wikipedia/commons/5/51/Notre_Dame_Stadium%2C_University_of_Notre_Dame%2C_South_Bend%2C_Indiana_%2811045936713%29.jpg"
+    ],
+    "saved_at": "2026-04-08T02:47:18Z"
   }
 }
