@@ -394,12 +394,15 @@
     "student_life": "https://www.smu.edu/-/media/Site/StudentAffairs/FSL/Home/FSL_Leaders.jpg?h=1472&iar=0&w=2616&hash=5911220D922392486EC780405B3ED0C0",
     "is_fallback": {
       "swim": false,
-      "student_life": false
+      "student_life": false,
+      "hero": false
     },
     "source_pages": {
       "swim": "curated",
-      "student_life": "curated"
-    }
+      "student_life": "curated",
+      "hero": "curated"
+    },
+    "hero": "https://www.smu.edu/-/media/site/home/fy25/home-assets/campus-beauty.jpg"
   },
   "Stanford University": {
     "hero": "https://media.istockphoto.com/id/1282845414/photo/usa-stanford-university-editorial.jpg?s=612x612&w=0&k=20&c=c42pY5HABj9I6jM8Z0GuYs0bdvgIBoZeqmk9Ayf8B20=",
@@ -435,6 +438,21 @@
     "hero": "https://www.vt.edu/content/dam/vt_edu/admissions/images/tour/galleries/torg/torg1.jpg.transform/xl-medium/image.jpg",
     "swim": "https://swimswam.com/wp-content/uploads/2020/06/Virginia-Tech-swim-dive-photo-from-Twitter-768x512.jpg",
     "student_life": "https://virginiatech.sportswar.com/wp-content/uploads/sites/15/2023/10/JLF_231014_WF_VT_003.jpg",
+    "is_fallback": {
+      "hero": false,
+      "swim": false,
+      "student_life": false
+    },
+    "source_pages": {
+      "hero": "curated",
+      "swim": "curated",
+      "student_life": "curated"
+    }
+  },
+  "Pittsburgh, University of": {
+    "hero": "https://media.istockphoto.com/id/1473994844/photo/buildings-on-carnegie-mellon-university-and-the-university-of-pittsburgh.jpg?s=612x612&w=0&k=20&c=1rRtOW80gWrW7itgRmh7CgeW6272lTD20BPfcy__AQQ=",
+    "swim": "https://admissions.pitt.edu/wp-content/uploads/2023/07/rec14.jpg",
+    "student_life": "https://www.utimes.pitt.edu/sites/default/files/social-image/Studentarrival.jpg",
     "is_fallback": {
       "hero": false,
       "swim": false,

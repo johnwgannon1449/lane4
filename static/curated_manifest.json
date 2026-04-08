@@ -519,7 +519,9 @@
     "saved_at": "2026-04-08T02:47:18Z"
   },
   "Southern Methodist University": {
-    "hero_images": [],
+    "hero_images": [
+      "https://www.smu.edu/-/media/site/home/fy25/home-assets/campus-beauty.jpg"
+    ],
     "pool_images": [
       "https://assets.simpleviewinc.com/simpleview/image/fetch/c_fill,h_524,q_50,w_786/https://assets.simpleviewinc.com/simpleview/image/upload/crm/southernbleacher/smu-aquatic-1-87235fd35056a36_872361e9-5056-a36a-0bcb05ef75c99dde.jpg",
       "https://assets.simpleviewinc.com/simpleview/image/fetch/c_fill,h_524,q_50,w_786/https://assets.simpleviewinc.com/simpleview/image/upload/crm/southernbleacher/smu-aquatic-4-872540fa5056a36_872541ec-5056-a36a-0b4ed37a5704589f.jpg"
@@ -531,7 +533,7 @@
       "https://i.pinimg.com/736x/01/b3/7c/01b37c508ea73785a5143704c63104e1--southern-methodist-university-student-life.jpg",
       "https://i0.wp.com/www.society19.com/wp-content/uploads/2016/11/southern-methodist-university-student-event.jpg?resize=540%2C360&ssl=1"
     ],
-    "approved_hero_image": null,
+    "approved_hero_image": "https://www.smu.edu/-/media/site/home/fy25/home-assets/campus-beauty.jpg",
     "approved_pool_image": "https://assets.simpleviewinc.com/simpleview/image/fetch/c_fill,h_524,q_50,w_786/https://assets.simpleviewinc.com/simpleview/image/upload/crm/southernbleacher/smu-aquatic-1-87235fd35056a36_872361e9-5056-a36a-0bcb05ef75c99dde.jpg",
     "approved_student_life_image": "https://www.smu.edu/-/media/Site/StudentAffairs/FSL/Home/FSL_Leaders.jpg?h=1472&iar=0&w=2616&hash=5911220D922392486EC780405B3ED0C0",
     "approved_extra_images": [
@@ -541,7 +543,7 @@
       "https://i.pinimg.com/736x/01/b3/7c/01b37c508ea73785a5143704c63104e1--southern-methodist-university-student-life.jpg",
       "https://i0.wp.com/www.society19.com/wp-content/uploads/2016/11/southern-methodist-university-student-event.jpg?resize=540%2C360&ssl=1"
     ],
-    "saved_at": "2026-04-08T02:51:21Z"
+    "saved_at": "2026-04-08T03:10:19Z"
   },
   "Stanford University": {
     "hero_images": [
@@ -621,5 +623,26 @@
       "https://vt.edu/content/vt_edu/en/admissions/undergraduate/visit/campus-photo-tour/jcr:content/content/adaptiveimage_926934412.transform/l-medium/image.jpg"
     ],
     "saved_at": "2026-04-08T02:58:55Z"
+  },
+  "Pittsburgh, University of": {
+    "hero_images": [
+      "https://media.istockphoto.com/id/1473994844/photo/buildings-on-carnegie-mellon-university-and-the-university-of-pittsburgh.jpg?s=612x612&w=0&k=20&c=1rRtOW80gWrW7itgRmh7CgeW6272lTD20BPfcy__AQQ="
+    ],
+    "pool_images": [
+      "https://admissions.pitt.edu/wp-content/uploads/2023/07/rec14.jpg"
+    ],
+    "student_life_images": [
+      "https://www.utimes.pitt.edu/sites/default/files/social-image/Studentarrival.jpg",
+      "https://www.education.pitt.edu/wp-content/uploads/2024/07/homecoming-image.jpg",
+      "https://www.hillel.org/wp-content/uploads/2024/07/pitt-1024x683.jpg"
+    ],
+    "approved_hero_image": "https://media.istockphoto.com/id/1473994844/photo/buildings-on-carnegie-mellon-university-and-the-university-of-pittsburgh.jpg?s=612x612&w=0&k=20&c=1rRtOW80gWrW7itgRmh7CgeW6272lTD20BPfcy__AQQ=",
+    "approved_pool_image": "https://admissions.pitt.edu/wp-content/uploads/2023/07/rec14.jpg",
+    "approved_student_life_image": "https://www.utimes.pitt.edu/sites/default/files/social-image/Studentarrival.jpg",
+    "approved_extra_images": [
+      "https://www.education.pitt.edu/wp-content/uploads/2024/07/homecoming-image.jpg",
+      "https://www.hillel.org/wp-content/uploads/2024/07/pitt-1024x683.jpg"
+    ],
+    "saved_at": "2026-04-08T03:09:38Z"
   }
 }
