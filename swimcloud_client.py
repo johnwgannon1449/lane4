@@ -198,8 +198,10 @@ def extract_scy_bests(raw_times: list[dict]) -> dict[str, dict]:
         if not event:
             continue
 
-        # Prefer seedtime (hand-padded best); fallback to eventtime
-        t_raw = rec.get("seedtime") or rec.get("eventtime")
+        # Use eventtime (actual verified race result).
+        # Fall back to seedtime only when eventtime is absent — seedtime is an
+        # unverified entry declaration and must never take precedence over a real result.
+        t_raw = rec.get("eventtime") or rec.get("seedtime")
         if t_raw is None:
             continue
         try:
