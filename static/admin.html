@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Lane4 Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Fraunces:wght@700;800&display=swap" rel="stylesheet" />
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --blue:    #2563EB;
+  --blue-d:  #1D4ED8;
+  --blue-l:  #EFF6FF;
+  --green:   #16A34A;
+  --green-l: #F0FDF4;
+  --amber:   #D97706;
+  --amber-l: #FFFBEB;
+  --red:     #DC2626;
+  --red-l:   #FEF2F2;
+  --text:    #0F172A;
+  --muted:   #64748B;
+  --border:  #E2E8F0;
+  --bg:      #F8FAFC;
+  --card:    #FFFFFF;
+  --sidebar: 280px;
+  --header:  52px;
+  --radius:  10px;
+  --shadow:  0 2px 8px rgba(0,0,0,.07), 0 0 1px rgba(0,0,0,.05);
+}
+body { font-family: 'Figtree', sans-serif; background: var(--bg); color: var(--text); font-size: 14px; min-height: 100vh; }
+
+/* ── Header ─────────────────────────────────────────────────────────── */
+header {
+  height: var(--header); display: flex; align-items: center; justify-content: space-between;
+  padding: 0 1.25rem; background: var(--card); border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; z-index: 10;
+}
+.logo { font-family: 'Fraunces', serif; font-weight: 800; font-size: 1.1rem; color: var(--text); text-decoration: none; }
+.logo span { color: var(--blue); }
+.header-right { display: flex; align-items: center; gap: 0.75rem; }
+.back-link { font-size: 0.82rem; color: var(--muted); text-decoration: none; }
+.back-link:hover { color: var(--text); }
+.badge { font-size: 0.7rem; font-weight: 700; background: var(--amber-l); color: var(--amber); border: 1px solid #FDE68A; padding: 2px 8px; border-radius: 99px; letter-spacing: 0.03em; }
+
+/* ── Layout ─────────────────────────────────────────────────────────── */
+.layout { display: flex; height: calc(100vh - var(--header)); overflow: hidden; }
+
+/* ── Sidebar ────────────────────────────────────────────────────────── */
+.sidebar {
+  width: var(--sidebar); flex-shrink: 0; background: var(--card);
+  border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden;
+}
+.sidebar-search-wrap { padding: 0.75rem; border-bottom: 1px solid var(--border); }
+.sidebar-search {
+  width: 100%; padding: 7px 10px; border: 1.5px solid var(--border); border-radius: 8px;
+  font-family: 'Figtree', sans-serif; font-size: 0.84rem; color: var(--text); background: var(--bg);
+  outline: none;
+}
+.sidebar-search:focus { border-color: var(--blue); }
+.sidebar-stats { padding: 0.5rem 0.75rem; font-size: 0.75rem; color: var(--muted); border-bottom: 1px solid var(--border); }
+.school-list { flex: 1; overflow-y: auto; }
+.school-item {
+  padding: 0.6rem 0.75rem; cursor: pointer; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 0.5rem; transition: background 0.1s;
+}
+.school-item:hover { background: var(--bg); }
+.school-item.active { background: var(--blue-l); }
+.school-item-name { flex: 1; font-weight: 500; font-size: 0.83rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.school-item-dot {
+  width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+  background: var(--border);
+}
+.school-item-dot.has-candidates { background: var(--amber); }
+.school-item-dot.is-curated     { background: var(--green); }
+
+/* ── Main panel ─────────────────────────────────────────────────────── */
+.main { flex: 1; overflow-y: auto; padding: 1.5rem; }
+.empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 60%; gap: 0.75rem; color: var(--muted); }
+.empty-icon { font-size: 2.5rem; }
+
+/* ── School header ──────────────────────────────────────────────────── */
+.school-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; gap: 1rem; flex-wrap: wrap; }
+.school-title { font-family: 'Fraunces', serif; font-weight: 800; font-size: 1.4rem; }
+.school-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+
+/* ── Buttons ─────────────────────────────────────────────────────────── */
+.btn {
+  display: inline-flex; align-items: center; gap: 0.35rem;
+  padding: 7px 14px; border-radius: 8px; border: 1.5px solid transparent;
+  font-family: 'Figtree', sans-serif; font-size: 0.83rem; font-weight: 600;
+  cursor: pointer; transition: opacity 0.15s;
+}
+.btn:disabled { opacity: 0.5; cursor: default; }
+.btn-primary   { background: var(--blue);  color: #fff; border-color: var(--blue); }
+.btn-primary:hover:not(:disabled) { background: var(--blue-d); border-color: var(--blue-d); }
+.btn-secondary { background: var(--card);  color: var(--text); border-color: var(--border); }
+.btn-secondary:hover:not(:disabled) { background: var(--bg); }
+.btn-green     { background: var(--green); color: #fff; border-color: var(--green); }
+.btn-green:hover:not(:disabled) { background: #15803D; border-color: #15803D; }
+.btn-sm { padding: 4px 10px; font-size: 0.78rem; }
+
+/* ── Section ─────────────────────────────────────────────────────────── */
+.section { margin-bottom: 2rem; }
+.section-title {
+  font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 0.75rem; padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ── Current images strip ────────────────────────────────────────────── */
+.current-images { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 0.5rem; }
+.current-slot {
+  flex: 1; min-width: 180px; max-width: 260px; background: var(--card);
+  border: 1.5px solid var(--border); border-radius: var(--radius); overflow: hidden;
+}
+.current-slot.filled { border-color: var(--green); }
+.current-slot-label {
+  padding: 6px 10px; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.05em;
+  text-transform: uppercase; color: var(--muted); border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.current-slot.filled .current-slot-label { color: var(--green); border-color: #BBF7D0; background: var(--green-l); }
+.current-img {
+  width: 100%; aspect-ratio: 16/9; object-fit: cover; display: block; background: var(--bg);
+}
+.current-img-empty {
+  width: 100%; aspect-ratio: 16/9; display: flex; align-items: center; justify-content: center;
+  color: var(--muted); font-size: 0.8rem; background: var(--bg);
+}
+
+/* ── Candidates grid ─────────────────────────────────────────────────── */
+.candidates-filter { display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap; }
+.filter-chip {
+  padding: 4px 12px; border-radius: 99px; font-size: 0.78rem; font-weight: 600;
+  cursor: pointer; border: 1.5px solid var(--border); background: var(--card); color: var(--muted);
+  transition: all 0.15s;
+}
+.filter-chip.active { background: var(--blue); color: #fff; border-color: var(--blue); }
+.candidates-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.75rem;
+}
+.cand-card {
+  background: var(--card); border: 1.5px solid var(--border); border-radius: var(--radius);
+  overflow: hidden; box-shadow: var(--shadow); transition: border-color 0.15s;
+}
+.cand-card:hover { border-color: #94A3B8; }
+.cand-card.approved { border-color: var(--green); }
+.cand-img {
+  width: 100%; aspect-ratio: 16/9; object-fit: cover; display: block; background: var(--bg);
+  cursor: pointer;
+}
+.cand-meta { padding: 0.5rem; display: flex; flex-direction: column; gap: 0.35rem; }
+.cand-cat {
+  font-size: 0.68rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--muted);
+}
+.cand-approve-row { display: flex; gap: 0.35rem; flex-wrap: wrap; }
+
+/* ── Toast ───────────────────────────────────────────────────────────── */
+.toast {
+  position: fixed; bottom: 1.25rem; right: 1.25rem; background: var(--text); color: #fff;
+  padding: 0.65rem 1rem; border-radius: 8px; font-size: 0.83rem; font-weight: 500;
+  box-shadow: 0 4px 16px rgba(0,0,0,.2); opacity: 0; transition: opacity 0.2s;
+  pointer-events: none; z-index: 100;
+}
+.toast.visible { opacity: 1; }
+
+/* ── Spinner ─────────────────────────────────────────────────────────── */
+.spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,.4); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Status msg ─────────────────────────────────────────────────────── */
+.status-msg { font-size: 0.82rem; color: var(--muted); padding: 0.75rem 0; }
+.status-msg.ok  { color: var(--green); }
+.status-msg.err { color: var(--red); }
+</style>
+</head>
+<body>
+
+<header>
+  <a class="logo" href="/">Lane<span>4</span></a>
+  <div class="header-right">
+    <span class="badge">ADMIN</span>
+    <a class="back-link" href="/">← Back to app</a>
+  </div>
+</header>
+
+<div class="layout">
+
+  <!-- ── Sidebar: school list ─────────────────────────────────── -->
+  <aside class="sidebar">
+    <div class="sidebar-search-wrap">
+      <input class="sidebar-search" id="school-search" type="text" placeholder="Filter schools…" oninput="filterSchools()" />
+    </div>
+    <div class="sidebar-stats" id="sidebar-stats">Loading…</div>
+    <div class="school-list" id="school-list"></div>
+  </aside>
+
+  <!-- ── Main: detail panel ──────────────────────────────────── -->
+  <main class="main" id="main-panel">
+    <div class="empty-state">
+      <div class="empty-icon">🏊</div>
+      <div>Select a school to manage its images</div>
+    </div>
+  </main>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let ALL_SCHOOLS   = [];
+let ACTIVE_SCHOOL = null;
+let FILTER_CAT    = 'all';
+let PENDING_HERO  = null;
+let PENDING_POOL  = null;
+let PENDING_STUDENT = null;
+
+// ── Boot ──────────────────────────────────────────────────────────────
+async function boot() {
+  try {
+    const res  = await fetch('/api/ua/schools');
+    if (res.status === 401) { window.location.href = '/'; return; }
+    if (res.status === 403) { document.body.innerHTML = '<div style="padding:2rem;color:#DC2626;">Access denied.</div>'; return; }
+    ALL_SCHOOLS = await res.json();
+    renderSidebarStats();
+    renderSchoolList(ALL_SCHOOLS);
+  } catch(e) {
+    document.getElementById('sidebar-stats').textContent = 'Failed to load schools.';
+  }
+}
+
+// ── Sidebar ───────────────────────────────────────────────────────────
+function renderSidebarStats() {
+  const total    = ALL_SCHOOLS.length;
+  const curated  = ALL_SCHOOLS.filter(s => s.is_curated).length;
+  const hasCands = ALL_SCHOOLS.filter(s => s.has_candidates).length;
+  document.getElementById('sidebar-stats').textContent =
+    `${total} schools · ${curated} curated · ${hasCands} with candidates`;
+}
+
+function filterSchools() {
+  const q = document.getElementById('school-search').value.toLowerCase();
+  renderSchoolList(q ? ALL_SCHOOLS.filter(s => s.name.toLowerCase().includes(q)) : ALL_SCHOOLS);
+}
+
+function renderSchoolList(schools) {
+  const el = document.getElementById('school-list');
+  if (!schools.length) { el.innerHTML = '<div style="padding:0.75rem;color:var(--muted);font-size:0.82rem;">No schools found.</div>'; return; }
+  el.innerHTML = schools.map(s => `
+    <div class="school-item ${ACTIVE_SCHOOL === s.name ? 'active' : ''}" onclick="selectSchool('${esc(s.name)}')">
+      <div class="school-item-dot ${s.is_curated ? 'is-curated' : s.has_candidates ? 'has-candidates' : ''}"></div>
+      <div class="school-item-name" title="${esc(s.name)}">${esc(s.name)}</div>
+    </div>
+  `).join('');
+}
+
+// ── School detail ─────────────────────────────────────────────────────
+async function selectSchool(name) {
+  ACTIVE_SCHOOL = name;
+  FILTER_CAT    = 'all';
+  PENDING_HERO    = null;
+  PENDING_POOL    = null;
+  PENDING_STUDENT = null;
+
+  // Highlight sidebar
+  document.querySelectorAll('.school-item').forEach(el => {
+    el.classList.toggle('active', el.querySelector('.school-item-name')?.textContent === name);
+  });
+
+  const panel = document.getElementById('main-panel');
+  panel.innerHTML = '<div class="status-msg">Loading…</div>';
+
+  try {
+    const res  = await fetch('/api/ua/candidates/' + encodeURIComponent(name));
+    if (!res.ok) throw new Error(await res.text());
+    const data = await res.json();
+    renderDetail(name, data);
+  } catch(e) {
+    panel.innerHTML = `<div class="status-msg err">Failed to load: ${e.message}</div>`;
+  }
+}
+
+function renderDetail(name, data) {
+  const { candidates = [], stored = {} } = data;
+
+  // Use pending selections if set, else fall back to stored
+  const heroUrl    = PENDING_HERO    ?? stored.hero         ?? null;
+  const poolUrl    = PENDING_POOL    ?? stored.swim         ?? null;
+  const studentUrl = PENDING_STUDENT ?? stored.student_life ?? null;
+
+  const cats = ['all', 'campus', 'pool', 'student_life'];
+  const filtered = FILTER_CAT === 'all' ? candidates : candidates.filter(c => c.category === FILTER_CAT);
+
+  const panel = document.getElementById('main-panel');
+  panel.innerHTML = `
+    <div class="school-header">
+      <div class="school-title">${esc(name)}</div>
+      <div class="school-actions">
+        <button class="btn btn-secondary" id="btn-fetch" onclick="fetchCandidates('${esc(name)}')">Fetch Image Candidates</button>
+        <button class="btn btn-green" id="btn-approve" onclick="approveImages('${esc(name)}')" ${(!PENDING_HERO && !PENDING_POOL && !PENDING_STUDENT) ? 'disabled' : ''}>
+          Save Selections
+        </button>
+      </div>
+    </div>
+    <div id="fetch-status"></div>
+
+    <div class="section">
+      <div class="section-title">Current Images (live in app)</div>
+      <div class="current-images">
+        ${renderCurrentSlot('Hero / Campus', heroUrl, 'hero')}
+        ${renderCurrentSlot('Pool', poolUrl, 'pool')}
+        ${renderCurrentSlot('Student Life', studentUrl, 'student')}
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Image Candidates (${candidates.length})</div>
+      ${candidates.length === 0
+        ? `<div class="status-msg">No candidates yet. Click "Fetch Image Candidates" to load them.</div>`
+        : `
+          <div class="candidates-filter">
+            ${cats.map(c => `<div class="filter-chip ${FILTER_CAT === c ? 'active' : ''}" onclick="setCatFilter('${c}','${esc(name)}')">${catLabel(c)}</div>`).join('')}
+          </div>
+          <div class="candidates-grid" id="cand-grid">
+            ${filtered.map(c => renderCandCard(c, heroUrl, poolUrl, studentUrl)).join('')}
+          </div>
+          ${filtered.length === 0 ? `<div class="status-msg">No candidates in this category.</div>` : ''}
+        `
+      }
+    </div>
+  `;
+}
+
+function renderCurrentSlot(label, url, type) {
+  const filled = !!url;
+  return `
+    <div class="current-slot ${filled ? 'filled' : ''}">
+      <div class="current-slot-label">
+        <span>${label}</span>
+        ${filled ? '<span>✓ set</span>' : '<span>—</span>'}
+      </div>
+      ${filled
+        ? `<img class="current-img" src="${esc(url)}" loading="lazy" onerror="this.style.display='none'" />`
+        : `<div class="current-img-empty">No image set</div>`}
+    </div>
+  `;
+}
+
+function renderCandCard(c, heroUrl, poolUrl, studentUrl) {
+  const url  = c.url || '';
+  const cat  = c.category || 'campus';
+  const isHero    = url === heroUrl;
+  const isPool    = url === poolUrl;
+  const isStudent = url === studentUrl;
+  const approved  = isHero || isPool || isStudent;
+  return `
+    <div class="cand-card ${approved ? 'approved' : ''}">
+      <img class="cand-img" src="${esc(url)}" loading="lazy" onerror="this.parentElement.style.display='none'"
+           onclick="window.open('${esc(url)}','_blank')" title="Open full size" />
+      <div class="cand-meta">
+        <div class="cand-cat">${catLabel(cat)}</div>
+        <div class="cand-approve-row">
+          <button class="btn btn-sm ${isHero ? 'btn-green' : 'btn-secondary'}"
+                  onclick="setPending('hero','${esc(url)}')" title="Use as hero/campus image">
+            ${isHero ? '✓ Hero' : 'Hero'}
+          </button>
+          <button class="btn btn-sm ${isPool ? 'btn-green' : 'btn-secondary'}"
+                  onclick="setPending('pool','${esc(url)}')" title="Use as pool image">
+            ${isPool ? '✓ Pool' : 'Pool'}
+          </button>
+          <button class="btn btn-sm ${isStudent ? 'btn-green' : 'btn-secondary'}"
+                  onclick="setPending('student','${esc(url)}')" title="Use as student life image">
+            ${isStudent ? '✓ Life' : 'Life'}
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// ── Interactions ──────────────────────────────────────────────────────
+function setPending(type, url) {
+  if (type === 'hero')    PENDING_HERO    = url;
+  if (type === 'pool')    PENDING_POOL    = url;
+  if (type === 'student') PENDING_STUDENT = url;
+  if (ACTIVE_SCHOOL) selectSchool(ACTIVE_SCHOOL);
+}
+
+function setCatFilter(cat, name) {
+  FILTER_CAT = cat;
+  if (ACTIVE_SCHOOL) selectSchool(ACTIVE_SCHOOL);
+}
+
+async function fetchCandidates(name) {
+  const btn = document.getElementById('btn-fetch');
+  const statusEl = document.getElementById('fetch-status');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Fetching…';
+  statusEl.className = 'status-msg';
+  statusEl.textContent = 'Fetching candidates from the web…';
+  try {
+    const res  = await fetch('/api/ua/fetch-candidates', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ school: name }),
+    });
+    const data = await res.json();
+    if (!res.ok || data.error) throw new Error(data.error || 'Unknown error');
+    showToast(`Fetched ${data.count} candidates for ${name}`);
+    statusEl.className = 'status-msg ok';
+    statusEl.textContent = `Done — ${data.count} new candidates fetched.`;
+    // Refresh the school detail
+    const idx = ALL_SCHOOLS.findIndex(s => s.name === name);
+    if (idx >= 0) ALL_SCHOOLS[idx].has_candidates = true;
+    renderSchoolList(ALL_SCHOOLS.filter(s => {
+      const q = document.getElementById('school-search').value.toLowerCase();
+      return !q || s.name.toLowerCase().includes(q);
+    }));
+    await selectSchool(name);
+  } catch(e) {
+    statusEl.className = 'status-msg err';
+    statusEl.textContent = `Error: ${e.message}`;
+    showToast('Fetch failed: ' + e.message);
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = 'Fetch Image Candidates'; }
+  }
+}
+
+async function approveImages(name) {
+  const btn = document.getElementById('btn-approve');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Saving…';
+  const body = {
+    school:              name,
+    hero_images:         PENDING_HERO    ? [PENDING_HERO]    : [],
+    pool_images:         PENDING_POOL    ? [PENDING_POOL]    : [],
+    student_life_images: PENDING_STUDENT ? [PENDING_STUDENT] : [],
+  };
+  try {
+    const res  = await fetch('/api/ua/approve', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    const data = await res.json();
+    if (!res.ok || data.error) throw new Error(data.error || 'Unknown error');
+    showToast(`Images saved for ${name}`);
+    const idx = ALL_SCHOOLS.findIndex(s => s.name === name);
+    if (idx >= 0) {
+      ALL_SCHOOLS[idx].is_curated   = true;
+      ALL_SCHOOLS[idx].stored_hero  = PENDING_HERO    || ALL_SCHOOLS[idx].stored_hero;
+      ALL_SCHOOLS[idx].stored_swim  = PENDING_POOL    || ALL_SCHOOLS[idx].stored_swim;
+      ALL_SCHOOLS[idx].stored_student = PENDING_STUDENT || ALL_SCHOOLS[idx].stored_student;
+    }
+    PENDING_HERO    = null;
+    PENDING_POOL    = null;
+    PENDING_STUDENT = null;
+    renderSidebarStats();
+    await selectSchool(name);
+  } catch(e) {
+    showToast('Save failed: ' + e.message);
+    btn.disabled = false;
+    btn.textContent = 'Save Selections';
+  }
+}
+
+// ── Utilities ─────────────────────────────────────────────────────────
+function catLabel(c) {
+  return { all: 'All', campus: 'Campus', pool: 'Pool', student_life: 'Student Life' }[c] || c;
+}
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+let _toastTimer;
+function showToast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('visible');
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(() => el.classList.remove('visible'), 3000);
+}
+
+boot();
+</script>
+</body>
+</html>

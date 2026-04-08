@@ -133,6 +133,23 @@ def admin_required(f):
         return f(*args, **kwargs)
     return decorated
 
+_USER_ADMIN_EMAIL = 'johngannon@pacesupply.com'
+
+def user_admin_required(f):
+    """Gate: user must be logged in AND be the designated admin email."""
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        if 'user_id' not in session:
+            if request.path.startswith('/api/'):
+                return jsonify({'error': 'Not authenticated'}), 401
+            return redirect('/')
+        if session.get('email') != _USER_ADMIN_EMAIL:
+            if request.path.startswith('/api/'):
+                return jsonify({'error': 'Forbidden'}), 403
+            return 'Forbidden', 403
+        return f(*args, **kwargs)
+    return decorated
+
 # ---------------------------------------------------------------------------
 # AUTH ENDPOINTS
 # ---------------------------------------------------------------------------
@@ -5343,6 +5360,112 @@ def _rebuild_school_images_from_curated():
         updated += 1
     _save_school_images(imgs)
     return updated
+
+
+# ── User-admin panel (/admin) ──────────────────────────────────────────────
+
+@app.route('/admin')
+@user_admin_required
+def user_admin_page():
+    return send_from_directory('static', 'admin.html')
+
+
+@app.route('/api/ua/schools', methods=['GET'])
+@user_admin_required
+def ua_schools():
+    school_conf = {s['school']: s.get('conference', '') for s in EXPLORE_SCHOOLS}
+    candidates  = _load_candidates_manifest()
+    curated     = _load_curated_manifest()
+    imgs        = _load_school_images()
+    result = []
+    for name in sorted(school_conf.keys()):
+        cands    = candidates.get(name, [])
+        cur      = curated.get(name, {})
+        stored   = imgs.get(name, {})
+        result.append({
+            'name':            name,
+            'conference':      school_conf.get(name, ''),
+            'has_candidates':  bool(cands),
+            'candidate_count': len(cands),
+            'is_curated':      bool(cur.get('hero_images') or cur.get('selected_in_order')),
+            'stored_hero':     stored.get('hero'),
+            'stored_swim':     stored.get('swim'),
+            'stored_student':  stored.get('student_life'),
+        })
+    return jsonify(result)
+
+
+@app.route('/api/ua/candidates/<path:school>', methods=['GET'])
+@user_admin_required
+def ua_candidates(school):
+    candidates = _load_candidates_manifest()
+    curated    = _load_curated_manifest()
+    imgs       = _load_school_images()
+    cands = candidates.get(school, [])
+    cur   = curated.get(school, {})
+    stored = imgs.get(school, {})
+    # Apply blocklist
+    blocklist = _load_blocklist()
+    if blocklist:
+        cands = [c for c in cands if c.get('url', '') not in blocklist]
+    return jsonify({'candidates': cands, 'curated': cur, 'stored': stored})
+
+
+@app.route('/api/ua/fetch-candidates', methods=['POST'])
+@user_admin_required
+def ua_fetch_candidates():
+    body   = request.get_json(silent=True) or {}
+    school = (body.get('school') or '').strip()
+    if not school:
+        return jsonify({'error': 'missing school'}), 400
+    try:
+        from harvest_candidates import fetch_candidates, _rescore_and_trim_by_category
+        new_candidates = fetch_candidates(school)
+        blocklist = _load_blocklist()
+        if blocklist:
+            new_candidates = [c for c in new_candidates if c.get('url', '') not in blocklist]
+        manifest = _load_candidates_manifest()
+        existing = manifest.get(school, [])
+        existing_urls = {c['url'] for c in existing}
+        merged  = existing + [c for c in new_candidates if c['url'] not in existing_urls]
+        trimmed = _rescore_and_trim_by_category(merged, per_cat_limit=24)
+        manifest[school] = trimmed
+        with open(_CANDIDATES_PATH, 'w', encoding='utf-8') as f:
+            json.dump(manifest, f, indent=2, ensure_ascii=False)
+        return jsonify({'ok': True, 'count': len(new_candidates)})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/ua/approve', methods=['POST'])
+@user_admin_required
+def ua_approve():
+    body   = request.get_json(silent=True) or {}
+    school = (body.get('school') or '').strip()
+    if not school:
+        return jsonify({'error': 'missing school'}), 400
+    hero_images         = body.get('hero_images', [])
+    pool_images         = body.get('pool_images', [])
+    student_life_images = body.get('student_life_images', [])
+    curated = _load_curated_manifest()
+    curated[school] = {
+        'hero_images':                hero_images,
+        'pool_images':                pool_images,
+        'student_life_images':        student_life_images,
+        'approved_hero_image':        hero_images[0]         if hero_images         else None,
+        'approved_pool_image':        pool_images[0]         if pool_images         else None,
+        'approved_student_life_image': student_life_images[0] if student_life_images else None,
+        'approved_extra_images':      hero_images[1:] + pool_images[1:] + student_life_images[1:],
+        'saved_at': time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()),
+    }
+    _save_curated_manifest(curated)
+    _push_curated_to_school_images(
+        school,
+        hero_images[0]         if hero_images         else None,
+        pool_images[0]         if pool_images         else None,
+        student_life_images[0] if student_life_images else None,
+    )
+    return jsonify({'ok': True, 'school': school})
 
 
 @app.route('/admin/login', methods=['GET'])

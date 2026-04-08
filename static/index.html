@@ -761,6 +761,7 @@
     <div class="nav-tab"        id="tab-mylist"    onclick="showTab('mylist')">My List</div>
     <div class="nav-tab"        id="tab-reminders" onclick="showTab('reminders')">Reminders</div>
     <div class="nav-tab"        id="tab-profile"   onclick="showTab('profile')">Profile</div>
+    <a class="nav-tab" id="nav-admin-link" href="/admin" style="display:none;text-decoration:none;">Admin</a>
   </div>
 </nav>
 
@@ -1657,7 +1658,15 @@ async function boot() {
   await afterAuthBoot();
 }
 
+const ADMIN_EMAIL = 'johngannon@pacesupply.com';
+function _syncAdminNav() {
+  const el = document.getElementById('nav-admin-link');
+  if (!el) return;
+  el.style.display = (CURRENT_USER && CURRENT_USER.email === ADMIN_EMAIL) ? '' : 'none';
+}
+
 async function afterAuthBoot() {
+  _syncAdminNav();
   // 2. Load localStorage as baseline first, then server overlays (server wins per key)
   loadFromStorage();
   await loadFromServer();
