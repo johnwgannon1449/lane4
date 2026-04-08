@@ -5806,5 +5806,27 @@ def download_snapshot():
 # Sync curated picks → school_images.json once all helpers are defined
 _rebuild_school_images_from_curated()
 
+@app.route('/api/dbcheck')
+def api_dbcheck():
+    import os
+    from urllib.parse import urlparse
+    url = os.environ.get('DATABASE_URL', '')
+    p = urlparse(url)
+    info = {'host': p.hostname, 'db': p.path.lstrip('/')}
+    try:
+        with get_db() as conn:
+            with conn.cursor() as cur:
+                cur.execute("SELECT COUNT(*) FROM users")
+                info['user_count'] = cur.fetchone()[0]
+                cur.execute("SELECT COUNT(*) FROM admins")
+                info['admin_count'] = cur.fetchone()[0]
+                cur.execute("SELECT LEFT(password_hash,20) FROM users WHERE email='johngannon@pacesupply.com'")
+                row = cur.fetchone()
+                info['user_hash_prefix'] = row[0] if row else None
+    except Exception as e:
+        info['error'] = str(e)
+    return jsonify(info)
+
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
