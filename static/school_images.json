@@ -1,49 +1,4 @@
 {
-  "Air Force": {
-    "hero": "https://www.usafa.edu/app/uploads/54859840375_e7e4fc8630_o.jpg",
-    "student_life": "https://www.usafa.edu/app/uploads/54520130904_05fda2031f_o.jpg",
-    "swim": "https://www.usafa.edu/app/uploads/CCD_Banner_05.jpg",
-    "is_fallback": {
-      "hero": false,
-      "student_life": false,
-      "swim": false
-    },
-    "source_pages": {
-      "hero": "homepage",
-      "student_life": "student_life",
-      "swim": "athletics"
-    }
-  },
-  "American University": {
-    "hero": null,
-    "student_life": null,
-    "swim": null,
-    "is_fallback": {
-      "hero": true,
-      "student_life": true,
-      "swim": true
-    },
-    "source_pages": {
-      "hero": null,
-      "student_life": null,
-      "swim": null
-    }
-  },
-  "Amherst College": {
-    "hero": "https://www.amherst.edu/system/files/styles/fs_440_248/private/2025_0422_April-Break_EC-21-1840x1400_0.jpg",
-    "student_life": "https://www.amherst.edu/system/files/styles/fs_100_100/private/2020_0227_Intro%20to%20Economics_072_0.jpg",
-    "swim": "https://images.sidearmdev.com/convert",
-    "is_fallback": {
-      "hero": false,
-      "student_life": false,
-      "swim": false
-    },
-    "source_pages": {
-      "hero": "homepage",
-      "student_life": "admissions",
-      "swim": "athletics"
-    }
-  },
   "Boston College": {
     "hero": "https://upload.wikimedia.org/wikipedia/commons/b/bc/Simmons_University_Main_College_Building.jpg",
     "swim": "https://images.pexels.com/photos/7513420/pexels-photo-7513420.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
@@ -390,19 +345,19 @@
     }
   },
   "Southern Methodist University": {
+    "hero": "https://www.smu.edu/-/media/site/home/fy25/home-assets/campus-beauty.jpg",
     "swim": "https://assets.simpleviewinc.com/simpleview/image/fetch/c_fill,h_524,q_50,w_786/https://assets.simpleviewinc.com/simpleview/image/upload/crm/southernbleacher/smu-aquatic-1-87235fd35056a36_872361e9-5056-a36a-0bcb05ef75c99dde.jpg",
     "student_life": "https://www.smu.edu/-/media/Site/StudentAffairs/FSL/Home/FSL_Leaders.jpg?h=1472&iar=0&w=2616&hash=5911220D922392486EC780405B3ED0C0",
     "is_fallback": {
+      "hero": false,
       "swim": false,
-      "student_life": false,
-      "hero": false
+      "student_life": false
     },
     "source_pages": {
+      "hero": "curated",
       "swim": "curated",
-      "student_life": "curated",
-      "hero": "curated"
-    },
-    "hero": "https://www.smu.edu/-/media/site/home/fy25/home-assets/campus-beauty.jpg"
+      "student_life": "curated"
+    }
   },
   "Stanford University": {
     "hero": "https://media.istockphoto.com/id/1282845414/photo/usa-stanford-university-editorial.jpg?s=612x612&w=0&k=20&c=c42pY5HABj9I6jM8Z0GuYs0bdvgIBoZeqmk9Ayf8B20=",
@@ -431,6 +386,40 @@
     "source_pages": {
       "hero": "curated",
       "swim": "curated",
+      "student_life": "curated"
+    }
+  },
+  "VA Tech": {
+    "hero": "https://www.vt.edu/content/dam/vt_edu/admissions/images/tour/galleries/torg/torg1.jpg.transform/xl-medium/image.jpg",
+    "swim": "https://swimswam.com/wp-content/uploads/2020/06/Virginia-Tech-swim-dive-photo-from-Twitter-768x512.jpg",
+    "student_life": "https://virginiatech.sportswar.com/wp-content/uploads/sites/15/2023/10/JLF_231014_WF_VT_003.jpg",
+    "is_fallback": {
+      "hero": false,
+      "swim": false,
+      "student_life": false
+    },
+    "source_pages": {
+      "hero": "curated",
+      "swim": "curated",
+      "student_life": "curated"
+    }
+  },
+  "Pittsburgh, University of": {
+    "hero": "https://media.istockphoto.com/id/1473994844/photo/buildings-on-carnegie-mellon-university-and-the-university-of-pittsburgh.jpg?s=612x612&w=0&k=20&c=1rRtOW80gWrW7itgRmh7CgeW6272lTD20BPfcy__AQQ=",
+    "swim": "https://admissions.pitt.edu/wp-content/uploads/2023/07/rec14.jpg",
+    "student_life": "https://www.utimes.pitt.edu/sites/default/files/social-image/Studentarrival.jpg",
+    "is_fallback": {
+      "hero": false,
+      "swim": false,
+      "student_life": false
+    },
+    "source_pages": {
+      "hero": "curated",
+      "swim": "curated",
+      "student_life": "curated"
+    }
+  }
+}    "swim": "curated",
       "student_life": "curated"
     }
   },

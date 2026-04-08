@@ -2472,8 +2472,11 @@ def _float(v):
         return None
 
 load_data()
-_init_db()
-_bootstrap_initial_admin()
+try:
+    _init_db()
+    _bootstrap_initial_admin()
+except Exception as _db_init_err:
+    print(f'[startup] DB init warning: {_db_init_err} — admin auth may be unavailable')
 
 # ---------------------------------------------------------------------------
 # Scoring engine — all formulas from Swimmer_Calcs (workbook authoritative)
