@@ -3,6 +3,7 @@ import urllib.request, urllib.parse
 from flask import Flask, request, jsonify, send_from_directory, session, redirect
 from dotenv import load_dotenv
 from functools import wraps
+from werkzeug.middleware.proxy_fix import ProxyFix
 try:
     import psycopg2
     import psycopg2.extras
@@ -13,7 +14,10 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 load_dotenv()
 app = Flask(__name__, static_folder='static', static_url_path='')
+app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
 app.secret_key = os.environ.get('SESSION_SECRET', 'dev-secret-change-me')
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+app.config['SESSION_COOKIE_SECURE'] = os.environ.get('FLASK_ENV') != 'development'
 
 # ---------------------------------------------------------------------------
 # LANGUAGE PROMPT  (loaded once at startup; used as AI system prompt)
