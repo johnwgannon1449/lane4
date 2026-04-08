@@ -509,11 +509,12 @@ async function selectSchool(idx) {
     if (!res.ok) throw new Error(await res.text());
     const data = await res.json();
 
-    // Split candidates by category
+    // Split candidates by category, then sort each section by score
     (data.candidates || []).forEach(c => {
       const cat = c.category || 'campus';
       if (CANDIDATES[cat]) CANDIDATES[cat].push(c);
     });
+    SECTIONS.forEach(s => sortSection(s.key));
 
     // Restore previous selections if school was already curated
     const cur = data.curated || {};
@@ -617,6 +618,12 @@ function renderSection(sec) {
       }
     </div>
   </div>`;
+}
+
+// Sort a CANDIDATES[key] array in-place by score descending.
+// Call this after every push so the best images always float to position 1.
+function sortSection(key) {
+  (CANDIDATES[key] || []).sort((a, b) => (b.score || 0) - (a.score || 0));
 }
 
 function renderSectionBody(key, cands, sels, hint) {
@@ -899,6 +906,7 @@ async function autoFetchAllCategories(schoolName) {
         }
       });
       if (added > 0) {
+        sortSection(key);
         const body = document.getElementById(`body-${key}`);
         if (body) body.innerHTML = renderSectionBody(key, CANDIDATES[key], SELECTIONS[key], sec.hint);
       }
@@ -945,6 +953,7 @@ async function askMore(key) {
         added++;
       }
     });
+    sortSection(key);
 
     if (data.count > 0) school.has_candidates = true;
 
@@ -994,6 +1003,7 @@ async function fetchMoreAll() {
       const newCands = (data.candidates || []).filter(c => (c.category || 'campus') === sec.key);
       const existingUrls = new Set(CANDIDATES[sec.key].map(c => c.url));
       newCands.forEach(c => { if (!existingUrls.has(c.url)) CANDIDATES[sec.key].push(c); });
+      sortSection(sec.key);
 
       const body = document.getElementById(`body-${sec.key}`);
       if (body && !SKIPPED[sec.key]) {
