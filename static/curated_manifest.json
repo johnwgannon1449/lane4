@@ -453,5 +453,21 @@
       "https://www.coopercarry.com/wp-content/uploads/2018/07/Talley-Student-Union-NC-State-5.jpg"
     ],
     "saved_at": "2026-04-08T02:19:07Z"
+  },
+  "California, University of, Ber": {
+    "hero_images": [
+      "https://www.spokin.com/wp-content/uploads/2023/04/Untitled-design-2023-04-10T175953.110.png"
+    ],
+    "pool_images": [
+      "https://schnackel.com/wp-content/uploads/2021/01/Legends_Aquatic_Center_04_thumb.jpg"
+    ],
+    "student_life_images": [
+      "https://www.universityofcalifornia.edu/sites/default/files/uc-berkeley-us-news-1.jpg"
+    ],
+    "approved_hero_image": "https://www.spokin.com/wp-content/uploads/2023/04/Untitled-design-2023-04-10T175953.110.png",
+    "approved_pool_image": "https://schnackel.com/wp-content/uploads/2021/01/Legends_Aquatic_Center_04_thumb.jpg",
+    "approved_student_life_image": "https://www.universityofcalifornia.edu/sites/default/files/uc-berkeley-us-news-1.jpg",
+    "approved_extra_images": [],
+    "saved_at": "2026-04-08T02:31:44Z"
   }
 }

@@ -420,11 +420,33 @@ _STOP = {'university', 'college', 'of', 'the', 'at', 'and', 'a', 'an',
 
 
 def _key_words(name: str) -> list[str]:
-    return [w.lower() for w in name.split() if w.lower() not in _STOP and len(w) > 1]
+    # Strip punctuation from each token so 'carolina,' becomes 'carolina'
+    cleaned = [w.strip('.,;:\'"()[]') for w in name.split()]
+    return [w.lower() for w in cleaned if w.lower() not in _STOP and len(w) > 1]
+
+
+_INVERSION_RE = re.compile(
+    r'^(.+?),\s*University\s+of(?:,\s*(.+))?$', re.IGNORECASE)
+
+def _search_name(school: str) -> str:
+    """Return a natural, search-friendly form of the school name.
+
+    Converts storage-format inverted names to the form a human would type:
+      'North Carolina, University of'      → 'University of North Carolina'
+      'California, University of, Ber'     → 'University of California Ber'
+      'Notre Dame, University of'          → 'University of Notre Dame'
+    All other names are returned unchanged.
+    """
+    m = _INVERSION_RE.match(school)
+    if m:
+        base   = m.group(1).strip()
+        suffix = (m.group(2) or '').strip()
+        return f"University of {base} {suffix}".strip() if suffix else f"University of {base}"
+    return school
 
 
 def _title_matches(school: str, title: str) -> bool:
-    kw = _key_words(school)
+    kw = _key_words(_search_name(school))
     if not kw:
         return True
     tl = title.lower()
@@ -439,7 +461,7 @@ def _url_mentions_school(school: str, img: dict) -> bool:
     Campus/hero images are less sensitive since wrong-school campus shots are
     still usable; pool shots must be from the correct school.
     """
-    kw = _key_words(school)
+    kw = _key_words(_search_name(school))   # use natural name, no commas
     if not kw:
         return True
     combined = (img.get('url', '') + ' ' + img.get('page_url', '')).lower()
@@ -468,6 +490,9 @@ def _wiki_opensearch(query: str, limit: int = 5) -> list[str]:
 
 
 def _wiki_find_page(school: str) -> str | None:
+    # Always search with the natural-language name — inverted names like
+    # "North Carolina, University of" confuse Wikipedia's search API.
+    school = _search_name(school)
     low = school.lower()
     edu_words = ('university', 'college', 'academy', 'institute', 'school')
     has_edu = any(w in low for w in edu_words)
@@ -998,6 +1023,11 @@ def fetch_candidates(school: str, domains_cache: dict | None = None) -> list[dic
     if domains_cache is None:
         domains_cache = _load_domains()
 
+    # sq = search-query name — natural language form used in ALL search queries.
+    # 'North Carolina, University of' → 'University of North Carolina'
+    # `school` (original) is kept for manifest keys / dedup only.
+    sq = _search_name(school)
+
     all_candidates: list[dict] = []
     seen_urls: set[str] = set()
 
@@ -1050,12 +1080,12 @@ def fetch_candidates(school: str, domains_cache: dict | None = None) -> list[dic
     # Try Google CSE first (best quality); fall back to DuckDuckGo when CSE
     # quota is exhausted or the cx parameter is misconfigured.
     _CATEGORY_QUERIES = [
-        (f'{school} campus',                        'campus'),
-        (f'{school} university buildings campus',   'campus'),
-        (f'{school} natatorium swimming pool',      'swim'),
-        (f'{school} aquatic center swimming',       'swim'),
-        (f'{school} students campus life',          'student_life'),
-        (f'{school} student union college life',    'student_life'),
+        (f'{sq} campus',                        'campus'),
+        (f'{sq} university buildings campus',   'campus'),
+        (f'{sq} natatorium swimming pool',      'swim'),
+        (f'{sq} aquatic center swimming',       'swim'),
+        (f'{sq} students campus life',          'student_life'),
+        (f'{sq} student union college life',    'student_life'),
     ]
     cse_before = len(all_candidates)
     if GOOGLE_CSE_KEY:
@@ -1068,7 +1098,7 @@ def fetch_candidates(school: str, domains_cache: dict | None = None) -> list[dic
         print(f'    [ddg] fetching campus / pool / student images')
         for category, pt in [('campus', 'campus'), ('pool', 'swim'), ('student_life', 'student_life')]:
             for q_tmpl in _DDG_QUERIES.get(category, []):
-                q = q_tmpl.format(school=school)
+                q = q_tmpl.format(school=sq)
                 for img in _ddg_image_search(q, page_type=pt, n=10):
                     # For pool images: penalise (but keep) images where URL/page
                     # doesn't mention this school — they likely show the wrong pool.
@@ -1155,12 +1185,15 @@ def fetch_candidates_for_category(school: str, category: str) -> list[dict]:
     new_results: list[dict] = []
     seen: set[str] = set(existing_urls)
 
+    # sq = search-query form of school name (converts inverted names)
+    sq = _search_name(school)
+
     def _add_if_new(item: dict):
         if item.get('url') and item['url'] not in seen:
             seen.add(item['url'])
             new_results.append(item)
 
-    queries = [q.format(school=school)
+    queries = [q.format(school=sq)
                for q in _MORE_GOOGLE_QUERIES.get(category, _MORE_GOOGLE_QUERIES['campus'])]
 
     # ── Site-restricted DDG (highest quality — images from school's own site) ─
@@ -1199,7 +1232,7 @@ def fetch_candidates_for_category(school: str, category: str) -> list[dict]:
 
     # ── General DDG fallback (quoted school name, last resort) ───────────────
     if len(new_results) == cse_before:
-        ddg_queries = [q.format(school=school)
+        ddg_queries = [q.format(school=sq)
                        for q in _DDG_QUERIES.get(category, _DDG_QUERIES['campus'])]
         for q in ddg_queries:
             for img in _ddg_image_search(q, page_type=page_type, n=10):

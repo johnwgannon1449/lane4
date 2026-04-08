@@ -346,5 +346,20 @@
       "swim": "curated",
       "student_life": "curated"
     }
+  },
+  "California, University of, Ber": {
+    "hero": "https://www.spokin.com/wp-content/uploads/2023/04/Untitled-design-2023-04-10T175953.110.png",
+    "swim": "https://schnackel.com/wp-content/uploads/2021/01/Legends_Aquatic_Center_04_thumb.jpg",
+    "student_life": "https://www.universityofcalifornia.edu/sites/default/files/uc-berkeley-us-news-1.jpg",
+    "is_fallback": {
+      "hero": false,
+      "swim": false,
+      "student_life": false
+    },
+    "source_pages": {
+      "hero": "curated",
+      "swim": "curated",
+      "student_life": "curated"
+    }
   }
 }
