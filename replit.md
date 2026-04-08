@@ -349,6 +349,9 @@ The `*_flags` columns carry raw annotation suffixes stripped from time tokens (e
 CCIW Men 200 Fly: true data ceiling — only 11 swimmers entered; target anchor depth (16) is not achievable from source data.
 MPSF and PCSC improvements: `_detect_column_splits` fallback pass fixed distance-event pages where split-row times partially fill the column gap, reducing the observable gap from the required 3 bins to 2 consecutive empty bins.
 
+## User Preferences
+- **Always give full URLs** when referencing pages, endpoints, or routes (e.g. `https://lane4-recruit.replit.app/admin/curate`, not just `/admin/curate`)
+
 ### Active Fixes Applied
 - **CID ligature normalization**: `(cid:976)` → `"f"` in HY-TEK MM8 fonts; resolves "Butter(cid:976)ly" → "Butterfly" for event header detection
 - **LAST-time extraction**: `parse_place_and_time` returns the last valid time (≥10 s) per row, correctly picking the finals time in "Prelim Time | Finals Time" dual-column rows
