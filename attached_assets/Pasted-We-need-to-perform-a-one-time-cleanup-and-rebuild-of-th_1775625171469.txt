@@ -1,0 +1,157 @@
+We need to perform a one-time cleanup and rebuild of the Lane4 image candidate storage.
+
+Context:
+
+The current system stores candidate images in:
+
+static/candidates_manifest.json
+
+Over time this file accumulated weak or duplicate images because the backend merged new candidates into existing ones without pruning.
+
+We are about to deploy improved harvesting logic, so we need to rebuild the candidate manifest cleanly.
+
+IMPORTANT:
+This is a one-time cleanup step.
+Do not break the curator system.
+
+==================================================
+STEP 1 — BACKUP
+===============
+
+Before making any changes:
+
+1. Copy the current file:
+   static/candidates_manifest.json
+
+to:
+
+static/candidates_manifest_backup.json
+
+This ensures we can recover if anything goes wrong.
+
+==================================================
+STEP 2 — CLEAR STORED CANDIDATES
+================================
+
+Reset the candidate manifest so that all schools start fresh.
+
+Create a new clean manifest file:
+
+static/candidates_manifest.json
+
+Structure should remain the same, but candidate arrays should be empty.
+
+Example structure:
+
+{
+"School Name": []
+}
+
+for each school.
+
+School names should still come from:
+
+school_names.json
+
+This preserves the structure but removes all stale candidates.
+
+==================================================
+STEP 3 — REBUILD USING THE HARVESTER
+====================================
+
+Use harvest_candidates.py to regenerate candidates.
+
+For each school:
+
+1. Run the harvester with reset mode
+2. Fetch candidates using the improved harvesting logic
+
+Goal:
+
+Each school should end up with:
+
+• up to 16 campus candidates
+• up to 16 pool candidates
+• up to 16 student_life candidates
+
+Do NOT overfill categories.
+Do NOT accumulate unlimited images.
+
+Store the rebuilt candidates back into:
+
+static/candidates_manifest.json
+
+==================================================
+STEP 4 — NORMALIZE AND CLEAN RESULTS
+====================================
+
+During rebuild:
+
+Apply these cleanup rules:
+
+1. Deduplicate images by URL.
+2. Remove any images that appear across multiple schools (cross-school duplicates).
+3. Remove obvious junk images such as:
+
+   * logos
+   * maps
+   * icons
+   * placeholders
+   * extremely small images
+4. Trim candidate pools so they remain bounded (e.g., max 24 per category).
+
+The goal is a clean candidate manifest, not an ever-growing archive.
+
+==================================================
+STEP 5 — VERIFY MANIFEST HEALTH
+===============================
+
+After rebuild:
+
+Print diagnostics:
+
+• number of schools processed
+• number of candidates per category
+• any schools missing pool or student-life images
+• any schools with unusually low candidate counts
+
+This ensures the curator has a healthy starting dataset.
+
+==================================================
+STEP 6 — DO NOT MODIFY CURATED IMAGES
+=====================================
+
+The curated selections stored in the curator system must NOT be deleted.
+
+Only rebuild candidate pools.
+
+Do not modify:
+
+• saved hero images
+• saved pool images
+• saved student-life images
+
+These are already curated.
+
+==================================================
+STEP 7 — OUTPUT SUMMARY
+=======================
+
+After cleanup is complete, report:
+
+1. total schools rebuilt
+2. average candidates per category
+3. any schools with weak candidate pools
+4. confirmation that backup file was created
+5. confirmation that stale candidates were removed
+
+==================================================
+GOAL
+====
+
+After this cleanup:
+
+• stale junk candidates are removed
+• the manifest contains only fresh candidates
+• the curator loads fast
+• the improved harvesting logic starts from a clean dataset
