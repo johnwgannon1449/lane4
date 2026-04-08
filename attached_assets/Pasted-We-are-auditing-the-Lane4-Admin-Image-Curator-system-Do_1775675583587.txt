@@ -1,0 +1,138 @@
+We are auditing the **Lane4 Admin Image Curator system**.
+
+Do NOT modify code yet.
+
+This audit is specifically about **how the Image Curator finds candidate images**.
+
+The curator is the admin tool where I review images for each school and approve them for:
+
+* hero (campus)
+* pool
+* student life
+
+These candidates appear in the admin UI and can be fetched with the endpoint:
+
+`/api/ua/fetch-candidates`
+
+Your job is to trace **exactly how those candidate images are discovered.**
+
+Answer the following clearly.
+
+---
+
+### 1. Find the curator image pipeline
+
+Identify the exact file(s) responsible for discovering candidate images for the admin curator.
+
+Show:
+
+* file names
+* functions responsible for scraping/searching images
+
+---
+
+### 2. Trace the request path
+
+Trace the full code path when the admin panel calls:
+
+`/api/ua/fetch-candidates`
+
+Show:
+
+```
+route
+→ function
+→ image discovery logic
+→ candidate filtering
+→ response
+```
+
+Include file names and functions.
+
+---
+
+### 3. Identify image sources
+
+List **every source currently used** to find images for schools.
+
+Examples could include:
+
+* official school websites
+* athletics websites
+* Wikipedia
+* Google image search
+* Pexels / Unsplash
+* other APIs
+* local cached images
+
+Explain which sources are **primary** vs **fallback**.
+
+---
+
+### 4. Explain filtering rules
+
+Describe the current logic used to reject bad candidates such as:
+
+* logos
+* maps
+* seals
+* icons
+* very small images
+* black and white photos
+* duplicates
+
+Show where this filtering logic lives.
+
+---
+
+### 5. Explain scoring / ranking
+
+How are candidate images ranked before being returned to the admin UI?
+
+Explain what factors affect ranking such as:
+
+* page type
+* URL tokens
+* alt text
+* image dimensions
+* category match
+
+---
+
+### 6. Show where candidates are stored
+
+Confirm where discovered candidates are stored before approval.
+
+Examples may include:
+
+* `candidates_manifest.json`
+* another manifest file
+* memory cache
+
+Explain how new candidates are merged with existing ones.
+
+---
+
+### 7. Confirm category handling
+
+Explain how the system distinguishes between:
+
+* campus images
+* pool images
+* student life images
+
+Is category handled in the scraper or only in the admin UI?
+
+---
+
+### 8. Show the exact discovery function
+
+Provide the **main function responsible for finding images for a school**, including the file name.
+
+This is the function we will improve next.
+
+---
+
+Do not modify anything yet.
+
+This task is **only a technical audit of the Image Curator image discovery pipeline.**
