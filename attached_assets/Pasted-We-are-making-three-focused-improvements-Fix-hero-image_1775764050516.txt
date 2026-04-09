@@ -1,0 +1,140 @@
+We are making three focused improvements:
+Fix hero images on the initial Top 6 schools page
+Clean up profile navigation and profile UI
+Transform the profile page into a premium recruiting profile presentation
+IMPORTANT
+Do NOT modify:
+swim evaluation logic
+recruiting likelihood logic
+school ranking logic
+database schema
+This patch affects UI rendering, layout, and profile presentation only.
+1. FIX HERO IMAGES ON INITIAL 6 SCHOOLS
+Currently hero images do not appear on the first 6 schools page, even when they exist.
+The first-6 screen must use the same image-loading logic as Explore.
+Implementation goal:
+const firstSix = rankedSchools.slice(0, 6)
+firstSix.forEach(school => renderSchoolCard(school))
+Image priority should match Explore:
+school.hero_image || school.images.campus?.[0]
+Requirements:
+hero images must render on the initial 6 schools when available
+if no hero image exists, render cleanly without broken spacing
+use the same school card / image logic already working elsewhere in the app
+do not maintain separate image logic for the first-6 page
+Hero images must render on:
+first 6 schools
+Explore cards
+deep dive headers
+2. PROFILE NAVIGATION + LOGOUT
+Currently logout is hard to find.
+Update the Profile nav item to open a small dropdown.
+Dropdown items:
+My Profile
+Log Out
+Behavior:
+My Profile → /profile
+Log Out → logs user out and returns to the hero screen
+Important:
+keep this simple and obvious
+do not add extra friction
+profile should still feel effectively one-click accessible
+logout should be clearly visible once Profile is tapped
+3. REMOVE PROFILE DEBUG ELEMENT
+Remove the label:
+PROFILE TEST MARKER
+This is a debug artifact and should not appear in production.
+4. REMOVE ACADEMIC FOCUS QUESTION
+Remove the entire block:
+What's your academic focus so far?
+We already capture academic direction through major selection above, so this question is redundant.
+Remove:
+the UI section
+associated state / rendering for that question if still present
+5. TRANSFORM PROFILE PAGE INTO A PREMIUM RECRUITING PROFILE
+The profile page should feel like a premium recruiting identity page, not a settings form.
+The athlete should see themselves presented as one cohesive recruit.
+This page should feel like something a swimmer would proudly show:
+a parent
+a grandparent
+a club coach
+a college coach
+The goal is not “data entry.”
+The goal is: this kid feels like the man.
+Even if the swimmer is not headed to Stanford, the page should make him feel like a serious recruit with real value and real options.
+6. PROFILE PAGE STRUCTURE
+HEADER
+At the top of the page, present the athlete cleanly:
+James Gannon
+Class of 2026 • Freestyle / IM
+Lane4 Recruiting Profile
+Optional credibility line:
+Built from verified meet results
+Keep it polished and minimal.
+7. RECRUITING SUMMARY
+Under the header, generate a short, confident identity summary based on the swimmer’s profile.
+Examples:
+High-academic swimmer with real college options and strong value for selective programs.
+Ultra high-academic recruit with strong event range and legitimate scoring potential at selective college programs.
+Use academic data to trigger stronger language where deserved.
+Examples of logic:
+GPA ≥ 3.8 or SAT ≥ 1450 → High Academic Recruit
+Top academic tier → Ultra High Academic Recruit
+This language should make the swimmer feel recognized and legit.
+Do not make it cheesy.
+Make it feel confident, polished, and earned.
+8. ATHLETE SNAPSHOT (COHESIVE, NOT FRAGMENTED)
+Do NOT present the page as a stack of unrelated widgets or individual event badges.
+Instead create one clean unified snapshot block that pulls the athlete together in one shot.
+Example structure:
+Top Events
+200 Free • 400 IM • 100 Free
+
+Academic Profile
+4.34 GPA • 1460 SAT • 9 APs
+
+Lane4 Evaluation
+Strong fit for selective academic programs
+This should feel cohesive and premium.
+The athlete is one athlete, not a pile of little cards.
+9. FULL BEST TIMES
+Below the snapshot, show full best times in a clean list.
+Example:
+Best Times (SCY)
+
+200 Free   1:44.65
+400 IM     4:09.38
+100 Free   49.96
+100 Breast 59.49
+1650 Free  16:06.59
+Keep this elegant and readable.
+Do not turn each event into its own flashy badge.
+10. ACADEMIC INTERESTS
+Rename:
+Potential majors
+to:
+Academic Interests
+Show selected majors only.
+This should feel college-ready and polished.
+11. DESIGN PRINCIPLE
+The profile page should feel like:
+a premium recruiting profile / athlete landing page
+not:
+a form filled with fields
+It should feel meaningful, cohesive, and a little braggy in the right way.
+The swimmer should look at it and think:
+“Yeah… this is me as a real recruit.”
+SUCCESS CRITERIA
+After this patch:
+Initial 6 schools
+hero images display when available
+Profile navigation
+tapping Profile reveals an obvious dropdown with:
+My Profile
+Log Out
+Profile page
+PROFILE TEST MARKER is gone
+Academic Focus question is gone
+page feels like a premium recruiting profile
+athlete is presented as one cohesive recruit, not scattered widgets
+Implement this as a clean UI and layout refinement only.

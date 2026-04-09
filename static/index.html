@@ -54,6 +54,21 @@
     }
     .nav-tab:hover { color: var(--navy); }
     .nav-tab.active { color: var(--blue); border-bottom-color: var(--blue); }
+    /* ── Profile dropdown ─────────────────────────────────────── */
+    .nav-profile-wrap { position: relative; }
+    .nav-profile-dropdown {
+      display: none; position: absolute; top: calc(100% + 2px); right: 0;
+      background: var(--white); border: 1.5px solid var(--border);
+      border-radius: 10px; min-width: 140px; box-shadow: 0 8px 24px rgba(0,0,0,0.10);
+      z-index: 200; overflow: hidden;
+    }
+    .nav-profile-dropdown.open { display: block; }
+    .nav-profile-item {
+      padding: 0.65rem 1.1rem; font-size: 0.88rem; font-weight: 600; color: var(--navy);
+      cursor: pointer; white-space: nowrap;
+    }
+    .nav-profile-item:hover { background: var(--bg); }
+    .nav-profile-item.danger { color: #EF4444; }
 
     /* ── LAYOUT ──────────────────────────────────────────────── */
     .tab-panel { display: none; }
@@ -1088,7 +1103,13 @@
     <div class="nav-tab active" id="tab-explore"   onclick="showTab('explore')">Explore</div>
     <div class="nav-tab"        id="tab-mylist"    onclick="showTab('mylist')">My List</div>
     <div class="nav-tab"        id="tab-reminders" onclick="showTab('reminders')">Reminders</div>
-    <div class="nav-tab"        id="tab-profile"   onclick="showTab('profile')">Profile</div>
+    <div class="nav-tab nav-profile-wrap" id="tab-profile" onclick="toggleProfileMenu(event)">
+      Profile <span style="font-size:0.6em;margin-left:2px;">▾</span>
+      <div class="nav-profile-dropdown" id="profile-nav-dropdown">
+        <div class="nav-profile-item" onclick="event.stopPropagation();closeProfileMenu();showTab('profile')">My Profile</div>
+        <div class="nav-profile-item danger" onclick="event.stopPropagation();closeProfileMenu();authLogout()">Log Out</div>
+      </div>
+    </div>
     <a class="nav-tab" id="nav-admin-link" href="/admin" style="display:none;text-decoration:none;">Admin</a>
   </div>
 </nav>
@@ -1163,10 +1184,36 @@
 ════════════════════════════════════════════════════════════════ -->
 <div class="tab-panel" id="panel-profile">
   <div class="wrap">
-    <div style="background:#ff0;color:#000;font-weight:700;padding:6px 10px;margin-bottom:8px;border-radius:6px;font-size:0.85rem;">PROFILE TEST MARKER</div>
-    <div class="page-title" id="prof-name">Your Profile</div>
-    <div class="page-sub">Academic stats and swim times Lane4 uses to score every school.</div>
 
+    <!-- ── PREMIUM RECRUITING HEADER ──────────────────────────── -->
+    <div id="prof-header-block" style="padding:1.5rem 0 1.1rem;border-bottom:1px solid var(--border);margin-bottom:1.25rem;"></div>
+
+    <!-- ── RECRUITING SUMMARY ─────────────────────────────────── -->
+    <div id="prof-summary-block" style="margin-bottom:1.25rem;"></div>
+
+    <!-- ── ATHLETE SNAPSHOT ───────────────────────────────────── -->
+    <div id="prof-snapshot-block" style="margin-bottom:1.5rem;"></div>
+
+    <!-- ── BEST TIMES (SCY) ───────────────────────────────────── -->
+    <div id="prof-times-outer" style="margin-bottom:1.5rem;">
+      <div class="section-label" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.5rem;">
+        Best Times <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:0.75rem;color:var(--muted);">(SCY)</span>
+        <button class="btn-edit-link" onclick="toggleEditTimes()">✏ Edit</button>
+      </div>
+      <div class="card" style="padding:0.85rem 1.1rem;">
+        <div class="times-list" id="prof-times"></div>
+        <div id="times-edit-panel" style="display:none;"></div>
+      </div>
+    </div>
+
+    <!-- ── ACADEMIC INTERESTS ─────────────────────────────────── -->
+    <div class="section-label" style="margin-top:0.25rem;">Academic Interests</div>
+    <div class="card" style="margin-bottom:1rem;padding:0.9rem 1rem;">
+      <div style="font-size:0.78rem;color:var(--muted);margin-bottom:0.6rem;">Select up to 2 — shapes the academic section of every deep dive</div>
+      <div id="major-picker-profile"></div>
+    </div>
+
+    <!-- ── ACADEMIC STATS (EDIT) ──────────────────────────────── -->
     <div class="section-label" style="display:flex;align-items:center;justify-content:space-between;">
       Academic Stats
       <button class="btn-edit-link" id="stats-edit-btn" onclick="toggleEditStats()">✏ Edit</button>
@@ -1174,23 +1221,7 @@
     <div class="stat-grid" id="prof-stats"></div>
     <div id="stats-edit-panel" style="display:none;"></div>
 
-    <div class="section-label" style="margin-top:1rem;">Potential Majors</div>
-    <div class="card" style="margin-bottom:1rem;padding:0.9rem 1rem;">
-      <div style="font-size:0.78rem;color:var(--muted);margin-bottom:0.6rem;">Select up to 2 — shapes the academic section of every deep dive</div>
-      <div id="major-picker-profile"></div>
-    </div>
-
-    <div class="section-label" style="margin-top:0.5rem;display:flex;align-items:center;justify-content:space-between;">
-      Current Best Times (SCY)
-      <button class="btn-edit-link" onclick="toggleEditTimes()">✏ Edit times</button>
-    </div>
-    <div class="card" style="margin-bottom:1.5rem;">
-      <div class="times-list" id="prof-times"></div>
-      <div id="times-edit-panel" style="display:none;"></div>
-    </div>
-
-
-    <!-- ── SwimCloud Integration ──────────────────────────────── -->
+    <!-- ── SWIMCLOUD ───────────────────────────────────────────── -->
     <div class="section-label" style="margin-top:1rem;">SwimCloud Times</div>
     <div class="card" id="sc-card" style="margin-bottom:1.5rem;padding:1rem 1.1rem;">
       <div id="sc-status-inner">
@@ -1199,6 +1230,7 @@
       </div>
     </div>
 
+    <!-- ── PREFERENCES ────────────────────────────────────────── -->
     <div class="section-label" style="margin-top:2rem;">
       Preferences
       <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:0.78rem;color:var(--muted);">— personalizes your search results and deep dives</span>
@@ -1211,6 +1243,7 @@
       </div>
     </div>
 
+    <!-- ── ANYTHING ELSE ──────────────────────────────────────── -->
     <div class="section-label" style="margin-top:1.5rem;">Anything else?
       <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:0.78rem;color:var(--muted);">— optional, free-form</span>
     </div>
@@ -1225,16 +1258,18 @@
       </div>
     </div>
 
+    <!-- ── ACCOUNT / DANGER ZONE ─────────────────────────────── -->
     <div class="danger-zone">
       <div id="profile-account-row" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;padding-bottom:0.9rem;border-bottom:1px solid var(--border);">
         <div>
           <div style="font-size:0.75rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:0.15rem;">Signed in as</div>
-          <div id="profile-email" style="font-size:0.88rem;color:var(--text);font-weight:500;">—</div>
+          <div id="profile-email" style="font-size:0.88rem;color:var(--navy);font-weight:500;">—</div>
         </div>
         <button class="btn btn-sm" onclick="authLogout()" style="font-size:0.78rem;padding:6px 13px;background:none;border:1.5px solid var(--border);color:var(--muted);">Sign out</button>
       </div>
       <button class="btn btn-primary" onclick="confirmStartNewSwimmer()">Start New Swimmer</button>
     </div>
+
   </div>
 </div>
 
@@ -2283,16 +2318,19 @@ async function obBuildAndFinish() {
   try { await pushToServer(); } catch(_) {}
 
   const top6 = obSelectBalancedTop6(OB_STATE.scoreResults || []);
-  obShowResults(top6);
+  await obShowResults(top6);
 }
 
-function obShowResults(top6) {
+async function obShowResults(top6) {
   obShowScreen(9);
   const bodyEl = document.getElementById('ob-s9-body');
   if (!top6.length) {
     bodyEl.innerHTML = '<div class="ob-hero-sub">We didn\u2019t find strong program matches yet \u2014 you can still explore all schools and save favorites as you train.</div>';
     return;
   }
+  // Ensure school images are loaded before rendering cards — they are not
+  // loaded yet at this point in the onboarding flow (afterAuthBoot runs later).
+  if (!Object.keys(SCHOOL_IMAGES).length) await loadSchoolImages();
   // Use the same full explore card component for consistency with Explore page.
   // This ensures hero images, Admissions Reality gating, and all buttons work identically.
   bodyEl.innerHTML = top6.map((r, i) => _buildCardHtml(r, i)).join('');
@@ -2619,6 +2657,26 @@ function showTab(name) {
 
   if (name === 'mylist')    renderMyList();
   if (name === 'reminders') renderReminders();
+}
+
+// ── Profile nav dropdown ──────────────────────────────────────────
+function toggleProfileMenu(e) {
+  e.stopPropagation();
+  const dd = document.getElementById('profile-nav-dropdown');
+  if (!dd) return;
+  const isOpen = dd.classList.contains('open');
+  dd.classList.toggle('open', !isOpen);
+  if (!isOpen) {
+    // Close on next outside click
+    const close = (ev) => {
+      if (!dd.contains(ev.target)) { dd.classList.remove('open'); document.removeEventListener('click', close, true); }
+    };
+    document.addEventListener('click', close, true);
+  }
+}
+function closeProfileMenu() {
+  const dd = document.getElementById('profile-nav-dropdown');
+  if (dd) dd.classList.remove('open');
 }
 
 function safeAdmColor(adm) {
@@ -4759,12 +4817,93 @@ function renderLoggedInUser() {
   if (el && CURRENT_USER) el.textContent = CURRENT_USER.email;
 }
 
+// ── Profile header / summary helpers ─────────────────────────────
+function _profTopEventsLine() {
+  const entries = Object.entries(JAMES.times || {}).filter(([, v]) => v);
+  if (!entries.length) return null;
+  return entries.slice(0, 3).map(([ev]) => ev).join(' • ');
+}
+
+function _profAcademicLine() {
+  const parts = [];
+  if (JAMES.gpa) parts.push(JAMES.gpa + ' GPA');
+  if (JAMES.sat) parts.push(JAMES.sat + ' SAT');
+  const act = JAMES.actScore || ACT_SCORE;
+  if (act) parts.push(act + ' ACT');
+  if (JAMES.apCount) parts.push(JAMES.apCount + ' APs');
+  return parts.length ? parts.join(' • ') : null;
+}
+
+function _profLane4Eval() {
+  const gpa   = parseFloat(JAMES.gpa) || 0;
+  const sat   = parseInt(JAMES.sat) || 0;
+  const act   = parseInt(JAMES.actScore || ACT_SCORE) || 0;
+  const satEq = act ? actToSat(act) : sat;
+  if (satEq >= 1450 || gpa >= 3.8) return 'Strong fit for selective academic programs';
+  return 'Real options across D1, D2, and D3 programs';
+}
+
+function _profRecruitSummary() {
+  const gpa   = parseFloat(JAMES.gpa) || 0;
+  const sat   = parseInt(JAMES.sat) || 0;
+  const act   = parseInt(JAMES.actScore || ACT_SCORE) || 0;
+  const satEq = act ? actToSat(act) : sat;
+  const hasTimes = Object.values(JAMES.times || {}).some(t => t);
+  if (gpa >= 3.9 || satEq >= 1500)
+    return 'Ultra high-academic recruit with strong event range and legitimate scoring potential at selective college programs.';
+  if (gpa >= 3.8 || satEq >= 1450)
+    return 'High-academic swimmer with real college options and strong value for selective programs.';
+  if (hasTimes)
+    return 'Competitive swimmer with a clear recruiting path across multiple program levels.';
+  return 'A serious recruit building a college target list with Lane4.';
+}
+
 function renderProfile() {
   if (!JAMES.name) return;
-  document.getElementById('prof-name').textContent = JAMES.name + "'s Profile";
+
+  // ── Premium header ────────────────────────────────────────────
+  const gradYear  = JAMES.gradYear ? `Class of ${JAMES.gradYear}` : '';
+  const topEvents = _profTopEventsLine();
+  const classLine = [gradYear, topEvents].filter(Boolean).join(' • ');
+  const headerEl  = document.getElementById('prof-header-block');
+  if (headerEl) {
+    headerEl.innerHTML = `
+      <div style="font-family:'Fraunces',serif;font-size:1.7rem;font-weight:700;color:var(--navy);line-height:1.1;margin-bottom:0.3rem;">${esc(JAMES.name)}</div>
+      ${classLine ? `<div style="font-size:0.88rem;color:var(--muted);margin-bottom:0.55rem;">${esc(classLine)}</div>` : ''}
+      <div style="font-size:0.7rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--blue);margin-bottom:0.15rem;">Lane4 Recruiting Profile</div>
+      <div style="font-size:0.72rem;color:var(--muted);">Built from verified meet results</div>
+    `;
+  }
+
+  // ── Recruiting summary (show once academic data exists) ───────
+  const summaryEl = document.getElementById('prof-summary-block');
+  if (summaryEl) {
+    const hasAcademic = JAMES.gpa || JAMES.sat || JAMES.actScore || ACT_SCORE;
+    summaryEl.innerHTML = hasAcademic
+      ? `<div style="font-size:0.95rem;color:var(--navy);line-height:1.6;padding:0.9rem 1rem;background:var(--bg);border-radius:10px;border-left:3px solid var(--blue);">${esc(_profRecruitSummary())}</div>`
+      : '';
+  }
+
+  // ── Athlete snapshot ──────────────────────────────────────────
+  const snapshotEl = document.getElementById('prof-snapshot-block');
+  if (snapshotEl) {
+    const evLine  = _profTopEventsLine();
+    const acLine  = _profAcademicLine();
+    const evalLn  = _profLane4Eval();
+    const rows    = [];
+    if (evLine) rows.push(['Top Events', evLine]);
+    if (acLine) rows.push(['Academic Profile', acLine]);
+    rows.push(['Lane4 Evaluation', evalLn]);
+    snapshotEl.innerHTML = `<div class="card" style="padding:1rem 1.1rem;">${
+      rows.map(([label, val], idx) => `
+        <div style="${idx < rows.length - 1 ? 'margin-bottom:0.9rem;' : ''}">
+          <div style="font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--muted);margin-bottom:0.2rem;">${esc(label)}</div>
+          <div style="font-size:0.92rem;color:var(--navy);font-weight:600;">${esc(val)}</div>
+        </div>`).join('')
+    }</div>`;
+  }
+
   renderLoggedInUser();
-  const aboutLabel = document.getElementById('prof-about-label');
-  if (aboutLabel) aboutLabel.textContent = 'About ' + JAMES.name;
   renderStats();
   renderMajorPickerProfile();
   renderTimes();
@@ -4816,11 +4955,6 @@ const PREF_QUESTIONS = [
     key: 'preferred_region',
     label: 'Where are you open to?',
     options: ['Anywhere', 'East Coast', 'Midwest', 'South', 'West Coast'],
-  },
-  {
-    key: 'academic_focus',
-    label: "What's your academic focus so far?",
-    options: ['STEM', 'Pre-med / Health', 'Business / Economics', 'Humanities / Social Sciences', 'Undecided'],
   },
   {
     key: 'academic_environment',
