@@ -1,0 +1,80 @@
+We are improving the Top 6 “Best College Swim Fits” reveal cards so they behave like full Lane4 school cards instead of static display items.
+IMPORTANT
+Do NOT modify swim evaluation logic, ranking logic, recruiting likelihood logic, or database structure.
+This change is UI-only and should reuse existing components already used in Explore cards.
+GOAL
+The Top 6 reveal cards should have the same functionality as other Lane4 school cards:
+• Hero photo (when available)
+• Division label
+• Fit badge
+• School description
+• Location
+• Add to List button
+• Deep Dive button
+These cards must not be static.
+1. INCLUDE HERO IMAGE
+If a school has a stored hero campus image, display it at the top of the card.
+Layout:
+[Hero Image]
+Johns Hopkins University
+D3
+[A Final Potential]
+
+Description text
+
+Baltimore, MD
+Rules:
+• Use the same image logic already used elsewhere in the platform
+• If no hero image exists, render the card without an empty placeholder
+• Maintain consistent card spacing
+Images are especially important for smaller schools.
+2. ADD DIVISION LABEL
+Display the NCAA division:
+• D1
+• D2
+• D3
+Place it near the school name using the same styling used elsewhere in the platform.
+Example:
+Johns Hopkins University
+D3
+3. KEEP EXISTING FIT BADGE
+The recruiting fit badge should remain visible:
+Examples:
+• A Final Potential
+• Conference Meet Scorer
+• Podium Potential
+Do not modify badge logic.
+4. ENABLE “ADD TO LIST”
+Each card must include the Add to List button already used on Explore cards.
+Behavior:
+• adds the school to the swimmer’s saved list
+• immediate visual confirmation (same behavior as elsewhere)
+Placement:
+Bottom portion of the card.
+5. ENABLE “DEEP DIVE”
+Each card must include the Deep Dive button used elsewhere.
+Behavior:
+• opens the full Lane4 program deep dive page
+Do NOT make the entire card clickable.
+Use explicit buttons only.
+Layout example:
+[Add to List]   [Deep Dive]
+6. MAINTAIN SINGLE COLUMN LAYOUT
+The Top 6 reveal page should remain single column.
+Reason:
+This moment should feel curated and intentional rather than a dense grid.
+Each school should feel like a featured recommendation.
+7. REUSE EXISTING CARD COMPONENTS
+If possible, reuse the existing Explore school card component to avoid duplicated logic.
+The Top 6 reveal should simply render:
+render_school_card(school)
+with the same functionality.
+SUCCESS CRITERIA
+The Top 6 reveal cards should now:
+• display hero images when available
+• show division labels
+• allow users to Add to List immediately
+• allow users to launch Deep Dive pages
+• remain visually clean and focused
+The reveal moment should feel interactive and actionable, not static.
+Do not modify school ranking or swim fit logic.

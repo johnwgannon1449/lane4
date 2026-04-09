@@ -758,29 +758,32 @@
     /* Reveal cards (Screen 9 + post-onboarding explore) */
     .ob-reveal-card {
       border:1.5px solid var(--border); border-radius:14px; overflow:hidden;
-      margin-bottom:0.7rem; background:var(--white);
+      margin-bottom:0.85rem; background:var(--white);
       box-shadow:0 2px 12px rgba(15,23,42,.055);
     }
-    .ob-reveal-img { width:100%; height:110px; overflow:hidden; }
+    .ob-reveal-img { width:100%; height:140px; overflow:hidden; }
     .ob-reveal-img img { width:100%; height:100%; object-fit:cover; display:block; }
-    .ob-reveal-body { padding:0.75rem 1rem 0.85rem; display:flex; flex-direction:column; gap:3px; }
-    .ob-reveal-header { display:flex; align-items:center; gap:0.55rem; }
+    .ob-reveal-body { padding:0.85rem 1rem 1rem; display:flex; flex-direction:column; gap:3px; }
+    .ob-reveal-header { display:flex; align-items:flex-start; gap:0.55rem; }
     .ob-reveal-rank {
       width:24px; height:24px; border-radius:50%; background:var(--navy);
-      color:#fff; font-weight:800; font-size:0.72rem; flex-shrink:0;
+      color:#fff; font-weight:800; font-size:0.72rem; flex-shrink:0; margin-top:2px;
       display:flex; align-items:center; justify-content:center;
     }
     .ob-reveal-school { font-weight:800; font-size:0.98rem; color:var(--navy); }
+    .ob-reveal-div { font-size:0.7rem; font-weight:700; color:#64748B; margin-top:2px; }
     .ob-swim-badge {
       font-size:0.7rem; font-weight:700; padding:2px 9px; border-radius:99px;
-      display:inline-block; margin-top:2px; width:fit-content;
+      display:inline-block; margin-top:4px; width:fit-content;
     }
     .ob-reveal-tagline {
       font-size:0.8rem; color:var(--muted); line-height:1.45;
-      margin-top:3px;
+      margin-top:4px;
       display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
     }
-    .ob-reveal-loc { font-size:0.72rem; color:#94A3B8; margin-top:1px; }
+    .ob-reveal-loc { font-size:0.72rem; color:#94A3B8; margin-top:2px; }
+    .ob-reveal-actions { display:flex; gap:0.5rem; margin-top:0.85rem; }
+    .ob-reveal-actions .btn { flex:1; font-size:0.82rem; padding:0.55rem 0.5rem; text-align:center; }
     /* Post-onboarding "More Schools" section in explore tab */
     .ob-post-land { margin-bottom:1.5rem; }
     .ob-post-land-title {
@@ -1804,27 +1807,54 @@ function obSwimBadge(result) {
 
 // ── Rich reveal card HTML ───────────────────────────────────────
 function obRevealCardHtml(r, rank) {
-  const badge   = obSwimBadge(r);
-  const imgUrl  = (SCHOOL_IMAGES[r.school] || {}).hero || null;
-  const tagline = (r.meta && r.meta.vibe) ? r.meta.vibe : '';
-  const loc     = (r.meta && r.meta.location) ? r.meta.location : '';
+  const badge    = obSwimBadge(r);
+  const imgUrl   = _schoolPhoto(r.school, 'hero');
+  const tagline  = (r.meta && r.meta.vibe)     ? r.meta.vibe     : '';
+  const loc      = (r.meta && r.meta.location) ? r.meta.location : '';
+  const div      = r.division || '';
+  const inList   = MY_LIST.includes(r.school);
+  const schoolJs = JSON.stringify(r.school);
 
   const imgHtml = imgUrl
-    ? `<div class="ob-reveal-img"><img src="${esc(imgUrl)}" alt="${esc(r.school)}" loading="lazy" onerror="this.parentElement.style.display='none'" /></div>`
+    ? `<div class="ob-reveal-img"><img src="${esc(imgUrl)}" alt="${esc(r.school)}" loading="lazy" onerror="this.closest('.ob-reveal-img').remove()" /></div>`
     : '';
+
+  const addBtn = inList
+    ? `<button class="btn btn-added" disabled>✓ On My List</button>`
+    : `<button class="btn btn-primary" id="ob-reveal-add-${rank}" onclick="obRevealAddToList(this,${schoolJs})">+ Add to List</button>`;
 
   return `<div class="ob-reveal-card">
     ${imgHtml}
     <div class="ob-reveal-body">
       <div class="ob-reveal-header">
         <div class="ob-reveal-rank">${rank}</div>
-        <div class="ob-reveal-school">${esc(r.school)}</div>
+        <div>
+          <div class="ob-reveal-school">${esc(r.school)}</div>
+          ${div ? `<div class="ob-reveal-div">${esc(div)}</div>` : ''}
+        </div>
       </div>
       <span class="ob-swim-badge" style="background:${esc(badge.bg)};color:${esc(badge.color)};">${esc(badge.label)}</span>
       ${tagline ? `<div class="ob-reveal-tagline">${esc(tagline)}</div>` : ''}
-      ${loc ? `<div class="ob-reveal-loc">${esc(loc)}</div>` : ''}
+      ${loc     ? `<div class="ob-reveal-loc">${esc(loc)}</div>`        : ''}
+      <div class="ob-reveal-actions">
+        ${addBtn}
+        <button class="btn btn-ghost" onclick="openDeepDive(${schoolJs})">Deep Dive →</button>
+      </div>
     </div>
   </div>`;
+}
+
+// Add-to-list handler for onboarding reveal cards (no rcard-N id dependency)
+function obRevealAddToList(btn, school) {
+  if (!MY_LIST.includes(school)) {
+    MY_LIST.push(school);
+    CRM_DATA[school] = CRM_DATA[school] || { status: 'interested', notes: [], reminders: [] };
+  }
+  btn.className   = 'btn btn-added';
+  btn.disabled    = true;
+  btn.textContent = '\u2713 On My List';
+  updateBadges();
+  saveToStorage();
 }
 
 // ── Mini card for post-onboarding explore section ───────────────
