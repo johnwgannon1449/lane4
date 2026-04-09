@@ -1571,92 +1571,168 @@ const D3_EVENTS_ONBOARD = [
 let OB_STATE = {};
 let OB_MANUAL_IDX = 0;
 
-// ── Brand recognition scores for D3 schools (0–10) ─────────────
-// Two types of recognition combined:
-//   Academic prestige (widely known name / reputation)
-//   D3 Swim program strength (well-known in the sport, conf champions)
-const D3_BRAND = {
-  // Top academic brands
-  'Williams College':10, 'Amherst College':10, 'Swarthmore College':10,
-  'Pomona College':10, 'University of Chicago':10,
-  'MIT':10, 'Massachusetts Institute of Technology':10,
-  'Middlebury College':9, 'Wesleyan University':9, 'Tufts University':9,
-  'Bowdoin College':9, 'Emory University':9,
-  'Carnegie Mellon University':9, 'Johns Hopkins University':9,
-  'Washington University in St. Louis':9,
-  'Harvey Mudd College':9, 'Wellesley College':9,
-  'Haverford College':9,
-  'Colby College':8, 'Bates College':8, 'Trinity College':8,
-  'Brandeis University':8, 'Case Western Reserve University':8,
-  'Claremont McKenna College':8, 'Carleton College':8,
-  'Colorado College':8, 'Grinnell College':8,
-  'Smith College':8, 'Bryn Mawr College':8, 'Vassar College':8,
-  'Occidental College':8,
-  'Kenyon College':8, 'Oberlin College':8,
-  'Hamilton College':7, 'Connecticut College':7,
-  'Scripps College':7, 'Pitzer College':7,
-  'New York University':8, 'University of Rochester':7,
-  'Bard College':7, 'Skidmore College':7, 'Union College':7,
-  'Whitman College':7, 'Lewis & Clark College':7,
-  'Macalester College':7, 'St. Olaf College':7,
-  'Mount Holyoke College':7, 'Denison University':7,
-  'Lafayette College':7, 'Franklin & Marshall College':7,
-  'Washington and Lee University':7,
-  'Rensselaer Polytechnic Institute':7, 'Stevens Institute of Technology':7,
-  'Rose-Hulman Institute of Technology':7,
-  'Clarkson University':6, 'Muhlenberg College':6,
-  'Dickinson College':6, 'DePauw University':6,
-  'Gettysburg College':6, 'College of Wooster':6,
-  'Ohio Wesleyan University':6, 'Willamette University':6,
-  'Ithaca College':6, 'Gustavus Adolphus College':6,
-  // Well-known D3 swim programs (recognizable in the sport)
-  'Augustana College':7,              // CCIW powerhouse, frequent conference champion
-  'Wheaton College':6,                // CCIW, historically strong
-  'North Central College':5,          // CCIW
-  'York College of Pennsylvania':6,   // MAC, dominant program
-  'Messiah University':6,             // MAC, strong program
-  'Widener University':5,             // MAC
-  'Misericordia University':5,        // MAC
-  'Rowan University':6,               // NJAC, large program
-  'Salisbury University':6,           // CAC, strong program
-  'Christopher Newport University':5, // CAC
-  'SUNY Geneseo':5,                   // SUNYAC
-  'SUNY New Paltz':5,                 // SUNYAC
-  'Springfield College':6,            // NEWMAC, well-known athletic school
-  'Calvin University':5,              // MIAA
-  'Hope College':6,                   // MIAA, historically strong
-  'Alma College':5,                   // MIAA
-  'Pacific University':5,             // NWC
-  'Linfield University':5,            // NWC
+// ── Lane4 Brand Rank — lower number = more recognizable ─────────
+// Source: Lane4 Brand Recognition Score spec (top 150 D3-eligible schools).
+// D1 schools (Harvard, Stanford, etc.) are included because they help rank
+// the D3 schools below them; they will never appear in score-all results.
+// Duplicates in the spec use the first (lowest-numbered) occurrence.
+const LANE4_BRAND_RANK = {
+  'Massachusetts Institute of Technology': 3,
+  'Johns Hopkins University': 12,
+  'University of Chicago': 11,
+  'Carnegie Mellon University': 21,
+  'Emory University': 22,
+  'Washington University in St. Louis': 23,
+  'Tufts University': 24,
+  'Case Western Reserve University': 25,
+  'Pomona College': 26,
+  'Williams College': 27,
+  'Amherst College': 28,
+  'Swarthmore College': 29,
+  'Middlebury College': 30,
+  'Kenyon College': 31,
+  'Denison University': 32,
+  'Claremont McKenna College': 33,
+  'Harvey Mudd College': 34,
+  'Bowdoin College': 35,
+  'Colby College': 36,
+  'Hamilton College': 37,
+  'Haverford College': 38,
+  'Carleton College': 39,
+  'Grinnell College': 40,
+  'New York University': 41,
+  'University of Rochester': 42,
+  'Brandeis University': 43,
+  'Stevens Institute of Technology': 44,
+  'Rensselaer Polytechnic Institute': 45,
+  'Worcester Polytechnic Institute': 46,
+  'Rose-Hulman Institute of Technology': 47,
+  'Rochester Institute of Technology': 48,
+  'Lafayette College': 54,
+  'Lehigh University': 55,
+  'Bucknell University': 56,
+  'Colgate University': 57,
+  'Union College': 58,
+  'Davidson College': 59,
+  'Washington and Lee University': 61,
+  'Colorado College': 62,
+  'St. Olaf College': 63,
+  'Macalester College': 64,
+  'Occidental College': 65,
+  'Whitman College': 66,
+  'Rhodes College': 67,
+  'Centre College': 68,
+  'Franklin & Marshall College': 70,
+  'Dickinson College': 71,
+  'Gettysburg College': 72,
+  'DePauw University': 73,
+  'Furman University': 74,
+  'Kalamazoo College': 76,
+  'Allegheny College': 77,
+  'College of Wooster': 78,
+  'Lawrence University': 79,
+  'Gustavus Adolphus College': 80,
+  'Wheaton College': 81,
+  'Hope College': 82,
+  'Calvin University': 83,
+  'Baldwin Wallace University': 84,
+  'Trinity College': 85,
+  'Connecticut College': 86,
+  'Bates College': 87,
+  'Skidmore College': 88,
+  'Vassar College': 89,
+  'Oberlin College': 90,
+  'Whitworth University': 91,
+  'Pacific Lutheran University': 92,
+  'University of Puget Sound': 93,
+  'Lewis & Clark College': 94,
+  'Willamette University': 95,
+  'Linfield University': 96,
+  'Luther College': 98,
+  'Augsburg University': 99,
+  'St. John\'s University': 100,
+  'University of St. Thomas': 101,
+  'Bethel University': 102,
+  'University of Redlands': 103,
+  'Chapman University': 104,
+  'Whittier College': 105,
+  'Pitzer College': 107,
+  'Scripps College': 108,
+  'Bard College': 110,
+  'Knox College': 111,
+  'Beloit College': 112,
+  'Lake Forest College': 113,
+  'Ripon College': 114,
+  'Cornell College': 115,
+  'Coe College': 116,
+  'Central College': 117,
+  'Simpson College': 118,
+  'Wartburg College': 119,
+  'St. Norbert College': 121,
+  'Carroll University': 122,
+  'Wabash College': 127,
+  'Earlham College': 128,
+  'Transylvania University': 129,
+  'Hendrix College': 131,
+  'Berry College': 134,
+  'Oglethorpe University': 135,
+  'Millsaps College': 137,
+  'Austin College': 138,
+  'Southwestern University': 139,
+  'George Fox University': 148,
 };
 
-// ── Top-6 reveal selection ──────────────────────────────────────
-// Only schools with adjPts > 0 are legitimate fits — the scoring engine
-// cannot produce meaningful "stretch" scores for schools beyond the
-// swimmer's competitive range (they floor at 0 regardless of how far off).
-// Brand recognition acts as a tiebreaker within the competitive pool:
-// when two schools have similar swim scores, prefer the recognizable one.
+// ── Top-6 reveal selection (Lane4 Brand Rank spec) ──────────────
+// LANE4_BRAND_RANK: lower number = more recognizable (rank 1 = Harvard tier).
+// adjPts > 0 = swimmer has a legitimate swim fit at that school.
+// adjPts = 0 = scoring engine has no competitive data (used for stretch only).
+//
+// Algorithm:
+//  1. REALISTIC (up to 3): adjPts > 0, sorted by brand_rank asc then confFinish asc.
+//     → "Most recognizable school you can definitely swim at."
+//  2. STRETCH (up to 3):   adjPts = 0 AND in LANE4_BRAND_RANK, sorted by brand_rank asc.
+//     → "Exciting known programs just outside your current range."
+//  3. BACKFILL: if stretch pool is thin, fill remaining slots from realistic pool.
 function obSelectBalancedTop6(results) {
   const all = results || [];
 
-  // All schools where the swimmer genuinely competes (adjPts > 0)
-  const eligible = all.filter(r => r.adjPts > 0);
-  if (eligible.length <= 6) return eligible;
+  // brand_rank for a school: lower = better. Unranked = 9999 (sorted last).
+  const brandRank = s => LANE4_BRAND_RANK[s] || 9999;
+  const cfBonus   = r => r.confFinish2026 ? r.confFinish2026 : 999; // lower = better
 
-  // Blend swim score + brand recognition + conference finish so recognizable
-  // and stronger programs surface when swim scores are tied.
-  //   Brand bonus (0.5 weight): brand-7 school gains 3.5 pts
-  //   confFinish bonus: 1st-place program gains +1.4, 2nd gains +1.2, etc.
-  //   Both bonuses together cannot overcome a meaningful adjPts gap.
-  const blended = eligible
-    .map(r => {
-      const brand   = D3_BRAND[r.school] || 0;
-      const confBonus = r.confFinish2026 ? Math.max(0, 8 - r.confFinish2026) * 0.2 : 0;
-      return { ...r, _selScore: r.adjPts + brand * 0.5 + confBonus };
-    })
-    .sort((a, b) => b._selScore - a._selScore);
+  // ── Realistic pool ──────────────────────────────────────────
+  const realistic = all
+    .filter(r => r.adjPts > 0)
+    .sort((a, b) => {
+      const ra = brandRank(a.school), rb = brandRank(b.school);
+      if (ra !== rb) return ra - rb;          // prefer lower brand_rank
+      if (a.adjPts !== b.adjPts) return b.adjPts - a.adjPts; // then higher swim score
+      return cfBonus(a) - cfBonus(b);         // then better conf finish
+    });
 
-  return blended.slice(0, 6);
+  // ── Stretch pool ─────────────────────────────────────────────
+  // Schools with adjPts = 0 that are in the brand rank map.
+  // The scoring engine floors at 0 for schools beyond the swimmer's range —
+  // these are shown as aspirational stretch options, labeled accordingly.
+  const stretch = all
+    .filter(r => r.adjPts === 0 && LANE4_BRAND_RANK[r.school])
+    .sort((a, b) => brandRank(a.school) - brandRank(b.school));
+
+  // ── Build final 6 ────────────────────────────────────────────
+  const used = new Set();
+  const pick = [];
+  const take = (pool, max) => {
+    for (const r of pool) {
+      if (pick.length >= max) break;
+      if (!used.has(r.school)) { pick.push(r); used.add(r.school); }
+    }
+  };
+
+  take(realistic, 3); // 3 realistic fits (best-branded eligible schools)
+  take(stretch,   6); // up to 3 stretch (stops at 6 total)
+  take(realistic, 6); // back-fill from realistic if stretch pool is thin
+
+  return pick.slice(0, 6);
 }
 
 // ── Swim potential badge ────────────────────────────────────────

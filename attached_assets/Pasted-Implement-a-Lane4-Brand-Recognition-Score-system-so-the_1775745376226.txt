@@ -1,0 +1,237 @@
+Implement a **Lane4 Brand Recognition Score** system so the onboarding reveal and early Explore results prioritize recognizable, exciting schools when the swimmer is eligible.
+
+Do NOT change swim scoring, conference scoring logic, or recruiting likelihood math.
+This is a **presentation-layer ranking** used only when multiple schools are eligible for the swimmer.
+
+---
+
+PURPOSE
+
+---
+
+Lane4’s first reveal should answer:
+
+“What is the best-known school I could realistically swim at?”
+
+When the system identifies the pool of schools where a swimmer’s times fit, it should prefer schools with stronger brand recognition when selecting the **Top 6 reveal** and ordering early Explore results.
+
+This does not override swim eligibility.
+It only **prioritizes recognizable schools when swim scores are similar.**
+
+---
+
+IMPLEMENTATION
+
+---
+
+Add a new field to the school data model:
+
+brand_rank
+
+Lower number = stronger brand recognition.
+
+Example:
+
+Harvard → brand_rank: 1
+Whitman → brand_rank: 110+
+
+When selecting Top 6 schools:
+
+1. Filter schools where swimmer has a legitimate swim fit.
+2. Sort by brand_rank (ascending).
+3. Allow up to **3 stretch schools** if swim scores are within the acceptable stretch range.
+4. Fill the Top 6 with the highest brand schools from the eligible pool.
+
+Goal: If a swimmer can realistically swim at a recognizable program, it should appear in the first reveal.
+
+---
+
+LANE4 BRAND RANK (TOP 150)
+
+---
+
+1 Harvard University
+2 Stanford University
+3 Massachusetts Institute of Technology
+4 Princeton University
+5 Yale University
+6 University of California Berkeley
+7 University of Michigan
+8 University of Virginia
+9 Duke University
+10 Northwestern University
+
+11 University of Chicago
+12 Johns Hopkins University
+13 University of Notre Dame
+14 Cornell University
+15 University of Pennsylvania
+16 Columbia University
+17 Dartmouth College
+18 Brown University
+19 California Institute of Technology
+20 Rice University
+
+21 Carnegie Mellon University
+22 Emory University
+23 Washington University in St Louis
+24 Tufts University
+25 Case Western Reserve University
+26 Pomona College
+27 Williams College
+28 Amherst College
+29 Swarthmore College
+30 Middlebury College
+
+31 Kenyon College
+32 Denison University
+33 Claremont McKenna College
+34 Harvey Mudd College
+35 Bowdoin College
+36 Colby College
+37 Hamilton College
+38 Haverford College
+39 Carleton College
+40 Grinnell College
+
+41 New York University
+42 University of Rochester
+43 Brandeis University
+44 Stevens Institute of Technology
+45 Rensselaer Polytechnic Institute
+46 Worcester Polytechnic Institute
+47 Rose-Hulman Institute of Technology
+48 Rochester Institute of Technology
+49 Santa Clara University
+50 Boston University
+
+51 Boston College
+52 Villanova University
+53 Fordham University
+54 Lafayette College
+55 Lehigh University
+56 Bucknell University
+57 Colgate University
+58 Union College
+59 Davidson College
+60 Trinity University Texas
+
+61 Washington and Lee University
+62 Colorado College
+63 St Olaf College
+64 Macalester College
+65 Occidental College
+66 Whitman College
+67 Rhodes College
+68 Centre College
+69 Sewanee University of the South
+70 Franklin and Marshall College
+
+71 Dickinson College
+72 Gettysburg College
+73 DePauw University
+74 Furman University
+75 Elon University
+76 Kalamazoo College
+77 Allegheny College
+78 College of Wooster
+79 Lawrence University
+80 Gustavus Adolphus College
+
+81 Wheaton College Illinois
+82 Hope College
+83 Calvin University
+84 Baldwin Wallace University
+85 Trinity College Connecticut
+86 Connecticut College
+87 Bates College
+88 Skidmore College
+89 Vassar College
+90 Oberlin College
+
+91 Whitworth University
+92 Pacific Lutheran University
+93 Puget Sound University
+94 Lewis and Clark College
+95 Willamette University
+96 Linfield University
+97 Whitworth University
+98 Luther College
+99 Augsburg University
+100 St Johns University Minnesota
+
+101 St Thomas University Minnesota
+102 Bethel University Minnesota
+103 University of Redlands
+104 Chapman University
+105 Whittier College
+106 Occidental College
+107 Pitzer College
+108 Scripps College
+109 Sarah Lawrence College
+110 Bard College
+
+111 Knox College
+112 Beloit College
+113 Lake Forest College
+114 Ripon College
+115 Cornell College Iowa
+116 Coe College
+117 Central College Iowa
+118 Simpson College Iowa
+119 Wartburg College
+120 Luther College
+
+121 St Norbert College
+122 Carroll University Wisconsin
+123 Lawrence University
+124 Beloit College
+125 Knox College
+126 DePauw University
+127 Wabash College
+128 Earlham College
+129 Transylvania University
+130 Centre College
+
+131 Hendrix College
+132 Rhodes College
+133 Sewanee University of the South
+134 Berry College
+135 Oglethorpe University
+136 Birmingham Southern College
+137 Millsaps College
+138 Austin College
+139 Southwestern University
+140 Trinity University Texas
+
+141 Whitman College
+142 Whitworth University
+143 Willamette University
+144 Lewis and Clark College
+145 Puget Sound University
+146 Pacific Lutheran University
+147 Linfield University
+148 George Fox University
+149 Whitworth University
+150 Hardin Simmons University
+
+---
+
+GOAL
+
+---
+
+When a swimmer completes onboarding, the first schools they see should include recognizable names whenever possible.
+
+Example:
+
+Best College Swim Fits
+
+Johns Hopkins
+Carnegie Mellon
+Tufts
+Case Western
+Denison
+Whitman
+
+This creates an exciting reveal while still remaining honest to swim performance.
