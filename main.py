@@ -5643,6 +5643,31 @@ def ua_approve():
     return jsonify({'ok': True, 'school': school})
 
 
+@app.route('/api/ua/ban', methods=['POST'])
+@user_admin_required
+def ua_ban_images():
+    """Permanently ban image URL(s) from the curator and candidates manifest."""
+    body = request.get_json(silent=True) or {}
+    urls_to_ban = [u for u in body.get('urls', []) if u and isinstance(u, str)]
+    if not urls_to_ban:
+        return jsonify({'error': 'No URLs provided'}), 400
+    bl = _load_blocklist()
+    bl.update(urls_to_ban)
+    _save_blocklist(bl)
+    # Prune banned URLs from candidates manifest immediately
+    manifest = _load_candidates_manifest()
+    changed = False
+    for school in list(manifest.keys()):
+        before = len(manifest[school])
+        manifest[school] = [c for c in manifest[school] if c.get('url', '') not in bl]
+        if len(manifest[school]) != before:
+            changed = True
+    if changed:
+        with open(_CANDIDATES_PATH, 'w', encoding='utf-8') as f:
+            json.dump(manifest, f, indent=2, ensure_ascii=False)
+    return jsonify({'ok': True, 'banned': len(urls_to_ban), 'total_in_blocklist': len(bl)})
+
+
 @app.route('/api/ua/admins', methods=['GET'])
 @user_admin_required
 def ua_list_admins():

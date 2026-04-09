@@ -9,193 +9,246 @@
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
-  --blue:    #2563EB;
-  --blue-d:  #1D4ED8;
-  --blue-l:  #EFF6FF;
-  --green:   #16A34A;
-  --green-l: #F0FDF4;
-  --amber:   #D97706;
-  --amber-l: #FFFBEB;
-  --red:     #DC2626;
-  --red-l:   #FEF2F2;
-  --text:    #0F172A;
-  --muted:   #64748B;
-  --border:  #E2E8F0;
-  --bg:      #F8FAFC;
-  --card:    #FFFFFF;
-  --sidebar: 280px;
-  --header:  52px;
-  --radius:  10px;
+  --blue:    #2563EB; --blue-d: #1D4ED8; --blue-l: #EFF6FF;
+  --green:   #16A34A; --green-l: #F0FDF4;
+  --amber:   #D97706; --amber-l: #FFFBEB;
+  --red:     #DC2626; --red-l: #FEF2F2;
+  --purple:  #7C3AED; --purple-l: #F5F3FF;
+  --text:    #0F172A; --muted: #64748B; --border: #E2E8F0;
+  --bg:      #F8FAFC; --card: #FFFFFF;
+  --sidebar: 270px; --header: 52px; --radius: 10px;
   --shadow:  0 2px 8px rgba(0,0,0,.07), 0 0 1px rgba(0,0,0,.05);
 }
-body { font-family: 'Figtree', sans-serif; background: var(--bg); color: var(--text); font-size: 14px; min-height: 100vh; }
+body { font-family:'Figtree',sans-serif; background:var(--bg); color:var(--text); font-size:14px; min-height:100vh; }
 
-/* ── Header ─────────────────────────────────────────────────────────── */
+/* ── Header ── */
 header {
-  height: var(--header); display: flex; align-items: center; justify-content: space-between;
-  padding: 0 1.25rem; background: var(--card); border-bottom: 1px solid var(--border);
-  position: sticky; top: 0; z-index: 10;
+  height:var(--header); display:flex; align-items:center; justify-content:space-between;
+  padding:0 1.25rem; background:var(--card); border-bottom:1px solid var(--border);
+  position:sticky; top:0; z-index:20;
 }
-.logo { font-family: 'Fraunces', serif; font-weight: 800; font-size: 1.1rem; color: var(--text); text-decoration: none; }
-.logo span { color: var(--blue); }
-.header-right { display: flex; align-items: center; gap: 0.75rem; }
-.back-link { font-size: 0.82rem; color: var(--muted); text-decoration: none; }
-.back-link:hover { color: var(--text); }
-.badge { font-size: 0.7rem; font-weight: 700; background: var(--amber-l); color: var(--amber); border: 1px solid #FDE68A; padding: 2px 8px; border-radius: 99px; letter-spacing: 0.03em; }
+.logo { font-family:'Fraunces',serif; font-weight:800; font-size:1.1rem; color:var(--text); text-decoration:none; }
+.logo span { color:var(--blue); }
+.header-right { display:flex; align-items:center; gap:0.6rem; }
+.badge { font-size:0.7rem; font-weight:700; background:var(--amber-l); color:var(--amber);
+         border:1px solid #FDE68A; padding:2px 8px; border-radius:99px; letter-spacing:0.03em; }
+.hdr-btn { font-family:'Figtree',sans-serif; font-size:0.8rem; font-weight:600;
+           background:none; border:1.5px solid var(--border); border-radius:7px;
+           padding:4px 12px; cursor:pointer; color:var(--muted); }
+.hdr-btn:hover { color:var(--text); border-color:#94A3B8; }
+.back-link { font-size:0.82rem; color:var(--muted); text-decoration:none; }
+.back-link:hover { color:var(--text); }
 
-/* ── Layout ─────────────────────────────────────────────────────────── */
-.layout { display: flex; height: calc(100vh - var(--header)); overflow: hidden; }
+/* ── Layout ── */
+.layout { display:flex; height:calc(100vh - var(--header)); overflow:hidden; }
+.view-hidden { display:none !important; }
 
-/* ── Sidebar ────────────────────────────────────────────────────────── */
+/* ── Sidebar ── */
 .sidebar {
-  width: var(--sidebar); flex-shrink: 0; background: var(--card);
-  border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden;
+  width:var(--sidebar); flex-shrink:0; background:var(--card);
+  border-right:1px solid var(--border); display:flex; flex-direction:column; overflow:hidden;
 }
-.sidebar-search-wrap { padding: 0.75rem; border-bottom: 1px solid var(--border); }
+.sidebar-top { padding:0.6rem; border-bottom:1px solid var(--border); display:flex; flex-direction:column; gap:0.4rem; }
 .sidebar-search {
-  width: 100%; padding: 7px 10px; border: 1.5px solid var(--border); border-radius: 8px;
-  font-family: 'Figtree', sans-serif; font-size: 0.84rem; color: var(--text); background: var(--bg);
-  outline: none;
+  width:100%; padding:7px 10px; border:1.5px solid var(--border); border-radius:8px;
+  font-family:'Figtree',sans-serif; font-size:0.83rem; color:var(--text); background:var(--bg); outline:none;
 }
-.sidebar-search:focus { border-color: var(--blue); }
-.sidebar-stats { padding: 0.5rem 0.75rem; font-size: 0.75rem; color: var(--muted); border-bottom: 1px solid var(--border); }
-.school-list { flex: 1; overflow-y: auto; }
+.sidebar-search:focus { border-color:var(--blue); }
+.sidebar-stats { font-size:0.74rem; color:var(--muted); }
+.bg-status {
+  font-size:0.72rem; color:var(--amber); background:var(--amber-l);
+  padding:3px 8px; border-radius:6px; display:none;
+}
+.conf-list { flex:1; overflow-y:auto; }
+
+/* ── Conference accordion ── */
+.conf-item {}
+.conf-header {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0.55rem 0.75rem; cursor:pointer;
+  background:var(--bg); border-bottom:1px solid var(--border);
+  font-size:0.78rem; font-weight:700; color:var(--muted); letter-spacing:0.03em;
+  text-transform:uppercase; user-select:none;
+}
+.conf-header:hover { background:#F1F5F9; }
+.conf-header.open { color:var(--blue); background:var(--blue-l); }
+.conf-chevron { font-size:0.7rem; transition:transform 0.15s; }
+.conf-header.open .conf-chevron { transform:rotate(90deg); }
+.conf-school-count { font-size:0.7rem; font-weight:500; color:var(--muted); background:var(--border); padding:1px 6px; border-radius:99px; }
+.conf-header.open .conf-school-count { background:var(--blue); color:#fff; }
+.conf-body { display:none; }
+.conf-body.open { display:block; }
+
+/* ── School items ── */
 .school-item {
-  padding: 0.6rem 0.75rem; cursor: pointer; border-bottom: 1px solid var(--border);
-  display: flex; align-items: center; gap: 0.5rem; transition: background 0.1s;
+  padding:0.5rem 0.75rem 0.5rem 1.25rem; cursor:pointer;
+  border-bottom:1px solid var(--border); display:flex; align-items:center; gap:0.5rem;
+  transition:background 0.1s;
 }
-.school-item:hover { background: var(--bg); }
-.school-item.active { background: var(--blue-l); }
-.school-item-name { flex: 1; font-weight: 500; font-size: 0.83rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.school-item-dot {
-  width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
-  background: var(--border);
-}
-.school-item-dot.has-candidates { background: var(--amber); }
-.school-item-dot.is-curated     { background: var(--green); }
+.school-item:hover { background:var(--bg); }
+.school-item.active { background:var(--blue-l); }
+.school-item-name { flex:1; font-size:0.82rem; font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.school-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; background:var(--border); }
+.school-dot.curated  { background:var(--green); }
+.school-dot.has-cands { background:var(--amber); }
+.school-dot.fetching  { background:var(--blue); animation:pulse 1s ease-in-out infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
 
-/* ── Main panel ─────────────────────────────────────────────────────── */
-.main { flex: 1; overflow-y: auto; padding: 1.5rem; }
-.empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 60%; gap: 0.75rem; color: var(--muted); }
-.empty-icon { font-size: 2.5rem; }
+/* ── Main panel ── */
+.main { flex:1; overflow-y:auto; padding:1.5rem; }
+.empty-state { display:flex; flex-direction:column; align-items:center; justify-content:center;
+               height:60%; gap:0.75rem; color:var(--muted); text-align:center; }
+.empty-icon { font-size:2.5rem; }
 
-/* ── School header ──────────────────────────────────────────────────── */
-.school-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; gap: 1rem; flex-wrap: wrap; }
-.school-title { font-family: 'Fraunces', serif; font-weight: 800; font-size: 1.4rem; }
-.school-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+/* ── School header ── */
+.school-header { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:1.5rem; gap:1rem; flex-wrap:wrap; }
+.school-title { font-family:'Fraunces',serif; font-weight:800; font-size:1.35rem; }
+.school-conf  { font-size:0.78rem; color:var(--muted); margin-top:2px; }
+.school-actions { display:flex; gap:0.5rem; flex-wrap:wrap; flex-shrink:0; }
 
-/* ── Buttons ─────────────────────────────────────────────────────────── */
+/* ── Buttons ── */
 .btn {
-  display: inline-flex; align-items: center; gap: 0.35rem;
-  padding: 7px 14px; border-radius: 8px; border: 1.5px solid transparent;
-  font-family: 'Figtree', sans-serif; font-size: 0.83rem; font-weight: 600;
-  cursor: pointer; transition: opacity 0.15s;
+  display:inline-flex; align-items:center; gap:0.35rem;
+  padding:7px 14px; border-radius:8px; border:1.5px solid transparent;
+  font-family:'Figtree',sans-serif; font-size:0.83rem; font-weight:600;
+  cursor:pointer; transition:opacity 0.15s; white-space:nowrap;
 }
-.btn:disabled { opacity: 0.5; cursor: default; }
-.btn-primary   { background: var(--blue);  color: #fff; border-color: var(--blue); }
-.btn-primary:hover:not(:disabled) { background: var(--blue-d); border-color: var(--blue-d); }
-.btn-secondary { background: var(--card);  color: var(--text); border-color: var(--border); }
-.btn-secondary:hover:not(:disabled) { background: var(--bg); }
-.btn-green     { background: var(--green); color: #fff; border-color: var(--green); }
-.btn-green:hover:not(:disabled) { background: #15803D; border-color: #15803D; }
-.btn-sm { padding: 4px 10px; font-size: 0.78rem; }
+.btn:disabled { opacity:0.45; cursor:default; }
+.btn-primary  { background:var(--blue); color:#fff; border-color:var(--blue); }
+.btn-primary:hover:not(:disabled) { background:var(--blue-d); }
+.btn-secondary { background:var(--card); color:var(--text); border-color:var(--border); }
+.btn-secondary:hover:not(:disabled) { background:var(--bg); }
+.btn-green    { background:var(--green); color:#fff; border-color:var(--green); }
+.btn-green:hover:not(:disabled) { background:#15803D; }
+.spinner { display:inline-block; width:13px; height:13px; border:2px solid rgba(255,255,255,.4); border-top-color:#fff; border-radius:50%; animation:spin 0.7s linear infinite; }
+@keyframes spin { to { transform:rotate(360deg); } }
 
-/* ── Section ─────────────────────────────────────────────────────────── */
-.section { margin-bottom: 2rem; }
-.section-title {
-  font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
-  color: var(--muted); margin-bottom: 0.75rem; padding-bottom: 0.5rem;
-  border-bottom: 1px solid var(--border);
+/* ── Type sections ── */
+.type-section { margin-bottom:2rem; }
+.type-header {
+  display:flex; align-items:center; gap:0.6rem; margin-bottom:0.75rem;
+  padding-bottom:0.5rem; border-bottom:2px solid var(--border);
 }
+.type-title { font-weight:700; font-size:1rem; }
+.type-count { font-size:0.78rem; color:var(--muted); background:var(--border); padding:2px 8px; border-radius:99px; }
+.type-count.has-sel { background:var(--green); color:#fff; }
 
-/* ── Current images strip ────────────────────────────────────────────── */
-.current-images { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 0.5rem; }
-.current-slot {
-  flex: 1; min-width: 180px; max-width: 260px; background: var(--card);
-  border: 1.5px solid var(--border); border-radius: var(--radius); overflow: hidden;
+/* ── Selected strip ── */
+.sel-strip {
+  display:flex; gap:0.6rem; overflow-x:auto; padding:0.5rem 0 0.75rem;
+  scrollbar-width:thin; scrollbar-color:var(--border) transparent;
 }
-.current-slot.filled { border-color: var(--green); }
-.current-slot-label {
-  padding: 6px 10px; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.05em;
-  text-transform: uppercase; color: var(--muted); border-bottom: 1px solid var(--border);
-  display: flex; align-items: center; justify-content: space-between;
+.sel-empty { font-size:0.82rem; color:var(--muted); font-style:italic; padding:0.4rem 0 0.75rem; }
+.sel-thumb {
+  position:relative; flex-shrink:0; width:140px;
+  border:2px solid var(--border); border-radius:8px; overflow:hidden; background:var(--bg);
 }
-.current-slot.filled .current-slot-label { color: var(--green); border-color: #BBF7D0; background: var(--green-l); }
-.current-img {
-  width: 100%; aspect-ratio: 16/9; object-fit: cover; display: block; background: var(--bg);
+.sel-thumb.primary { border-color:var(--green); }
+.sel-thumb img { width:100%; height:90px; object-fit:cover; display:block; }
+.sel-order {
+  font-size:0.68rem; font-weight:700; padding:2px 6px;
+  background:rgba(0,0,0,.55); color:#fff; position:absolute; top:4px; left:4px; border-radius:4px;
 }
-.current-img-empty {
-  width: 100%; aspect-ratio: 16/9; display: flex; align-items: center; justify-content: center;
-  color: var(--muted); font-size: 0.8rem; background: var(--bg);
+.sel-thumb.primary .sel-order { background:var(--green); }
+.sel-thumb-actions {
+  display:flex; flex-direction:column; gap:2px; padding:4px;
+  background:var(--card); border-top:1px solid var(--border);
 }
+.btn-micro {
+  font-family:'Figtree',sans-serif; font-size:0.68rem; font-weight:600;
+  padding:2px 6px; border-radius:5px; border:1.5px solid var(--border);
+  cursor:pointer; background:var(--card); color:var(--muted); white-space:nowrap;
+}
+.btn-micro:hover { background:var(--bg); color:var(--text); }
+.btn-micro.danger { border-color:#FCA5A5; color:var(--red); }
+.btn-micro.danger:hover { background:var(--red-l); }
+.btn-micro.move { border-color:#BFDBFE; color:var(--blue); }
+.btn-micro.move:hover { background:var(--blue-l); }
 
-/* ── Candidates grid ─────────────────────────────────────────────────── */
-.candidates-filter { display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap; }
-.filter-chip {
-  padding: 4px 12px; border-radius: 99px; font-size: 0.78rem; font-weight: 600;
-  cursor: pointer; border: 1.5px solid var(--border); background: var(--card); color: var(--muted);
-  transition: all 0.15s;
-}
-.filter-chip.active { background: var(--blue); color: #fff; border-color: var(--blue); }
-.candidates-grid {
-  display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.75rem;
+/* ── Candidate section label ── */
+.cands-label { font-size:0.78rem; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:0.5rem; }
+.no-cands { font-size:0.82rem; color:var(--muted); font-style:italic; padding:0.5rem 0; }
+
+/* ── Candidate grid ── */
+.cand-grid {
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:0.75rem;
 }
 .cand-card {
-  background: var(--card); border: 1.5px solid var(--border); border-radius: var(--radius);
-  overflow: hidden; box-shadow: var(--shadow); transition: border-color 0.15s;
+  border:1.5px solid var(--border); border-radius:var(--radius); overflow:hidden;
+  background:var(--card); display:flex; flex-direction:column; position:relative;
+  transition:border-color 0.15s;
 }
-.cand-card:hover { border-color: #94A3B8; }
-.cand-card.approved { border-color: var(--green); }
+.cand-card.is-assigned { border-color:var(--green); }
+.cand-card.is-banned   { display:none; }
 .cand-img {
-  width: 100%; aspect-ratio: 16/9; object-fit: cover; display: block; background: var(--bg);
-  cursor: pointer;
+  width:100%; aspect-ratio:16/9; object-fit:cover; display:block; cursor:pointer;
+  background:var(--bg);
 }
-.cand-meta { padding: 0.5rem; display: flex; flex-direction: column; gap: 0.35rem; }
-.cand-cat {
-  font-size: 0.68rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
-  color: var(--muted);
+.cand-img:hover { opacity:0.92; }
+.cand-meta { padding:0.45rem; display:flex; flex-direction:column; gap:0.3rem; }
+.assigned-badge {
+  font-size:0.68rem; font-weight:700; padding:2px 6px; border-radius:4px;
+  background:var(--green-l); color:var(--green); align-self:flex-start;
 }
-.cand-approve-row { display: flex; gap: 0.35rem; flex-wrap: wrap; }
+.cand-add-row { display:flex; flex-wrap:wrap; gap:3px; }
+.btn-add {
+  font-family:'Figtree',sans-serif; font-size:0.7rem; font-weight:600;
+  padding:3px 7px; border-radius:5px; border:1.5px solid var(--border);
+  cursor:pointer; background:var(--card); color:var(--muted);
+}
+.btn-add:hover { background:var(--blue-l); border-color:var(--blue); color:var(--blue); }
+.btn-add.active { background:var(--green-l); border-color:var(--green); color:var(--green); }
+.btn-ban {
+  font-family:'Figtree',sans-serif; font-size:0.7rem; font-weight:600;
+  padding:3px 7px; border-radius:5px; border:1.5px solid #FCA5A5;
+  cursor:pointer; background:var(--card); color:var(--red); margin-top:2px; align-self:flex-start;
+}
+.btn-ban:hover { background:var(--red-l); }
+.btn-move-row { display:flex; flex-wrap:wrap; gap:3px; margin-top:2px; }
+.btn-moveto {
+  font-family:'Figtree',sans-serif; font-size:0.7rem; font-weight:600;
+  padding:3px 7px; border-radius:5px; border:1.5px solid #BFDBFE;
+  cursor:pointer; background:var(--card); color:var(--blue);
+}
+.btn-moveto:hover { background:var(--blue-l); }
+.btn-deselect {
+  font-family:'Figtree',sans-serif; font-size:0.7rem; font-weight:600;
+  padding:3px 7px; border-radius:5px; border:1.5px solid #FCA5A5;
+  cursor:pointer; background:var(--card); color:var(--red);
+}
+.btn-deselect:hover { background:var(--red-l); }
 
-/* ── Toast ───────────────────────────────────────────────────────────── */
+/* ── Status messages ── */
+.status-msg { font-size:0.82rem; color:var(--muted); padding:0.6rem 0; }
+.status-msg.ok  { color:var(--green); }
+.status-msg.err { color:var(--red); }
+
+/* ── Admins panel ── */
+#view-admins { padding:2rem; max-width:560px; }
+.admins-heading { font-family:'Fraunces',serif; font-size:1.15rem; font-weight:700; margin-bottom:0.25rem; }
+.admins-sub { font-size:0.82rem; color:var(--muted); margin-bottom:1.25rem; }
+.admin-table { width:100%; border-collapse:collapse; font-size:0.83rem; }
+.admin-table th { text-align:left; padding:0.45rem 0.6rem; border-bottom:2px solid var(--border);
+                  color:var(--muted); font-weight:600; font-size:0.75rem; text-transform:uppercase; letter-spacing:0.04em; }
+.admin-table td { padding:0.6rem 0.6rem; border-bottom:1px solid var(--border); }
+.admin-table tr:last-child td { border-bottom:none; }
+.admin-active-badge { display:inline-block; font-size:0.7rem; font-weight:700; padding:1px 7px; border-radius:99px; }
+.admin-active-badge.active { background:var(--green-l); color:var(--green); }
+.admin-active-badge.inactive { background:var(--red-l); color:var(--red); }
+.add-admin-form { display:flex; gap:0.6rem; margin-top:1.25rem; }
+.add-admin-input { flex:1; padding:8px 10px; border:1.5px solid var(--border); border-radius:8px;
+                   font-family:'Figtree',sans-serif; font-size:0.84rem; outline:none; }
+.add-admin-input:focus { border-color:var(--blue); }
+.admins-msg { font-size:0.82rem; margin-top:0.75rem; min-height:1.2rem; }
+.admins-msg.ok { color:var(--green); } .admins-msg.err { color:var(--red); }
+
+/* ── Toast ── */
 .toast {
-  position: fixed; bottom: 1.25rem; right: 1.25rem; background: var(--text); color: #fff;
-  padding: 0.65rem 1rem; border-radius: 8px; font-size: 0.83rem; font-weight: 500;
-  box-shadow: 0 4px 16px rgba(0,0,0,.2); opacity: 0; transition: opacity 0.2s;
-  pointer-events: none; z-index: 100;
+  position:fixed; bottom:1.25rem; right:1.25rem; background:var(--text); color:#fff;
+  padding:10px 18px; border-radius:10px; font-size:0.83rem; font-weight:600;
+  opacity:0; transform:translateY(8px); transition:opacity 0.2s,transform 0.2s; pointer-events:none; z-index:99;
 }
-.toast.visible { opacity: 1; }
-
-/* ── Spinner ─────────────────────────────────────────────────────────── */
-.spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,.4); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; }
-@keyframes spin { to { transform: rotate(360deg); } }
-
-/* ── Status msg ─────────────────────────────────────────────────────── */
-.status-msg { font-size: 0.82rem; color: var(--muted); padding: 0.75rem 0; }
-.status-msg.ok  { color: var(--green); }
-.status-msg.err { color: var(--red); }
-
-/* ── Admins panel ───────────────────────────────────────────────────── */
-.view-hidden { display: none !important; }
-#admins-panel { padding: 1.75rem; max-width: 560px; }
-.admins-heading { font-family: 'Fraunces', serif; font-size: 1.15rem; font-weight: 700; margin-bottom: 0.25rem; }
-.admins-sub { font-size: 0.82rem; color: var(--muted); margin-bottom: 1.25rem; }
-.admin-table { width: 100%; border-collapse: collapse; font-size: 0.83rem; }
-.admin-table th { text-align: left; padding: 0.45rem 0.6rem; border-bottom: 2px solid var(--border); color: var(--muted); font-weight: 600; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; }
-.admin-table td { padding: 0.6rem 0.6rem; border-bottom: 1px solid var(--border); }
-.admin-table tr:last-child td { border-bottom: none; }
-.admin-active-badge { display: inline-block; font-size: 0.7rem; font-weight: 700; padding: 1px 7px; border-radius: 99px; }
-.admin-active-badge.active { background: var(--green-l); color: var(--green); }
-.admin-active-badge.inactive { background: var(--red-l); color: var(--red); }
-.add-admin-form { display: flex; gap: 0.6rem; margin-top: 1.25rem; }
-.add-admin-input { flex: 1; padding: 8px 10px; border: 1.5px solid var(--border); border-radius: 8px; font-family: 'Figtree', sans-serif; font-size: 0.84rem; outline: none; }
-.add-admin-input:focus { border-color: var(--blue); }
-.btn-add-admin { padding: 8px 16px; background: var(--blue); color: #fff; border: none; border-radius: 8px; font-family: 'Figtree', sans-serif; font-size: 0.84rem; font-weight: 600; cursor: pointer; }
-.btn-add-admin:hover { background: var(--blue-d); }
-.btn-add-admin:disabled { opacity: 0.6; cursor: default; }
-.admins-msg { font-size: 0.82rem; margin-top: 0.75rem; min-height: 1.2rem; }
-.admins-msg.ok  { color: var(--green); }
-.admins-msg.err { color: var(--red); }
+.toast.visible { opacity:1; transform:none; }
 </style>
 </head>
 <body>
@@ -204,49 +257,44 @@ header {
   <a class="logo" href="/">Lane<span>4</span></a>
   <div class="header-right">
     <span class="badge">ADMIN</span>
-    <button id="btn-toggle-admins" onclick="toggleAdminsPanel()"
-      style="font-family:'Figtree',sans-serif;font-size:0.8rem;font-weight:600;background:none;border:1.5px solid var(--border);border-radius:7px;padding:4px 12px;cursor:pointer;color:var(--muted);">
-      Manage Admins
-    </button>
+    <button class="hdr-btn" id="btn-toggle-view" onclick="toggleAdminsPanel()">Manage Admins</button>
     <a class="back-link" href="/">← Back to app</a>
   </div>
 </header>
 
-<!-- ── Image manager view ────────────────────────────────────────── -->
-<div id="view-schools" class="layout">
+<!-- ── Curator view ──────────────────────────────────────────────── -->
+<div class="layout" id="view-curator">
 
-  <!-- ── Sidebar: school list ─────────────────────────────────── -->
   <aside class="sidebar">
-    <div class="sidebar-search-wrap">
-      <input class="sidebar-search" id="school-search" type="text" placeholder="Filter schools…" oninput="filterSchools()" />
+    <div class="sidebar-top">
+      <input class="sidebar-search" id="school-search" type="text" placeholder="Search schools…" oninput="filterSchools()" />
+      <div class="sidebar-stats" id="sidebar-stats">Loading…</div>
+      <div class="bg-status" id="bg-status"></div>
     </div>
-    <div class="sidebar-stats" id="sidebar-stats">Loading…</div>
-    <div class="school-list" id="school-list"></div>
+    <div class="conf-list" id="conf-list"></div>
   </aside>
 
-  <!-- ── Main: detail panel ──────────────────────────────────── -->
   <main class="main" id="main-panel">
     <div class="empty-state">
       <div class="empty-icon">🏊</div>
-      <div>Select a school to manage its images</div>
+      <div style="font-weight:600">Select a conference to begin</div>
+      <div style="font-size:0.82rem;">Click a conference in the sidebar — the app will start building candidates for all schools in the background while you work.</div>
     </div>
   </main>
 
 </div>
 
-<!-- ── Admins management view ───────────────────────────────────── -->
-<div id="admins-panel" class="view-hidden">
+<!-- ── Admins panel ──────────────────────────────────────────────── -->
+<div id="view-admins" class="view-hidden">
   <div class="admins-heading">Admin Management</div>
-  <div class="admins-sub">Users with admin access to this panel. Anyone listed here can access /admin.</div>
+  <div class="admins-sub">Anyone listed here can access /admin. The first admin is seeded automatically.</div>
   <table class="admin-table" id="admins-table">
-    <thead>
-      <tr><th>Email</th><th>Status</th><th>Added by</th><th>Date</th></tr>
-    </thead>
+    <thead><tr><th>Email</th><th>Status</th><th>Added by</th><th>Date</th></tr></thead>
     <tbody id="admins-tbody"><tr><td colspan="4" style="color:var(--muted);padding:0.75rem 0.6rem;">Loading…</td></tr></tbody>
   </table>
   <form class="add-admin-form" onsubmit="addAdmin(event)">
     <input class="add-admin-input" id="new-admin-email" type="email" placeholder="new@example.com" required />
-    <button class="btn-add-admin" type="submit" id="btn-add-admin">Add Admin</button>
+    <button class="btn btn-primary" type="submit" id="btn-add-admin">Add Admin</button>
   </form>
   <div class="admins-msg" id="admins-msg"></div>
 </div>
@@ -254,29 +302,495 @@ header {
 <div class="toast" id="toast"></div>
 
 <script>
-let ALL_SCHOOLS   = [];
+// ══════════════════════════════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════════════════════════════
+let ALL_SCHOOLS = [];         // [{name, conference, has_candidates, is_curated, …}]
+let BY_CONF     = {};         // {confName: [school, …]}
 let ACTIVE_SCHOOL = null;
-let FILTER_CAT    = 'all';
-let PENDING_HERO  = null;
-let PENDING_POOL  = null;
-let PENDING_STUDENT = null;
+let ACTIVE_CONF   = null;
+let CURRENT_CANDIDATES = [];  // full candidate list for active school
+let CURRENT_STORED     = {};  // {hero, swim, student_life} from school_images
 
-// ── Admins panel ──────────────────────────────────────────────────────
+// Ordered selection arrays — each is a list of URLs in user-specified order
+let SEL = { campus: [], pool: [], life: [] };
+
+// Background fetch queue
+let BG_QUEUE   = [];   // school names waiting for background fetch
+let BG_RUNNING = false;
+let BG_FETCHING_SCHOOL = null;
+
+// Admins panel toggle
 let _adminsOpen = false;
 
+// ══════════════════════════════════════════════════════════════════════════
+// BOOT
+// ══════════════════════════════════════════════════════════════════════════
+async function boot() {
+  try {
+    const res = await fetch('/api/ua/schools');
+    if (res.status === 401) { window.location.href = '/'; return; }
+    if (res.status === 403) {
+      document.body.innerHTML = '<div style="padding:2rem;color:var(--red);font-family:Figtree,sans-serif;">Access denied.</div>';
+      return;
+    }
+    ALL_SCHOOLS = await res.json();
+    buildConferences();
+    renderStats();
+    renderConfList();
+  } catch(e) {
+    document.getElementById('sidebar-stats').textContent = 'Failed to load schools.';
+  }
+}
+
+function buildConferences() {
+  BY_CONF = {};
+  for (const s of ALL_SCHOOLS) {
+    const c = s.conference || 'Other';
+    if (!BY_CONF[c]) BY_CONF[c] = [];
+    BY_CONF[c].push(s);
+  }
+  for (const c in BY_CONF) BY_CONF[c].sort((a,b) => a.name.localeCompare(b.name));
+}
+
+function renderStats() {
+  const curated  = ALL_SCHOOLS.filter(s => s.is_curated).length;
+  const hasCands = ALL_SCHOOLS.filter(s => s.has_candidates).length;
+  document.getElementById('sidebar-stats').textContent =
+    `${ALL_SCHOOLS.length} schools · ${curated} curated · ${hasCands} with candidates`;
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+// CONFERENCE SIDEBAR
+// ══════════════════════════════════════════════════════════════════════════
+function renderConfList(filterQ) {
+  const list = document.getElementById('conf-list');
+  const q = (filterQ || '').toLowerCase();
+
+  if (q) {
+    // Flat search mode
+    const matches = ALL_SCHOOLS.filter(s => s.name.toLowerCase().includes(q));
+    list.innerHTML = matches.map(s => schoolItemHtml(s)).join('') ||
+      '<div style="padding:0.75rem;font-size:0.82rem;color:var(--muted);">No schools found.</div>';
+    list.querySelectorAll('.school-item').forEach(el =>
+      el.addEventListener('click', () => selectSchool(el.dataset.school))
+    );
+    return;
+  }
+
+  // Conference accordion mode
+  list.innerHTML = Object.keys(BY_CONF).sort().map(conf => {
+    const schools = BY_CONF[conf];
+    const isOpen  = conf === ACTIVE_CONF;
+    const curated = schools.filter(s => s.is_curated).length;
+    const hasC    = schools.filter(s => s.has_candidates).length;
+    return `
+      <div class="conf-item" data-conf="${esc(conf)}">
+        <div class="conf-header ${isOpen ? 'open' : ''}" onclick="toggleConf('${esc(conf)}')">
+          <span>${esc(conf)}</span>
+          <span style="display:flex;align-items:center;gap:0.4rem;">
+            <span class="conf-school-count">${schools.length}</span>
+            <span class="conf-chevron">▶</span>
+          </span>
+        </div>
+        <div class="conf-body ${isOpen ? 'open' : ''}">
+          ${schools.map(s => schoolItemHtml(s)).join('')}
+        </div>
+      </div>`;
+  }).join('');
+
+  list.querySelectorAll('.school-item').forEach(el =>
+    el.addEventListener('click', () => selectSchool(el.dataset.school))
+  );
+}
+
+function schoolItemHtml(s) {
+  const isFetching = BG_FETCHING_SCHOOL === s.name;
+  const dotClass   = isFetching ? 'fetching'
+                   : s.is_curated ? 'curated'
+                   : s.has_candidates ? 'has-cands' : '';
+  return `
+    <div class="school-item ${ACTIVE_SCHOOL === s.name ? 'active' : ''}" data-school="${esc(s.name)}">
+      <div class="school-dot ${dotClass}"></div>
+      <div class="school-item-name" title="${esc(s.name)}">${esc(s.name)}</div>
+    </div>`;
+}
+
+function filterSchools() {
+  const q = document.getElementById('school-search').value;
+  renderConfList(q);
+}
+
+function toggleConf(conf) {
+  const wasOpen = ACTIVE_CONF === conf;
+  ACTIVE_CONF = wasOpen ? null : conf;
+  renderConfList(document.getElementById('school-search').value);
+  if (!wasOpen) startConfBackgroundFetch(conf);
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+// BACKGROUND FETCH QUEUE
+// ══════════════════════════════════════════════════════════════════════════
+function startConfBackgroundFetch(conf) {
+  const schools = (BY_CONF[conf] || []).filter(s => !s.has_candidates);
+  if (schools.length === 0) return;
+  // Prepend this conference's schools to the front of the queue (active conf first)
+  const names = schools.map(s => s.name);
+  BG_QUEUE = [...names.filter(n => !BG_QUEUE.includes(n)), ...BG_QUEUE.filter(n => !names.includes(n))];
+  drainQueue();
+}
+
+async function drainQueue() {
+  if (BG_RUNNING) return;
+  BG_RUNNING = true;
+  setBgStatus();
+  while (BG_QUEUE.length > 0) {
+    const name = BG_QUEUE[0];
+    BG_FETCHING_SCHOOL = name;
+    setBgStatus();
+    refreshSchoolDot(name);
+    try {
+      const res = await fetch('/api/ua/fetch-candidates', {
+        method: 'POST', headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({school: name}),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        const s = ALL_SCHOOLS.find(x => x.name === name);
+        if (s) { s.has_candidates = true; s.candidate_count = data.count || 0; }
+      }
+    } catch {}
+    BG_QUEUE.shift();
+    BG_FETCHING_SCHOOL = null;
+    refreshSchoolDot(name);
+  }
+  BG_RUNNING = false;
+  setBgStatus();
+  renderStats();
+}
+
+function setBgStatus() {
+  const el = document.getElementById('bg-status');
+  if (BG_RUNNING) {
+    el.style.display = '';
+    el.textContent = BG_FETCHING_SCHOOL
+      ? `Building: ${esc(BG_FETCHING_SCHOOL)}${BG_QUEUE.length > 1 ? ` (+${BG_QUEUE.length-1} more)` : ''}…`
+      : 'Building…';
+  } else {
+    el.style.display = 'none';
+  }
+}
+
+function refreshSchoolDot(name) {
+  document.querySelectorAll('.school-item').forEach(el => {
+    if (el.dataset.school === name) {
+      const s = ALL_SCHOOLS.find(x => x.name === name);
+      if (!s) return;
+      const dot = el.querySelector('.school-dot');
+      if (!dot) return;
+      const isFetching = BG_FETCHING_SCHOOL === name;
+      dot.className = 'school-dot ' + (isFetching ? 'fetching'
+        : s.is_curated ? 'curated' : s.has_candidates ? 'has-cands' : '');
+    }
+  });
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+// SCHOOL DETAIL
+// ══════════════════════════════════════════════════════════════════════════
+async function selectSchool(name) {
+  ACTIVE_SCHOOL = name;
+  SEL = { campus: [], pool: [], life: [] };
+  CURRENT_CANDIDATES = [];
+
+  // Highlight in sidebar
+  document.querySelectorAll('.school-item').forEach(el =>
+    el.classList.toggle('active', el.dataset.school === name)
+  );
+
+  const panel = document.getElementById('main-panel');
+  panel.innerHTML = '<div class="status-msg">Loading…</div>';
+
+  try {
+    const res  = await fetch('/api/ua/candidates/' + encodeURIComponent(name));
+    if (!res.ok) throw new Error(await res.text());
+    const data = await res.json();
+
+    CURRENT_CANDIDATES = data.candidates || [];
+    CURRENT_STORED     = data.stored     || {};
+
+    // Pre-populate selections from saved curated data
+    const cur = data.curated || {};
+    SEL.campus = [...(cur.hero_images         || [])];
+    SEL.pool   = [...(cur.pool_images         || [])];
+    SEL.life   = [...(cur.student_life_images || [])];
+
+    renderDetail();
+  } catch(e) {
+    panel.innerHTML = `<div class="status-msg err">Failed to load: ${e.message}</div>`;
+  }
+}
+
+function renderDetail() {
+  const name = ACTIVE_SCHOOL;
+  if (!name) return;
+  const school = ALL_SCHOOLS.find(s => s.name === name) || {};
+  const totalSel = SEL.campus.length + SEL.pool.length + SEL.life.length;
+
+  const panel = document.getElementById('main-panel');
+  panel.innerHTML = `
+    <div class="school-header">
+      <div>
+        <div class="school-title">${esc(name)}</div>
+        <div class="school-conf">${esc(school.conference || '')}</div>
+      </div>
+      <div class="school-actions">
+        <div id="fetch-status" style="font-size:0.8rem;color:var(--muted);align-self:center;"></div>
+        <button class="btn btn-secondary" id="btn-fetch" onclick="fetchCandidates('${esc(name)}')">Fetch Candidates</button>
+        <button class="btn btn-green" id="btn-save" onclick="saveSelections('${esc(name)}')" ${totalSel === 0 ? 'disabled' : ''}>
+          Save Selections${totalSel > 0 ? ' ('+totalSel+')' : ''}
+        </button>
+      </div>
+    </div>
+
+    ${renderTypeSection('campus', 'Campus',       '🏛️')}
+    ${renderTypeSection('pool',   'Pool',         '🏊')}
+    ${renderTypeSection('life',   'Student Life', '🎓')}
+  `;
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+// TYPE SECTIONS
+// ══════════════════════════════════════════════════════════════════════════
+function renderTypeSection(type, label, emoji) {
+  const selUrls  = SEL[type];
+  const catKey   = typeToCategory(type);
+  const cands    = CURRENT_CANDIDATES.filter(c => c.category === catKey);
+  const hasSelClass = selUrls.length > 0 ? 'has-sel' : '';
+
+  const selHtml = selUrls.length > 0
+    ? `<div class="sel-strip">${selUrls.map((url, i) => selThumbHtml(url, i, type, selUrls.length)).join('')}</div>`
+    : `<div class="sel-empty">No images selected for ${label} yet</div>`;
+
+  return `
+    <div class="type-section" id="section-${type}">
+      <div class="type-header">
+        <span class="type-title">${emoji} ${label}</span>
+        <span class="type-count ${hasSelClass}">${selUrls.length} selected</span>
+      </div>
+      ${selHtml}
+      <div class="cands-label">Candidates · ${cands.length}</div>
+      <div class="cand-grid">
+        ${cands.map(c => candCardHtml(c, type)).join('')}
+        ${cands.length === 0
+          ? `<div class="no-cands">No ${label} candidates yet — click Fetch Candidates.</div>`
+          : ''}
+      </div>
+    </div>`;
+}
+
+function selThumbHtml(url, idx, type, total) {
+  const isPrimary = idx === 0;
+  const orderLabel = isPrimary ? '★ Primary' : '#' + (idx + 1);
+  const moveButtons = [
+    type !== 'campus' ? `<button class="btn-micro move" onclick="moveImage('${esc(url)}','campus')">→ Campus</button>` : '',
+    type !== 'pool'   ? `<button class="btn-micro move" onclick="moveImage('${esc(url)}','pool')">→ Pool</button>` : '',
+    type !== 'life'   ? `<button class="btn-micro move" onclick="moveImage('${esc(url)}','life')">→ Life</button>` : '',
+  ].filter(Boolean).join('');
+  return `
+    <div class="sel-thumb ${isPrimary ? 'primary' : ''}">
+      <div class="sel-order">${orderLabel}</div>
+      <img src="${esc(url)}" onerror="this.style.opacity=0.3" onclick="window.open('${esc(url)}','_blank')" style="cursor:pointer" />
+      <div class="sel-thumb-actions">
+        ${moveButtons}
+        <button class="btn-micro danger" onclick="removeImage('${esc(url)}')">✕ Remove</button>
+      </div>
+    </div>`;
+}
+
+function candCardHtml(c, sectionType) {
+  const url = c.url || '';
+  const cat = c.category || 'campus';
+
+  const campusIdx = SEL.campus.indexOf(url);
+  const poolIdx   = SEL.pool.indexOf(url);
+  const lifeIdx   = SEL.life.indexOf(url);
+
+  const assignedType = campusIdx >= 0 ? 'campus' : poolIdx >= 0 ? 'pool' : lifeIdx >= 0 ? 'life' : null;
+  const assignedPos  = assignedType === 'campus' ? campusIdx : assignedType === 'pool' ? poolIdx : assignedType === 'life' ? lifeIdx : -1;
+  const isTop        = assignedPos === 0;
+
+  let assignHtml = '';
+  if (assignedType) {
+    const typeLabel = {campus:'Campus', pool:'Pool', life:'Life'}[assignedType];
+    const badge = isTop ? `★ Primary · ${typeLabel}` : `#${assignedPos + 1} · ${typeLabel}`;
+    const moveBtns = [
+      assignedType !== 'campus' ? `<button class="btn-moveto" onclick="moveImage('${esc(url)}','campus')">→ Campus</button>` : '',
+      assignedType !== 'pool'   ? `<button class="btn-moveto" onclick="moveImage('${esc(url)}','pool')">→ Pool</button>` : '',
+      assignedType !== 'life'   ? `<button class="btn-moveto" onclick="moveImage('${esc(url)}','life')">→ Life</button>` : '',
+    ].filter(Boolean).join('');
+    assignHtml = `
+      <div class="assigned-badge">${badge}</div>
+      <div class="btn-move-row">${moveBtns}</div>
+      <div class="cand-add-row">
+        <button class="btn-deselect" onclick="removeImage('${esc(url)}')">✕ Remove</button>
+        <button class="btn-ban" onclick="banImage('${esc(url)}')">× Ban</button>
+      </div>`;
+  } else {
+    assignHtml = `
+      <div class="cand-add-row">
+        <button class="btn-add" onclick="assignImage('${esc(url)}','campus')">+ Campus</button>
+        <button class="btn-add" onclick="assignImage('${esc(url)}','pool')">+ Pool</button>
+        <button class="btn-add" onclick="assignImage('${esc(url)}','life')">+ Life</button>
+      </div>
+      <button class="btn-ban" onclick="banImage('${esc(url)}')">× Ban</button>`;
+  }
+
+  return `
+    <div class="cand-card ${assignedType ? 'is-assigned' : ''}" id="cand-${btoa(url).replace(/[^a-zA-Z0-9]/g,'')}">
+      <img class="cand-img" src="${esc(url)}" loading="lazy"
+           onclick="window.open('${esc(url)}','_blank')"
+           onerror="this.parentElement.remove()" />
+      <div class="cand-meta">${assignHtml}</div>
+    </div>`;
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+// SELECTION MANAGEMENT
+// ══════════════════════════════════════════════════════════════════════════
+function assignImage(url, type) {
+  // Remove from all types if already present (can't be in two buckets)
+  SEL.campus = SEL.campus.filter(u => u !== url);
+  SEL.pool   = SEL.pool.filter(u => u !== url);
+  SEL.life   = SEL.life.filter(u => u !== url);
+  // Add to target type
+  SEL[type].push(url);
+  renderDetail();
+}
+
+function removeImage(url) {
+  SEL.campus = SEL.campus.filter(u => u !== url);
+  SEL.pool   = SEL.pool.filter(u => u !== url);
+  SEL.life   = SEL.life.filter(u => u !== url);
+  renderDetail();
+}
+
+function moveImage(url, toType) {
+  // Remove from wherever it is, add to new type
+  SEL.campus = SEL.campus.filter(u => u !== url);
+  SEL.pool   = SEL.pool.filter(u => u !== url);
+  SEL.life   = SEL.life.filter(u => u !== url);
+  if (!SEL[toType].includes(url)) SEL[toType].push(url);
+  renderDetail();
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+// BAN (PERMANENT)
+// ══════════════════════════════════════════════════════════════════════════
+async function banImage(url) {
+  // Remove from candidate list and selections immediately (instant UI feedback)
+  CURRENT_CANDIDATES = CURRENT_CANDIDATES.filter(c => c.url !== url);
+  SEL.campus = SEL.campus.filter(u => u !== url);
+  SEL.pool   = SEL.pool.filter(u => u !== url);
+  SEL.life   = SEL.life.filter(u => u !== url);
+  renderDetail();
+
+  // Persist to backend blocklist
+  try {
+    await fetch('/api/ua/ban', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({urls: [url]}),
+    });
+    showToast('Image permanently banned');
+  } catch(e) {
+    showToast('Ban saved locally — server sync failed');
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+// FETCH CANDIDATES (FOREGROUND)
+// ══════════════════════════════════════════════════════════════════════════
+async function fetchCandidates(name) {
+  const btn      = document.getElementById('btn-fetch');
+  const statusEl = document.getElementById('fetch-status');
+  if (!btn) return;
+  btn.disabled   = true;
+  btn.innerHTML  = '<span class="spinner"></span> Fetching…';
+  if (statusEl) { statusEl.textContent = 'Searching the web for images…'; }
+  try {
+    const res  = await fetch('/api/ua/fetch-candidates', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({school: name}),
+    });
+    const data = await res.json();
+    if (!res.ok || data.error) throw new Error(data.error || 'Unknown error');
+    showToast(`Fetched ${data.count} candidates for ${name}`);
+    // Mark school as having candidates
+    const s = ALL_SCHOOLS.find(x => x.name === name);
+    if (s) s.has_candidates = true;
+    // Reload school detail
+    await selectSchool(name);
+    renderStats();
+    refreshSchoolDot(name);
+  } catch(e) {
+    if (statusEl) { statusEl.textContent = 'Fetch failed: ' + e.message; statusEl.style.color = 'var(--red)'; }
+    showToast('Fetch failed: ' + e.message);
+    if (btn) { btn.disabled = false; btn.textContent = 'Fetch Candidates'; }
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+// SAVE SELECTIONS
+// ══════════════════════════════════════════════════════════════════════════
+async function saveSelections(name) {
+  const btn = document.getElementById('btn-save');
+  if (!btn) return;
+  btn.disabled  = true;
+  btn.innerHTML = '<span class="spinner"></span> Saving…';
+  try {
+    const res  = await fetch('/api/ua/approve', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        school:              name,
+        hero_images:         SEL.campus,
+        pool_images:         SEL.pool,
+        student_life_images: SEL.life,
+      }),
+    });
+    const data = await res.json();
+    if (!res.ok || data.error) throw new Error(data.error || 'Unknown error');
+
+    // Update school status
+    const s = ALL_SCHOOLS.find(x => x.name === name);
+    if (s) s.is_curated = true;
+    refreshSchoolDot(name);
+    renderStats();
+    showToast('Saved — ' + (SEL.campus.length + SEL.pool.length + SEL.life.length) + ' images for ' + name);
+    btn.textContent = 'Save Selections (' + (SEL.campus.length + SEL.pool.length + SEL.life.length) + ')';
+    btn.disabled = false;
+  } catch(e) {
+    showToast('Save failed: ' + e.message);
+    btn.disabled = false;
+    btn.textContent = 'Save Selections';
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+// ADMINS PANEL
+// ══════════════════════════════════════════════════════════════════════════
 function toggleAdminsPanel() {
   _adminsOpen = !_adminsOpen;
-  const btn       = document.getElementById('btn-toggle-admins');
-  const schools   = document.getElementById('view-schools');
-  const adminsDiv = document.getElementById('admins-panel');
+  const btn     = document.getElementById('btn-toggle-view');
+  const curator = document.getElementById('view-curator');
+  const admins  = document.getElementById('view-admins');
   if (_adminsOpen) {
-    schools.classList.add('view-hidden');
-    adminsDiv.classList.remove('view-hidden');
-    btn.textContent = '← Image Manager';
+    curator.classList.add('view-hidden');
+    admins.classList.remove('view-hidden');
+    btn.textContent = '← Image Curator';
     loadAdmins();
   } else {
-    adminsDiv.classList.add('view-hidden');
-    schools.classList.remove('view-hidden');
+    admins.classList.add('view-hidden');
+    curator.classList.remove('view-hidden');
     btn.textContent = 'Manage Admins';
   }
 }
@@ -299,292 +813,49 @@ async function loadAdmins() {
         <td style="color:var(--muted)">${esc(r.created_at || '')}</td>
       </tr>`).join('');
   } catch(e) {
-    tbody.innerHTML = `<tr><td colspan="4" style="color:var(--red);">Failed to load: ${esc(e.message)}</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="4" style="color:var(--red);">Failed: ${esc(e.message)}</td></tr>`;
   }
 }
 
 async function addAdmin(evt) {
   evt.preventDefault();
-  const input  = document.getElementById('new-admin-email');
-  const btn    = document.getElementById('btn-add-admin');
-  const msgEl  = document.getElementById('admins-msg');
-  const email  = input.value.trim();
+  const input = document.getElementById('new-admin-email');
+  const btn   = document.getElementById('btn-add-admin');
+  const msgEl = document.getElementById('admins-msg');
+  const email = input.value.trim();
   if (!email) return;
-  btn.disabled    = true;
-  msgEl.className = 'admins-msg';
-  msgEl.textContent = '';
+  btn.disabled = true;
+  msgEl.className = 'admins-msg'; msgEl.textContent = '';
   try {
     const res  = await fetch('/api/ua/admins/create', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email }),
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({email}),
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || 'Unknown error');
-    msgEl.className   = 'admins-msg ok';
-    msgEl.textContent = `${data.email} added as admin.`;
+    msgEl.className = 'admins-msg ok';
+    msgEl.textContent = `${data.email} added.`;
     input.value = '';
     loadAdmins();
   } catch(e) {
-    msgEl.className   = 'admins-msg err';
+    msgEl.className = 'admins-msg err';
     msgEl.textContent = 'Error: ' + e.message;
   } finally {
     btn.disabled = false;
   }
 }
 
-// ── Boot ──────────────────────────────────────────────────────────────
-async function boot() {
-  try {
-    const res  = await fetch('/api/ua/schools');
-    if (res.status === 401) { window.location.href = '/'; return; }
-    if (res.status === 403) { document.body.innerHTML = '<div style="padding:2rem;color:#DC2626;">Access denied.</div>'; return; }
-    ALL_SCHOOLS = await res.json();
-    renderSidebarStats();
-    renderSchoolList(ALL_SCHOOLS);
-  } catch(e) {
-    document.getElementById('sidebar-stats').textContent = 'Failed to load schools.';
-  }
+// ══════════════════════════════════════════════════════════════════════════
+// UTILITIES
+// ══════════════════════════════════════════════════════════════════════════
+function typeToCategory(type) {
+  return {campus:'campus', pool:'pool', life:'student_life'}[type] || type;
 }
 
-// ── Sidebar ───────────────────────────────────────────────────────────
-function renderSidebarStats() {
-  const total    = ALL_SCHOOLS.length;
-  const curated  = ALL_SCHOOLS.filter(s => s.is_curated).length;
-  const hasCands = ALL_SCHOOLS.filter(s => s.has_candidates).length;
-  document.getElementById('sidebar-stats').textContent =
-    `${total} schools · ${curated} curated · ${hasCands} with candidates`;
-}
-
-function filterSchools() {
-  const q = document.getElementById('school-search').value.toLowerCase();
-  renderSchoolList(q ? ALL_SCHOOLS.filter(s => s.name.toLowerCase().includes(q)) : ALL_SCHOOLS);
-}
-
-function renderSchoolList(schools) {
-  const el = document.getElementById('school-list');
-  if (!schools.length) { el.innerHTML = '<div style="padding:0.75rem;color:var(--muted);font-size:0.82rem;">No schools found.</div>'; return; }
-  el.innerHTML = schools.map(s => `
-    <div class="school-item ${ACTIVE_SCHOOL === s.name ? 'active' : ''}" onclick="selectSchool('${esc(s.name)}')">
-      <div class="school-item-dot ${s.is_curated ? 'is-curated' : s.has_candidates ? 'has-candidates' : ''}"></div>
-      <div class="school-item-name" title="${esc(s.name)}">${esc(s.name)}</div>
-    </div>
-  `).join('');
-}
-
-// ── School detail ─────────────────────────────────────────────────────
-async function selectSchool(name) {
-  ACTIVE_SCHOOL = name;
-  FILTER_CAT    = 'all';
-  PENDING_HERO    = null;
-  PENDING_POOL    = null;
-  PENDING_STUDENT = null;
-
-  // Highlight sidebar
-  document.querySelectorAll('.school-item').forEach(el => {
-    el.classList.toggle('active', el.querySelector('.school-item-name')?.textContent === name);
-  });
-
-  const panel = document.getElementById('main-panel');
-  panel.innerHTML = '<div class="status-msg">Loading…</div>';
-
-  try {
-    const res  = await fetch('/api/ua/candidates/' + encodeURIComponent(name));
-    if (!res.ok) throw new Error(await res.text());
-    const data = await res.json();
-    renderDetail(name, data);
-  } catch(e) {
-    panel.innerHTML = `<div class="status-msg err">Failed to load: ${e.message}</div>`;
-  }
-}
-
-function renderDetail(name, data) {
-  const { candidates = [], stored = {} } = data;
-
-  // Use pending selections if set, else fall back to stored
-  const heroUrl    = PENDING_HERO    ?? stored.hero         ?? null;
-  const poolUrl    = PENDING_POOL    ?? stored.swim         ?? null;
-  const studentUrl = PENDING_STUDENT ?? stored.student_life ?? null;
-
-  const cats = ['all', 'campus', 'pool', 'student_life'];
-  const filtered = FILTER_CAT === 'all' ? candidates : candidates.filter(c => c.category === FILTER_CAT);
-
-  const panel = document.getElementById('main-panel');
-  panel.innerHTML = `
-    <div class="school-header">
-      <div class="school-title">${esc(name)}</div>
-      <div class="school-actions">
-        <button class="btn btn-secondary" id="btn-fetch" onclick="fetchCandidates('${esc(name)}')">Fetch Image Candidates</button>
-        <button class="btn btn-green" id="btn-approve" onclick="approveImages('${esc(name)}')" ${(!PENDING_HERO && !PENDING_POOL && !PENDING_STUDENT) ? 'disabled' : ''}>
-          Save Selections
-        </button>
-      </div>
-    </div>
-    <div id="fetch-status"></div>
-
-    <div class="section">
-      <div class="section-title">Current Images (live in app)</div>
-      <div class="current-images">
-        ${renderCurrentSlot('Hero / Campus', heroUrl, 'hero')}
-        ${renderCurrentSlot('Pool', poolUrl, 'pool')}
-        ${renderCurrentSlot('Student Life', studentUrl, 'student')}
-      </div>
-    </div>
-
-    <div class="section">
-      <div class="section-title">Image Candidates (${candidates.length})</div>
-      ${candidates.length === 0
-        ? `<div class="status-msg">No candidates yet. Click "Fetch Image Candidates" to load them.</div>`
-        : `
-          <div class="candidates-filter">
-            ${cats.map(c => `<div class="filter-chip ${FILTER_CAT === c ? 'active' : ''}" onclick="setCatFilter('${c}','${esc(name)}')">${catLabel(c)}</div>`).join('')}
-          </div>
-          <div class="candidates-grid" id="cand-grid">
-            ${filtered.map(c => renderCandCard(c, heroUrl, poolUrl, studentUrl)).join('')}
-          </div>
-          ${filtered.length === 0 ? `<div class="status-msg">No candidates in this category.</div>` : ''}
-        `
-      }
-    </div>
-  `;
-}
-
-function renderCurrentSlot(label, url, type) {
-  const filled = !!url;
-  return `
-    <div class="current-slot ${filled ? 'filled' : ''}">
-      <div class="current-slot-label">
-        <span>${label}</span>
-        ${filled ? '<span>✓ set</span>' : '<span>—</span>'}
-      </div>
-      ${filled
-        ? `<img class="current-img" src="${esc(url)}" loading="lazy" onerror="this.style.display='none'" />`
-        : `<div class="current-img-empty">No image set</div>`}
-    </div>
-  `;
-}
-
-function renderCandCard(c, heroUrl, poolUrl, studentUrl) {
-  const url  = c.url || '';
-  const cat  = c.category || 'campus';
-  const isHero    = url === heroUrl;
-  const isPool    = url === poolUrl;
-  const isStudent = url === studentUrl;
-  const approved  = isHero || isPool || isStudent;
-  return `
-    <div class="cand-card ${approved ? 'approved' : ''}">
-      <img class="cand-img" src="${esc(url)}" loading="lazy" onerror="this.parentElement.style.display='none'"
-           onclick="window.open('${esc(url)}','_blank')" title="Open full size" />
-      <div class="cand-meta">
-        <div class="cand-cat">${catLabel(cat)}</div>
-        <div class="cand-approve-row">
-          <button class="btn btn-sm ${isHero ? 'btn-green' : 'btn-secondary'}"
-                  onclick="setPending('hero','${esc(url)}')" title="Use as hero/campus image">
-            ${isHero ? '✓ Hero' : 'Hero'}
-          </button>
-          <button class="btn btn-sm ${isPool ? 'btn-green' : 'btn-secondary'}"
-                  onclick="setPending('pool','${esc(url)}')" title="Use as pool image">
-            ${isPool ? '✓ Pool' : 'Pool'}
-          </button>
-          <button class="btn btn-sm ${isStudent ? 'btn-green' : 'btn-secondary'}"
-                  onclick="setPending('student','${esc(url)}')" title="Use as student life image">
-            ${isStudent ? '✓ Life' : 'Life'}
-          </button>
-        </div>
-      </div>
-    </div>
-  `;
-}
-
-// ── Interactions ──────────────────────────────────────────────────────
-function setPending(type, url) {
-  if (type === 'hero')    PENDING_HERO    = url;
-  if (type === 'pool')    PENDING_POOL    = url;
-  if (type === 'student') PENDING_STUDENT = url;
-  if (ACTIVE_SCHOOL) selectSchool(ACTIVE_SCHOOL);
-}
-
-function setCatFilter(cat, name) {
-  FILTER_CAT = cat;
-  if (ACTIVE_SCHOOL) selectSchool(ACTIVE_SCHOOL);
-}
-
-async function fetchCandidates(name) {
-  const btn = document.getElementById('btn-fetch');
-  const statusEl = document.getElementById('fetch-status');
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span> Fetching…';
-  statusEl.className = 'status-msg';
-  statusEl.textContent = 'Fetching candidates from the web…';
-  try {
-    const res  = await fetch('/api/ua/fetch-candidates', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ school: name }),
-    });
-    const data = await res.json();
-    if (!res.ok || data.error) throw new Error(data.error || 'Unknown error');
-    showToast(`Fetched ${data.count} candidates for ${name}`);
-    statusEl.className = 'status-msg ok';
-    statusEl.textContent = `Done — ${data.count} new candidates fetched.`;
-    // Refresh the school detail
-    const idx = ALL_SCHOOLS.findIndex(s => s.name === name);
-    if (idx >= 0) ALL_SCHOOLS[idx].has_candidates = true;
-    renderSchoolList(ALL_SCHOOLS.filter(s => {
-      const q = document.getElementById('school-search').value.toLowerCase();
-      return !q || s.name.toLowerCase().includes(q);
-    }));
-    await selectSchool(name);
-  } catch(e) {
-    statusEl.className = 'status-msg err';
-    statusEl.textContent = `Error: ${e.message}`;
-    showToast('Fetch failed: ' + e.message);
-  } finally {
-    if (btn) { btn.disabled = false; btn.textContent = 'Fetch Image Candidates'; }
-  }
-}
-
-async function approveImages(name) {
-  const btn = document.getElementById('btn-approve');
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span> Saving…';
-  const body = {
-    school:              name,
-    hero_images:         PENDING_HERO    ? [PENDING_HERO]    : [],
-    pool_images:         PENDING_POOL    ? [PENDING_POOL]    : [],
-    student_life_images: PENDING_STUDENT ? [PENDING_STUDENT] : [],
-  };
-  try {
-    const res  = await fetch('/api/ua/approve', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
-    });
-    const data = await res.json();
-    if (!res.ok || data.error) throw new Error(data.error || 'Unknown error');
-    showToast(`Images saved for ${name}`);
-    const idx = ALL_SCHOOLS.findIndex(s => s.name === name);
-    if (idx >= 0) {
-      ALL_SCHOOLS[idx].is_curated   = true;
-      ALL_SCHOOLS[idx].stored_hero  = PENDING_HERO    || ALL_SCHOOLS[idx].stored_hero;
-      ALL_SCHOOLS[idx].stored_swim  = PENDING_POOL    || ALL_SCHOOLS[idx].stored_swim;
-      ALL_SCHOOLS[idx].stored_student = PENDING_STUDENT || ALL_SCHOOLS[idx].stored_student;
-    }
-    PENDING_HERO    = null;
-    PENDING_POOL    = null;
-    PENDING_STUDENT = null;
-    renderSidebarStats();
-    await selectSchool(name);
-  } catch(e) {
-    showToast('Save failed: ' + e.message);
-    btn.disabled = false;
-    btn.textContent = 'Save Selections';
-  }
-}
-
-// ── Utilities ─────────────────────────────────────────────────────────
-function catLabel(c) {
-  return { all: 'All', campus: 'Campus', pool: 'Pool', student_life: 'Student Life' }[c] || c;
-}
 function esc(s) {
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  return String(s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
 
 let _toastTimer;
@@ -593,7 +864,7 @@ function showToast(msg) {
   el.textContent = msg;
   el.classList.add('visible');
   clearTimeout(_toastTimer);
-  _toastTimer = setTimeout(() => el.classList.remove('visible'), 3000);
+  _toastTimer = setTimeout(() => el.classList.remove('visible'), 3500);
 }
 
 boot();
