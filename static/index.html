@@ -1697,17 +1697,24 @@ function obSelectBalancedTop6(results) {
   const all = results || [];
 
   // brand_rank for a school: lower = better. Unranked = 9999 (sorted last).
-  const brandRank = s => LANE4_BRAND_RANK[s] || 9999;
-  const cfBonus   = r => r.confFinish2026 ? r.confFinish2026 : 999; // lower = better
+  const brandRank  = s => LANE4_BRAND_RANK[s] || 9999;
+  // Projected individual conference finish: best (min) place across top3 events.
+  // Lower = more competitive. Falls back to 9999 if no place data available.
+  const projPlace  = r => {
+    const places = (r.top3 || []).map(e => e.place).filter(p => p != null && p < 999);
+    return places.length ? Math.min(...places) : 9999;
+  };
 
   // ── Realistic pool ──────────────────────────────────────────
+  // Sort order: 1) brand_rank asc  2) projected conf finish asc  3) swim score desc
   const realistic = all
     .filter(r => r.adjPts > 0)
     .sort((a, b) => {
       const ra = brandRank(a.school), rb = brandRank(b.school);
-      if (ra !== rb) return ra - rb;          // prefer lower brand_rank
-      if (a.adjPts !== b.adjPts) return b.adjPts - a.adjPts; // then higher swim score
-      return cfBonus(a) - cfBonus(b);         // then better conf finish
+      if (ra !== rb) return ra - rb;                      // 1. brand_rank asc
+      const pa = projPlace(a), pb = projPlace(b);
+      if (pa !== pb) return pa - pb;                      // 2. projected conf finish asc
+      return b.adjPts - a.adjPts;                         // 3. swim score desc
     });
 
   // ── Stretch pool ─────────────────────────────────────────────
