@@ -1,0 +1,158 @@
+Update the Lane4 **initial results reveal** (after onboarding) so the first screen feels exciting, credible, and swimmer-focused.
+
+Do not change the recruiting engine or scoring calculations.
+This is a **presentation and selection layer change only.**
+
+---
+
+SECTION TITLE
+
+---
+
+Change the results header from:
+
+Your Lane Assignment
+
+to:
+
+Best College Swim Fits
+
+Subtext:
+
+Based on your times, these programs look like strong fits.
+
+---
+
+TOP 6 SCHOOL SELECTION LOGIC
+
+---
+
+The current system appears to simply take the top 6 by swim score.
+
+Instead, create a **balanced reveal that prioritizes recognizable schools when possible.**
+
+Selection priorities should be:
+
+1. Strong swim fit
+2. Recognizable academic brands (when available)
+3. Schools where swimmer could score at conference meet
+4. Schools where swimmer could reach A-final or podium potential
+
+Suggested reveal composition:
+
+• 2 strong swim fits
+• 2 recognizable academic schools
+• 1 stretch / exciting school
+• 1 additional realistic option
+
+Do NOT sacrifice realism — but when multiple schools have similar swim scores, prefer the one with **higher brand recognition.**
+
+---
+
+CARD CONTENT
+
+---
+
+Each of the 6 reveal cards should now include:
+
+1. School Name
+
+2. Swim Potential Badge
+
+Replace generic labels with swimmer-relevant tags such as:
+
+Conference Meet Scorer
+A Final Potential
+Podium Potential
+Strong Swim Fit
+Coach Interest Possible
+Longer-Term Swim Goal
+
+These should come from existing scoring logic where possible.
+
+3. School Tagline
+
+Use the **existing generated school tagline** that already appears in the Explore cards.
+
+Example style:
+
+"Top-tier academics with one of the fastest rising swim programs in the conference."
+
+or
+
+"Elite liberal arts college where smart swimmers thrive."
+
+4. School Image
+
+If a curated school image exists in the image system:
+
+Display the hero campus image on the card.
+
+If no image exists:
+
+Display the card cleanly without a broken placeholder.
+
+---
+
+CARD LAYOUT
+
+---
+
+Each reveal card should contain:
+
+School Photo (if available)
+
+School Name
+
+Swim Potential Badge
+
+School Tagline
+
+Cards should feel visually richer than the current simple list.
+
+---
+
+VISUAL TONE
+
+---
+
+This screen should feel like a **big reveal moment**, not a database result.
+
+Design cues:
+
+• slightly larger cards
+• clear swim potential badges
+• concise tagline
+• recognizable school names emphasized
+
+---
+
+TRANSITION TO EXPLORE
+
+---
+
+Below the Top 6 reveal, keep the button:
+
+Explore All My Schools →
+
+When clicked, transition into the full Explore interface.
+
+However, do NOT drop the user directly into a blank search bar.
+
+Instead show:
+
+More Schools That Fit Your Times
+
+with additional personalized school cards before the search UI.
+
+---
+
+IMPORTANT GOAL
+
+---
+
+The first reveal should make a swimmer immediately think:
+
+"Wow, I could actually swim there."
+
+Recognizable schools, clear swim potential, and the existing school taglines should make the results feel exciting and credible.
