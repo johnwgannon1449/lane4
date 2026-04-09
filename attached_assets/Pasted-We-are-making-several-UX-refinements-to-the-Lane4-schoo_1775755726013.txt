@@ -1,0 +1,92 @@
+We are making several UX refinements to the Lane4 school reveal and Explore experience.
+IMPORTANT
+Do NOT change swim evaluation logic, school ranking logic, recruiting likelihood logic, or database schema.
+These changes are UI behavior and gating logic only.
+1. SLOW DOWN SCHOOL COUNT OVERLAY
+The overlay that appears after matching schools (example text: Hundreds of programs match your current speed) disappears too quickly.
+Update timing:
+display overlay for 2.0–2.5 seconds
+keep auto-transition (no user click required)
+maintain current light overlay styling
+preserve existing language tier system (Dozens / Scores / Hundreds)
+Subtext remains:
+We have so many options! Let’s get to work and narrow down the best fit for you.
+Goal: allow the excitement moment to land.
+2. UPDATE TOP 6 CARD ACTION BUTTONS
+On the Best College Swim Fits page (Top 6 schools):
+Update button layout.
+Current layout:
+Add to List   Deep Dive
+New layout:
+Deep Dive   Add to List
+Rules:
+Deep Dive on the left
+Add to List on the right
+Both buttons should be blue CTA style
+Maintain consistent spacing
+Do NOT make the whole card clickable
+3. INCLUDE HERO IMAGE WHEN AVAILABLE
+Top 6 cards should include the hero campus image when one exists.
+Rules:
+hero image appears at top of card
+reuse same logic used elsewhere in Explore cards
+if no image exists, render card normally without placeholder space
+Images are important for smaller schools.
+4. FIRST EXPLORE PAGE SHOULD USE FULL EXPLORE CARDS
+When the user first lands in Explore, the schools shown should use the same full card component used later in Explore.
+Do NOT render simplified reveal cards.
+Explore cards should include:
+hero image
+division label
+fit badge
+admissions section
+Add to List
+Deep Dive
+Implementation:
+render_explore_school_card(school)
+This ensures the user immediately sees the full Lane4 product.
+5. ADMISSIONS REALITY GATING
+Lane4 should never show full admissions chances until the academic profile is completed.
+Check:
+user.academic_profile_complete
+If academic profile IS complete
+Display the normal admissions probability / messaging.
+If academic profile is NOT complete
+Instead of showing admissions probability, show a button labeled:
+Admissions Reality
+This replaces the admissions result.
+6. ADMISSIONS REALITY BUTTON BEHAVIOR
+When the user clicks Admissions Reality:
+Step 1 — show quick overlay message:
+We need to know a little more about you before we can answer this.
+Step 2 — automatically route the user to:
+/profile
+This should take the user to the academic profile section.
+Goal: drive profile completion earlier.
+7. APPLY ADMISSIONS REALITY LOGIC TO BOTH CARD TYPES
+The admissions gating must apply to:
+Top 6 reveal cards
+Explore cards
+This ensures consistent behavior everywhere.
+8. DO NOT CHANGE SCHOOL RANKING LOGIC
+The following systems must remain untouched:
+recruiting likelihood tiers
+brand_rank ordering
+Top 6 selection logic
+next 6 selection logic
+conference scoring
+swim score calculations
+These changes are purely presentation and gating.
+SUCCESS CRITERIA
+After this patch:
+Top 6 cards should:
+show hero images when available
+include Deep Dive + Add to List buttons
+use improved button order
+The overlay should:
+stay visible long enough to feel exciting
+Explore should:
+render full Explore cards immediately
+Admissions chances should:
+only appear after the academic profile is completed
+otherwise prompt the Admissions Reality → Profile flow.

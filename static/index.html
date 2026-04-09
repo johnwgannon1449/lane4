@@ -1815,6 +1815,17 @@ function obRevealCardHtml(r, rank) {
   const inList   = MY_LIST.includes(r.school);
   const schoolJs = JSON.stringify(r.school);
 
+  // Admissions Reality gating: only show admit badge when profile is complete
+  const admHtml = (() => {
+    if (!_isAcademicProfileComplete()) {
+      return `<button class="btn btn-primary" style="font-size:0.7rem;padding:3px 10px;line-height:1.5;margin-top:5px;" onclick="obShowAdmissionsReality()">Admissions Reality</button>`;
+    }
+    const adm = r.admission || {};
+    if (!adm.label || adm.label === 'No data' || adm.label === 'Unknown') return '';
+    const bg = safeAdmColor(adm);
+    return `<span class="ob-swim-badge" style="background:${bg};color:#fff;margin-top:5px;">${esc(adm.label)}</span>`;
+  })();
+
   const imgHtml = imgUrl
     ? `<div class="ob-reveal-img"><img src="${esc(imgUrl)}" alt="${esc(r.school)}" loading="lazy" onerror="this.closest('.ob-reveal-img').remove()" /></div>`
     : '';
@@ -1836,9 +1847,10 @@ function obRevealCardHtml(r, rank) {
       <span class="ob-swim-badge" style="background:${esc(badge.bg)};color:${esc(badge.color)};">${esc(badge.label)}</span>
       ${tagline ? `<div class="ob-reveal-tagline">${esc(tagline)}</div>` : ''}
       ${loc     ? `<div class="ob-reveal-loc">${esc(loc)}</div>`        : ''}
+      ${admHtml}
       <div class="ob-reveal-actions">
+        <button class="btn btn-primary" onclick="openDeepDive(${schoolJs})">Deep Dive →</button>
         ${addBtn}
-        <button class="btn btn-ghost" onclick="openDeepDive(${schoolJs})">Deep Dive →</button>
       </div>
     </div>
   </div>`;
@@ -2181,8 +2193,8 @@ function obShowMatchCount() {
     `<div class="ob-count-label ob-count-fade-in">${label}</div>` +
     `<div class="ob-count-sub ob-count-sub-fade" style="margin-top:0.5rem;">${sub}</div>`;
 
-  // Auto-advance after 1.1 s — no click required
-  setTimeout(() => obS6Next(), 1100);
+  // Auto-advance after 2.2 s — long enough to let the excitement land
+  setTimeout(() => obS6Next(), 2200);
 }
 
 function obS6Next() {
@@ -2299,14 +2311,12 @@ async function obFinish() {
   const more    = obSelectNextSchools(allScored, top6Set, 2);
 
   if (more.length > 0) {
+    // Show section title in search-state; render full explore cards in search-results
     const searchState = document.getElementById('search-state');
     if (searchState) {
-      searchState.innerHTML = `
-        <div class="ob-post-land">
-          <div class="ob-post-land-title">More Schools That Fit Your Times</div>
-          <div class="ob-post-land-grid">${more.map(r => obPostMiniCardHtml(r)).join('')}</div>
-        </div>`;
+      searchState.innerHTML = `<div style="font-family:'Fraunces',serif;font-size:1.1rem;font-weight:700;color:var(--navy);margin-bottom:0.75rem;">More Schools That Fit Your Times</div>`;
     }
+    renderResultCards(more, null, false, null);
   }
 }
 
@@ -2737,6 +2747,31 @@ async function runSearch() {
 }
 
 // ── Card HTML builder (outer-scope — used by renderVisibleResults) ────────────
+// ── Academic profile completeness check ───────────────────────
+// Returns true once the swimmer has entered at least GPA or test scores.
+function _isAcademicProfileComplete() {
+  return !!(JAMES && (JAMES.gpa || JAMES.sat || JAMES.act));
+}
+
+// ── Admissions Reality gate: overlay → profile tab ────────────
+function obShowAdmissionsReality() {
+  const overlay = document.createElement('div');
+  overlay.id = 'adm-reality-overlay';
+  overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(15,23,42,0.55);display:flex;align-items:center;justify-content:center;z-index:9999;padding:2rem;';
+  overlay.innerHTML = `
+    <div style="background:#fff;border-radius:16px;padding:2rem 1.75rem;max-width:320px;text-align:center;box-shadow:0 12px 40px rgba(15,23,42,0.22);">
+      <div style="font-family:'Fraunces',serif;font-size:1.1rem;font-weight:700;color:#0F172A;line-height:1.4;">
+        We need to know a little more about you before we can answer this.
+      </div>
+    </div>`;
+  document.body.appendChild(overlay);
+  setTimeout(() => {
+    const el = document.getElementById('adm-reality-overlay');
+    if (el) el.remove();
+    showTab('profile');
+  }, 1800);
+}
+
 function _buildCardHtml(r, i) {
   const inList   = MY_LIST.includes(r.school);
   const top3     = r.top3 || [];
@@ -2773,6 +2808,10 @@ function _buildCardHtml(r, i) {
   };
   const _admHtml = () => {
     if (isOOU) return '';
+    // Gate: only show real admissions data once the academic profile is complete
+    if (!_isAcademicProfileComplete()) {
+      return `<button class="btn btn-primary" style="font-size:0.7rem;padding:3px 10px;line-height:1.5;" onclick="obShowAdmissionsReality()">Admissions Reality</button>`;
+    }
     const lbl = adm.label && adm.label !== 'Unknown' && adm.label !== 'No data' ? adm.label : 'Admission N/A';
     const bg  = (lbl === 'Admission N/A') ? '#94A3B8' : admColor;
     return `<span class="badge badge-adm" style="background:${bg};">${esc(lbl)}</span>`;
