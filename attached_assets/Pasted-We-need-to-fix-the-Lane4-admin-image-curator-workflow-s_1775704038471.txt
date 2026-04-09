@@ -1,0 +1,82 @@
+We need to fix the Lane4 admin image curator workflow so it behaves logically and eliminates unnecessary clicks.
+This pass is about automation, persistence, and visibility of existing selections.
+Do not change unrelated systems.
+1. Automatically fetch candidates when entering a school
+Currently the curator requires clicking Fetch Candidates after opening a school.
+This is incorrect UX.
+When an admin opens a school in the curator:
+Automatically trigger candidate generation for Campus, Pool, and Student Life
+Do this immediately on page load
+Do not require clicking Fetch Candidates
+The system should attempt to load:
+16 Campus candidates
+16 Pool candidates
+16 Student Life candidates
+The curator should open already populated.
+The Fetch Candidates button can remain but should act as Refresh Candidates.
+2. Always show previously saved images when re-entering a school
+Currently when returning to a school the previously approved images are not visible.
+This is a major workflow bug.
+When a school loads:
+First load existing curated images from:
+curated_manifest.json
+school_images.json
+Display those images immediately in the curator.
+They must appear:
+clearly marked as Selected / Saved
+pinned at the top of their section
+Example sections:
+Campus
+Selected images (existing)
+Candidate images (new)
+Pool
+Selected images (existing)
+Candidate images (new)
+Student Life
+Selected images (existing)
+Candidate images (new)
+Admins must always see what was previously approved.
+3. Prevent loss of selections during candidate refresh
+When new candidates are fetched:
+Do not remove previously selected images
+Keep selected images pinned at the top
+Only refresh the candidate pool below them
+Selections must persist unless explicitly removed.
+4. Ensure sections target 16 candidates automatically
+On automatic load or refresh:
+Attempt to populate:
+16 Campus candidates
+16 Pool candidates
+16 Student Life candidates
+Do not count junk or duplicates toward the 16.
+If the first search attempt returns too few good candidates, automatically expand search variants until the section reaches 16 or the search space is exhausted.
+Admins should not need to repeatedly click Fetch More just to reach 16.
+5. Keep Save buttons top and bottom
+Ensure Save Selections exists at:
+top of the page
+bottom of the page
+Both buttons must perform the same save operation.
+6. Improve clarity of selected images
+Selected images should be visually obvious.
+Add a clear visual state such as:
+check mark
+highlighted border
+“Selected” label
+Admins must instantly see which images are currently saved for the school.
+7. Preserve admin efficiency
+Final intended workflow:
+Open school →
+Immediately see existing saved images →
+Immediately see fresh candidate images →
+Click replacements if needed →
+Save →
+Next school.
+No unnecessary clicks.
+8. QA this behavior
+Confirm:
+opening a school auto-loads candidates
+existing curated images always display
+selections persist across refresh
+Save works from top and bottom
+candidate pools populate automatically
+The goal is to make curating 80+ schools fast and frictionless without repetitive manual actions.
