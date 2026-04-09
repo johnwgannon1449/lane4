@@ -727,13 +727,15 @@
     .ob-tier-badge { font-size:0.7rem; font-weight:700; padding:2px 7px; border-radius:10px; display:inline-block; }
     .ob-del-btn { background:none; border:none; cursor:pointer; color:var(--muted); font-size:0.9rem; padding:0 2px; }
     .ob-del-btn:hover { color:var(--red); }
-    /* Match count */
-    .ob-count-number {
-      font-family:'Fraunces',serif; font-size:3.75rem; font-weight:900;
-      color:var(--blue); line-height:1; margin:0 0 0.35rem;
+    /* Match count / S6 overlay */
+    .ob-count-label { font-size:1.25rem; color:var(--navy); font-weight:700; margin-bottom:0.4rem; line-height:1.35; }
+    .ob-count-sub { font-size:0.9rem; color:var(--muted); line-height:1.6; }
+    @keyframes ob-fade-in-up {
+      from { opacity:0; transform:translateY(14px); }
+      to   { opacity:1; transform:translateY(0); }
     }
-    .ob-count-label { font-size:1.05rem; color:var(--navy); font-weight:600; margin-bottom:0.3rem; }
-    .ob-count-sub { font-size:0.88rem; color:var(--muted); line-height:1.55; }
+    .ob-count-fade-in { animation: ob-fade-in-up 0.45s cubic-bezier(.22,.68,0,1.2) both; }
+    .ob-count-sub-fade { animation: ob-fade-in-up 0.4s 0.22s ease-out both; }
     /* Results */
     .ob-result-card {
       border:1.5px solid var(--border); border-radius:11px; padding:0.8rem 1rem;
@@ -1001,11 +1003,10 @@
       </div>
     </div>
 
-    <!-- Screen 6: Match Count Reveal -->
+    <!-- Screen 6: Match Count Overlay (auto-advances, no click required) -->
     <div id="ob-s6" class="ob-screen">
       <div class="ob-logo">Lane<span>4</span></div>
-      <div id="ob-s6-body" style="margin:1.25rem 0 1.5rem;"></div>
-      <button class="ob-submit" id="ob-s6-btn" onclick="obS6Next()">Show My Lane Assignment →</button>
+      <div id="ob-s6-body" style="margin:1.75rem 0 1rem;"></div>
     </div>
 
     <!-- Screen 7: Email + Password -->
@@ -1877,6 +1878,50 @@ function hideOnboarding() {
   document.getElementById('onboarding-overlay').style.display = 'none';
 }
 
+// ── Tagline pools ─────────────────────────────────────────────
+const OB_S3_POOL = [
+  'Dang, that\u2019s fast\u2026',
+  'C\u2019mon, are these relay splits?',
+  'Somebody\u2019s been putting in yardage.',
+  'That breakout looks dangerous.',
+  'Those turns are doing work.',
+  'This kid likes the water.',
+  'Easy speed.',
+  'Coach is gonna like that one.',
+  'That back half though\u2026',
+];
+const OB_S5_POOL = [
+  'Oh, this roster just got interesting.',
+  'This coach can\u2019t get ahold of her fast enough.',
+  'Podium potential\u2026',
+  'That conference final just got faster.',
+  'Somebody\u2019s lane just opened up.',
+  'This is getting fun.',
+  'That\u2019s a program on the rise.',
+  'A few coaches are about to pay attention.',
+];
+
+// Pick n distinct random items from an array
+const obPickRandom = (arr, n) => [...arr].sort(() => Math.random() - 0.5).slice(0, n);
+
+// Promise-based delay
+const obWait = ms => new Promise(r => setTimeout(r, ms));
+
+// Sequential fade-through taglines. Returns a Promise that resolves after all lines shown.
+async function obRunTaglines(elId, lines, msPerLine) {
+  const el = document.getElementById(elId);
+  if (!el) return obWait(lines.length * msPerLine);
+  for (const line of lines) {
+    el.style.transition = 'opacity 0.2s';
+    el.style.opacity = '0';
+    await obWait(220);
+    if (!document.getElementById(elId)) return; // screen may have changed
+    el.textContent = line;
+    el.style.opacity = '1';
+    await obWait(msPerLine);
+  }
+}
+
 function obStartMessages(elId, messages, interval) {
   interval = interval || 1600;
   const el = document.getElementById(elId);
@@ -1957,27 +2002,17 @@ async function obSelectSwimmer(swimmerId, displayName, team, gradYear) {
   if (gradYear) OB_STATE.gradYear = parseInt(gradYear) || 2026;
 
   obShowScreen(3);
-  obStartMessages('ob-s3-msg', [
-    'Grabbing best times\u2026',
-    'Checking the psych sheet\u2026',
-    'Someone\u2019s been putting in yardage.',
-    'Lane 4 energy detected.',
-    'Counting strokes, not vibes.',
-    'Trying not to get split-swindled\u2026',
-    'Yep, those are real swimmer times.',
-    'Hold on, verifying that 100 free\u2026',
-    'Sorting the pain-cave events\u2026',
+  // 2–3 random swimmer-native taglines, ~550 ms each → ~1.5–1.9 s total
+  const s3lines = obPickRandom(OB_S3_POOL, 3);
+  const [fetchResult] = await Promise.all([
+    fetch('/api/public/swimcloud/propose?swimmer_id=' + encodeURIComponent(swimmerId) + '&gender=' + (OB_STATE.gender || 'men'))
+      .then(r => r.json())
+      .catch(() => ({ proposed: [] })),
+    obRunTaglines('ob-s3-msg', s3lines, 560),
   ]);
-
-  try {
-    const res  = await fetch('/api/public/swimcloud/propose?swimmer_id=' + encodeURIComponent(swimmerId) + '&gender=' + (OB_STATE.gender || 'men'));
-    const data = await res.json();
-    OB_STATE.proposedTimes = data.proposed || [];
-    if (data.swimmer && data.swimmer.gender) OB_STATE.gender = data.swimmer.gender;
-    obRenderTimeValidation();
-  } catch(e) {
-    obGoManual();
-  }
+  OB_STATE.proposedTimes = (fetchResult && fetchResult.proposed) || [];
+  if (fetchResult && fetchResult.swimmer && fetchResult.swimmer.gender) OB_STATE.gender = fetchResult.swimmer.gender;
+  obRenderTimeValidation();
 }
 
 function obGoManual() {
@@ -2078,28 +2113,17 @@ async function obS4Confirm() {
   OB_STATE.confirmedTimes = times;
 
   obShowScreen(5);
-  obStartMessages('ob-s5-msg', [
-    'Visiting campuses for you\u2026',
-    'Looking for schools where you can contribute\u2026',
-    'Scanning for smart swimmer schools\u2026',
-    'Somewhere, a coach just nodded quietly.',
-    'Finding the sweet spot between fast and feasible\u2026',
-    'Checking where stopwatch and transcript can coexist.',
-    'Trying not to send you rainbow chasing\u2026',
-  ]);
-
-  try {
-    const res  = await fetch('/api/score-all', {
+  // 3 random recruiting-themed taglines, ~850 ms each → ~2.7 s total
+  const s5lines = obPickRandom(OB_S5_POOL, 3);
+  const [scoreData] = await Promise.all([
+    fetch('/api/score-all', {
       method: 'POST', headers: {'Content-Type':'application/json'},
       body: JSON.stringify({ times: OB_STATE.confirmedTimes, sat: 0, gpa: 0 }),
-    });
-    const data = await res.json();
-    OB_STATE.scoreResults = data.results || [];
-    OB_STATE.matchCount   = OB_STATE.scoreResults.filter(r => r.adjPts > 0).length;
-  } catch(e) {
-    OB_STATE.scoreResults = [];
-    OB_STATE.matchCount   = 0;
-  }
+    }).then(r => r.json()).catch(() => ({ results: [] })),
+    obRunTaglines('ob-s5-msg', s5lines, 860),
+  ]);
+  OB_STATE.scoreResults = (scoreData && scoreData.results) || [];
+  OB_STATE.matchCount   = OB_STATE.scoreResults.filter(r => r.adjPts > 0).length;
   obShowMatchCount();
 }
 
@@ -2113,25 +2137,22 @@ function obShowMatchCount() {
     sub   = 'Looks like you\u2019re still developing toward college recruiting range. Explore schools while you keep training \u2014 your times will get there.';
   } else if (n >= 100) {
     label = 'Hundreds of programs match your current speed.';
-    sub   = 'You\u2019ve got serious options. Let\u2019s find the best-fit schools for your speed and goals.';
+    sub   = 'We have so many options! Let\u2019s get to work and narrow down the best fit for you.';
   } else if (n >= 20) {
     label = 'Scores of colleges match your current speed.';
-    sub   = 'A strong pool of programs fits your times. Let\u2019s narrow it down to your best fits.';
+    sub   = 'We have so many options! Let\u2019s get to work and narrow down the best fit for you.';
   } else {
     label = 'Dozens of programs match your current speed.';
-    sub   = n >= 5 ? 'Several programs look promising for your times. Let\u2019s find your best lane.'
-          :          'A few targeted options line up with where you are now. Quality over quantity.';
+    sub   = 'We have so many options! Let\u2019s get to work and narrow down the best fit for you.';
   }
 
-  const s7head = document.getElementById('ob-s7-headline');
-  if (s7head) {
-    s7head.textContent = n >= 20 ? 'Don\u2019t leave before the interval.'
-      : n >= 1 ? 'Don\u2019t leave before the interval.'
-      : 'Keep training \u2014 your lane is coming.';
-  }
-
+  // Render with entrance animation
   document.getElementById('ob-s6-body').innerHTML =
-    `<div class="ob-count-label">${label}</div><div class="ob-count-sub" style="margin-top:0.3rem;">${sub}</div>`;
+    `<div class="ob-count-label ob-count-fade-in">${label}</div>` +
+    `<div class="ob-count-sub ob-count-sub-fade" style="margin-top:0.5rem;">${sub}</div>`;
+
+  // Auto-advance after 1.1 s — no click required
+  setTimeout(() => obS6Next(), 1100);
 }
 
 function obS6Next() {

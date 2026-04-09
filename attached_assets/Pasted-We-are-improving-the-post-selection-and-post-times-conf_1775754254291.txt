@@ -1,0 +1,118 @@
+We are improving the post-selection and post-times-confirmation onboarding flow in Lane4 to make it feel fast, fun, and exciting without adding friction.
+IMPORTANT
+Do NOT change swim evaluation logic, recruiting likelihood logic, database structure, or authentication behavior in this patch.
+This patch is only about loading/transition UX, copy, timing, and auto-advance flow.
+GOAL
+Turn dead loading moments into high-energy Lane4 moments.
+We want:
+After swimmer identity is selected
+show short, funny, swimmer-native taglines while we scrape times
+After times are confirmed / submitted
+show short, fun recruiting-themed taglines while we match schools
+Then show a brief light overlay with the school-count language in words only
+Then auto-transition directly to the email capture screen
+No extra click on the count screen.
+This should feel exciting, smooth, and premium.
+It must not drag.
+1. AFTER SWIMMER SELECTION: TIMES SCRAPE TAGLINES
+When the user selects their swimmer identity (name / team / grad year), and Lane4 begins pulling times, show a rotating set of short taglines.
+These should be pulled randomly from a pool so repeat visits feel fresh.
+Use a tagline pool like this:
+Dang, that’s fast…
+Did she really just drop a {time}??
+C’mon, are these relay splits?
+Somebody’s been putting in yardage.
+That breakout looks dangerous.
+Those turns are doing work.
+This kid likes the water.
+Easy speed.
+Coach is gonna like that one.
+That back half though…
+Implementation requirements:
+choose 2–3 random lines
+show them one at a time during the time-scrape phase
+total duration should be about 1.5–2.0 seconds
+smooth fade/transition between lines
+do NOT slow down actual data loading if it finishes faster; just keep UI pacing polished
+if data loading completes before all lines finish, complete the current line and continue immediately
+If {time} is not easily available in context, use a fallback generic line instead of forcing interpolation.
+2. AFTER TIMES CONFIRMATION: SCHOOL MATCHING TAGLINES
+After the user confirms / edits their times and submits, before the email screen appears, show a second rotating set of recruiting-themed taglines.
+These should also be selected randomly from a pool.
+Use a tagline pool like this:
+Oh he’d crush it in this conference.
+This coach can’t get ahold of her fast enough.
+She’d look great in those school colors.
+Podium potential…
+This roster just got interesting.
+That conference final just got faster.
+Somebody’s lane just opened up.
+This is getting fun.
+That’s a program on the rise.
+A few coaches are about to pay attention.
+Implementation requirements:
+choose 3–4 random lines
+show them one at a time
+total duration should be about 2.5–3.0 seconds
+smooth fade/transition between lines
+this should feel energetic, not slow
+3. SCHOOL COUNT OVERLAY
+After the school-matching taglines finish, show a light overlay / transition card.
+This is NOT a full-screen blocking page.
+It should feel like an exciting transition moment.
+Display:
+Main line:
+[COUNT LANGUAGE]
+Use existing Lane4 school-count language tiers (already implemented / available elsewhere if present), for example:
+Dozens of programs match your current speed.
+Scores of colleges match your current speed.
+Hundreds of programs match your current speed.
+Do NOT show exact numbers.
+Sub line:
+We have so many options! Let’s get to work and narrow down the best fit for you.
+Overlay requirements:
+visible for about 1.0–1.2 seconds
+no click required
+should feel exciting on exit
+light visual treatment, not a heavy modal
+then automatically transition into the email capture screen
+4. EMAIL SCREEN ENTRY
+After the overlay, automatically go straight to the existing email capture screen.
+Do not require the user to dismiss the overlay first.
+This patch should remove unnecessary friction and preserve momentum.
+5. TIMING TARGETS
+Target pacing:
+swimmer selection → time scrape taglines: 1.5–2.0 sec
+times confirmed → school matching taglines: 2.5–3.0 sec
+count overlay: 1.0–1.2 sec
+Total added perceived delay after times confirmation should be roughly 4–5 seconds max.
+It should feel polished and exciting, never sluggish.
+If backend work finishes early, keep the pacing smooth but do not artificially extend it beyond these rough targets.
+6. UX / STYLE NOTES
+The tone should feel:
+swimmer-native
+playful
+confident
+exciting
+not cheesy
+not overly corporate
+Use subtle animation / fades if helpful, but keep implementation lightweight.
+This should feel like Lane4 is doing something smart and personalized in real time.
+7. DO NOT CHANGE
+Do NOT modify:
+school ranking logic
+recruiting likelihood logic
+swim scoring
+authentication logic
+database schema
+admissions logic
+image logic
+This patch is only for the onboarding transition experience.
+SUCCESS CRITERIA
+When a swimmer uses the flow:
+selecting identity feels lively
+confirming times feels like something exciting is happening
+the count moment feels promising, not mathematical
+the email screen arrives with momentum
+repeat visits still feel fresh because taglines are randomized
+Implement this cleanly in the current flow with minimal disruption to existing logic.
