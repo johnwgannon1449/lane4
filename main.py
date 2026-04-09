@@ -5612,6 +5612,65 @@ def ua_fetch_candidates():
         return jsonify({'error': str(e)}), 500
 
 
+@app.route('/api/ua/fetch-more', methods=['POST'])
+@user_admin_required
+def ua_fetch_more():
+    """Fetch additional candidates for one section (category) of a school."""
+    body     = request.get_json(silent=True) or {}
+    school   = (body.get('school') or '').strip()
+    category = (body.get('category') or '').strip()   # campus | pool | student_life
+    if not school or category not in ('campus', 'pool', 'student_life'):
+        return jsonify({'error': 'missing or invalid school/category'}), 400
+    try:
+        from harvest_candidates import fetch_candidates_for_category, _rescore_and_trim_by_category
+        new_cands = fetch_candidates_for_category(school, category)
+        blocklist = _load_blocklist()
+        if blocklist:
+            new_cands = [c for c in new_cands if c.get('url', '') not in blocklist]
+        manifest = _load_candidates_manifest()
+        existing = manifest.get(school, [])
+        existing_urls = {c['url'] for c in existing}
+        merged  = existing + [c for c in new_cands if c['url'] not in existing_urls]
+        trimmed = _rescore_and_trim_by_category(merged, per_cat_limit=32)
+        manifest[school] = trimmed
+        with open(_CANDIDATES_PATH, 'w', encoding='utf-8') as f:
+            json.dump(manifest, f, indent=2, ensure_ascii=False)
+        added = [c for c in new_cands if c['url'] not in existing_urls]
+        return jsonify({'ok': True, 'added': len(added), 'candidates': trimmed})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/ua/redo-section', methods=['POST'])
+@user_admin_required
+def ua_redo_section():
+    """Discard existing candidates for one category and run a fresh fetch."""
+    body     = request.get_json(silent=True) or {}
+    school   = (body.get('school') or '').strip()
+    category = (body.get('category') or '').strip()
+    if not school or category not in ('campus', 'pool', 'student_life'):
+        return jsonify({'error': 'missing or invalid school/category'}), 400
+    try:
+        from harvest_candidates import fetch_candidates_for_category, _rescore_and_trim_by_category
+        # Strip existing candidates for this category, keep other categories
+        manifest = _load_candidates_manifest()
+        existing = manifest.get(school, [])
+        kept = [c for c in existing if c.get('category') != category]
+        # Fresh fetch for just this category
+        new_cands = fetch_candidates_for_category(school, category)
+        blocklist = _load_blocklist()
+        if blocklist:
+            new_cands = [c for c in new_cands if c.get('url', '') not in blocklist]
+        merged  = kept + new_cands
+        trimmed = _rescore_and_trim_by_category(merged, per_cat_limit=32)
+        manifest[school] = trimmed
+        with open(_CANDIDATES_PATH, 'w', encoding='utf-8') as f:
+            json.dump(manifest, f, indent=2, ensure_ascii=False)
+        return jsonify({'ok': True, 'count': len(new_cands), 'candidates': trimmed})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
 @app.route('/api/ua/approve', methods=['POST'])
 @user_admin_required
 def ua_approve():

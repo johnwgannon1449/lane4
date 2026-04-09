@@ -1,0 +1,154 @@
+Please improve the Lane4 admin image curator so it becomes much more efficient, accurate, and visually usable for curation at scale.
+This is a focused pass on:
+candidate image quality
+image type sorting
+admin curation workflow
+curator UI polish
+Do not change unrelated app logic.
+1. Improve candidate image sorting by type
+Right now Campus / Pool / Student Life candidates are mixed together too often.
+Please tighten classification so each section shows much better candidates for that type.
+Campus rules
+Campus should prefer:
+clear exterior campus buildings
+quads, iconic architecture, aerials, recognizable school grounds
+high-quality official campus photos
+Campus should reject or strongly downrank:
+pool photos
+gyms / fitness rooms
+student group event photos
+logos / graphics / posters / badges / rankings graphics
+dorm room closeups unless clearly useful
+generic interiors unless iconic and school-specific
+Pool rules
+Pool should prefer:
+actual swim facility / natatorium images
+competition pools, aquatic centers, team pool decks
+images clearly tied to that school if possible
+Pool should reject or strongly downrank:
+generic pools with weak attribution
+rec center fitness rooms
+water polo graphics / logos
+random aquatic images from other schools
+any image with obvious school mismatch
+campus exteriors
+student life/event images
+Very important:
+For Pool, require stronger confidence that the pool belongs to the school.
+Use signals like:
+page source domain relevance
+file/url text
+alt text / surrounding text
+school name or athletics context near image
+natatorium / aquatic center naming match
+If confidence is low, do not include it.
+Student Life rules
+Student Life should prefer:
+students on campus
+authentic student interactions
+events, clubs, hanging out, campus scenes with people
+photos that make a recruit think “I could see myself here”
+Student Life should reject or strongly downrank:
+logos / graphics / badges
+empty campus exteriors
+pool photos
+gym equipment shots
+generic marketing graphics
+faculty-only or formal headshot-type images
+2. Add stronger candidate filtering before images reach the admin
+Please add better pre-filtering to reject low-value images before they appear.
+Strongly reject:
+logos
+seals
+wordmarks
+“best colleges” badges
+ranking graphics
+screenshots
+collages
+illustrations / renderings
+extremely low-resolution images
+stretched / distorted images
+images with large text overlays
+obvious duplicates / near-duplicates
+Also downrank:
+black and white images
+tiny thumbnails
+overly dark images
+blurry images
+heavily compressed images
+3. Improve image quality threshold
+Raise the minimum quality bar for candidate images.
+Requirements:
+prefer larger, sharper images
+prefer landscape orientation for campus and pool where possible
+avoid tiny or muddy images
+if a candidate is too small or too blurry, do not show it
+prefer official school / admissions / athletics sources when available
+4. Better section candidate counts and layout
+Each image type section should aim for:
+16 candidates per section
+shown as 4 across
+cards slightly larger than current layout for easier visual review
+If fewer than 16 good candidates exist after filtering, show what exists, but only include candidates that clear the new quality bar.
+5. Add “Fetch More Images” and “Redo Section”
+For each section (Campus / Pool / Student Life), add:
+Fetch More Images
+fetch 16 additional candidates for that section only
+append them below existing candidates or merge with dedupe
+do not repeat already shown images
+Redo Section
+discard the current candidate pool for that section
+run a fresh search/generation for that section only
+intended for cases where the current batch is clearly bad
+This should exist separately for each section.
+6. Make pool curation easier
+Pool curation is currently too labor intensive because it is hard to tell whether a pool is actually the correct school.
+Please add a small source/context line under each pool candidate showing helpful attribution info when available, such as:
+source domain
+nearby page title or page label
+natatorium / aquatic center name if found
+Goal:
+Help the admin quickly answer:
+“Whose pool am I looking at?”
+If attribution is weak, visually indicate low confidence.
+7. Add Save button at top and bottom
+There is already a save button near the top.
+Please also add a matching Save Selections button at the bottom of each school page so the admin does not need to scroll back to the top.
+Both buttons should save the same current state.
+8. Improve curator section controls and headers
+Please improve visual hierarchy in the admin curator.
+Changes:
+make Campus / Pool / Student Life section headers larger and clearer
+make counts more readable
+make the top nav/header text slightly larger
+make the Lane4 brand/logo in the upper left pop more visually
+improve spacing so the admin panel feels more polished and easier to scan
+9. Keep current curation actions, but polish them
+Retain the current action buttons:
+Campus
+Pool
+Life
+Ban
+Remove
+Primary
+But make sure they remain clean and easy to use with the slightly larger card layout.
+10. QA this flow
+Please test:
+fetching candidates by section
+fetch more images
+redo section
+save from top button
+save from bottom button
+dedupe still works
+section classification is improved
+pool attribution display works
+layout remains usable on desktop/tablet
+Important:
+Do not make the curator flashy.
+Make it cleaner, more accurate, and much less labor intensive.
+The goal is:
+fewer junk images,
+better type sorting,
+better pool confidence,
+bigger/easier curation cards,
+and faster school-by-school image approval.

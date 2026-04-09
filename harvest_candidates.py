@@ -42,8 +42,8 @@ COMMONS_API     = 'https://commons.wikimedia.org/w/api.php'
 PEXELS_URL      = 'https://api.pexels.com/v1/search'
 GOOGLE_CSE_URL  = 'https://www.googleapis.com/customsearch/v1'
 
-MIN_WIDTH  = 400
-MIN_HEIGHT = 220
+MIN_WIDTH  = 500
+MIN_HEIGHT = 280
 MAX_CANDIDATES = 80   # up to ~24 per category × 3 categories
 CRAWL_WORKERS  = 6
 PAGE_TIMEOUT   = 8
@@ -99,6 +99,18 @@ BAD_TOKENS = [
     'map', 'locator', 'county_', 'state_map', 'seal.', 'coa.', 'arms.',
     'placeholder', 'spacer', 'pixel.', '1x1', 'blank.', 'transparent.',
     'avatar', 'gravatar', 'generic-', 'default-user', 'default-photo',
+    # Rankings / badge graphics
+    'ranking', 'best-college', 'best_college', 'ranked-', '_ranked',
+    'award-badge', 'award_badge', 'us-news', 'usnews', 'niche-badge',
+    'college-ranking', 'top-college', 'top_college', '#1-', 'no1-',
+    'best-value', 'best_value', 'school-badge', 'college-badge',
+    # Screenshots / composites / illustrations
+    'screenshot', 'collage', 'composite', 'illustration', 'rendering',
+    'infographic', 'graphic_', '_graphic', 'promo-graphic',
+    # Social / marketing overlays
+    'instagram-', 'facebook-', 'social-post', 'twitter-', 'ad-', '-ad.',
+    # Very small thumbnails
+    '32x32', '64x64', '48x48', '16x16',
 ]
 
 BOOST_IMG_TOKENS = [
@@ -354,6 +366,94 @@ def _score_image(img: dict) -> float:
             score -= 0.6
 
     return max(score, 0.0)
+
+
+def _pool_confidence(img: dict, school: str) -> float:
+    """Return 0.0–1.0 pool confidence: how likely this image is actually the school's pool.
+
+    Signals:
+    - page_type == 'swim': strong positive (harvested from swim-specific page)
+    - url/page_url/alt contains pool tokens: positive
+    - url/page_url contains school key words: positive
+    - source domain matches school domain (site: search): very strong positive
+    - image came from wrong-school search context: negative
+    """
+    page_type    = img.get('page_type', 'general')
+    url          = urllib.parse.unquote(img.get('url', '')).lower()
+    page_url     = urllib.parse.unquote(img.get('page_url', '')).lower()
+    alt          = (img.get('alt') or '').lower()
+    search_ctx   = img.get('search_context', '').lower()
+
+    score = 0.0
+
+    # page_type == swim means it was explicitly fetched from a swim/pool page
+    if page_type == 'swim':
+        score += 0.5
+
+    # Pool tokens in URL or alt
+    pool_tokens = {'natator', 'aquatic', 'swim', 'pool', 'diving', 'aquatics'}
+    if any(t in url for t in pool_tokens):
+        score += 0.2
+    if any(t in alt for t in pool_tokens):
+        score += 0.15
+    if any(t in page_url for t in pool_tokens):
+        score += 0.15
+
+    # School name in URL / page / alt / search context
+    kw = _key_words(_search_name(school))
+    combined = url + ' ' + page_url + ' ' + alt + ' ' + search_ctx
+    matches = sum(1 for k in kw if k in combined)
+    if kw:
+        score += 0.4 * (matches / len(kw))
+
+    # Site-restricted source = image is from school's own domain (very strong)
+    if 'site:' in search_ctx:
+        score += 0.25
+
+    return min(score, 1.0)
+
+
+def _pool_attribution_label(img: dict) -> str:
+    """Build a short human-readable attribution line for pool images shown in admin.
+
+    Format (first non-empty wins):
+      "natatorium name" from page context
+      → Source: domain.edu  |  alt text snippet
+    """
+    page_url = img.get('page_url', '') or ''
+    alt      = (img.get('alt') or '').strip()
+    ctx      = img.get('search_context', '') or ''
+    source   = img.get('source', '') or ''
+
+    parts = []
+
+    # Domain label
+    if page_url:
+        try:
+            host = urllib.parse.urlparse(page_url).netloc.lower().replace('www.', '')
+            if host:
+                parts.append(host)
+        except Exception:
+            pass
+    elif 'wiki_commons' in source:
+        parts.append('Wikimedia Commons')
+    elif 'google_cse' in source:
+        parts.append('Google Images')
+
+    # Natatorium / aquatic center name from search context or alt
+    _natnames = re.findall(
+        r'(?i)([\w\s]+(natatorium|aquatic\s+center|aquatic\s+centre|'
+        r'swim\s+complex|pool\s+complex|pool\s+facility)[\w\s]*)',
+        alt + ' ' + ctx
+    )
+    if _natnames:
+        nat = _natnames[0][0].strip()[:60]
+        if nat not in parts:
+            parts.append(nat)
+    elif alt and len(alt) < 80:
+        parts.append(alt)
+
+    return ' · '.join(p for p in parts if p) or ''
 
 
 def _assign_category(img: dict) -> str:
@@ -1206,6 +1306,13 @@ def fetch_candidates(school: str, domains_cache: dict | None = None) -> list[dic
     # ── Assign display category to every candidate ───────────────────────────
     for img in all_candidates:
         img['category'] = _assign_category(img)
+        if img['category'] == 'pool':
+            conf = _pool_confidence(img, school)
+            img['pool_confidence'] = round(conf, 2)
+            img['pool_attribution'] = _pool_attribution_label(img)
+            # Remove very low-confidence pool images (likely wrong school)
+            if conf < 0.2:
+                img['category'] = 'campus'   # demote rather than discard
 
     all_candidates.sort(key=lambda x: x.get('score', 0), reverse=True)
     return all_candidates[:MAX_CANDIDATES]
@@ -1392,6 +1499,12 @@ def fetch_candidates_for_category(school: str, category: str) -> list[dict]:
     # Assign display categories
     for img in new_results:
         img['category'] = _assign_category(img)
+        if img['category'] == 'pool':
+            conf = _pool_confidence(img, school)
+            img['pool_confidence'] = round(conf, 2)
+            img['pool_attribution'] = _pool_attribution_label(img)
+            if conf < 0.2:
+                img['category'] = 'campus'
 
     new_results.sort(key=lambda x: x.get('score', 0), reverse=True)
     return new_results

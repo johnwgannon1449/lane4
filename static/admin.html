@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Lane4 Admin</title>
+<title>Lane4 Admin — Image Curator</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
-<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Fraunces:wght@700;800&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Fraunces:ital,wght@0,700;0,800;0,900;1,700&display=swap" rel="stylesheet" />
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
@@ -16,27 +16,42 @@
   --purple:  #7C3AED; --purple-l: #F5F3FF;
   --text:    #0F172A; --muted: #64748B; --border: #E2E8F0;
   --bg:      #F8FAFC; --card: #FFFFFF;
-  --sidebar: 270px; --header: 52px; --radius: 10px;
-  --shadow:  0 2px 8px rgba(0,0,0,.07), 0 0 1px rgba(0,0,0,.05);
+  --sidebar: 275px; --header: 58px; --radius: 10px;
+  --shadow:  0 2px 8px rgba(0,0,0,.08), 0 0 1px rgba(0,0,0,.05);
 }
 body { font-family:'Figtree',sans-serif; background:var(--bg); color:var(--text); font-size:14px; min-height:100vh; }
 
 /* ── Header ── */
 header {
   height:var(--header); display:flex; align-items:center; justify-content:space-between;
-  padding:0 1.25rem; background:var(--card); border-bottom:1px solid var(--border);
-  position:sticky; top:0; z-index:20;
+  padding:0 1.5rem; background:var(--card); border-bottom:2px solid var(--border);
+  position:sticky; top:0; z-index:20; box-shadow:0 1px 4px rgba(0,0,0,.06);
 }
-.logo { font-family:'Fraunces',serif; font-weight:800; font-size:1.1rem; color:var(--text); text-decoration:none; }
-.logo span { color:var(--blue); }
-.header-right { display:flex; align-items:center; gap:0.6rem; }
-.badge { font-size:0.7rem; font-weight:700; background:var(--amber-l); color:var(--amber);
-         border:1px solid #FDE68A; padding:2px 8px; border-radius:99px; letter-spacing:0.03em; }
-.hdr-btn { font-family:'Figtree',sans-serif; font-size:0.8rem; font-weight:600;
-           background:none; border:1.5px solid var(--border); border-radius:7px;
-           padding:4px 12px; cursor:pointer; color:var(--muted); }
+.logo {
+  font-family:'Fraunces',serif; font-weight:900; font-size:1.4rem;
+  color:var(--text); text-decoration:none; letter-spacing:-0.02em;
+  display:flex; align-items:baseline; gap:0;
+}
+.logo .lane { color:var(--text); }
+.logo .four { color:var(--blue); font-style:italic; }
+.logo-tag {
+  font-family:'Figtree',sans-serif; font-size:0.68rem; font-weight:700;
+  color:var(--muted); letter-spacing:0.08em; text-transform:uppercase;
+  margin-left:0.6rem; padding:2px 7px; background:var(--bg);
+  border:1.5px solid var(--border); border-radius:5px; align-self:center;
+}
+.header-right { display:flex; align-items:center; gap:0.75rem; }
+.badge {
+  font-size:0.7rem; font-weight:700; background:var(--amber-l); color:var(--amber);
+  border:1.5px solid #FDE68A; padding:3px 10px; border-radius:99px; letter-spacing:0.04em;
+}
+.hdr-btn {
+  font-family:'Figtree',sans-serif; font-size:0.83rem; font-weight:600;
+  background:none; border:1.5px solid var(--border); border-radius:7px;
+  padding:5px 14px; cursor:pointer; color:var(--muted);
+}
 .hdr-btn:hover { color:var(--text); border-color:#94A3B8; }
-.back-link { font-size:0.82rem; color:var(--muted); text-decoration:none; }
+.back-link { font-size:0.83rem; color:var(--muted); text-decoration:none; }
 .back-link:hover { color:var(--text); }
 
 /* ── Layout ── */
@@ -48,26 +63,25 @@ header {
   width:var(--sidebar); flex-shrink:0; background:var(--card);
   border-right:1px solid var(--border); display:flex; flex-direction:column; overflow:hidden;
 }
-.sidebar-top { padding:0.6rem; border-bottom:1px solid var(--border); display:flex; flex-direction:column; gap:0.4rem; }
+.sidebar-top { padding:0.75rem; border-bottom:1px solid var(--border); display:flex; flex-direction:column; gap:0.5rem; }
 .sidebar-search {
-  width:100%; padding:7px 10px; border:1.5px solid var(--border); border-radius:8px;
-  font-family:'Figtree',sans-serif; font-size:0.83rem; color:var(--text); background:var(--bg); outline:none;
+  width:100%; padding:8px 11px; border:1.5px solid var(--border); border-radius:8px;
+  font-family:'Figtree',sans-serif; font-size:0.84rem; color:var(--text); background:var(--bg); outline:none;
 }
 .sidebar-search:focus { border-color:var(--blue); }
-.sidebar-stats { font-size:0.74rem; color:var(--muted); }
+.sidebar-stats { font-size:0.75rem; color:var(--muted); }
 .bg-status {
-  font-size:0.72rem; color:var(--amber); background:var(--amber-l);
-  padding:3px 8px; border-radius:6px; display:none;
+  font-size:0.73rem; color:var(--amber); background:var(--amber-l);
+  padding:3px 9px; border-radius:6px; display:none;
 }
 .conf-list { flex:1; overflow-y:auto; }
 
 /* ── Conference accordion ── */
-.conf-item {}
 .conf-header {
   display:flex; align-items:center; justify-content:space-between;
-  padding:0.55rem 0.75rem; cursor:pointer;
+  padding:0.55rem 0.8rem; cursor:pointer;
   background:var(--bg); border-bottom:1px solid var(--border);
-  font-size:0.78rem; font-weight:700; color:var(--muted); letter-spacing:0.03em;
+  font-size:0.75rem; font-weight:700; color:var(--muted); letter-spacing:0.04em;
   text-transform:uppercase; user-select:none;
 }
 .conf-header:hover { background:#F1F5F9; }
@@ -81,13 +95,13 @@ header {
 
 /* ── School items ── */
 .school-item {
-  padding:0.5rem 0.75rem 0.5rem 1.25rem; cursor:pointer;
+  padding:0.5rem 0.8rem 0.5rem 1.3rem; cursor:pointer;
   border-bottom:1px solid var(--border); display:flex; align-items:center; gap:0.5rem;
   transition:background 0.1s;
 }
 .school-item:hover { background:var(--bg); }
-.school-item.active { background:var(--blue-l); }
-.school-item-name { flex:1; font-size:0.82rem; font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.school-item.active { background:var(--blue-l); border-left:3px solid var(--blue); padding-left:calc(1.3rem - 3px); }
+.school-item-name { flex:1; font-size:0.83rem; font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .school-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; background:var(--border); }
 .school-dot.curated  { background:var(--green); }
 .school-dot.has-cands { background:var(--amber); }
@@ -95,23 +109,28 @@ header {
 @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
 
 /* ── Main panel ── */
-.main { flex:1; overflow-y:auto; padding:1.5rem; }
+.main { flex:1; overflow-y:auto; padding:1.75rem 2rem; }
 .empty-state { display:flex; flex-direction:column; align-items:center; justify-content:center;
-               height:60%; gap:0.75rem; color:var(--muted); text-align:center; }
-.empty-icon { font-size:2.5rem; }
+               height:60%; gap:0.85rem; color:var(--muted); text-align:center; }
+.empty-icon { font-size:2.8rem; }
+.empty-state h2 { font-family:'Fraunces',serif; font-size:1.2rem; color:var(--text); }
 
 /* ── School header ── */
-.school-header { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:1.5rem; gap:1rem; flex-wrap:wrap; }
-.school-title { font-family:'Fraunces',serif; font-weight:800; font-size:1.35rem; }
-.school-conf  { font-size:0.78rem; color:var(--muted); margin-top:2px; }
-.school-actions { display:flex; gap:0.5rem; flex-wrap:wrap; flex-shrink:0; }
+.school-header {
+  display:flex; align-items:flex-start; justify-content:space-between;
+  margin-bottom:2rem; gap:1rem; flex-wrap:wrap;
+  padding-bottom:1.25rem; border-bottom:2px solid var(--border);
+}
+.school-title { font-family:'Fraunces',serif; font-weight:800; font-size:1.6rem; line-height:1.2; }
+.school-conf  { font-size:0.82rem; color:var(--muted); margin-top:4px; }
+.school-actions { display:flex; gap:0.5rem; flex-wrap:wrap; flex-shrink:0; align-items:center; }
 
 /* ── Buttons ── */
 .btn {
   display:inline-flex; align-items:center; gap:0.35rem;
-  padding:7px 14px; border-radius:8px; border:1.5px solid transparent;
-  font-family:'Figtree',sans-serif; font-size:0.83rem; font-weight:600;
-  cursor:pointer; transition:opacity 0.15s; white-space:nowrap;
+  padding:8px 16px; border-radius:8px; border:1.5px solid transparent;
+  font-family:'Figtree',sans-serif; font-size:0.84rem; font-weight:600;
+  cursor:pointer; transition:opacity 0.15s, background 0.12s; white-space:nowrap;
 }
 .btn:disabled { opacity:0.45; cursor:default; }
 .btn-primary  { background:var(--blue); color:#fff; border-color:var(--blue); }
@@ -120,43 +139,52 @@ header {
 .btn-secondary:hover:not(:disabled) { background:var(--bg); }
 .btn-green    { background:var(--green); color:#fff; border-color:var(--green); }
 .btn-green:hover:not(:disabled) { background:#15803D; }
+.btn-sm { padding:5px 11px; font-size:0.78rem; border-radius:6px; }
 .spinner { display:inline-block; width:13px; height:13px; border:2px solid rgba(255,255,255,.4); border-top-color:#fff; border-radius:50%; animation:spin 0.7s linear infinite; }
+.spinner-dark { display:inline-block; width:12px; height:12px; border:2px solid rgba(0,0,0,.15); border-top-color:var(--blue); border-radius:50%; animation:spin 0.7s linear infinite; }
 @keyframes spin { to { transform:rotate(360deg); } }
 
 /* ── Type sections ── */
-.type-section { margin-bottom:2rem; }
+.type-section { margin-bottom:2.5rem; }
 .type-header {
-  display:flex; align-items:center; gap:0.6rem; margin-bottom:0.75rem;
-  padding-bottom:0.5rem; border-bottom:2px solid var(--border);
+  display:flex; align-items:center; gap:0.75rem; margin-bottom:1rem;
+  padding-bottom:0.65rem; border-bottom:3px solid var(--border);
 }
-.type-title { font-weight:700; font-size:1rem; }
-.type-count { font-size:0.78rem; color:var(--muted); background:var(--border); padding:2px 8px; border-radius:99px; }
+.type-title {
+  font-family:'Fraunces',serif; font-weight:800; font-size:1.25rem; letter-spacing:-0.01em;
+  display:flex; align-items:center; gap:0.4rem;
+}
+.type-count {
+  font-size:0.78rem; font-weight:600; color:var(--muted);
+  background:var(--border); padding:2px 10px; border-radius:99px;
+}
 .type-count.has-sel { background:var(--green); color:#fff; }
+.type-header-actions { display:flex; gap:0.4rem; margin-left:auto; }
 
 /* ── Selected strip ── */
 .sel-strip {
-  display:flex; gap:0.6rem; overflow-x:auto; padding:0.5rem 0 0.75rem;
+  display:flex; gap:0.75rem; overflow-x:auto; padding:0.5rem 0 0.85rem;
   scrollbar-width:thin; scrollbar-color:var(--border) transparent;
 }
-.sel-empty { font-size:0.82rem; color:var(--muted); font-style:italic; padding:0.4rem 0 0.75rem; }
+.sel-empty { font-size:0.83rem; color:var(--muted); font-style:italic; padding:0.4rem 0 0.85rem; }
 .sel-thumb {
-  position:relative; flex-shrink:0; width:140px;
+  position:relative; flex-shrink:0; width:155px;
   border:2px solid var(--border); border-radius:8px; overflow:hidden; background:var(--bg);
 }
 .sel-thumb.primary { border-color:var(--green); }
-.sel-thumb img { width:100%; height:90px; object-fit:cover; display:block; }
+.sel-thumb img { width:100%; height:98px; object-fit:cover; display:block; }
 .sel-order {
-  font-size:0.68rem; font-weight:700; padding:2px 6px;
+  font-size:0.68rem; font-weight:700; padding:2px 7px;
   background:rgba(0,0,0,.55); color:#fff; position:absolute; top:4px; left:4px; border-radius:4px;
 }
 .sel-thumb.primary .sel-order { background:var(--green); }
 .sel-thumb-actions {
-  display:flex; flex-direction:column; gap:2px; padding:4px;
+  display:flex; flex-direction:column; gap:2px; padding:5px;
   background:var(--card); border-top:1px solid var(--border);
 }
 .btn-micro {
   font-family:'Figtree',sans-serif; font-size:0.68rem; font-weight:600;
-  padding:2px 6px; border-radius:5px; border:1.5px solid var(--border);
+  padding:2px 7px; border-radius:5px; border:1.5px solid var(--border);
   cursor:pointer; background:var(--card); color:var(--muted); white-space:nowrap;
 }
 .btn-micro:hover { background:var(--bg); color:var(--text); }
@@ -165,88 +193,128 @@ header {
 .btn-micro.move { border-color:#BFDBFE; color:var(--blue); }
 .btn-micro.move:hover { background:var(--blue-l); }
 
-/* ── Candidate section label ── */
-.cands-label { font-size:0.78rem; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:0.5rem; }
-.no-cands { font-size:0.82rem; color:var(--muted); font-style:italic; padding:0.5rem 0; }
-
 /* ── Candidate grid ── */
-.cand-grid {
-  display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:0.75rem;
+.cands-label {
+  font-size:0.78rem; font-weight:700; color:var(--muted); text-transform:uppercase;
+  letter-spacing:0.05em; margin-bottom:0.6rem;
 }
+.no-cands { font-size:0.83rem; color:var(--muted); font-style:italic; padding:0.6rem 0; }
+.cand-grid {
+  display:grid;
+  grid-template-columns:repeat(4, 1fr);
+  gap:0.85rem;
+}
+@media (max-width:1300px) { .cand-grid { grid-template-columns:repeat(3,1fr); } }
+@media (max-width:960px)  { .cand-grid { grid-template-columns:repeat(2,1fr); } }
+
 .cand-card {
   border:1.5px solid var(--border); border-radius:var(--radius); overflow:hidden;
   background:var(--card); display:flex; flex-direction:column; position:relative;
-  transition:border-color 0.15s;
+  transition:border-color 0.15s, box-shadow 0.15s;
 }
-.cand-card.is-assigned { border-color:var(--green); }
-.cand-card.is-banned   { display:none; }
+.cand-card:hover { box-shadow:var(--shadow); }
+.cand-card.is-assigned { border-color:var(--green); box-shadow:0 0 0 2px rgba(22,163,74,.12); }
 .cand-img {
   width:100%; aspect-ratio:16/9; object-fit:cover; display:block; cursor:pointer;
   background:var(--bg);
 }
-.cand-img:hover { opacity:0.92; }
-.cand-meta { padding:0.45rem; display:flex; flex-direction:column; gap:0.3rem; }
+.cand-img:hover { opacity:0.9; }
+.cand-meta { padding:0.5rem 0.55rem; display:flex; flex-direction:column; gap:0.35rem; }
 .assigned-badge {
-  font-size:0.68rem; font-weight:700; padding:2px 6px; border-radius:4px;
+  font-size:0.7rem; font-weight:700; padding:2px 7px; border-radius:5px;
   background:var(--green-l); color:var(--green); align-self:flex-start;
 }
+
+/* ── Pool attribution ── */
+.pool-attr {
+  font-size:0.68rem; color:var(--muted); padding:0.25rem 0.55rem 0.3rem;
+  background:var(--bg); border-top:1px solid var(--border);
+  display:flex; align-items:center; gap:0.35rem; min-height:26px;
+}
+.pool-conf-dot {
+  width:7px; height:7px; border-radius:50%; flex-shrink:0;
+  display:inline-block;
+}
+.pool-attr-text { flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+
+/* ── Action buttons in card ── */
 .cand-add-row { display:flex; flex-wrap:wrap; gap:3px; }
 .btn-add {
-  font-family:'Figtree',sans-serif; font-size:0.7rem; font-weight:600;
-  padding:3px 7px; border-radius:5px; border:1.5px solid var(--border);
+  font-family:'Figtree',sans-serif; font-size:0.72rem; font-weight:600;
+  padding:3px 8px; border-radius:5px; border:1.5px solid var(--border);
   cursor:pointer; background:var(--card); color:var(--muted);
 }
 .btn-add:hover { background:var(--blue-l); border-color:var(--blue); color:var(--blue); }
-.btn-add.active { background:var(--green-l); border-color:var(--green); color:var(--green); }
 .btn-ban {
-  font-family:'Figtree',sans-serif; font-size:0.7rem; font-weight:600;
-  padding:3px 7px; border-radius:5px; border:1.5px solid #FCA5A5;
+  font-family:'Figtree',sans-serif; font-size:0.72rem; font-weight:600;
+  padding:3px 8px; border-radius:5px; border:1.5px solid #FCA5A5;
   cursor:pointer; background:var(--card); color:var(--red); margin-top:2px; align-self:flex-start;
 }
 .btn-ban:hover { background:var(--red-l); }
-.btn-move-row { display:flex; flex-wrap:wrap; gap:3px; margin-top:2px; }
+.btn-move-row { display:flex; flex-wrap:wrap; gap:3px; }
 .btn-moveto {
-  font-family:'Figtree',sans-serif; font-size:0.7rem; font-weight:600;
-  padding:3px 7px; border-radius:5px; border:1.5px solid #BFDBFE;
+  font-family:'Figtree',sans-serif; font-size:0.72rem; font-weight:600;
+  padding:3px 8px; border-radius:5px; border:1.5px solid #BFDBFE;
   cursor:pointer; background:var(--card); color:var(--blue);
 }
 .btn-moveto:hover { background:var(--blue-l); }
 .btn-deselect {
-  font-family:'Figtree',sans-serif; font-size:0.7rem; font-weight:600;
-  padding:3px 7px; border-radius:5px; border:1.5px solid #FCA5A5;
+  font-family:'Figtree',sans-serif; font-size:0.72rem; font-weight:600;
+  padding:3px 8px; border-radius:5px; border:1.5px solid #FCA5A5;
   cursor:pointer; background:var(--card); color:var(--red);
 }
 .btn-deselect:hover { background:var(--red-l); }
 
+/* ── Section divider + bottom save ── */
+.section-save-row {
+  display:flex; align-items:center; justify-content:flex-end;
+  padding:0.75rem 0 0; margin-top:0.5rem;
+  border-top:1px dashed var(--border);
+}
+
+/* ── Bottom page save ── */
+.page-bottom-save {
+  margin-top:2rem; padding:1.25rem 0 0;
+  border-top:2px solid var(--border);
+  display:flex; align-items:center; justify-content:space-between;
+  gap:1rem; flex-wrap:wrap;
+}
+.page-bottom-save .save-summary {
+  font-size:0.83rem; color:var(--muted);
+}
+
 /* ── Status messages ── */
-.status-msg { font-size:0.82rem; color:var(--muted); padding:0.6rem 0; }
+.status-msg { font-size:0.83rem; color:var(--muted); padding:0.6rem 0; }
 .status-msg.ok  { color:var(--green); }
 .status-msg.err { color:var(--red); }
+.section-status { font-size:0.78rem; color:var(--muted); min-height:1.2rem; }
+.section-status.ok  { color:var(--green); }
+.section-status.err { color:var(--red); }
 
 /* ── Admins panel ── */
-#view-admins { padding:2rem; max-width:560px; }
-.admins-heading { font-family:'Fraunces',serif; font-size:1.15rem; font-weight:700; margin-bottom:0.25rem; }
-.admins-sub { font-size:0.82rem; color:var(--muted); margin-bottom:1.25rem; }
+#view-admins { padding:2.5rem; max-width:580px; }
+.admins-heading { font-family:'Fraunces',serif; font-size:1.2rem; font-weight:800; margin-bottom:0.3rem; }
+.admins-sub { font-size:0.83rem; color:var(--muted); margin-bottom:1.5rem; }
 .admin-table { width:100%; border-collapse:collapse; font-size:0.83rem; }
-.admin-table th { text-align:left; padding:0.45rem 0.6rem; border-bottom:2px solid var(--border);
+.admin-table th { text-align:left; padding:0.5rem 0.6rem; border-bottom:2px solid var(--border);
                   color:var(--muted); font-weight:600; font-size:0.75rem; text-transform:uppercase; letter-spacing:0.04em; }
 .admin-table td { padding:0.6rem 0.6rem; border-bottom:1px solid var(--border); }
 .admin-table tr:last-child td { border-bottom:none; }
 .admin-active-badge { display:inline-block; font-size:0.7rem; font-weight:700; padding:1px 7px; border-radius:99px; }
 .admin-active-badge.active { background:var(--green-l); color:var(--green); }
 .admin-active-badge.inactive { background:var(--red-l); color:var(--red); }
-.add-admin-form { display:flex; gap:0.6rem; margin-top:1.25rem; }
-.add-admin-input { flex:1; padding:8px 10px; border:1.5px solid var(--border); border-radius:8px;
+.add-admin-form { display:flex; gap:0.6rem; margin-top:1.5rem; }
+.add-admin-input { flex:1; padding:8px 11px; border:1.5px solid var(--border); border-radius:8px;
                    font-family:'Figtree',sans-serif; font-size:0.84rem; outline:none; }
 .add-admin-input:focus { border-color:var(--blue); }
-.admins-msg { font-size:0.82rem; margin-top:0.75rem; min-height:1.2rem; }
+.admins-msg { font-size:0.83rem; margin-top:0.75rem; min-height:1.2rem; }
 .admins-msg.ok { color:var(--green); } .admins-msg.err { color:var(--red); }
 
 /* ── Toast ── */
 .toast {
-  position:fixed; bottom:1.25rem; right:1.25rem; background:var(--text); color:#fff;
-  padding:10px 18px; border-radius:10px; font-size:0.83rem; font-weight:600;
-  opacity:0; transform:translateY(8px); transition:opacity 0.2s,transform 0.2s; pointer-events:none; z-index:99;
+  position:fixed; bottom:1.5rem; right:1.5rem; background:var(--text); color:#fff;
+  padding:11px 20px; border-radius:10px; font-size:0.84rem; font-weight:600;
+  opacity:0; transform:translateY(10px); transition:opacity 0.2s,transform 0.2s; pointer-events:none; z-index:99;
 }
 .toast.visible { opacity:1; transform:none; }
 </style>
@@ -254,7 +322,10 @@ header {
 <body>
 
 <header>
-  <a class="logo" href="/">Lane<span>4</span></a>
+  <a class="logo" href="/">
+    <span class="lane">Lane</span><span class="four">4</span>
+    <span class="logo-tag">Curator</span>
+  </a>
   <div class="header-right">
     <span class="badge">ADMIN</span>
     <button class="hdr-btn" id="btn-toggle-view" onclick="toggleAdminsPanel()">Manage Admins</button>
@@ -277,8 +348,8 @@ header {
   <main class="main" id="main-panel">
     <div class="empty-state">
       <div class="empty-icon">🏊</div>
-      <div style="font-weight:600">Select a conference to begin</div>
-      <div style="font-size:0.82rem;">Click a conference in the sidebar — the app will start building candidates for all schools in the background while you work.</div>
+      <h2>Select a school to begin</h2>
+      <div style="font-size:0.84rem;max-width:320px;">Click a conference in the sidebar — the app will start building candidates for all schools in the background while you work.</div>
     </div>
   </main>
 
@@ -305,22 +376,21 @@ header {
 // ══════════════════════════════════════════════════════════════════════════
 // STATE
 // ══════════════════════════════════════════════════════════════════════════
-let ALL_SCHOOLS = [];         // [{name, conference, has_candidates, is_curated, …}]
-let BY_CONF     = {};         // {confName: [school, …]}
+let ALL_SCHOOLS = [];
+let BY_CONF     = {};
 let ACTIVE_SCHOOL = null;
 let ACTIVE_CONF   = null;
-let CURRENT_CANDIDATES = [];  // full candidate list for active school
-let CURRENT_STORED     = {};  // {hero, swim, student_life} from school_images
+let CURRENT_CANDIDATES = [];
+let CURRENT_STORED     = {};
 
 // Ordered selection arrays — each is a list of URLs in user-specified order
 let SEL = { campus: [], pool: [], life: [] };
 
 // Background fetch queue
-let BG_QUEUE   = [];   // school names waiting for background fetch
+let BG_QUEUE   = [];
 let BG_RUNNING = false;
 let BG_FETCHING_SCHOOL = null;
 
-// Admins panel toggle
 let _adminsOpen = false;
 
 // ══════════════════════════════════════════════════════════════════════════
@@ -368,22 +438,18 @@ function renderConfList(filterQ) {
   const q = (filterQ || '').toLowerCase();
 
   if (q) {
-    // Flat search mode
     const matches = ALL_SCHOOLS.filter(s => s.name.toLowerCase().includes(q));
     list.innerHTML = matches.map(s => schoolItemHtml(s)).join('') ||
-      '<div style="padding:0.75rem;font-size:0.82rem;color:var(--muted);">No schools found.</div>';
+      '<div style="padding:0.75rem;font-size:0.83rem;color:var(--muted);">No schools found.</div>';
     list.querySelectorAll('.school-item').forEach(el =>
       el.addEventListener('click', () => selectSchool(el.dataset.school))
     );
     return;
   }
 
-  // Conference accordion mode
   list.innerHTML = Object.keys(BY_CONF).sort().map(conf => {
     const schools = BY_CONF[conf];
     const isOpen  = conf === ACTIVE_CONF;
-    const curated = schools.filter(s => s.is_curated).length;
-    const hasC    = schools.filter(s => s.has_candidates).length;
     return `
       <div class="conf-item" data-conf="${esc(conf)}">
         <div class="conf-header ${isOpen ? 'open' : ''}" onclick="toggleConf('${esc(conf)}')">
@@ -434,7 +500,6 @@ function toggleConf(conf) {
 function startConfBackgroundFetch(conf) {
   const schools = (BY_CONF[conf] || []).filter(s => !s.has_candidates);
   if (schools.length === 0) return;
-  // Prepend this conference's schools to the front of the queue (active conf first)
   const names = schools.map(s => s.name);
   BG_QUEUE = [...names.filter(n => !BG_QUEUE.includes(n)), ...BG_QUEUE.filter(n => !names.includes(n))];
   drainQueue();
@@ -503,7 +568,6 @@ async function selectSchool(name) {
   SEL = { campus: [], pool: [], life: [] };
   CURRENT_CANDIDATES = [];
 
-  // Highlight in sidebar
   document.querySelectorAll('.school-item').forEach(el =>
     el.classList.toggle('active', el.dataset.school === name)
   );
@@ -519,7 +583,6 @@ async function selectSchool(name) {
     CURRENT_CANDIDATES = data.candidates || [];
     CURRENT_STORED     = data.stored     || {};
 
-    // Pre-populate selections from saved curated data
     const cur = data.curated || {};
     SEL.campus = [...(cur.hero_images         || [])];
     SEL.pool   = [...(cur.pool_images         || [])];
@@ -547,7 +610,7 @@ function renderDetail() {
       <div class="school-actions">
         <div id="fetch-status" style="font-size:0.8rem;color:var(--muted);align-self:center;"></div>
         <button class="btn btn-secondary" id="btn-fetch" onclick="fetchCandidates('${esc(name)}')">Fetch Candidates</button>
-        <button class="btn btn-green" id="btn-save" onclick="saveSelections('${esc(name)}')" ${totalSel === 0 ? 'disabled' : ''}>
+        <button class="btn btn-green" id="btn-save-top" onclick="saveSelections('${esc(name)}')" ${totalSel === 0 ? 'disabled' : ''}>
           Save Selections${totalSel > 0 ? ' ('+totalSel+')' : ''}
         </button>
       </div>
@@ -556,6 +619,13 @@ function renderDetail() {
     ${renderTypeSection('campus', 'Campus',       '🏛️')}
     ${renderTypeSection('pool',   'Pool',         '🏊')}
     ${renderTypeSection('life',   'Student Life', '🎓')}
+
+    <div class="page-bottom-save">
+      <div class="save-summary">${totalSel} image${totalSel !== 1 ? 's' : ''} selected across all sections</div>
+      <button class="btn btn-green" id="btn-save-bottom" onclick="saveSelections('${esc(name)}')" ${totalSel === 0 ? 'disabled' : ''}>
+        Save Selections${totalSel > 0 ? ' ('+totalSel+')' : ''}
+      </button>
+    </div>
   `;
 }
 
@@ -577,13 +647,26 @@ function renderTypeSection(type, label, emoji) {
       <div class="type-header">
         <span class="type-title">${emoji} ${label}</span>
         <span class="type-count ${hasSelClass}">${selUrls.length} selected</span>
+        <div class="type-header-actions">
+          <button class="btn btn-secondary btn-sm" id="btn-more-${type}"
+                  onclick="fetchMoreSection('${esc(ACTIVE_SCHOOL)}', '${catKey}', '${type}')">
+            Fetch More
+          </button>
+          <button class="btn btn-secondary btn-sm" id="btn-redo-${type}"
+                  onclick="redoSection('${esc(ACTIVE_SCHOOL)}', '${catKey}', '${type}')">
+            Redo Section
+          </button>
+        </div>
       </div>
       ${selHtml}
-      <div class="cands-label">Candidates · ${cands.length}</div>
-      <div class="cand-grid">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.6rem;">
+        <div class="cands-label">Candidates · ${cands.length}</div>
+        <div class="section-status" id="sec-status-${type}"></div>
+      </div>
+      <div class="cand-grid" id="cand-grid-${type}">
         ${cands.map(c => candCardHtml(c, type)).join('')}
         ${cands.length === 0
-          ? `<div class="no-cands">No ${label} candidates yet — click Fetch Candidates.</div>`
+          ? `<div class="no-cands" style="grid-column:1/-1;">No ${label} candidates yet — click Fetch Candidates or Fetch More.</div>`
           : ''}
       </div>
     </div>`;
@@ -609,8 +692,10 @@ function selThumbHtml(url, idx, type, total) {
 }
 
 function candCardHtml(c, sectionType) {
-  const url = c.url || '';
-  const cat = c.category || 'campus';
+  const url  = c.url || '';
+  const cat  = c.category || 'campus';
+  const conf = c.pool_confidence != null ? c.pool_confidence : null;
+  const attr = c.pool_attribution || '';
 
   const campusIdx = SEL.campus.indexOf(url);
   const poolIdx   = SEL.pool.indexOf(url);
@@ -646,11 +731,27 @@ function candCardHtml(c, sectionType) {
       <button class="btn-ban" onclick="banImage('${esc(url)}')">× Ban</button>`;
   }
 
+  // Pool attribution row
+  let poolAttrHtml = '';
+  if (cat === 'pool' || sectionType === 'pool') {
+    const confNum = conf != null ? conf : 0;
+    const dotColor = confNum >= 0.7 ? '#16A34A' : confNum >= 0.4 ? '#D97706' : '#94A3B8';
+    const confLabel = conf != null ? `${Math.round(confNum * 100)}%` : '?';
+    const attrText = attr || (conf == null ? 'No attribution data' : '');
+    poolAttrHtml = `
+      <div class="pool-attr">
+        <span class="pool-conf-dot" style="background:${dotColor}" title="Pool confidence: ${confLabel}"></span>
+        <span class="pool-attr-text" title="${esc(attrText || '')}">${esc(attrText) || '<em style="opacity:.6">No attribution</em>'}</span>
+        <span style="font-size:0.65rem;color:${dotColor};font-weight:700;flex-shrink:0;">${confLabel}</span>
+      </div>`;
+  }
+
   return `
     <div class="cand-card ${assignedType ? 'is-assigned' : ''}" id="cand-${btoa(url).replace(/[^a-zA-Z0-9]/g,'')}">
       <img class="cand-img" src="${esc(url)}" loading="lazy"
            onclick="window.open('${esc(url)}','_blank')"
            onerror="this.parentElement.remove()" />
+      ${poolAttrHtml}
       <div class="cand-meta">${assignHtml}</div>
     </div>`;
 }
@@ -659,11 +760,9 @@ function candCardHtml(c, sectionType) {
 // SELECTION MANAGEMENT
 // ══════════════════════════════════════════════════════════════════════════
 function assignImage(url, type) {
-  // Remove from all types if already present (can't be in two buckets)
   SEL.campus = SEL.campus.filter(u => u !== url);
   SEL.pool   = SEL.pool.filter(u => u !== url);
   SEL.life   = SEL.life.filter(u => u !== url);
-  // Add to target type
   SEL[type].push(url);
   renderDetail();
 }
@@ -676,7 +775,6 @@ function removeImage(url) {
 }
 
 function moveImage(url, toType) {
-  // Remove from wherever it is, add to new type
   SEL.campus = SEL.campus.filter(u => u !== url);
   SEL.pool   = SEL.pool.filter(u => u !== url);
   SEL.life   = SEL.life.filter(u => u !== url);
@@ -688,14 +786,11 @@ function moveImage(url, toType) {
 // BAN (PERMANENT)
 // ══════════════════════════════════════════════════════════════════════════
 async function banImage(url) {
-  // Remove from candidate list and selections immediately (instant UI feedback)
   CURRENT_CANDIDATES = CURRENT_CANDIDATES.filter(c => c.url !== url);
   SEL.campus = SEL.campus.filter(u => u !== url);
   SEL.pool   = SEL.pool.filter(u => u !== url);
   SEL.life   = SEL.life.filter(u => u !== url);
   renderDetail();
-
-  // Persist to backend blocklist
   try {
     await fetch('/api/ua/ban', {
       method: 'POST', headers: {'Content-Type':'application/json'},
@@ -708,7 +803,7 @@ async function banImage(url) {
 }
 
 // ══════════════════════════════════════════════════════════════════════════
-// FETCH CANDIDATES (FOREGROUND)
+// FETCH CANDIDATES (FOREGROUND — FULL SCHOOL)
 // ══════════════════════════════════════════════════════════════════════════
 async function fetchCandidates(name) {
   const btn      = document.getElementById('btn-fetch');
@@ -725,10 +820,8 @@ async function fetchCandidates(name) {
     const data = await res.json();
     if (!res.ok || data.error) throw new Error(data.error || 'Unknown error');
     showToast(`Fetched ${data.count} candidates for ${name}`);
-    // Mark school as having candidates
     const s = ALL_SCHOOLS.find(x => x.name === name);
     if (s) s.has_candidates = true;
-    // Reload school detail
     await selectSchool(name);
     renderStats();
     refreshSchoolDot(name);
@@ -740,13 +833,102 @@ async function fetchCandidates(name) {
 }
 
 // ══════════════════════════════════════════════════════════════════════════
+// FETCH MORE (PER SECTION)
+// ══════════════════════════════════════════════════════════════════════════
+async function fetchMoreSection(name, category, type) {
+  const btn = document.getElementById(`btn-more-${type}`);
+  const statusEl = document.getElementById(`sec-status-${type}`);
+  if (!btn) return;
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner-dark"></span> Fetching…';
+  if (statusEl) { statusEl.textContent = 'Fetching more images…'; statusEl.className = 'section-status'; }
+  try {
+    const res  = await fetch('/api/ua/fetch-more', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({school: name, category}),
+    });
+    const data = await res.json();
+    if (!res.ok || data.error) throw new Error(data.error || 'Unknown error');
+    CURRENT_CANDIDATES = data.candidates || CURRENT_CANDIDATES;
+    const added = data.added || 0;
+    showToast(`Added ${added} new image${added !== 1 ? 's' : ''} to ${type}`);
+    if (statusEl) { statusEl.textContent = `+${added} new`; statusEl.className = 'section-status ok'; }
+    _rerenderSection(type);
+    _updateSaveButtons();
+  } catch(e) {
+    showToast('Fetch more failed: ' + e.message);
+    if (statusEl) { statusEl.textContent = 'Failed: ' + e.message; statusEl.className = 'section-status err'; }
+    if (btn) { btn.disabled = false; btn.textContent = 'Fetch More'; }
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+// REDO SECTION
+// ══════════════════════════════════════════════════════════════════════════
+async function redoSection(name, category, type) {
+  if (!confirm(`Redo the ${type} section for ${name}? This will discard current ${type} candidates and fetch fresh ones.`)) return;
+  const btn = document.getElementById(`btn-redo-${type}`);
+  const statusEl = document.getElementById(`sec-status-${type}`);
+  if (!btn) return;
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner-dark"></span> Redoing…';
+  if (statusEl) { statusEl.textContent = 'Fetching fresh images…'; statusEl.className = 'section-status'; }
+  try {
+    const res  = await fetch('/api/ua/redo-section', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({school: name, category}),
+    });
+    const data = await res.json();
+    if (!res.ok || data.error) throw new Error(data.error || 'Unknown error');
+    CURRENT_CANDIDATES = data.candidates || CURRENT_CANDIDATES;
+    // Clear selections for this type since the pool was wiped
+    if (type === 'campus') SEL.campus = SEL.campus.filter(u => CURRENT_CANDIDATES.some(c => c.url === u));
+    if (type === 'pool')   SEL.pool   = SEL.pool.filter(u => CURRENT_CANDIDATES.some(c => c.url === u));
+    if (type === 'life')   SEL.life   = SEL.life.filter(u => CURRENT_CANDIDATES.some(c => c.url === u));
+    const count = data.count || 0;
+    showToast(`Redo complete — ${count} fresh ${type} images`);
+    if (statusEl) { statusEl.textContent = `${count} fresh`; statusEl.className = 'section-status ok'; }
+    _rerenderSection(type);
+    _updateSaveButtons();
+  } catch(e) {
+    showToast('Redo failed: ' + e.message);
+    if (statusEl) { statusEl.textContent = 'Failed: ' + e.message; statusEl.className = 'section-status err'; }
+    if (btn) { btn.disabled = false; btn.textContent = 'Redo Section'; }
+  }
+}
+
+// Efficiently re-render a single section without full page rebuild
+function _rerenderSection(type) {
+  const sectionEl = document.getElementById(`section-${type}`);
+  if (!sectionEl) { renderDetail(); return; }
+  const label  = {campus:'Campus', pool:'Pool', life:'Student Life'}[type];
+  const emoji  = {campus:'🏛️', pool:'🏊', life:'🎓'}[type];
+  const newHtml = renderTypeSection(type, label, emoji);
+  sectionEl.outerHTML = newHtml;
+}
+
+function _updateSaveButtons() {
+  const totalSel = SEL.campus.length + SEL.pool.length + SEL.life.length;
+  const name = ACTIVE_SCHOOL;
+  ['btn-save-top', 'btn-save-bottom'].forEach(id => {
+    const btn = document.getElementById(id);
+    if (!btn) return;
+    btn.disabled = totalSel === 0;
+    btn.textContent = `Save Selections${totalSel > 0 ? ' ('+totalSel+')' : ''}`;
+  });
+  const summary = document.querySelector('.save-summary');
+  if (summary) summary.textContent = `${totalSel} image${totalSel !== 1 ? 's' : ''} selected across all sections`;
+}
+
+// ══════════════════════════════════════════════════════════════════════════
 // SAVE SELECTIONS
 // ══════════════════════════════════════════════════════════════════════════
 async function saveSelections(name) {
-  const btn = document.getElementById('btn-save');
-  if (!btn) return;
-  btn.disabled  = true;
-  btn.innerHTML = '<span class="spinner"></span> Saving…';
+  const totalSel = SEL.campus.length + SEL.pool.length + SEL.life.length;
+  ['btn-save-top', 'btn-save-bottom'].forEach(id => {
+    const btn = document.getElementById(id);
+    if (btn) { btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Saving…'; }
+  });
   try {
     const res  = await fetch('/api/ua/approve', {
       method: 'POST', headers: {'Content-Type':'application/json'},
@@ -759,19 +941,22 @@ async function saveSelections(name) {
     });
     const data = await res.json();
     if (!res.ok || data.error) throw new Error(data.error || 'Unknown error');
-
-    // Update school status
     const s = ALL_SCHOOLS.find(x => x.name === name);
     if (s) s.is_curated = true;
     refreshSchoolDot(name);
     renderStats();
-    showToast('Saved — ' + (SEL.campus.length + SEL.pool.length + SEL.life.length) + ' images for ' + name);
-    btn.textContent = 'Save Selections (' + (SEL.campus.length + SEL.pool.length + SEL.life.length) + ')';
-    btn.disabled = false;
+    showToast('Saved — ' + totalSel + ' images for ' + name);
+    const label = `Save Selections (${totalSel})`;
+    ['btn-save-top', 'btn-save-bottom'].forEach(id => {
+      const btn = document.getElementById(id);
+      if (btn) { btn.textContent = label; btn.disabled = false; }
+    });
   } catch(e) {
     showToast('Save failed: ' + e.message);
-    btn.disabled = false;
-    btn.textContent = 'Save Selections';
+    ['btn-save-top', 'btn-save-bottom'].forEach(id => {
+      const btn = document.getElementById(id);
+      if (btn) { btn.disabled = false; btn.textContent = 'Save Selections'; }
+    });
   }
 }
 
