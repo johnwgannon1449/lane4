@@ -4395,6 +4395,12 @@ def index():
     resp.headers['Expires'] = '0'
     return resp
 
+@app.route('/login', methods=['GET'])
+def login_page():
+    """Standalone login page for returning swimmers."""
+    return send_from_directory('static', 'login.html')
+
+
 @app.route('/debug-ui')
 def debug_ui():
     return send_from_directory('static', 'debug_ui.html')

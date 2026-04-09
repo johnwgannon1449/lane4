@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Lane4 — Sign In</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;0,800;1,700&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Figtree', sans-serif;
+  background: linear-gradient(135deg, #EFF6FF 0%, #F8FAFC 60%, #EDE9FE 100%);
+  min-height: 100vh;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 2rem 1rem 4rem;
+}
+.card {
+  background: #fff;
+  border: 1.5px solid #E2E8F0;
+  border-radius: 20px;
+  padding: 2.25rem 2rem;
+  width: 100%;
+  max-width: 440px;
+  box-shadow: 0 8px 40px rgba(37,99,235,.10);
+  margin-top: 2rem;
+}
+.logo {
+  font-family: 'Fraunces', serif;
+  font-weight: 800;
+  font-size: 1.4rem;
+  color: #0F172A;
+  margin-bottom: 0.25rem;
+}
+.logo span { color: #2563EB; }
+.headline {
+  font-family: 'Fraunces', serif;
+  font-weight: 700;
+  font-size: 1.6rem;
+  color: #0F172A;
+  margin: 1rem 0 0.4rem;
+  line-height: 1.25;
+}
+.sub { font-size: 0.9rem; color: #64748B; margin-bottom: 1.75rem; line-height: 1.55; }
+.field { margin-bottom: 1rem; }
+label { display: block; font-size: 0.78rem; font-weight: 600; color: #374151; margin-bottom: 5px; }
+input[type=email], input[type=password] {
+  width: 100%;
+  padding: 0.62rem 0.85rem;
+  border: 1.5px solid #E2E8F0;
+  border-radius: 10px;
+  font-family: 'Figtree', sans-serif;
+  font-size: 0.93rem;
+  color: #0F172A;
+  outline: none;
+  transition: border-color .15s;
+  background: #fff;
+}
+input:focus { border-color: #2563EB; }
+.pw-wrap { position: relative; display: block; }
+.pw-wrap input { padding-right: 2.6rem; width: 100%; }
+.pw-eye {
+  position: absolute; right: 0.7rem; top: 50%; transform: translateY(-50%);
+  background: none; border: none; cursor: pointer; padding: 0;
+  color: #94A3B8; line-height: 1; font-size: 1.05rem;
+}
+.err-box {
+  background: #FEF2F2; border: 1px solid #FECACA;
+  border-radius: 8px; padding: 0.6rem 0.85rem;
+  color: #DC2626; font-size: 0.82rem;
+  margin-bottom: 0.85rem; display: none;
+}
+.btn-submit {
+  display: block; width: 100%;
+  padding: 0.75rem 1rem;
+  background: #2563EB; color: #fff;
+  border: none; border-radius: 10px;
+  font-family: 'Figtree', sans-serif;
+  font-size: 0.97rem; font-weight: 700;
+  cursor: pointer; letter-spacing: 0.01em;
+  transition: background .15s;
+  margin-top: 0.25rem;
+}
+.btn-submit:hover { background: #1D4ED8; }
+.btn-submit:disabled { background: #93C5FD; cursor: not-allowed; }
+.back-link {
+  text-align: center;
+  margin-top: 1.4rem;
+  font-size: 0.85rem;
+  color: #64748B;
+}
+.back-link a { color: #2563EB; font-weight: 600; text-decoration: none; }
+.back-link a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="logo">Lane<span>4</span></div>
+  <div class="headline">Find your lane.</div>
+  <div class="sub">Welcome back. Sign in to see your schools.</div>
+
+  <div class="field">
+    <label for="login-email">Email address</label>
+    <input type="email" id="login-email" placeholder="family@example.com"
+           autocomplete="email"
+           onkeydown="if(event.key==='Enter')document.getElementById('login-pw').focus()" />
+  </div>
+  <div class="field">
+    <label for="login-pw">Password</label>
+    <div class="pw-wrap">
+      <input type="password" id="login-pw" placeholder="••••••••"
+             autocomplete="current-password"
+             onkeydown="if(event.key==='Enter')submitLogin()" />
+      <button class="pw-eye" type="button" onclick="togglePw()" title="Show/hide password">👁</button>
+    </div>
+  </div>
+
+  <div class="err-box" id="login-err"></div>
+  <button class="btn-submit" id="login-btn" onclick="submitLogin()">Sign In →</button>
+
+  <div class="back-link">New swimmer? <a href="/">Start your lane assignment</a></div>
+</div>
+
+<script>
+function togglePw() {
+  const pw = document.getElementById('login-pw');
+  pw.type = pw.type === 'password' ? 'text' : 'password';
+}
+
+async function submitLogin() {
+  const email    = (document.getElementById('login-email').value || '').trim().toLowerCase();
+  const password = document.getElementById('login-pw').value;
+  const errEl    = document.getElementById('login-err');
+  const btn      = document.getElementById('login-btn');
+
+  errEl.style.display = 'none';
+  errEl.textContent   = '';
+
+  if (!email || !password) {
+    errEl.textContent   = 'Please enter your email and password.';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  btn.disabled    = true;
+  btn.textContent = 'Signing in…';
+
+  try {
+    const res  = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    });
+    const data = await res.json();
+    if (!res.ok || !data.ok) {
+      errEl.textContent   = data.error || 'Incorrect email or password.';
+      errEl.style.display = 'block';
+      btn.disabled        = false;
+      btn.textContent     = 'Sign In →';
+      return;
+    }
+    window.location.href = '/';
+  } catch(e) {
+    errEl.textContent   = 'Network error. Please check your connection.';
+    errEl.style.display = 'block';
+    btn.disabled        = false;
+    btn.textContent     = 'Sign In →';
+  }
+}
+</script>
+</body>
+</html>

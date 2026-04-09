@@ -1,0 +1,109 @@
+We recently attempted a patch that did not apply correctly. Several features are working inside the app but do not work from the initial onboarding reveal (the first 6 schools screen).
+This indicates the first-6 page is likely using a different rendering path than the Explore page.
+We must correct this.
+IMPORTANT
+Do NOT modify:
+swim evaluation logic
+recruiting likelihood logic
+school ranking logic
+database schema
+This patch is strictly UI wiring, routing, and event handlers.
+1. HERO LOGIN BUTTON IS CURRENTLY A DEAD END
+The Existing Swimmers Login button on the hero screen currently does nothing when pressed.
+This is a critical bug.
+Current behavior:
+User clicks:
+Existing Swimmers Login
+Nothing happens.
+The button must route directly to the login page.
+Required behavior:
+Existing Swimmers Login
+→ navigate to /login
+Requirements:
+• Must work immediately from hero
+• Must not require entering a swimmer name first
+• Must not open inline auth on the hero page
+• Must navigate to the existing login page
+Hero should be the only login entry point before onboarding begins.
+2. FIRST-6 SCHOOLS PAGE IS NOT USING THE SAME CARD COMPONENT
+The initial Top 6 schools reveal appears to use a custom renderer instead of the Explore card component.
+Because of this:
+• hero images do not display
+• Admissions Reality button does not route to profile
+• card behavior differs from Explore
+Fix this by making the first-6 page reuse the same component.
+Replace custom rendering with:
+renderSchoolCard(school)
+Implementation pattern:
+const firstSix = rankedSchools.slice(0, 6)
+
+firstSix.forEach(school => {
+    renderSchoolCard(school)
+})
+The first-6 page should not have its own card logic.
+3. HERO IMAGES MUST DISPLAY ON FIRST-6 CARDS
+Hero images are currently missing from the initial 6 schools.
+Ensure the same image logic used in Explore is used here.
+Image selection priority:
+school.hero_image
+OR
+school.images.campus[0]
+If neither exists, fall back to placeholder.
+Hero images must appear on:
+• initial 6 schools
+• Explore cards
+• Deep Dive headers
+4. ADMISSIONS REALITY BUTTON DOES NOT ROUTE FROM FIRST-6
+Current behavior:
+• Admissions Reality works correctly inside the app
+• From the first 6 schools, the overlay appears but the redirect does not happen
+This means the handler is not wired correctly on that page.
+All cards must use the same click handler.
+Button should call:
+handleAdmissionsRealityClick(school)
+Handler logic:
+If academic profile incomplete:
+Show overlay:
+We need to know a little more about you before we can answer this.
+Then after ~800ms redirect to:
+/profile
+This must work from:
+• first 6 schools
+• Explore cards
+• any school card
+5. REMOVE LOGIN FROM EMAIL COLLECTION SCREEN
+The email + password screen is account creation only.
+It must NOT contain a login option.
+Remove any text like:
+Already have an account? Log in instead
+Existing users must log in only from the hero screen.
+6. DO NOT CHANGE THE ONBOARDING FLOW
+The correct new user flow remains:
+Hero → Enter Name
+Confirm Club / Grad Year
+Confirm / Edit Times
+Hype Overlay
+Email + Password (create account)
+Initial 6 Schools
+Keep Exploring Schools → Explore page
+Deep Dive and Add to List stay on the first-6 screen.
+Admissions Reality from that page should route to Profile.
+SUCCESS CRITERIA
+After this patch:
+Hero Screen
+Existing Swimmers Login works
+Button routes to /login
+First-6 Schools
+Cards show:
+• hero images
+• Deep Dive button
+• Add to List button
+• Admissions Reality button
+Admissions Reality
+Overlay appears
+Then user is redirected to /profile
+Email Screen
+Only allows account creation
+No login option
+Card Consistency
+First-6 cards behave identically to Explore cards

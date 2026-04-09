@@ -951,7 +951,7 @@
       </div>
       <div id="ob-s1-err" class="ob-err" style="margin-bottom:0.4rem;"></div>
       <button class="ob-submit" onclick="obS1Next()">Find My Times →</button>
-      <button onclick="showAuth();return false;" style="display:block;width:100%;margin-top:1rem;padding:0.7rem 1rem;background:transparent;border:1.5px solid var(--blue);color:var(--blue);border-radius:8px;font-size:0.9rem;font-weight:700;cursor:pointer;letter-spacing:0.01em;">Existing Swimmers — Log In</button>
+      <button onclick="window.location.href='/login';return false;" style="display:block;width:100%;margin-top:1rem;padding:0.7rem 1rem;background:transparent;border:1.5px solid var(--blue);color:var(--blue);border-radius:8px;font-size:0.9rem;font-weight:700;cursor:pointer;letter-spacing:0.01em;">Existing Swimmers — Log In</button>
     </div>
 
     <!-- Screen 2: Swimmer Match -->
@@ -1029,7 +1029,6 @@
       </div>
       <div id="ob-s7-err" class="ob-err" style="margin-bottom:0.4rem;"></div>
       <button class="ob-submit" id="ob-s7-btn" onclick="obS7Submit()">SCHOOLS WITH A LANE FOR ME</button>
-      <div class="ob-login-link" style="margin-top:1rem;">Already have an account? <a href="#" onclick="showAuth();return false;">Log in instead</a></div>
     </div>
 
     <!-- Screen 8: Building Results -->
@@ -2294,7 +2293,9 @@ function obShowResults(top6) {
     bodyEl.innerHTML = '<div class="ob-hero-sub">We didn\u2019t find strong program matches yet \u2014 you can still explore all schools and save favorites as you train.</div>';
     return;
   }
-  bodyEl.innerHTML = top6.map((r, i) => obRevealCardHtml(r, i + 1)).join('');
+  // Use the same full explore card component for consistency with Explore page.
+  // This ensures hero images, Admissions Reality gating, and all buttons work identically.
+  bodyEl.innerHTML = top6.map((r, i) => _buildCardHtml(r, i)).join('');
 }
 
 async function obFinish() {
@@ -2754,6 +2755,7 @@ function _isAcademicProfileComplete() {
 }
 
 // ── Admissions Reality gate: overlay → profile tab ────────────
+// Works from both Screen 9 (onboarding still visible) and Explore cards.
 function obShowAdmissionsReality() {
   const overlay = document.createElement('div');
   overlay.id = 'adm-reality-overlay';
@@ -2765,11 +2767,18 @@ function obShowAdmissionsReality() {
       </div>
     </div>`;
   document.body.appendChild(overlay);
-  setTimeout(() => {
+  setTimeout(async () => {
     const el = document.getElementById('adm-reality-overlay');
     if (el) el.remove();
+    // If we're still in the onboarding overlay (e.g. Screen 9), exit it first
+    // and boot the main app before showing the profile tab.
+    const ob = document.getElementById('onboarding-overlay');
+    if (ob && ob.style.display !== 'none') {
+      hideOnboarding();
+      await afterAuthBoot();
+    }
     showTab('profile');
-  }, 1800);
+  }, 800);
 }
 
 function _buildCardHtml(r, i) {
