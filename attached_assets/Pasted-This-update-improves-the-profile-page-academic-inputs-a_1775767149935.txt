@@ -1,0 +1,147 @@
+This update improves the profile page, academic inputs, and recruit identity presentation so the swimmer feels like they are building a premium recruiting profile, not filling out a form.
+Do NOT change:
+swim recruiting logic
+school ranking logic
+explore results logic
+deep dive logic
+swimcloud sync logic
+This is UI/UX and data presentation only.
+1. Replace Academic Inputs With Scroll Pickers
+Academic data entry should feel intentional and premium, not like typing into a spreadsheet.
+Use scroll wheels / pickers similar to iOS pickers.
+GPA Picker
+Range:
+2.5 → 4.6
+Increment:
+0.1
+Default center position when opened:
+3.5
+Display format:
+3.8 GPA
+SAT Picker
+Wheel values:
+940 → 1600
+Increment:
+10
+Default center position:
+1240
+This intentionally encourages scrolling upward for most Lane4 users.
+Display format:
+1460 SAT
+AP Picker
+Range:
+0 → 15
+Increment:
+1
+Default:
+6
+Display format:
+9 APs
+ACT (Optional Field)
+Range:
+18 → 36
+Increment:
+1
+Default:
+28
+Only show if user chooses ACT instead of SAT.
+2. Combine Academics Into One Clean Profile Line
+Replace separate boxes with a single academic identity line.
+Example display:
+Academic Profile
+4.34 GPA • 1460 SAT • 9 APs
+Tapping the line opens the academic picker modal.
+3. Add Academic Recruit Status
+Immediately beneath the academic profile line, add a status tag.
+Logic example:
+High Academic Recruit:
+GPA ≥ 3.9 OR SAT ≥ 1400
+Ultra High Academic Recruit:
+GPA ≥ 4.2 OR SAT ≥ 1500
+Example display:
+High Academic Recruit
+or
+Ultra High Academic Recruit
+Style:
+Small pill tag, subtle but premium.
+4. Rebuild The Profile Header
+Replace the current top of profile with a tight recruiting identity card.
+Example layout:
+James Gannon
+Class of 2026 • Distance Freestyle / IM
+
+LANE4 RECRUITING PROFILE
+Built from verified meet results
+
+Academic Profile
+4.34 GPA • 1460 SAT • 9 APs
+
+High Academic Recruit
+Then below:
+Top Events
+100 Free • 1000 Free • 1650 Free
+5. Correct Event Identity Logic
+Do NOT use random ranking output.
+Instead:
+Determine top swimmer identity by fastest percentile events.
+Example outcome for James:
+Distance Freestyler with IM scoring potential
+Or:
+Sprint Freestyler
+IM / Breaststroke Hybrid
+Distance Specialist
+This text should appear under the swimmer name.
+6. Best Times Section Cleanup
+The current times block is cluttered.
+Reformat as:
+Best SCY Times
+
+1650 Free      16:06.59
+1000 Free       9:30.08
+500 Free        4:37.34
+200 Free        1:44.65
+200 IM          1:56.60
+100 Free          49.96
+Order by distance relevance to identity, not random order.
+7. Remove Broken / Unused Profile Fields
+Remove completely:
+Academic focus question
+This is now handled by major selection.
+8. Simplify Preferences Section
+Keep only preferences that actually affect deep dives.
+Keep:
+Preferred geography
+Academic intensity
+Team competitiveness
+Financial aid expectations
+Remove anything redundant.
+9. Move Logout To Profile Dropdown
+Current logout location is bad UX.
+Change top nav Profile into a dropdown.
+When clicking:
+Profile
+▾
+Dropdown options:
+View Profile
+Log Out
+Logout should not require scrolling to the bottom of the page.
+10. Remove Debug Label
+Delete:
+PROFILE TEST MARKER
+11. Make The Page Feel Premium
+Visual improvements:
+• tighter vertical spacing
+• stronger section hierarchy
+• slightly larger swimmer name
+• lighter card borders
+• consistent padding
+• fewer stacked boxes
+Goal:
+The page should feel like a recruiting profile page a swimmer would show a coach or family member.
+Not a settings page.
+Final Result
+The swimmer should feel like:
+“This looks like a real recruiting profile.”
+Not:
+“I filled out a form.”
+The page should make the swimmer feel confident, impressive, and excited about their options.

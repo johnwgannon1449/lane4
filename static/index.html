@@ -906,6 +906,71 @@
     .sc-use-seed-btn:hover { background: #D97706; }
     .sc-ignore-seed-btn { font-size: 0.7rem; padding: 0.18rem 0.5rem; background: transparent; color: var(--muted); border: 1px solid var(--border); border-radius: 4px; cursor: pointer; }
     .sc-ignore-seed-btn:hover { background: var(--border); }
+
+    /* ── Academic scroll picker ──────────────────────────────────── */
+    #acad-picker-overlay {
+      position: fixed; inset: 0; z-index: 600; background: rgba(0,0,0,0.45);
+      display: none; align-items: flex-end;
+    }
+    #acad-picker-overlay.open { display: flex; }
+    #acad-picker-sheet {
+      background: var(--white); border-radius: 20px 20px 0 0; width: 100%;
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+    .picker-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1rem 1.25rem; border-bottom: 1px solid var(--border);
+    }
+    .picker-title { font-weight: 700; font-size: 1rem; color: var(--navy); }
+    .picker-btn { background: none; border: none; cursor: pointer; font-size: 0.95rem; padding: 4px 8px; border-radius: 6px; }
+    .picker-btn-cancel { color: var(--muted); }
+    .picker-btn-done { color: var(--blue); font-weight: 700; }
+    .picker-drum-wrap { position: relative; height: 216px; overflow: hidden; }
+    #picker-drum {
+      height: 100%; overflow-y: scroll; scroll-snap-type: y mandatory;
+      scrollbar-width: none; -ms-overflow-style: none;
+    }
+    #picker-drum::-webkit-scrollbar { display: none; }
+    .picker-item {
+      height: 52px; scroll-snap-align: center; display: flex;
+      align-items: center; justify-content: center;
+      font-size: 1.2rem; font-weight: 600; color: var(--navy);
+    }
+    .picker-spacer { height: 82px; flex-shrink: 0; display: block; }
+    .picker-sel-band {
+      position: absolute; top: 50%; transform: translateY(-50%); left: 0; right: 0;
+      height: 52px; background: var(--bg);
+      border-top: 1.5px solid var(--border); border-bottom: 1.5px solid var(--border);
+      pointer-events: none; z-index: 2;
+    }
+    .picker-fade-top, .picker-fade-bot {
+      position: absolute; left: 0; right: 0; height: 72px; pointer-events: none; z-index: 3;
+    }
+    .picker-fade-top { top: 0; background: linear-gradient(to bottom, rgba(255,255,255,0.96), transparent); }
+    .picker-fade-bot { bottom: 0; background: linear-gradient(to top, rgba(255,255,255,0.96), transparent); }
+    /* ── Academic status + tap line ──────────────────────────────── */
+    .acad-status-pill {
+      display: inline-block; font-size: 0.68rem; font-weight: 700;
+      padding: 3px 10px; border-radius: 99px; letter-spacing: 0.04em; margin-top: 0.35rem;
+    }
+    .acad-status-high  { background: #DBEAFE; color: #1E40AF; }
+    .acad-status-ultra { background: #EDE9FE; color: #5B21B6; }
+    .acad-tap-row { display: flex; align-items: center; gap: 2px; flex-wrap: wrap; margin: 0.5rem 0 0; }
+    .acad-tap-seg {
+      font-size: 0.95rem; font-weight: 600; color: var(--navy);
+      padding: 4px 9px; border-radius: 7px; cursor: pointer; transition: background 0.12s;
+    }
+    .acad-tap-seg:hover, .acad-tap-seg:active { background: var(--blue-l); color: var(--blue); }
+    .acad-tap-sep { color: var(--muted); font-size: 0.95rem; user-select: none; padding: 0 1px; }
+    .acad-tap-empty {
+      font-size: 0.85rem; color: var(--muted); padding: 4px 9px; border-radius: 7px;
+      border: 1.5px dashed var(--border); cursor: pointer; transition: border-color 0.12s;
+    }
+    .acad-tap-empty:hover { border-color: var(--blue); color: var(--blue); }
+    /* ── Times grid premium ──────────────────────────────────────── */
+    .times-row { gap: 0; }
+    .times-ev-name { flex: 1; font-size: 0.88rem; color: var(--navy); font-weight: 500; }
+    .times-ev-val  { font-size: 0.88rem; color: var(--navy); font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: 0.01em; }
   </style>
 </head>
 <body>
@@ -1185,14 +1250,8 @@
 <div class="tab-panel" id="panel-profile">
   <div class="wrap">
 
-    <!-- ── PREMIUM RECRUITING HEADER ──────────────────────────── -->
-    <div id="prof-header-block" style="padding:1.5rem 0 1.1rem;border-bottom:1px solid var(--border);margin-bottom:1.25rem;"></div>
-
-    <!-- ── RECRUITING SUMMARY ─────────────────────────────────── -->
-    <div id="prof-summary-block" style="margin-bottom:1.25rem;"></div>
-
-    <!-- ── ATHLETE SNAPSHOT ───────────────────────────────────── -->
-    <div id="prof-snapshot-block" style="margin-bottom:1.5rem;"></div>
+    <!-- ── PREMIUM RECRUITING HEADER (rendered by JS) ───────────── -->
+    <div id="prof-header-block" style="padding:1.5rem 0 1.1rem;border-bottom:1px solid var(--border);margin-bottom:1.5rem;"></div>
 
     <!-- ── BEST TIMES (SCY) ───────────────────────────────────── -->
     <div id="prof-times-outer" style="margin-bottom:1.5rem;">
@@ -1212,14 +1271,6 @@
       <div style="font-size:0.78rem;color:var(--muted);margin-bottom:0.6rem;">Select up to 2 — shapes the academic section of every deep dive</div>
       <div id="major-picker-profile"></div>
     </div>
-
-    <!-- ── ACADEMIC STATS (EDIT) ──────────────────────────────── -->
-    <div class="section-label" style="display:flex;align-items:center;justify-content:space-between;">
-      Academic Stats
-      <button class="btn-edit-link" id="stats-edit-btn" onclick="toggleEditStats()">✏ Edit</button>
-    </div>
-    <div class="stat-grid" id="prof-stats"></div>
-    <div id="stats-edit-panel" style="display:none;"></div>
 
     <!-- ── SWIMCLOUD ───────────────────────────────────────────── -->
     <div class="section-label" style="margin-top:1rem;">SwimCloud Times</div>
@@ -4682,12 +4733,13 @@ function renderTimes() {
   const panel   = document.getElementById('times-edit-panel');
   if (!timesEl) return;
 
-  const entries = Object.entries(JAMES.times || {});
+  const sorted  = _sortedTimeEntries();               // identity-sorted for display
+  const entries = Object.entries(JAMES.times || {});  // unsorted, for edit mode
 
   if (!EDIT_TIMES) {
-    // ── View mode: clean 2-col rows ──────────────────────────────
-    timesEl.innerHTML = entries.length
-      ? `<div class="times-grid">${entries.map(([ev, t]) =>
+    // ── View mode: clean 2-col rows ordered by swim identity ──────
+    timesEl.innerHTML = sorted.length
+      ? `<div class="times-grid">${sorted.map(([ev, t]) =>
           `<div class="times-row">
             <span class="times-ev-name">${esc(ev)}</span>
             <span class="times-ev-val">${esc(t)}</span>
@@ -4817,99 +4869,211 @@ function renderLoggedInUser() {
   if (el && CURRENT_USER) el.textContent = CURRENT_USER.email;
 }
 
-// ── Profile header / summary helpers ─────────────────────────────
-function _profTopEventsLine() {
+// ── Times sort order (identity-based: distance → IM → sprint → strokes) ─
+const _TIMES_DISPLAY_ORDER = [
+  '1650 Free','1000 Free','500 Free','200 Free','100 Free','50 Free',
+  '400 IM','200 IM',
+  '200 Back','100 Back','200 Breast','100 Breast','200 Fly','100 Fly',
+];
+function _sortedTimeEntries() {
   const entries = Object.entries(JAMES.times || {}).filter(([, v]) => v);
-  if (!entries.length) return null;
-  return entries.slice(0, 3).map(([ev]) => ev).join(' • ');
+  return entries.sort(([a], [b]) => {
+    const ai = _TIMES_DISPLAY_ORDER.indexOf(a), bi = _TIMES_DISPLAY_ORDER.indexOf(b);
+    if (ai >= 0 && bi >= 0) return ai - bi;
+    if (ai >= 0) return -1;
+    if (bi >= 0) return 1;
+    return a.localeCompare(b);
+  });
 }
 
-function _profAcademicLine() {
-  const parts = [];
-  if (JAMES.gpa) parts.push(JAMES.gpa + ' GPA');
-  if (JAMES.sat) parts.push(JAMES.sat + ' SAT');
+// ── Profile header helpers ────────────────────────────────────────
+function _profSwimIdentity() {
+  const times  = JAMES.times || {};
+  const events = Object.keys(times).filter(e => times[e]);
+  if (!events.length) return null;
+  const has = (...ev) => ev.some(e => events.includes(e));
+  const hasDist   = has('500 Free','1000 Free','1650 Free');
+  const hasMid    = has('200 Free');
+  const hasSprint = has('50 Free','100 Free');
+  const hasIM     = has('200 IM','400 IM');
+  const hasBreast = has('100 Breast','200 Breast');
+  const hasBack   = has('100 Back','200 Back');
+  const hasFly    = has('100 Fly','200 Fly');
+  let primary = '';
+  if (hasDist)        primary = 'Distance Freestyle';
+  else if (hasIM && !hasSprint && !hasMid) primary = 'IM';
+  else if (hasMid && !hasSprint) primary = 'Mid-Distance Freestyle';
+  else if (hasSprint) primary = 'Sprint Freestyle';
+  else if (hasBreast) primary = 'Breaststroke';
+  else if (hasBack)   primary = 'Backstroke';
+  else if (hasFly)    primary = 'Butterfly';
+  else return null;
+  let secondary = '';
+  if (primary === 'Distance Freestyle' && hasIM)     secondary = 'IM scoring potential';
+  else if (primary === 'Distance Freestyle' && hasBreast) secondary = 'Breaststroke value';
+  else if (primary === 'Sprint Freestyle' && hasDist) secondary = 'Distance range';
+  if (secondary) return `${primary} / ${secondary}`;
+  return primary;
+}
+
+function _profTopEventsLine() {
+  const sorted = _sortedTimeEntries();
+  if (!sorted.length) return null;
+  return sorted.slice(0, 3).map(([ev]) => ev).join(' • ');
+}
+
+function _academicTapHtml() {
+  const gpa = JAMES.gpa;
+  const sat = JAMES.sat;
   const act = JAMES.actScore || ACT_SCORE;
-  if (act) parts.push(act + ' ACT');
-  if (JAMES.apCount) parts.push(JAMES.apCount + ' APs');
-  return parts.length ? parts.join(' • ') : null;
+  const aps = JAMES.apCount;
+  const parts = [];
+  parts.push(gpa
+    ? `<span class="acad-tap-seg" onclick="openPicker('gpa')">${gpa} GPA</span>`
+    : `<span class="acad-tap-empty" onclick="openPicker('gpa')">+ Add GPA</span>`);
+  parts.push('<span class="acad-tap-sep">•</span>');
+  if (act) {
+    parts.push(`<span class="acad-tap-seg" onclick="openPicker('act')">${act} ACT</span>`);
+  } else {
+    parts.push(sat
+      ? `<span class="acad-tap-seg" onclick="openPicker('sat')">${sat} SAT</span>`
+      : `<span class="acad-tap-empty" onclick="openPicker('sat')">+ Add SAT</span>`);
+  }
+  parts.push('<span class="acad-tap-sep">•</span>');
+  parts.push(aps
+    ? `<span class="acad-tap-seg" onclick="openPicker('ap')">${aps} APs</span>`
+    : `<span class="acad-tap-empty" onclick="openPicker('ap')">+ Add APs</span>`);
+  return `<div class="acad-tap-row">${parts.join('')}</div>`;
 }
 
-function _profLane4Eval() {
+function _academicStatusHtml() {
   const gpa   = parseFloat(JAMES.gpa) || 0;
   const sat   = parseInt(JAMES.sat) || 0;
   const act   = parseInt(JAMES.actScore || ACT_SCORE) || 0;
   const satEq = act ? actToSat(act) : sat;
-  if (satEq >= 1450 || gpa >= 3.8) return 'Strong fit for selective academic programs';
-  return 'Real options across D1, D2, and D3 programs';
-}
-
-function _profRecruitSummary() {
-  const gpa   = parseFloat(JAMES.gpa) || 0;
-  const sat   = parseInt(JAMES.sat) || 0;
-  const act   = parseInt(JAMES.actScore || ACT_SCORE) || 0;
-  const satEq = act ? actToSat(act) : sat;
-  const hasTimes = Object.values(JAMES.times || {}).some(t => t);
-  if (gpa >= 3.9 || satEq >= 1500)
-    return 'Ultra high-academic recruit with strong event range and legitimate scoring potential at selective college programs.';
-  if (gpa >= 3.8 || satEq >= 1450)
-    return 'High-academic swimmer with real college options and strong value for selective programs.';
-  if (hasTimes)
-    return 'Competitive swimmer with a clear recruiting path across multiple program levels.';
-  return 'A serious recruit building a college target list with Lane4.';
+  if (gpa >= 4.2 || satEq >= 1500)
+    return `<span class="acad-status-pill acad-status-ultra">Ultra High Academic Recruit</span>`;
+  if (gpa >= 3.9 || satEq >= 1400)
+    return `<span class="acad-status-pill acad-status-high">High Academic Recruit</span>`;
+  return '';
 }
 
 function renderProfile() {
   if (!JAMES.name) return;
 
-  // ── Premium header ────────────────────────────────────────────
-  const gradYear  = JAMES.gradYear ? `Class of ${JAMES.gradYear}` : '';
-  const topEvents = _profTopEventsLine();
-  const classLine = [gradYear, topEvents].filter(Boolean).join(' • ');
-  const headerEl  = document.getElementById('prof-header-block');
+  const headerEl = document.getElementById('prof-header-block');
   if (headerEl) {
+    const gradYear  = JAMES.gradYear ? `Class of ${JAMES.gradYear}` : '';
+    const identity  = _profSwimIdentity();
+    const classLine = [gradYear, identity].filter(Boolean).join(' • ');
+    const topEvLine = _profTopEventsLine();
+    const status    = _academicStatusHtml();
+
     headerEl.innerHTML = `
-      <div style="font-family:'Fraunces',serif;font-size:1.7rem;font-weight:700;color:var(--navy);line-height:1.1;margin-bottom:0.3rem;">${esc(JAMES.name)}</div>
-      ${classLine ? `<div style="font-size:0.88rem;color:var(--muted);margin-bottom:0.55rem;">${esc(classLine)}</div>` : ''}
-      <div style="font-size:0.7rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--blue);margin-bottom:0.15rem;">Lane4 Recruiting Profile</div>
-      <div style="font-size:0.72rem;color:var(--muted);">Built from verified meet results</div>
+      <div style="font-family:'Fraunces',serif;font-size:1.9rem;font-weight:700;color:var(--navy);line-height:1.05;margin-bottom:0.3rem;">${esc(JAMES.name)}</div>
+      ${classLine ? `<div style="font-size:0.88rem;color:var(--muted);margin-bottom:0.8rem;">${esc(classLine)}</div>` : ''}
+      <div style="font-size:0.63rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--blue);margin-bottom:0.1rem;">Lane4 Recruiting Profile</div>
+      <div style="font-size:0.72rem;color:var(--muted);margin-bottom:1.1rem;">Built from verified meet results</div>
+      <div style="font-size:0.63rem;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--muted);margin-bottom:0.15rem;">Academic Profile</div>
+      ${_academicTapHtml()}
+      ${status}
+      ${topEvLine ? `
+      <div style="font-size:0.63rem;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--muted);margin-top:1rem;margin-bottom:0.2rem;">Top Events</div>
+      <div style="font-size:0.9rem;font-weight:600;color:var(--navy);">${esc(topEvLine)}</div>
+      ` : ''}
     `;
   }
 
-  // ── Recruiting summary (show once academic data exists) ───────
-  const summaryEl = document.getElementById('prof-summary-block');
-  if (summaryEl) {
-    const hasAcademic = JAMES.gpa || JAMES.sat || JAMES.actScore || ACT_SCORE;
-    summaryEl.innerHTML = hasAcademic
-      ? `<div style="font-size:0.95rem;color:var(--navy);line-height:1.6;padding:0.9rem 1rem;background:var(--bg);border-radius:10px;border-left:3px solid var(--blue);">${esc(_profRecruitSummary())}</div>`
-      : '';
-  }
-
-  // ── Athlete snapshot ──────────────────────────────────────────
-  const snapshotEl = document.getElementById('prof-snapshot-block');
-  if (snapshotEl) {
-    const evLine  = _profTopEventsLine();
-    const acLine  = _profAcademicLine();
-    const evalLn  = _profLane4Eval();
-    const rows    = [];
-    if (evLine) rows.push(['Top Events', evLine]);
-    if (acLine) rows.push(['Academic Profile', acLine]);
-    rows.push(['Lane4 Evaluation', evalLn]);
-    snapshotEl.innerHTML = `<div class="card" style="padding:1rem 1.1rem;">${
-      rows.map(([label, val], idx) => `
-        <div style="${idx < rows.length - 1 ? 'margin-bottom:0.9rem;' : ''}">
-          <div style="font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--muted);margin-bottom:0.2rem;">${esc(label)}</div>
-          <div style="font-size:0.92rem;color:var(--navy);font-weight:600;">${esc(val)}</div>
-        </div>`).join('')
-    }</div>`;
-  }
-
   renderLoggedInUser();
-  renderStats();
   renderMajorPickerProfile();
   renderTimes();
   renderSwimCloud();
   renderVibeQuestions();
   renderPreferences();
+}
+
+// ── Academic scroll picker ────────────────────────────────────────
+let _pickerType   = null;
+let _pickerValues = [];
+const _PICKER_H   = 52;
+
+function openPicker(type) {
+  const cfgs = {
+    gpa: {
+      title: 'GPA',
+      values: Array.from({length: Math.round((4.6-2.5)/0.1)+1}, (_,i) => +(2.5+i*0.1).toFixed(1)),
+      format: v => v.toFixed(1) + ' GPA',
+      current: () => JAMES.gpa,
+      def: 3.5
+    },
+    sat: {
+      title: 'SAT',
+      values: Array.from({length: (1600-940)/10+1}, (_,i) => 940+i*10),
+      format: v => v.toLocaleString() + ' SAT',
+      current: () => JAMES.sat,
+      def: 1240
+    },
+    ap: {
+      title: 'APs',
+      values: Array.from({length: 16}, (_,i) => i),
+      format: v => v === 1 ? '1 AP' : v + ' APs',
+      current: () => JAMES.apCount,
+      def: 6
+    },
+    act: {
+      title: 'ACT',
+      values: Array.from({length: 36-18+1}, (_,i) => 18+i),
+      format: v => v + ' ACT',
+      current: () => JAMES.actScore || ACT_SCORE,
+      def: 28
+    },
+  };
+  const cfg = cfgs[type];
+  if (!cfg) return;
+  _pickerType   = type;
+  _pickerValues = cfg.values;
+
+  document.getElementById('picker-title').textContent = cfg.title;
+
+  const items = document.getElementById('picker-items');
+  items.innerHTML =
+    `<div class="picker-spacer"></div>` +
+    _pickerValues.map(v => `<div class="picker-item">${esc(cfg.format(v))}</div>`).join('') +
+    `<div class="picker-spacer"></div>`;
+
+  const cur = cfg.current();
+  let idx = _pickerValues.findIndex(v => String(v) === String(cur));
+  if (idx < 0) idx = _pickerValues.findIndex(v => v === cfg.def);
+  if (idx < 0) idx = 0;
+
+  const drum = document.getElementById('picker-drum');
+  drum.scrollTop = idx * _PICKER_H;
+
+  document.getElementById('acad-picker-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closePicker() {
+  const ov = document.getElementById('acad-picker-overlay');
+  if (ov) ov.classList.remove('open');
+  document.body.style.overflow = '';
+  _pickerType = null;
+}
+
+async function savePicker() {
+  if (!_pickerType) { closePicker(); return; }
+  const drum = document.getElementById('picker-drum');
+  const idx  = Math.max(0, Math.min(Math.round(drum.scrollTop / _PICKER_H), _pickerValues.length - 1));
+  const val  = _pickerValues[idx];
+  if (_pickerType === 'gpa')  { JAMES.gpa = val; }
+  if (_pickerType === 'sat')  { JAMES.sat = val; }
+  if (_pickerType === 'ap')   { JAMES.apCount = val; }
+  if (_pickerType === 'act')  { JAMES.actScore = val; ACT_SCORE = val; }
+  closePicker();
+  renderProfile();
+  saveToStorage();
+  try { await refreshScores(); } catch(_) {}
+  schedulePush();
 }
 
 function renderVibeQuestions() {
@@ -4962,24 +5126,9 @@ const PREF_QUESTIONS = [
     options: ['Very rigorous, push me', 'Challenging but balanced', 'More flexible / less pressure'],
   },
   {
-    key: 'swim_team_level',
-    label: 'What level of team do you want to be on?',
-    options: [
-      'I want to be on one of the fastest teams I can make',
-      'I want a strong team where I can contribute',
-      'I want a team where I can score and make an impact',
-    ],
-    wide: true,
-  },
-  {
     key: 'team_competition_comfort',
-    label: 'How do you feel about competition on your team?',
+    label: 'How competitive do you want the team dynamic to be?',
     options: ['I want to fight for top spots', "I'm good being in the mix", 'I want a more supportive / lower-pressure team'],
-  },
-  {
-    key: 'budget_range',
-    label: 'What feels realistic to pay per year?',
-    options: ['$0–15K', '$15K–35K', '$35K+'],
   },
   {
     key: 'need_based_aid_expectation',
@@ -5613,5 +5762,23 @@ function scDismissPR() {
 // ════════════════════════════════════════════════════════════════
 boot();
 </script>
+<!-- ── Academic scroll picker modal ──────────────────────────── -->
+<div id="acad-picker-overlay" onclick="closePicker()">
+  <div id="acad-picker-sheet" onclick="event.stopPropagation()">
+    <div class="picker-header">
+      <button class="picker-btn picker-btn-cancel" onclick="closePicker()">Cancel</button>
+      <div class="picker-title" id="picker-title">GPA</div>
+      <button class="picker-btn picker-btn-done" onclick="savePicker()">Done</button>
+    </div>
+    <div class="picker-drum-wrap">
+      <div class="picker-sel-band"></div>
+      <div class="picker-fade-top"></div>
+      <div class="picker-fade-bot"></div>
+      <div id="picker-drum">
+        <div id="picker-items" style="display:flex;flex-direction:column;"></div>
+      </div>
+    </div>
+  </div>
+</div>
 </body>
 </html>
