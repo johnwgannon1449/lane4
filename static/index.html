@@ -1682,50 +1682,45 @@ const LANE4_BRAND_RANK = {
   'George Fox University': 148,
 };
 
-// ── Top-6 reveal selection (Lane4 Brand Rank spec) ──────────────
-// LANE4_BRAND_RANK: lower number = more recognizable (rank 1 = Harvard tier).
-// adjPts > 0 = swimmer has a legitimate swim fit at that school.
-// adjPts = 0 = scoring engine has no competitive data (used for stretch only).
+// ── Top-6 reveal selection (Recruiting Likelihood tier spec) ─────
+// Uses the existing adjTier tiers to classify schools into:
+//   COMPETITIVE  — Conference Star / Top Recruit / Priority Recruit (realistic fits)
+//   POSSIBLE     — Recruitable / Below Roster Level             (realistic fits)
+//   REACH        — adjPts=0 AND in LANE4_BRAND_RANK            (aspirational stretch)
+//   NOT COMP     — adjPts=0 AND NOT in LANE4_BRAND_RANK → excluded from reveal
 //
-// Algorithm:
-//  1. REALISTIC (up to 3): adjPts > 0, sorted by brand_rank asc then confFinish asc.
-//     → "Most recognizable school you can definitely swim at."
-//  2. STRETCH (up to 3):   adjPts = 0 AND in LANE4_BRAND_RANK, sorted by brand_rank asc.
-//     → "Exciting known programs just outside your current range."
-//  3. BACKFILL: if stretch pool is thin, fill remaining slots from realistic pool.
+// Sort order within each group: brand_rank asc → projPlace asc → adjPts desc
+// Build: fill from Competitive+Possible first; then up to 3 Reach to fill remaining.
 function obSelectBalancedTop6(results) {
   const all = results || [];
 
-  // brand_rank for a school: lower = better. Unranked = 9999 (sorted last).
-  const brandRank  = s => LANE4_BRAND_RANK[s] || 9999;
-  // Projected individual conference finish: best (min) place across top3 events.
-  // Lower = more competitive. Falls back to 9999 if no place data available.
-  const projPlace  = r => {
+  const brandRank = s => LANE4_BRAND_RANK[s] || 9999;
+  const projPlace = r => {
     const places = (r.top3 || []).map(e => e.place).filter(p => p != null && p < 999);
     return places.length ? Math.min(...places) : 9999;
   };
 
-  // ── Realistic pool ──────────────────────────────────────────
-  // Sort order: 1) brand_rank asc  2) projected conf finish asc  3) swim score desc
-  const realistic = all
-    .filter(r => r.adjPts > 0)
-    .sort((a, b) => {
-      const ra = brandRank(a.school), rb = brandRank(b.school);
-      if (ra !== rb) return ra - rb;                      // 1. brand_rank asc
-      const pa = projPlace(a), pb = projPlace(b);
-      if (pa !== pb) return pa - pb;                      // 2. projected conf finish asc
-      return b.adjPts - a.adjPts;                         // 3. swim score desc
-    });
+  // ── Recruiting Likelihood tier classification ─────────────
+  const COMPETITIVE = new Set(['High-Point Contender','Conference Star','Top Recruit','Priority Recruit']);
+  const POSSIBLE    = new Set(['Recruitable','Below Roster Level']);
 
-  // ── Stretch pool ─────────────────────────────────────────────
-  // Schools with adjPts = 0 that are in the brand rank map.
-  // The scoring engine floors at 0 for schools beyond the swimmer's range —
-  // these are shown as aspirational stretch options, labeled accordingly.
-  const stretch = all
-    .filter(r => r.adjPts === 0 && LANE4_BRAND_RANK[r.school])
-    .sort((a, b) => brandRank(a.school) - brandRank(b.school));
+  const isRealistic = r => COMPETITIVE.has(r.adjTier) || POSSIBLE.has(r.adjTier);
+  const isReach     = r => !r.adjTier && r.adjPts === 0 && !!LANE4_BRAND_RANK[r.school];
+  // Schools with adjTier="Not Competitive", or adjPts=0 and not in brand map → excluded.
 
-  // ── Build final 6 ────────────────────────────────────────────
+  // ── Sort: brand_rank asc → projected conf finish asc → swim score desc ──
+  const sortFn = (a, b) => {
+    const ra = brandRank(a.school), rb = brandRank(b.school);
+    if (ra !== rb) return ra - rb;
+    const pa = projPlace(a), pb = projPlace(b);
+    if (pa !== pb) return pa - pb;
+    return b.adjPts - a.adjPts;
+  };
+
+  const realistic = all.filter(isRealistic).sort(sortFn);
+  const reach     = all.filter(isReach).sort(sortFn); // projPlace=9999 for all; sorts by brand_rank
+
+  // ── Build Top 6: realistic first, then up to 3 reach to fill ─
   const used = new Set();
   const pick = [];
   const take = (pool, max) => {
@@ -1735,9 +1730,9 @@ function obSelectBalancedTop6(results) {
     }
   };
 
-  take(realistic, 3); // 3 realistic fits (best-branded eligible schools)
-  take(stretch,   6); // up to 3 stretch (stops at 6 total)
-  take(realistic, 6); // back-fill from realistic if stretch pool is thin
+  take(realistic, 6);                                  // fill as many as possible from realistic
+  const reachSlots = Math.min(3, 6 - pick.length);    // up to 3 reach, only if slots remain
+  if (reachSlots > 0) take(reach, pick.length + reachSlots);
 
   return pick.slice(0, 6);
 }

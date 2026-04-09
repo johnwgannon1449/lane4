@@ -1,0 +1,123 @@
+Update the **Top 6 school reveal logic** in Lane4 so it uses the existing **Recruiting Likelihood tiers** instead of the previous swim-fit (adjPts) logic.
+
+Do NOT change any scoring math, conference projections, or recruiting tier calculations.
+This change only affects **how the Top 6 schools are selected and sorted for the onboarding reveal.**
+
+---
+
+GOAL
+
+---
+
+Lane4’s first reveal should answer:
+
+**“What are the best known schools where I could realistically be recruited?”**
+
+The selection should rely on the already-computed **Recruiting Likelihood tiers** rather than the older swim-fit system.
+
+This aligns the reveal with Lane4’s philosophy:
+
+• honest recruiting expectations
+• no rainbow chasing
+• focus on realistic opportunities
+
+---
+
+STEP 1 — BUILD ELIGIBLE SCHOOL POOL
+
+---
+
+From the full set of schools evaluated for the swimmer:
+
+Exclude any school where:
+
+Recruiting Likelihood = **NOT COMPETITIVE**
+
+These schools should **never appear in the Top 6 reveal**.
+
+They may still appear deeper in Explore if a user searches intentionally.
+
+Remaining eligible tiers are:
+
+• Competitive
+• Possible
+• Reach
+
+---
+
+STEP 2 — CLASSIFY SCHOOLS
+
+---
+
+Group the eligible schools into:
+
+REALISTIC FITS
+Recruiting Likelihood = **Competitive** or **Possible**
+
+STRETCH FITS
+Recruiting Likelihood = **Reach**
+
+---
+
+STEP 3 — SORT WITHIN EACH GROUP
+
+---
+
+Sort both groups using the Lane4 brand recognition ranking.
+
+Primary sort:
+
+brand_rank (ascending — lower number = stronger brand)
+
+Tie-breakers:
+
+projected_conference_finish (ascending)
+swim_score (descending)
+
+---
+
+STEP 4 — BUILD TOP 6 REVEAL
+
+---
+
+Construct the Top 6 using this order:
+
+1. Fill with **Competitive / Possible** schools first
+2. If fewer than 6 exist, fill remaining slots with **Reach** schools
+3. Maximum **3 Reach schools** in the Top 6
+4. Prefer the highest **brand_rank** schools when multiple options exist
+
+This ensures the reveal contains recognizable schools while remaining honest about recruiting likelihood.
+
+---
+
+STEP 5 — CARD BADGES
+
+---
+
+Display swim potential badges based on recruiting likelihood:
+
+Competitive → Conference Scorer / A-Final Potential
+Possible → Strong Swim Fit
+Reach → Longer-Term Swim Goal
+
+Do NOT display NOT COMPETITIVE schools in this reveal.
+
+---
+
+EXPECTED RESULT
+
+---
+
+The swimmer should see something like:
+
+Best College Swim Fits
+
+Johns Hopkins — Conference Scorer
+Carnegie Mellon — A Final Potential
+Case Western — Conference Scorer
+Tufts — Strong Swim Fit
+Emory — Longer-Term Swim Goal
+Williams — Longer-Term Swim Goal
+
+This creates an exciting but honest reveal that prioritizes recognizable schools where the swimmer has legitimate recruiting potential.
