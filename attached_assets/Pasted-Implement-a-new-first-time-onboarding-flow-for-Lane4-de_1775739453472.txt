@@ -1,0 +1,230 @@
+Implement a new **first-time onboarding flow** for Lane4 designed to immediately hook swimmers by pulling their best times, showing fast value, and only asking for email after demonstrating usefulness.
+
+This flow should feel **fun, swimmer-native, and credible**, not gimmicky or corporate.
+
+Do not modify the recruiting engine logic. This is primarily a **frontend onboarding and orchestration change**.
+
+---
+
+GLOBAL AUTH BEHAVIOR
+
+---
+
+If a user is already logged in:
+
+• Do NOT show onboarding
+• Send them directly to their normal logged-in landing page (dashboard/results)
+
+If a user is NOT logged in:
+
+• Show the new onboarding hero
+
+Session persistence should keep users logged in normally between visits.
+
+Add a visible **Log In** link for returning users on the hero screen.
+
+---
+
+SCREEN 1 — HERO
+
+Headline:
+
+Let’s get your college lane assignment.
+
+Subtext:
+
+Enter your name and I’ll find your best times.
+
+Input field:
+
+Swimmer Name
+
+Primary Button:
+
+Find My Times
+
+Secondary link (small but visible):
+
+Already have an account? Log in
+
+---
+
+SCREEN 2 — SWIMMER MATCH
+
+Search public swim results and return possible swimmer matches.
+
+If multiple matches appear:
+
+Header:
+
+Which one is you?
+
+Display cards showing:
+
+Name
+Club / Team
+Grad Year
+Location (if available)
+
+User selects their correct profile.
+
+---
+
+SCREEN 3 — FETCHING TIMES
+
+Do NOT show a spinner.
+
+Show rotating swim-themed loading messages.
+
+Rotate every ~1.5 seconds.
+
+Example messages:
+
+Grabbing best times…
+Checking the psych sheet…
+Dang, that’s moving.
+Lane 4 energy detected.
+Counting strokes, not vibes.
+Trying not to get split-swindled…
+Yep, those are real swimmer times.
+Sorting the pain-cave events…
+Hold on, verifying that 100 free…
+Someone’s been putting in yardage.
+
+---
+
+SCREEN 4 — TIME VALIDATION
+
+Header:
+
+These look like your best times — good to go?
+
+Display imported PRs.
+
+Allow swimmer to:
+
+• confirm times
+• edit times
+• delete events
+• optionally add missing events
+
+Primary Button:
+
+Looks Good
+
+---
+
+SCREEN 5 — SEARCHING FOR COLLEGES
+
+Once the swimmer confirms times, immediately begin a real background search for colleges where those times align.
+
+Show rotating loading messages again.
+
+Examples:
+
+Visiting campuses for you…
+Looking for schools where you can actually contribute…
+Trying not to send you rainbow chasing…
+Scanning for smart swimmer schools…
+Somewhere, a coach just nodded quietly.
+Finding the sweet spot between fast and feasible…
+Grandma would definitely brag about this place…
+Checking where stopwatch and transcript can coexist.
+
+---
+
+SCREEN 6 — MATCH COUNT REVEAL
+
+Before asking for email, reveal how many colleges were found.
+
+Use the following buckets:
+
+0 schools
+"Looks like you're still improving toward college recruiting range. Want to explore schools while you keep training?"
+
+1–4 schools
+"We found a few colleges where your times line up."
+
+5–11 schools
+"We found several colleges where your times line up."
+
+12–24 schools
+"We found a grip of colleges where your times line up."
+
+25+ schools
+"We found dozens of colleges where your times line up."
+
+---
+
+SCREEN 7 — EMAIL CAPTURE
+
+Only now ask for email.
+
+Example:
+
+Headline:
+
+We found dozens of colleges where your times fit.
+
+Subtext:
+
+Drop your email and I’ll save your results and show your best-fit schools.
+
+Input:
+
+Email Address
+
+Button:
+
+Show My Lane Assignment
+
+This step should create the new user account and attach the imported swimmer data.
+
+---
+
+SCREEN 8 — BUILDING RESULTS
+
+While the system prepares the results page, show one more rotating message set.
+
+Examples:
+
+Checking conference scoring tables…
+Comparing your events across programs…
+Looking for teams where you can score…
+Trying not to send you to fantasyland…
+Almost there… lining up your lane assignment.
+
+---
+
+SCREEN 9 — RESULTS
+
+Show the swimmer their **Top 6 Lane Assignments**.
+
+These should be schools where their current swim times align well with the program.
+
+Sort results to include recognizable academic brands where possible **without compromising realism**.
+
+Do NOT show admissions likelihood yet (academics not collected).
+
+Instead show swim-focused indicators such as:
+
+Strong Swim Fit
+Worth Exploring
+Coach Interest Possible
+Longer-Term Swim Goal
+
+---
+
+DESIGN NOTES
+
+• Keep screens clean and fast
+• Avoid heavy animations
+• Maintain a confident but playful tone
+• Do not overdo humor
+• The first meaningful payoff should happen within 20–30 seconds
+
+Goal:
+
+A swimmer should enter their name and quickly feel:
+
+"This thing actually knows where I might swim."

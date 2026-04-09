@@ -151,6 +151,22 @@ JAMES = {
 9 conferences, 76 total programs:
 Centennial (8), Liberty League (10), MIAC (6), NCAC (9), NESCAC (11), NEWMAC (7), NWC (8), SCIAC (9), UAA (8)
 
+## Onboarding Wizard (9-screen flow)
+New users (unauthenticated) enter via a 9-screen wizard instead of the old single-card form:
+1. **Hero** — Swimmer name input + "Find My Times" (routes to SwimCloud search)
+2. **Swimmer Match** — SwimCloud profile cards (tap to select); "None of these" falls back to manual
+3. **Fetching Times** — Loading screen with rotating swimmer humor messages
+4. **Time Validation** — Show imported SCY times in editable table + gender picker; add/delete rows
+5. **Searching Colleges** — Score-all loading screen (calls `/api/score-all` — public)
+6. **Match Count Reveal** — Animated count reveal before asking for email
+7. **Email + Password** — Account creation; existing account → auth overlay
+8. **Building Results** — Loading screen while saving profile and linking SwimCloud
+9. **Results** — Top 6 lane assignments with tier tags (Strong Fit / Exploring / etc.)
+
+Auth flow: unauthenticated → hero (screen 1); "Log in" link → auth overlay (existing).
+Returning users who click "Start New Swimmer" skip screen 7 (already logged in; `OB_STATE.isLoggedIn = true`).
+Public endpoints: `GET /api/public/swimcloud/search` and `GET /api/public/swimcloud/propose` (no login required).
+
 ## Current Frontend
 Single-page app at `/` with:
 1. **James profile strip** — GPA, SAT, times

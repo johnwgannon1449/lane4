@@ -661,6 +661,99 @@
     .ob-submit:hover { background: var(--blue-d); }
     .ob-submit:disabled { opacity: 0.5; cursor: not-allowed; }
 
+    /* ── ONBOARDING WIZARD ───────────────────────────────────── */
+    .ob-screen { display:none; }
+    .ob-screen.ob-active { display:block; }
+    .ob-hero-headline {
+      font-family:'Fraunces',serif; font-weight:800; font-size:1.85rem;
+      color:var(--navy); line-height:1.2; margin:1rem 0 0.5rem;
+    }
+    .ob-hero-sub { font-size:0.93rem; color:var(--muted); margin-bottom:1.75rem; line-height:1.6; }
+    .ob-login-link { text-align:center; margin-top:1.25rem; font-size:0.85rem; color:var(--muted); }
+    .ob-login-link a { color:var(--blue); font-weight:600; text-decoration:none; }
+    .ob-login-link a:hover { text-decoration:underline; }
+    .ob-back-btn {
+      background:none; border:none; color:var(--muted); font-size:0.82rem;
+      cursor:pointer; padding:0; margin-bottom:0.9rem; display:inline-flex; align-items:center; gap:4px;
+    }
+    .ob-back-btn:hover { color:var(--navy); }
+    /* Swimmer match cards */
+    .ob-match-grid { display:flex; flex-direction:column; gap:0.45rem; margin:0.75rem 0; }
+    .ob-match-card {
+      padding:0.8rem 1rem; border:1.5px solid var(--border); border-radius:10px;
+      cursor:pointer; transition:border-color .15s, background .15s;
+      display:flex; align-items:center; gap:0.75rem;
+    }
+    .ob-match-card:hover { border-color:var(--blue); background:var(--blue-l); }
+    .ob-match-avatar {
+      width:36px; height:36px; border-radius:50%; background:var(--blue);
+      display:flex; align-items:center; justify-content:center;
+      font-size:0.85rem; font-weight:700; color:#fff; flex-shrink:0;
+    }
+    .ob-match-name { font-weight:700; font-size:0.92rem; color:var(--navy); }
+    .ob-match-meta { font-size:0.77rem; color:var(--muted); margin-top:1px; }
+    .ob-none-btn {
+      background:none; border:1.5px dashed var(--border); color:var(--muted);
+      font-size:0.82rem; cursor:pointer; padding:0.6rem 1rem; border-radius:8px;
+      width:100%; margin-top:0.35rem; text-align:center; box-sizing:border-box;
+    }
+    .ob-none-btn:hover { border-color:var(--muted); color:var(--navy); }
+    /* Loading screens */
+    .ob-loading-wrap { text-align:center; padding:1.5rem 0 1rem; }
+    .ob-loading-msg {
+      font-family:'Fraunces',serif; font-size:1.3rem; font-weight:700;
+      color:var(--navy); min-height:2rem; transition:opacity .25s; line-height:1.3;
+    }
+    .ob-loading-dots { margin-top:1.75rem; display:flex; justify-content:center; gap:8px; }
+    .ob-loading-dot {
+      width:9px; height:9px; border-radius:50%; background:var(--blue);
+      animation:ob-dot-bounce 1.4s ease-in-out infinite;
+    }
+    .ob-loading-dot:nth-child(2) { animation-delay:.22s; }
+    .ob-loading-dot:nth-child(3) { animation-delay:.44s; }
+    @keyframes ob-dot-bounce {
+      0%,80%,100% { transform:scale(0.3); opacity:.25; }
+      40% { transform:scale(1); opacity:1; }
+    }
+    /* Time validation table */
+    .ob-time-table { width:100%; border-collapse:collapse; margin:0.6rem 0; }
+    .ob-time-table th {
+      text-align:left; font-size:0.68rem; font-weight:700; text-transform:uppercase;
+      letter-spacing:.08em; color:var(--muted); padding:0.3rem 0.4rem;
+      border-bottom:1.5px solid var(--border);
+    }
+    .ob-time-table td { padding:0.4rem 0.4rem; border-bottom:1px solid #F1F5F9; font-size:0.87rem; }
+    .ob-time-table tr:last-child td { border-bottom:none; }
+    .ob-tier-badge { font-size:0.7rem; font-weight:700; padding:2px 7px; border-radius:10px; display:inline-block; }
+    .ob-del-btn { background:none; border:none; cursor:pointer; color:var(--muted); font-size:0.9rem; padding:0 2px; }
+    .ob-del-btn:hover { color:var(--red); }
+    /* Match count */
+    .ob-count-number {
+      font-family:'Fraunces',serif; font-size:3.75rem; font-weight:900;
+      color:var(--blue); line-height:1; margin:0 0 0.35rem;
+    }
+    .ob-count-label { font-size:1.05rem; color:var(--navy); font-weight:600; margin-bottom:0.3rem; }
+    .ob-count-sub { font-size:0.88rem; color:var(--muted); line-height:1.55; }
+    /* Results */
+    .ob-result-card {
+      border:1.5px solid var(--border); border-radius:11px; padding:0.8rem 1rem;
+      margin-bottom:0.55rem; display:flex; align-items:center; gap:0.75rem;
+    }
+    .ob-result-rank {
+      width:29px; height:29px; border-radius:50%; background:var(--navy);
+      color:#fff; font-weight:800; font-size:0.8rem;
+      display:flex; align-items:center; justify-content:center; flex-shrink:0;
+    }
+    .ob-result-school { font-weight:700; font-size:0.92rem; color:var(--navy); }
+    .ob-result-tag {
+      font-size:0.7rem; font-weight:700; padding:2px 8px; border-radius:99px;
+      margin-top:3px; display:inline-block;
+    }
+    .ob-tag-strong  { background:#DCFCE7; color:#15803D; }
+    .ob-tag-explore { background:#EFF6FF; color:#1D4ED8; }
+    .ob-tag-interest{ background:#FEF9C3; color:#92400E; }
+    .ob-tag-goal    { background:#F3F4F6; color:#4B5563; }
+
     /* ── START NEW SWIMMER ───────────────────────────────────── */
     .danger-zone { border-top: 1.5px solid var(--border); padding-top: 1.25rem; margin-top: 1rem; }
     .btn-danger { background: var(--red-l); color: var(--red); border: 1.5px solid #FECACA; }
@@ -797,100 +890,138 @@
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════════
-     ONBOARDING OVERLAY — shown on first load if no swimmer in localStorage
+     ONBOARDING OVERLAY — 9-screen wizard for new users
 ════════════════════════════════════════════════════════════════ -->
 <div id="onboarding-overlay" style="display:none;">
   <div class="ob-card">
-    <div class="ob-logo">Lane<span>4</span></div>
-    <div class="ob-headline">Let's set up your swimmer profile.</div>
-    <div class="ob-sub">Lane4 uses your times, academics, and preferences to score every program and personalize every insight. Takes about 2 minutes.</div>
 
-    <div class="ob-section">
-      <div class="ob-section-label">About the swimmer</div>
-      <div class="ob-row">
-        <div class="ob-field">
-          <label>First name</label>
-          <input class="ob-input" id="ob-name" type="text" placeholder="e.g. Alex" autocomplete="off" />
-        </div>
-        <div class="ob-field">
-          <label>Graduation year</label>
-          <select class="ob-input" id="ob-gradyear">
-            <option value="2025">2025</option>
-            <option value="2026" selected>2026</option>
-            <option value="2027">2027</option>
-            <option value="2028">2028</option>
-            <option value="2029">2029</option>
-          </select>
-        </div>
+    <!-- Screen 1: Hero -->
+    <div id="ob-s1" class="ob-screen">
+      <div class="ob-logo">Lane<span>4</span></div>
+      <div class="ob-hero-headline">Let's get your college lane assignment.</div>
+      <div class="ob-hero-sub">Enter your name and I'll find your best times.</div>
+      <div class="ob-field">
+        <input class="ob-input" id="ob-name" type="text" placeholder="Swimmer Name" autocomplete="off"
+               onkeydown="if(event.key==='Enter')obS1Next()" />
       </div>
-      <div class="ob-row">
-        <div class="ob-field">
-          <label>I compete in</label>
-          <select class="ob-input" id="ob-gender">
-            <option value="men">Men's events</option>
-            <option value="women">Women's events</option>
-          </select>
-        </div>
-      </div>
-      <div id="ob-name-err" class="ob-err"></div>
+      <div id="ob-s1-err" class="ob-err" style="margin-bottom:0.4rem;"></div>
+      <button class="ob-submit" onclick="obS1Next()">Find My Times →</button>
+      <div class="ob-login-link">Already have an account? <a href="#" onclick="showAuth();return false;">Log in</a></div>
     </div>
 
-    <div class="ob-section">
-      <div class="ob-section-label">Best times <span class="ob-optional">(short-course yards — add at least one)</span></div>
-      <div style="font-size:0.75rem;color:var(--muted);margin-bottom:0.6rem;">Enter times as <strong>4:37.00</strong> or <strong>4:37</strong> for minutes:seconds, or <strong>59.50</strong> or <strong>59</strong> for seconds only.</div>
-      <div id="ob-times-list"></div>
-      <button class="ob-add-btn" onclick="obAddTimeRow()">+ Add another event</button>
-      <div id="ob-times-err" class="ob-err"></div>
-      <div style="margin-top:0.75rem;">
-        <button class="ob-add-btn" id="ob-rank-btn" onclick="obRankEvents()" style="background:var(--accent,#0057b8);color:#fff;border:none;padding:0.4rem 1rem;border-radius:6px;font-size:0.82rem;cursor:pointer;">
-          See how my events rank →
-        </button>
-      </div>
-      <div id="ob-rank-result" style="margin-top:0.6rem;display:none;"></div>
+    <!-- Screen 2: Swimmer Match -->
+    <div id="ob-s2" class="ob-screen">
+      <button class="ob-back-btn" onclick="obShowScreen(1)">← Back</button>
+      <div class="ob-logo">Lane<span>4</span></div>
+      <div class="ob-headline" id="ob-s2-headline">Which one is you?</div>
+      <div id="ob-s2-body"></div>
     </div>
 
-    <div class="ob-section">
-      <div class="ob-section-label">Academic profile <span class="ob-optional">(optional — improves school matching)</span></div>
-      <div class="ob-row">
-        <div class="ob-field">
-          <label>GPA (unweighted, 0–4.0)</label>
-          <input class="ob-input" id="ob-gpa" type="number" step="0.01" min="0" max="4.0" placeholder="3.85" />
-        </div>
-        <div class="ob-field">
-          <label>SAT composite (400–1600)</label>
-          <input class="ob-input" id="ob-sat" type="number" step="10" min="400" max="1600" placeholder="1350" />
-        </div>
-      </div>
-      <div class="ob-row">
-        <div class="ob-field">
-          <label>SAT Math (200–800) <span style="font-weight:400;font-size:0.78em;color:var(--muted);">optional</span></label>
-          <input class="ob-input" id="ob-math-sat" type="number" step="10" min="200" max="800" placeholder="720" />
-        </div>
-        <div class="ob-field">
-          <label>ACT composite (1–36) <span style="font-weight:400;font-size:0.78em;color:var(--muted);">optional</span></label>
-          <input class="ob-input" id="ob-act" type="number" step="1" min="1" max="36" placeholder="30" />
-        </div>
-      </div>
-      <div class="ob-row">
-        <div class="ob-field">
-          <label>Projected APs by graduation</label>
-          <select class="ob-input" id="ob-ap-count">
-            <option value="0">— not sure —</option>
-            <option value="1">1</option><option value="2">2</option><option value="3">3</option>
-            <option value="4">4</option><option value="5">5</option><option value="6">6</option>
-            <option value="7">7</option><option value="8">8</option><option value="9">9</option>
-            <option value="10">10</option><option value="11">11</option><option value="12">12</option>
-            <option value="13">13</option><option value="14">14</option><option value="15">15</option>
-            <option value="16">16</option>
-          </select>
+    <!-- Screen 3: Fetching Times -->
+    <div id="ob-s3" class="ob-screen">
+      <div class="ob-loading-wrap">
+        <div class="ob-logo">Lane<span>4</span></div>
+        <div style="margin-top:2.5rem;">
+          <div id="ob-s3-msg" class="ob-loading-msg">Grabbing best times…</div>
+          <div class="ob-loading-dots">
+            <div class="ob-loading-dot"></div><div class="ob-loading-dot"></div><div class="ob-loading-dot"></div>
+          </div>
         </div>
       </div>
     </div>
 
-    <button class="ob-submit" id="ob-submit-btn" onclick="submitOnboarding()">Save Profile &amp; Start →</button>
-    <div style="text-align:center;margin-top:0.75rem;font-size:0.73rem;color:var(--muted);">
-      🔒 Your profile is saved only in this browser. Nothing is sent to a server or stored in an account.
+    <!-- Screen 4: Time Validation -->
+    <div id="ob-s4" class="ob-screen">
+      <button class="ob-back-btn" onclick="obShowScreen(2)">← Back</button>
+      <div class="ob-logo">Lane<span>4</span></div>
+      <div class="ob-headline">These look like your best times — good to go?</div>
+      <div style="margin:0.65rem 0 0.25rem;">
+        <label style="font-size:0.78rem;font-weight:600;color:var(--slate);">I compete in</label>
+        <select class="ob-input" id="ob-gender" style="margin-top:4px;">
+          <option value="men">Men's events</option>
+          <option value="women">Women's events</option>
+        </select>
+      </div>
+      <div id="ob-s4-body" style="margin-top:0.5rem;"></div>
+      <div id="ob-s4-add-row"></div>
+      <div id="ob-s4-err" class="ob-err" style="margin:0.4rem 0;"></div>
+      <button class="ob-submit" id="ob-s4-confirm" onclick="obS4Confirm()" style="margin-top:0.75rem;">Looks Good →</button>
     </div>
+
+    <!-- Screen 5: Searching Colleges -->
+    <div id="ob-s5" class="ob-screen">
+      <div class="ob-loading-wrap">
+        <div class="ob-logo">Lane<span>4</span></div>
+        <div style="margin-top:2.5rem;">
+          <div id="ob-s5-msg" class="ob-loading-msg">Visiting campuses for you…</div>
+          <div class="ob-loading-dots">
+            <div class="ob-loading-dot"></div><div class="ob-loading-dot"></div><div class="ob-loading-dot"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Screen 6: Match Count Reveal -->
+    <div id="ob-s6" class="ob-screen">
+      <div class="ob-logo">Lane<span>4</span></div>
+      <div id="ob-s6-body" style="margin:1.25rem 0 1.5rem;"></div>
+      <button class="ob-submit" id="ob-s6-btn" onclick="obS6Next()">Show My Lane Assignment →</button>
+    </div>
+
+    <!-- Screen 7: Email + Password -->
+    <div id="ob-s7" class="ob-screen">
+      <div class="ob-logo">Lane<span>4</span></div>
+      <div class="ob-hero-headline" id="ob-s7-headline" style="font-size:1.4rem;">Save your results.</div>
+      <div class="ob-hero-sub" id="ob-s7-sub">Drop your email and I'll save your results and show your best-fit schools.</div>
+      <div class="ob-field">
+        <label>Email address</label>
+        <input class="ob-input" id="ob-email" type="email" placeholder="you@example.com" autocomplete="email"
+               onkeydown="if(event.key==='Enter')document.getElementById('ob-password').focus()" />
+      </div>
+      <div class="ob-field">
+        <label>Create a password <span style="font-weight:400;font-size:0.72rem;color:var(--muted);">min 8 characters</span></label>
+        <input class="ob-input" id="ob-password" type="password" placeholder="••••••••" autocomplete="new-password"
+               onkeydown="if(event.key==='Enter')obS7Submit()" />
+      </div>
+      <div id="ob-s7-err" class="ob-err" style="margin-bottom:0.4rem;"></div>
+      <button class="ob-submit" id="ob-s7-btn" onclick="obS7Submit()">Show My Lane Assignment →</button>
+      <div class="ob-login-link" style="margin-top:1rem;">Already have an account? <a href="#" onclick="showAuth();return false;">Log in instead</a></div>
+    </div>
+
+    <!-- Screen 8: Building Results -->
+    <div id="ob-s8" class="ob-screen">
+      <div class="ob-loading-wrap">
+        <div class="ob-logo">Lane<span>4</span></div>
+        <div style="margin-top:2.5rem;">
+          <div id="ob-s8-msg" class="ob-loading-msg">Lining up your lane assignment…</div>
+          <div class="ob-loading-dots">
+            <div class="ob-loading-dot"></div><div class="ob-loading-dot"></div><div class="ob-loading-dot"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Screen 9: Results -->
+    <div id="ob-s9" class="ob-screen">
+      <div class="ob-logo">Lane<span>4</span></div>
+      <div class="ob-hero-headline" style="font-size:1.5rem;">Your Lane Assignment</div>
+      <div class="ob-hero-sub">Based on your times, these programs look like strong fits.</div>
+      <div id="ob-s9-body" style="margin:0.5rem 0 1rem;"></div>
+      <button class="ob-submit" onclick="obFinish()">Explore All My Schools →</button>
+    </div>
+
+    <!-- Hidden compat fields for legacy code -->
+    <input type="hidden" id="ob-gradyear" value="2026" />
+    <input type="hidden" id="ob-gpa" value="" />
+    <input type="hidden" id="ob-sat" value="" />
+    <input type="hidden" id="ob-math-sat" value="" />
+    <input type="hidden" id="ob-act" value="" />
+    <select id="ob-ap-count" style="display:none;"><option value="0" selected>0</option></select>
+    <div id="ob-name-err" style="display:none;"></div>
+    <div id="ob-times-err" style="display:none;"></div>
+    <div id="ob-times-list" style="display:none;"></div>
+    <div id="ob-rank-result" style="display:none;"></div>
+
   </div>
 </div>
 
@@ -1394,221 +1525,437 @@ const D3_EVENTS_ONBOARD = [
   '200 IM','400 IM',
 ];
 
-let OB_ROWS = 0;
+// ════════════════════════════════════════════════════════════════
+// ONBOARDING WIZARD — 9-screen flow
+// ════════════════════════════════════════════════════════════════
+let OB_STATE = {};
+let OB_MANUAL_IDX = 0;
 
-function obAddTimeRow() {
-  const container = document.getElementById('ob-times-list');
-  const idx = OB_ROWS++;
-  const optionsHtml = D3_EVENTS_ONBOARD.map(e =>
-    `<option value="${esc(e)}">${esc(e)}</option>`
-  ).join('');
-  const row = document.createElement('div');
-  row.className = 'ob-time-row';
-  row.id = 'ob-row-' + idx;
-  row.innerHTML = `
-    <select class="ob-input" id="ob-event-${idx}">
-      <option value="">— event —</option>
-      ${optionsHtml}
-    </select>
-    <input class="ob-input time-val" id="ob-time-${idx}" type="text" placeholder="1:41.50" />
-    <button class="ob-time-del" title="Remove" onclick="obRemoveRow(${idx})">✕</button>`;
-  container.appendChild(row);
+function obReset() {
+  OB_STATE = {
+    screen: 1,
+    name: '',
+    gender: 'men',
+    gradYear: 2026,
+    swimmerId: null,
+    swimmerProfile: null,
+    proposedTimes: [],
+    confirmedTimes: {},
+    scoreResults: [],
+    matchCount: 0,
+    msgIntervals: [],
+    isLoggedIn: false,
+  };
+  OB_MANUAL_IDX = 0;
 }
 
-function obRemoveRow(idx) {
-  const row = document.getElementById('ob-row-' + idx);
-  if (row) row.remove();
+function obShowScreen(n) {
+  OB_STATE.msgIntervals.forEach(id => clearInterval(id));
+  OB_STATE.msgIntervals = [];
+  document.querySelectorAll('.ob-screen').forEach(el => {
+    el.style.display = (el.id === 'ob-s' + n) ? 'block' : 'none';
+  });
+  OB_STATE.screen = n;
 }
 
 function showOnboarding() {
+  obReset();
   document.getElementById('onboarding-overlay').style.display = 'flex';
-  obAddTimeRow();
+  obShowScreen(1);
+  setTimeout(() => document.getElementById('ob-name')?.focus(), 80);
 }
 
 function hideOnboarding() {
+  OB_STATE.msgIntervals.forEach(id => clearInterval(id));
+  OB_STATE.msgIntervals = [];
   document.getElementById('onboarding-overlay').style.display = 'none';
 }
 
-async function obRankEvents() {
-  const btn = document.getElementById('ob-rank-btn');
-  const resultDiv = document.getElementById('ob-rank-result');
-  const times = {};
-  document.querySelectorAll('[id^="ob-row-"]').forEach(row => {
-    const idx = row.id.replace('ob-row-', '');
-    const ev  = document.getElementById('ob-event-' + idx)?.value;
-    const t   = document.getElementById('ob-time-'  + idx)?.value?.trim();
-    if (ev && t) times[ev] = t;
-  });
-  if (Object.keys(times).length === 0) {
-    resultDiv.style.display = 'block';
-    resultDiv.innerHTML = '<div style="color:var(--muted);font-size:0.82rem;">Add at least one event and time first.</div>';
+function obStartMessages(elId, messages, interval) {
+  interval = interval || 1600;
+  const el = document.getElementById(elId);
+  if (!el) return;
+  el.textContent = messages[0];
+  let i = 0;
+  const id = setInterval(() => {
+    i = (i + 1) % messages.length;
+    el.style.opacity = '0';
+    setTimeout(() => { if (el) { el.textContent = messages[i]; el.style.opacity = '1'; } }, 220);
+  }, interval);
+  OB_STATE.msgIntervals.push(id);
+}
+
+// ── Screen 1: Hero ──────────────────────────────────────────────
+async function obS1Next() {
+  const nameEl = document.getElementById('ob-name');
+  const errEl  = document.getElementById('ob-s1-err');
+  const name   = nameEl.value.trim();
+  errEl.textContent = '';
+  if (!name || name.length < 2) { errEl.textContent = 'Please enter a name.'; return; }
+  OB_STATE.name = name;
+
+  obShowScreen(2);
+  document.getElementById('ob-s2-headline').textContent = 'Finding ' + name + ' on SwimCloud\u2026';
+  document.getElementById('ob-s2-body').innerHTML = '<div class="ob-loading-wrap" style="padding:1rem 0;"><div class="ob-loading-dots"><div class="ob-loading-dot"></div><div class="ob-loading-dot"></div><div class="ob-loading-dot"></div></div></div>';
+
+  try {
+    const res  = await fetch('/api/public/swimcloud/search?q=' + encodeURIComponent(name));
+    const data = await res.json();
+    obRenderMatchScreen(name, data.results || []);
+  } catch(e) {
+    obRenderMatchScreen(name, []);
+  }
+}
+
+function obRenderMatchScreen(name, results) {
+  const headEl = document.getElementById('ob-s2-headline');
+  const bodyEl = document.getElementById('ob-s2-body');
+
+  if (results.length === 0) {
+    headEl.textContent = 'Couldn\u2019t find \u201c' + name + '\u201d on SwimCloud';
+    bodyEl.innerHTML = `
+      <div class="ob-hero-sub" style="margin-top:0.6rem;">No profile found \u2014 no problem. You can enter your times manually.</div>
+      <button class="ob-submit" onclick="obGoManual()">Enter Times Manually \u2192</button>`;
     return;
   }
-  const gender = document.getElementById('ob-gender')?.value || 'men';
-  btn.disabled = true;
-  btn.textContent = 'Ranking…';
+
+  headEl.textContent = 'Which one is you?';
+  const cards = results.slice(0, 8).map(r => {
+    const n    = r.display_name || r.name || '?';
+    const init = n.split(' ').map(w => (w[0] || '').toUpperCase()).slice(0, 2).join('');
+    const yr   = r.grad_year ? '\u2019' + String(r.grad_year).slice(-2) : '';
+    const meta = [r.team, yr, r.location].filter(Boolean).join(' \u00b7 ');
+    const sid  = String(r.swimmer_id || '').replace(/'/g, '');
+    const dn   = esc(n);
+    const tm   = esc(r.team || '');
+    const gy   = esc(String(r.grad_year || ''));
+    return `<div class="ob-match-card" onclick="obSelectSwimmer('${sid}','${dn}','${tm}','${gy}')">
+      <div class="ob-match-avatar">${esc(init)}</div>
+      <div>
+        <div class="ob-match-name">${dn}</div>
+        ${meta ? `<div class="ob-match-meta">${esc(meta)}</div>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+
+  bodyEl.innerHTML = `
+    <div class="ob-match-grid">${cards}</div>
+    <button class="ob-none-btn" onclick="obGoManual()">None of these are me \u2014 enter times manually</button>`;
+}
+
+async function obSelectSwimmer(swimmerId, displayName, team, gradYear) {
+  OB_STATE.swimmerId      = swimmerId;
+  OB_STATE.swimmerProfile = { display_name: displayName, team, grad_year: gradYear };
+  if (gradYear) OB_STATE.gradYear = parseInt(gradYear) || 2026;
+
+  obShowScreen(3);
+  obStartMessages('ob-s3-msg', [
+    'Grabbing best times\u2026',
+    'Checking the psych sheet\u2026',
+    'Someone\u2019s been putting in yardage.',
+    'Lane 4 energy detected.',
+    'Counting strokes, not vibes.',
+    'Trying not to get split-swindled\u2026',
+    'Yep, those are real swimmer times.',
+    'Hold on, verifying that 100 free\u2026',
+    'Sorting the pain-cave events\u2026',
+  ]);
+
   try {
-    const resp = await fetch('/api/rank-events', {
-      method: 'POST',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({times, gender}),
-    });
-    const data = await resp.json();
-    if (!data.ok || !data.ranked?.length) {
-      resultDiv.style.display = 'block';
-      resultDiv.innerHTML = '<div style="color:var(--muted);font-size:0.82rem;">No events matched USA Swimming standards — check your times.</div>';
-      return;
-    }
-    const tierColors = {'AAAA+':'#8B5CF6','AAA':'#2563EB','AA':'#059669','A':'#D97706','B/BB':'#6B7280','Sub-B':'#9CA3AF'};
-    const rows = data.ranked.slice(0, 8).map((r, i) => {
-      const color = tierColors[r.tier] || '#6B7280';
-      const star  = r.top5 ? '★ ' : '';
-      return `<tr>
-        <td style="padding:3px 8px;font-size:0.8rem;font-weight:${r.top5?700:400};">${star}${r.event}</td>
-        <td style="padding:3px 8px;font-size:0.8rem;color:var(--muted);">${r.time}</td>
-        <td style="padding:3px 8px;">
-          <span style="font-size:0.78rem;font-weight:700;color:${color};background:${color}18;padding:2px 7px;border-radius:10px;">${r.a_label}</span>
-          <span style="font-size:0.75rem;color:var(--muted);margin-left:4px;">${r.tier}</span>
-        </td>
+    const res  = await fetch('/api/public/swimcloud/propose?swimmer_id=' + encodeURIComponent(swimmerId) + '&gender=' + (OB_STATE.gender || 'men'));
+    const data = await res.json();
+    OB_STATE.proposedTimes = data.proposed || [];
+    if (data.swimmer && data.swimmer.gender) OB_STATE.gender = data.swimmer.gender;
+    obRenderTimeValidation();
+  } catch(e) {
+    obGoManual();
+  }
+}
+
+function obGoManual() {
+  OB_STATE.swimmerId     = null;
+  OB_STATE.proposedTimes = [];
+  obRenderTimeValidation();
+}
+
+function obRenderTimeValidation() {
+  obShowScreen(4);
+  const genderSel = document.getElementById('ob-gender');
+  if (genderSel) genderSel.value = OB_STATE.gender || 'men';
+
+  const bodyEl   = document.getElementById('ob-s4-body');
+  const addRowEl = document.getElementById('ob-s4-add-row');
+
+  OB_STATE.confirmedTimes = {};
+  OB_STATE.proposedTimes.forEach(p => { OB_STATE.confirmedTimes[p.event] = p.time; });
+
+  if (OB_STATE.proposedTimes.length > 0) {
+    const TIER_COLORS = {'AAAA+':'#8B5CF6','AAA':'#2563EB','AA':'#059669','A':'#D97706','B/BB':'#6B7280','Sub-B':'#9CA3AF'};
+    const rows = OB_STATE.proposedTimes.map(p => {
+      const color = TIER_COLORS[p.tier] || '#9CA3AF';
+      const key   = (p.event || '').replace(/\s/g, '_');
+      return `<tr id="ob-time-row-${esc(key)}">
+        <td>${esc(p.event)}</td>
+        <td><input class="ob-input" style="padding:5px 8px;font-size:0.85rem;"
+                   id="ob-tval-${esc(key)}" value="${esc(p.time)}"
+                   onchange="obUpdateTime('${esc(p.event)}',this.value)" /></td>
+        <td><span class="ob-tier-badge" style="background:${color}18;color:${color};">${esc(p.tier || '')}</span></td>
+        <td><button class="ob-del-btn" onclick="obDeleteTime('${esc(p.event)}')">&#x2715;</button></td>
       </tr>`;
     }).join('');
-    resultDiv.style.display = 'block';
-    resultDiv.innerHTML = `
-      <div style="font-size:0.82rem;font-weight:600;margin-bottom:0.4rem;color:var(--text);">Your events ranked by strength (★ = suggested top 5):</div>
-      <table style="border-collapse:collapse;width:100%;">${rows}</table>
-      <div style="font-size:0.72rem;color:var(--muted);margin-top:0.4rem;">Based on USA Swimming 17–18 SCY motivational standards.</div>`;
-  } catch (e) {
-    resultDiv.style.display = 'block';
-    resultDiv.innerHTML = '<div style="color:var(--muted);font-size:0.82rem;">Ranking unavailable — continue with manual entry.</div>';
-  } finally {
-    btn.disabled = false;
-    btn.textContent = 'See how my events rank →';
+    bodyEl.innerHTML = `<table class="ob-time-table">
+      <thead><tr><th>Event</th><th>Time (SCY)</th><th>Tier</th><th></th></tr></thead>
+      <tbody id="ob-time-tbody">${rows}</tbody>
+    </table>
+    <div id="ob-manual-times"></div>`;
+  } else {
+    bodyEl.innerHTML = `
+      <div class="ob-hero-sub" style="margin:0.4rem 0 0.75rem;font-size:0.87rem;">Enter your best short-course yard times below. Add at least one.</div>
+      <div id="ob-manual-times"></div>`;
+    obAddManualRow();
   }
+
+  addRowEl.innerHTML = `<button class="ob-add-btn" onclick="obAddManualRow()" style="margin-top:0.4rem;">+ Add another event</button>`;
+  document.getElementById('ob-s4-err').textContent = '';
 }
 
-async function submitOnboarding() {
-  const nameEl    = document.getElementById('ob-name');
-  const gradEl    = document.getElementById('ob-gradyear');
-  const gpaEl     = document.getElementById('ob-gpa');
-  const satEl     = document.getElementById('ob-sat');
-  const nameErr   = document.getElementById('ob-name-err');
-  const timesErr  = document.getElementById('ob-times-err');
-  const submitBtn = document.getElementById('ob-submit-btn');
+function obAddManualRow() {
+  const container = document.getElementById('ob-manual-times');
+  if (!container) return;
+  const idx  = OB_MANUAL_IDX++;
+  const opts = D3_EVENTS_ONBOARD.map(e => `<option value="${esc(e)}">${esc(e)}</option>`).join('');
+  const row  = document.createElement('div');
+  row.className = 'ob-time-row';
+  row.id = 'ob-mrow-' + idx;
+  row.innerHTML = `
+    <select class="ob-input" id="ob-mev-${idx}">${opts}</select>
+    <input class="ob-input time-val" id="ob-mtime-${idx}" type="text" placeholder="e.g. 55.40" />
+    <button class="ob-time-del" onclick="document.getElementById('ob-mrow-${idx}').remove()">&#x2715;</button>`;
+  container.appendChild(row);
+}
 
-  nameErr.textContent  = '';
-  timesErr.textContent = '';
+function obUpdateTime(event, val) {
+  if (val.trim()) OB_STATE.confirmedTimes[event] = val.trim();
+  else            delete OB_STATE.confirmedTimes[event];
+}
 
-  const name         = nameEl.value.trim();
-  const gradYear     = gradEl.value;
-  const gender       = document.getElementById('ob-gender')?.value || 'men';
-  const gpa          = parseFloat(gpaEl.value) || 0;
-  const sat          = parseInt(satEl.value)   || 0;
-  const mathSat      = parseInt(document.getElementById('ob-math-sat')?.value) || 0;
-  const act          = parseInt(document.getElementById('ob-act')?.value) || 0;
-  const apCount      = parseInt(document.getElementById('ob-ap-count')?.value) || 0;
+function obDeleteTime(event) {
+  const key = (event || '').replace(/\s/g, '_');
+  const row = document.getElementById('ob-time-row-' + key);
+  if (row) row.remove();
+  delete OB_STATE.confirmedTimes[event];
+}
 
-  if (!name) {
-    nameErr.textContent = 'Please enter a first name.';
-    nameEl.focus();
-    return;
+async function obS4Confirm() {
+  const errEl = document.getElementById('ob-s4-err');
+  errEl.textContent = '';
+  OB_STATE.gender = document.getElementById('ob-gender')?.value || 'men';
+
+  const times = Object.assign({}, OB_STATE.confirmedTimes);
+
+  const manualCont = document.getElementById('ob-manual-times');
+  if (manualCont) {
+    manualCont.querySelectorAll('[id^="ob-mrow-"]').forEach(row => {
+      const idx = row.id.replace('ob-mrow-', '');
+      const ev  = document.getElementById('ob-mev-' + idx)?.value;
+      const t   = document.getElementById('ob-mtime-' + idx)?.value?.trim();
+      if (ev && t) times[ev] = t;
+    });
   }
-
-  // Collect times
-  const times = {};
-  let timesErrMsg = '';
-  const rows = document.querySelectorAll('[id^="ob-row-"]');
-  rows.forEach(row => {
-    const idx = row.id.replace('ob-row-', '');
-    const ev  = document.getElementById('ob-event-' + idx)?.value;
-    const t   = document.getElementById('ob-time-'  + idx)?.value.trim();
-    if (ev && t) {
-      if (!/^\d+(?::\d{2})?(?:\.\d{1,2})?$/.test(t) || t === '0') {
-        timesErrMsg = `"${t}" doesn't look right. Use 4:37 or 4:37.00 for min:sec, or 59 or 59.50 for seconds.`;
-      } else {
-        times[ev] = t;
-      }
-    }
-  });
 
   if (Object.keys(times).length === 0) {
-    timesErr.textContent = timesErrMsg || 'Please add at least one event and time.';
+    errEl.textContent = 'Please add at least one event and time.';
     return;
   }
-  if (timesErrMsg) {
-    timesErr.textContent = timesErrMsg;
-    return;
+  OB_STATE.confirmedTimes = times;
+
+  obShowScreen(5);
+  obStartMessages('ob-s5-msg', [
+    'Visiting campuses for you\u2026',
+    'Looking for schools where you can contribute\u2026',
+    'Scanning for smart swimmer schools\u2026',
+    'Somewhere, a coach just nodded quietly.',
+    'Finding the sweet spot between fast and feasible\u2026',
+    'Checking where stopwatch and transcript can coexist.',
+    'Trying not to send you rainbow chasing\u2026',
+  ]);
+
+  try {
+    const res  = await fetch('/api/score-all', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ times: OB_STATE.confirmedTimes, sat: 0, gpa: 0 }),
+    });
+    const data = await res.json();
+    OB_STATE.scoreResults = data.results || [];
+    OB_STATE.matchCount   = OB_STATE.scoreResults.filter(r => r.adjPts > 0).length;
+  } catch(e) {
+    OB_STATE.scoreResults = [];
+    OB_STATE.matchCount   = 0;
+  }
+  obShowMatchCount();
+}
+
+function obShowMatchCount() {
+  obShowScreen(6);
+  const n = OB_STATE.matchCount;
+  let countHtml, label, sub;
+
+  if (n === 0) {
+    countHtml = '';
+    label = 'Still building toward recruiting range.';
+    sub   = 'Looks like you\u2019re still developing toward college recruiting range. Explore schools while you keep training \u2014 your times will get there.';
+  } else {
+    countHtml = `<div class="ob-count-number">${n}</div>`;
+    label = n === 1 ? '1 college where your times line up.' : n + ' colleges where your times line up.';
+    sub   = n >= 25 ? 'Dozens of programs fit your current speed. Let\u2019s find the best ones.'
+          : n >= 12 ? 'A solid pool of programs fits your times. Let\u2019s narrow it down.'
+          : n >= 5  ? 'Several programs look promising for your times.'
+          :           'A few targeted options line up with where you are now.';
   }
 
-  submitBtn.disabled   = true;
-  submitBtn.textContent = 'Setting up…';
+  const s7head = document.getElementById('ob-s7-headline');
+  if (s7head) {
+    s7head.textContent = n >= 25 ? 'Save your results.'
+      : n >= 1 ? 'We found ' + n + ' college' + (n > 1 ? 's' : '') + ' that fit your times.'
+      : 'Keep training \u2014 your lane is coming.';
+  }
+
+  document.getElementById('ob-s6-body').innerHTML = countHtml +
+    `<div class="ob-count-label">${label}</div><div class="ob-count-sub" style="margin-top:0.3rem;">${sub}</div>`;
+}
+
+function obS6Next() {
+  if (OB_STATE.isLoggedIn) {
+    obBuildAndFinish();
+  } else {
+    obShowScreen(7);
+    setTimeout(() => document.getElementById('ob-email')?.focus(), 80);
+  }
+}
+
+async function obS7Submit() {
+  const emailEl = document.getElementById('ob-email');
+  const pwEl    = document.getElementById('ob-password');
+  const errEl   = document.getElementById('ob-s7-err');
+  const btn     = document.getElementById('ob-s7-btn');
+  errEl.textContent = '';
+
+  const email    = emailEl.value.trim();
+  const password = pwEl.value;
+
+  if (!email || !email.includes('@')) { errEl.textContent = 'Please enter a valid email address.'; emailEl.focus(); return; }
+  if (password.length < 8) { errEl.textContent = 'Password must be at least 8 characters.'; pwEl.focus(); return; }
+
+  btn.disabled = true;
+  btn.textContent = 'Creating your account\u2026';
+
+  try {
+    const res  = await fetch('/api/auth/register', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ email, password }),
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      errEl.textContent = res.status === 409
+        ? 'An account with that email already exists. Try logging in instead.'
+        : (data.error || 'Registration failed.');
+      btn.disabled = false; btn.textContent = 'Show My Lane Assignment \u2192';
+      return;
+    }
+
+    CURRENT_USER = { email: data.email };
+    _syncAdminNav();
+    OB_STATE.isLoggedIn = true;
+    await obBuildAndFinish();
+
+  } catch(e) {
+    errEl.textContent = 'Something went wrong. Please try again.';
+    btn.disabled = false; btn.textContent = 'Show My Lane Assignment \u2192';
+  }
+}
+
+async function obBuildAndFinish() {
+  obShowScreen(8);
+  obStartMessages('ob-s8-msg', [
+    'Checking conference scoring tables\u2026',
+    'Comparing your events across programs\u2026',
+    'Looking for teams where you can score\u2026',
+    'Almost there\u2026 lining up your lane assignment.',
+  ]);
 
   JAMES = {
-    name,
-    gradYear,
-    gender:       gender,
-    gpa:      gpa     || 0,
-    sat:      sat     || 0,
-    mathSat:  mathSat || 0,
-    actScore: act     || 0,
-    apCount:  apCount || 0,
-    satProjected: 0,
-    potentialMajors: [],
-    primaryMajor:    '',
-    secondaryMajor:  '',
-    academicGoal:    '',
-    times,
+    name:           OB_STATE.name,
+    gradYear:       OB_STATE.gradYear,
+    gender:         OB_STATE.gender,
+    gpa: 0, sat: 0, mathSat: 0, actScore: 0, apCount: 0,
+    satProjected: 0, potentialMajors: [], primaryMajor: '',
+    secondaryMajor: '', academicGoal: '',
+    times: OB_STATE.confirmedTimes,
     vibe: {},
   };
-  ACT_SCORE  = act || null;
-  SCORE_MODE = (act && !sat) ? 'ACT' : 'SAT';
-  ACT_PROJ = null;
-  VIBE_STATE  = {};
-  MY_LIST     = [];
-  CRM_DATA    = {};
-  OTHER_PREFS = '';
-  PREFERENCES = {};
+  if (OB_STATE.swimmerId) {
+    JAMES.swimcloud = {
+      swimmer_id:      OB_STATE.swimmerId,
+      display_name:    OB_STATE.swimmerProfile?.display_name || OB_STATE.name,
+      team:            OB_STATE.swimmerProfile?.team || '',
+      grad_year:       OB_STATE.swimmerProfile?.grad_year || OB_STATE.gradYear,
+      last_sync_at:    new Date().toISOString(),
+      accepted_events: OB_STATE.confirmedTimes,
+    };
+  }
+  ACT_SCORE = null; SCORE_MODE = 'SAT'; ACT_PROJ = null;
+  VIBE_STATE = {}; MY_LIST = []; CRM_DATA = {};
+  OTHER_PREFS = ''; PREFERENCES = {};
 
   saveToStorage();
+  try { await pushToServer(); } catch(_) {}
 
-  const [ob_schoolsRes, ob_scoreRes] = await Promise.allSettled([
-    fetch('/api/schools'),
-    fetch('/api/score-all', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ times: JAMES.times, sat: JAMES.sat, gpa: JAMES.gpa }),
-    }),
-    loadSchoolImages(),
-    fetch('/api/school-locations').then(r => r.ok ? r.json() : {}).then(d => { SCHOOL_LOCATIONS = d || {}; }).catch(() => {}),
-  ]);
-  if (ob_schoolsRes.status === 'fulfilled' && ob_schoolsRes.value.ok) {
-    try { const sd = await ob_schoolsRes.value.json(); ALL_SCHOOLS = sd.schools || []; } catch(_) {}
-  }
-  if (ob_scoreRes.status === 'fulfilled' && ob_scoreRes.value.ok) {
-    try { const sd = await ob_scoreRes.value.json(); ALL_RESULTS = sd.results || []; } catch(e) { console.error('Score failed:', e); }
-  }
+  const top6 = (OB_STATE.scoreResults || [])
+    .filter(r => r.adjPts > 0)
+    .sort((a, b) => b.adjPts - a.adjPts)
+    .slice(0, 6);
 
-  renderAllSchools();
-  hideOnboarding();
-  renderProfile();
-  renderElimBar();
-  renderMyList();
-  renderReminders();
-  updateBadges();
-
-  // Show a welcome nudge and focus the search bar
-  const searchState = document.getElementById('search-state');
-  if (searchState) {
-    searchState.innerHTML = `<div class="info-box" style="background:var(--green-l);border-left-color:var(--green);">
-      <strong>You're all set, ${esc(JAMES.name)}!</strong> Your profile is saved in this browser. Try a search to see your best-fit schools.
-    </div>`;
-    setTimeout(() => { if (searchState.querySelector('.info-box')) searchState.innerHTML = ''; }, 6000);
-  }
-  const qInput = document.getElementById('q-input');
-  if (qInput) { qInput.focus(); showDropdown(); }
-
-  submitBtn.disabled    = false;
-  submitBtn.textContent = 'Save Profile & Start →';
+  obShowResults(top6);
 }
+
+function obShowResults(top6) {
+  obShowScreen(9);
+  const TAG = [
+    { label: 'Strong Swim Fit',          cls: 'ob-tag-strong'   },
+    { label: 'Worth Exploring',          cls: 'ob-tag-explore'  },
+    { label: 'Coach Interest Possible',  cls: 'ob-tag-interest' },
+    { label: 'Longer-Term Swim Goal',    cls: 'ob-tag-goal'     },
+  ];
+  const bodyEl = document.getElementById('ob-s9-body');
+  if (!top6.length) {
+    bodyEl.innerHTML = '<div class="ob-hero-sub">We didn\u2019t find strong program matches yet \u2014 you can still explore all schools and save favorites as you train.</div>';
+    return;
+  }
+  const cards = top6.map((r, i) => {
+    const tag = TAG[Math.min(Math.floor(i * 4 / top6.length), 3)];
+    return `<div class="ob-result-card">
+      <div class="ob-result-rank">${i + 1}</div>
+      <div>
+        <div class="ob-result-school">${esc(r.school)}</div>
+        <span class="ob-result-tag ${esc(tag.cls)}">${esc(tag.label)}</span>
+      </div>
+    </div>`;
+  }).join('');
+  bodyEl.innerHTML = cards;
+}
+
+async function obFinish() {
+  if (OB_STATE.scoreResults.length > 0) ALL_RESULTS = OB_STATE.scoreResults;
+  hideOnboarding();
+  await afterAuthBoot();
+}
+
+// Legacy stubs kept for backward compatibility (no-ops in new flow)
+let OB_ROWS = 0;
+function obAddTimeRow() {}
+function obRemoveRow(idx) {}
+async function submitOnboarding() {}
+
 
 function confirmStartNewSwimmer() {
   if (confirm(`Start over with a new swimmer profile?\n\nThis will clear ${JAMES.name ? JAMES.name + "'s" : 'the current'} list, reminders, and notes from this browser.`)) {
@@ -1638,17 +1985,8 @@ function startNewSwimmer() {
   EDIT_STATS   = false;
   EDIT_TIMES   = false;
 
-  // Reset onboarding form
+  // Reset onboarding wizard
   OB_ROWS = 0;
-  document.getElementById('ob-times-list').innerHTML = '';
-  document.getElementById('ob-name').value           = '';
-  document.getElementById('ob-gradyear').value       = '2026';
-  document.getElementById('ob-gpa').value            = '';
-  document.getElementById('ob-sat').value            = '';
-  const obAct = document.getElementById('ob-act'); if (obAct) obAct.value = '';
-  const obAp  = document.getElementById('ob-ap-count'); if (obAp)  obAp.value  = '0';
-  document.getElementById('ob-name-err').textContent  = '';
-  document.getElementById('ob-times-err').textContent = '';
 
   // Reset explore tab search state
   const searchState   = document.getElementById('search-state');
@@ -1668,6 +2006,8 @@ function startNewSwimmer() {
   // Immediately push cleared state to server so the account is reset
   pushToServer();
   showOnboarding();
+  // Returning logged-in user — skip registration screen in wizard
+  if (CURRENT_USER) OB_STATE.isLoggedIn = true;
   showTab('explore');
 }
 
@@ -1732,6 +2072,7 @@ async function authSubmit() {
     }
     CURRENT_USER = { email: data.email, is_admin: data.is_admin || false };
     hideAuth();
+    hideOnboarding();
     await afterAuthBoot();
   } catch(e) {
     errEl.textContent = 'Network error. Please check your connection.';
@@ -1820,7 +2161,7 @@ async function boot() {
   } catch(_) {}
 
   if (!CURRENT_USER) {
-    showAuth();
+    showOnboarding();
     return;
   }
 

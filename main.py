@@ -303,6 +303,42 @@ def _sc_load_swimmer_record(user_id: int) -> dict:
     return {}
 
 
+@app.route('/api/public/swimcloud/search', methods=['GET'])
+def sc_search_public():
+    """Public SwimCloud search — used during onboarding before account creation."""
+    q = (request.args.get('q') or '').strip()
+    if not q:
+        return jsonify({'error': 'Query required'}), 400
+    try:
+        from swimcloud_client import search_swimmers
+        results = search_swimmers(q)
+        return jsonify({'results': results})
+    except Exception as e:
+        print(f'[swimcloud/public/search] {e}')
+        return jsonify({'error': 'SwimCloud search failed', 'detail': str(e)}), 502
+
+
+@app.route('/api/public/swimcloud/propose', methods=['GET'])
+def sc_propose_public():
+    """Public SwimCloud propose — used during onboarding before account creation."""
+    swimmer_id = (request.args.get('swimmer_id') or '').strip()
+    gender     = (request.args.get('gender') or 'men').strip()
+    if not swimmer_id:
+        return jsonify({'error': 'swimmer_id required'}), 400
+    try:
+        from swimcloud_client import get_swimmer_scy_bests
+        from motivational_ranking import rank_swimcloud_bests
+        scy_bests, profile_info, seed_prs = get_swimmer_scy_bests(swimmer_id)
+        effective_gender = profile_info.get('gender') or gender
+        if not scy_bests:
+            return jsonify({'swimmer': profile_info, 'proposed': [], 'seed_prs': []})
+        top10 = rank_swimcloud_bests(scy_bests, effective_gender, n=10)
+        return jsonify({'swimmer': profile_info, 'proposed': top10, 'seed_prs': seed_prs})
+    except Exception as e:
+        print(f'[swimcloud/public/propose] {e}')
+        return jsonify({'error': 'SwimCloud time fetch failed', 'detail': str(e)}), 502
+
+
 @app.route('/api/swimcloud/search', methods=['GET'])
 @login_required
 def sc_search():
