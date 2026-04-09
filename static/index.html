@@ -946,7 +946,7 @@
       </div>
       <div id="ob-s1-err" class="ob-err" style="margin-bottom:0.4rem;"></div>
       <button class="ob-submit" onclick="obS1Next()">Find My Times →</button>
-      <div class="ob-login-link">Already have an account? <a href="#" onclick="showAuth();return false;">Log in</a></div>
+      <button onclick="showAuth();return false;" style="display:block;width:100%;margin-top:1rem;padding:0.7rem 1rem;background:transparent;border:1.5px solid var(--blue);color:var(--blue);border-radius:8px;font-size:0.9rem;font-weight:700;cursor:pointer;letter-spacing:0.01em;">Existing Swimmers — Log In</button>
     </div>
 
     <!-- Screen 2: Swimmer Match -->
@@ -1011,8 +1011,8 @@
     <!-- Screen 7: Email + Password -->
     <div id="ob-s7" class="ob-screen">
       <div class="ob-logo">Lane<span>4</span></div>
-      <div class="ob-hero-headline" id="ob-s7-headline" style="font-size:1.4rem;">Save your results.</div>
-      <div class="ob-hero-sub" id="ob-s7-sub">Drop your email and I'll save your results and show your best-fit schools.</div>
+      <div class="ob-hero-headline" id="ob-s7-headline" style="font-size:1.4rem;">Don&rsquo;t leave before the interval.</div>
+      <div class="ob-hero-sub" id="ob-s7-sub">We found schools where your times already line up. One quick step and they&rsquo;re yours.</div>
       <div class="ob-field">
         <label>Email address</label>
         <input class="ob-input" id="ob-email" type="email" placeholder="you@example.com" autocomplete="email"
@@ -1024,7 +1024,7 @@
                onkeydown="if(event.key==='Enter')obS7Submit()" />
       </div>
       <div id="ob-s7-err" class="ob-err" style="margin-bottom:0.4rem;"></div>
-      <button class="ob-submit" id="ob-s7-btn" onclick="obS7Submit()">Show My Lane Assignment →</button>
+      <button class="ob-submit" id="ob-s7-btn" onclick="obS7Submit()">SCHOOLS WITH A LANE FOR ME</button>
       <div class="ob-login-link" style="margin-top:1rem;">Already have an account? <a href="#" onclick="showAuth();return false;">Log in instead</a></div>
     </div>
 
@@ -1737,6 +1737,50 @@ function obSelectBalancedTop6(results) {
   return pick.slice(0, 6);
 }
 
+// ── Continue the ranked list past a known exclude set ────────────
+// Runs the same tier-based algorithm used by obSelectBalancedTop6,
+// but skips any school already in excludeSet. maxReach caps reach slots.
+function obSelectNextSchools(allScored, excludeSet, maxReach) {
+  if (maxReach === undefined) maxReach = 2;
+  const all = (allScored || []).filter(r => !excludeSet.has(r.school));
+
+  const brandRank = s => LANE4_BRAND_RANK[s] || 9999;
+  const projPlace = r => {
+    const places = (r.top3 || []).map(e => e.place).filter(p => p != null && p < 999);
+    return places.length ? Math.min(...places) : 9999;
+  };
+
+  const COMPETITIVE = new Set(['High-Point Contender','Conference Star','Top Recruit','Priority Recruit']);
+  const POSSIBLE    = new Set(['Recruitable','Below Roster Level']);
+  const isRealistic = r => COMPETITIVE.has(r.adjTier) || POSSIBLE.has(r.adjTier);
+  const isReach     = r => !r.adjTier && r.adjPts === 0 && !!LANE4_BRAND_RANK[r.school];
+
+  const sortFn = (a, b) => {
+    const ra = brandRank(a.school), rb = brandRank(b.school);
+    if (ra !== rb) return ra - rb;
+    const pa = projPlace(a), pb = projPlace(b);
+    if (pa !== pb) return pa - pb;
+    return b.adjPts - a.adjPts;
+  };
+
+  const realistic = all.filter(isRealistic).sort(sortFn);
+  const reach     = all.filter(isReach).sort(sortFn);
+
+  const used = new Set(); const pick = [];
+  const take = (pool, max) => {
+    for (const r of pool) {
+      if (pick.length >= max) break;
+      if (!used.has(r.school)) { pick.push(r); used.add(r.school); }
+    }
+  };
+
+  take(realistic, 6);
+  const reachSlots = Math.min(maxReach, 6 - pick.length);
+  if (reachSlots > 0) take(reach, pick.length + reachSlots);
+
+  return pick.slice(0, 6);
+}
+
 // ── Swim potential badge ────────────────────────────────────────
 function obSwimBadge(result) {
   const t   = result.adjTier || '';
@@ -1857,8 +1901,10 @@ async function obS1Next() {
   OB_STATE.name = name;
 
   obShowScreen(2);
-  document.getElementById('ob-s2-headline').textContent = 'Finding ' + name + ' on SwimCloud\u2026';
+  const s2head = document.getElementById('ob-s2-headline');
+  s2head.textContent = 'Checking your race history\u2026';
   document.getElementById('ob-s2-body').innerHTML = '<div class="ob-loading-wrap" style="padding:1rem 0;"><div class="ob-loading-dots"><div class="ob-loading-dot"></div><div class="ob-loading-dot"></div><div class="ob-loading-dot"></div></div></div>';
+  const _s2timer = setTimeout(() => { if (s2head.textContent.startsWith('Checking')) s2head.textContent = 'Pulling your best times\u2026'; }, 2000);
 
   try {
     const res  = await fetch('/api/public/swimcloud/search?q=' + encodeURIComponent(name));
@@ -1874,7 +1920,7 @@ function obRenderMatchScreen(name, results) {
   const bodyEl = document.getElementById('ob-s2-body');
 
   if (results.length === 0) {
-    headEl.textContent = 'Couldn\u2019t find \u201c' + name + '\u201d on SwimCloud';
+    headEl.textContent = 'Couldn\u2019t find \u201c' + name + '\u201d';
     bodyEl.innerHTML = `
       <div class="ob-hero-sub" style="margin-top:0.6rem;">No profile found \u2014 no problem. You can enter your times manually.</div>
       <button class="ob-submit" onclick="obGoManual()">Enter Times Manually \u2192</button>`;
@@ -2060,29 +2106,31 @@ async function obS4Confirm() {
 function obShowMatchCount() {
   obShowScreen(6);
   const n = OB_STATE.matchCount;
-  let countHtml, label, sub;
+  let label, sub;
 
   if (n === 0) {
-    countHtml = '';
     label = 'Still building toward recruiting range.';
     sub   = 'Looks like you\u2019re still developing toward college recruiting range. Explore schools while you keep training \u2014 your times will get there.';
+  } else if (n >= 100) {
+    label = 'Hundreds of programs match your current speed.';
+    sub   = 'You\u2019ve got serious options. Let\u2019s find the best-fit schools for your speed and goals.';
+  } else if (n >= 20) {
+    label = 'Scores of colleges match your current speed.';
+    sub   = 'A strong pool of programs fits your times. Let\u2019s narrow it down to your best fits.';
   } else {
-    countHtml = `<div class="ob-count-number">${n}</div>`;
-    label = n === 1 ? '1 college where your times line up.' : n + ' colleges where your times line up.';
-    sub   = n >= 25 ? 'Dozens of programs fit your current speed. Let\u2019s find the best ones.'
-          : n >= 12 ? 'A solid pool of programs fits your times. Let\u2019s narrow it down.'
-          : n >= 5  ? 'Several programs look promising for your times.'
-          :           'A few targeted options line up with where you are now.';
+    label = 'Dozens of programs match your current speed.';
+    sub   = n >= 5 ? 'Several programs look promising for your times. Let\u2019s find your best lane.'
+          :          'A few targeted options line up with where you are now. Quality over quantity.';
   }
 
   const s7head = document.getElementById('ob-s7-headline');
   if (s7head) {
-    s7head.textContent = n >= 25 ? 'Save your results.'
-      : n >= 1 ? 'We found ' + n + ' college' + (n > 1 ? 's' : '') + ' that fit your times.'
+    s7head.textContent = n >= 20 ? 'Don\u2019t leave before the interval.'
+      : n >= 1 ? 'Don\u2019t leave before the interval.'
       : 'Keep training \u2014 your lane is coming.';
   }
 
-  document.getElementById('ob-s6-body').innerHTML = countHtml +
+  document.getElementById('ob-s6-body').innerHTML =
     `<div class="ob-count-label">${label}</div><div class="ob-count-sub" style="margin-top:0.3rem;">${sub}</div>`;
 }
 
@@ -2193,12 +2241,11 @@ async function obFinish() {
   hideOnboarding();
   await afterAuthBoot();
 
-  // Inject "More Schools That Fit Your Times" into the explore search-state
-  const revealed = new Set(obSelectBalancedTop6(allScored).map(r => r.school));
-  const more = allScored
-    .filter(r => r.adjPts > 0 && !revealed.has(r.school))
-    .sort((a, b) => b.adjPts - a.adjPts)
-    .slice(0, 8);
+  // Inject "More Schools That Fit Your Times" into the explore search-state.
+  // Continues the same ranked list from the Top 6, excluding already-shown schools.
+  // Max 2 reach schools in this next batch (same algorithm, stricter reach cap).
+  const top6Set = new Set(obSelectBalancedTop6(allScored).map(r => r.school));
+  const more    = obSelectNextSchools(allScored, top6Set, 2);
 
   if (more.length > 0) {
     const searchState = document.getElementById('search-state');

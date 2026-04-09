@@ -1,0 +1,87 @@
+We are making several UX and logic improvements to the Lane4 onboarding and reveal flow.
+IMPORTANT
+Do NOT change any swim evaluation logic, recruiting likelihood calculations, or database schema.
+Only modify copy, UI behavior, and school display sequencing.
+1. REMOVE SWIMCLOUD REFERENCES
+Currently the loading screen shows:
+“Finding on SwimCloud”
+Remove all references to SwimCloud from the UI.
+Replace the loading messages with:
+0–2 seconds
+Checking your race history…
+If loading takes longer than 2 seconds switch to:
+Pulling your best times…
+This text should rotate exactly in that order.
+No other loading text should reference SwimCloud.
+2. FIX SCHOOL COUNT LANGUAGE
+Currently we display exact numbers like:
+190 colleges where your times line up
+Instead we use Lane4 language tiers that feel more exciting and less mathematical.
+Keep the numeric count internally, but display language like:
+School Count	Display Language
+<20	Dozens of programs match your current speed
+20–99	Scores of colleges match your current speed
+100+	Hundreds of programs match your current speed
+Example display:
+Hundreds of programs match your current speed.
+Do NOT display the exact number.
+3. FIX “SEE MORE SCHOOLS” LOGIC
+After the Top 6 reveal, when the user clicks to see more schools, the system currently shows an unrelated list.
+This is incorrect.
+Instead:
+When generating the next 6 schools, run the exact same selection algorithm used for the Top 6.
+Rules:
+• Use existing recruiting likelihood filtering
+• Maintain brand_rank ordering
+• Maintain tie breakers (brand_rank → projected conference finish → swim score)
+BUT exclude the previously shown schools.
+Implementation:
+next_schools = run_top6_algorithm(
+    exclude = previously_shown_school_ids
+)
+Return the next 6 schools.
+Constraints remain:
+• Competitive / Possible prioritized
+• Reach only if needed
+• Maximum 2 Reach schools in this group
+The goal is that the system simply continues the ranked list, not generate a new random one.
+4. EXPLORE PAGE SCHOOL ORDER
+When the user reaches the Explore page, run the same algorithm again:
+exclude = all_previously_shown_schools
+return next 6 schools
+Do NOT change the ranking logic.
+We are simply continuing the ordered list.
+5. IMPROVE EMAIL CAPTURE SCREEN
+The email capture screen should feel exciting, not like a form.
+Update the screen with:
+Headline:
+Don’t leave before the interval.
+Subtext:
+We found schools where your times already line up.
+One quick step and they're yours.
+Primary blue button text:
+SCHOOLS WITH A LANE FOR ME
+The page should visually emphasize that something exciting is about to be revealed.
+Do not add additional form fields beyond email.
+6. FIX HERO PAGE LOGIN BUTTON
+Currently there is no functional login entry point for existing users.
+Add a secondary CTA below the main button.
+Primary CTA (unchanged):
+FIND MY TIMES
+Add directly below it:
+Existing Swimmers Login
+Design rules:
+• Slightly smaller than primary CTA
+• Bold enough to be visible
+• Lower visual weight than primary CTA
+• Positioned just far enough below the main button to prevent mis-clicks
+This button should trigger the existing login flow.
+GOAL
+These changes should:
+• Remove SwimCloud references
+• Make the school count language more exciting
+• Preserve the ranked school reveal system
+• Ensure additional schools continue the ranking
+• Make the email capture feel like a moment of anticipation
+• Restore login access for existing users
+Do not alter any swim evaluation or recruiting logic.
