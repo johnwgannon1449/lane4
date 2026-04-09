@@ -1,0 +1,101 @@
+We are simplifying and stabilizing the Lane4 Image Curator so that when an admin clicks a school it reliably produces enough images to curate quickly.
+The current system behaves inconsistently (1–3 images appearing, pool images missing, repeated fetches required). This patch fixes that.
+IMPORTANT
+Do NOT modify:
+database schema
+image storage model
+admin permissions
+school data structure
+Only modify image query logic, fetch quotas, and curator UI behavior.
+GOAL
+When an admin clicks a school in the curator, the system should automatically fetch enough candidates to show:
+16 Campus images
+16 Pool images
+16 Life images
+Total: 48 candidate images per school
+Admin should not need to press Fetch More repeatedly.
+1. FIX IMAGE QUOTAS
+Each category must maintain a target candidate count:
+CAMPUS_TARGET = 16
+POOL_TARGET = 16
+LIFE_TARGET = 16
+When the school page loads:
+if candidates(category) < TARGET:
+    continue_fetching(category)
+Continue fetching until:
+candidates >= TARGET
+or
+sources_exhausted
+Do not stop early after 1–2 usable results.
+2. USE CITY IN SEARCH QUERIES (CRITICAL FIX)
+Pool searches must include the school city.
+This dramatically improves results.
+Use:
+{school_name} {city} aquatic center
+{school_name} {city} swimming pool
+{school_name} {city} natatorium
+{school_name} swim team pool
+{school_name} athletics swimming
+Example:
+Whitman College Walla Walla aquatic center
+Whitman College Walla Walla swimming pool
+This should make pool images almost never come up short.
+3. IMPROVED SEARCH PATTERNS
+CAMPUS
+Use:
+{school_name} campus
+{school_name} university campus
+{school_name} campus aerial
+{school_name} campus quad
+{school_name} campus buildings
+POOL
+Use:
+{school_name} {city} aquatic center
+{school_name} {city} natatorium
+{school_name} {city} swimming pool
+{school_name} swim team pool
+{school_name} athletics swimming
+LIFE
+Use:
+{school_name} students campus
+{school_name} student life
+{school_name} campus life
+{school_name} students studying
+{school_name} student activities
+4. FILTER BAD IMAGES
+Before displaying candidates reject images that are clearly unusable.
+Reject if:
+black_and_white
+map
+satellite_map
+document_scan
+architectural_rendering
+low_resolution < 600px
+heavy watermark
+duplicate hash
+This prevents junk images entering the candidate pool.
+5. BACKGROUND PREFETCH
+When a school is selected:
+Immediately begin fetching all categories in parallel:
+fetch(campus)
+fetch(pool)
+fetch(life)
+The admin should never need to manually trigger fetches just to get enough candidates.
+6. CLEAN UP CURATOR UI
+Replace confusing messages like:
+"Only 1 usable found"
+With clear counters:
+Campus: 16 / 16
+Pool: 12 / 16
+Life: 16 / 16
+If a category is below target, the system continues fetching in the background.
+7. EXPECTED RESULT
+When clicking a school in the curator:
+Within a few seconds the admin should see:
+16 campus images
+16 pool images
+16 life images
+Total:
+48 images
+Most images should be relevant campus, aquatic facility, or student-life photos that can quickly be curated.
+The curator should feel stable, predictable, and easy to use.

@@ -5648,6 +5648,19 @@ def ua_fetch_candidates():
         return jsonify({'error': str(e)}), 500
 
 
+def _school_city(school_name: str) -> str | None:
+    """Return the city portion of a school's location from SCHOOL_META, if known.
+
+    E.g. "Walla Walla, WA" → "Walla Walla"
+    """
+    meta = SCHOOL_META.get(school_name, {})
+    loc  = meta.get('location', '') or ''
+    if loc:
+        city = loc.split(',')[0].strip()
+        return city if city else None
+    return None
+
+
 @app.route('/api/ua/fetch-more', methods=['POST'])
 @user_admin_required
 def ua_fetch_more():
@@ -5659,7 +5672,8 @@ def ua_fetch_more():
         return jsonify({'error': 'missing or invalid school/category'}), 400
     try:
         from harvest_candidates import fetch_candidates_for_category, _rescore_and_trim_by_category
-        new_cands = fetch_candidates_for_category(school, category)
+        city      = _school_city(school)
+        new_cands = fetch_candidates_for_category(school, category, city=city)
         blocklist = _load_blocklist()
         if blocklist:
             new_cands = [c for c in new_cands if c.get('url', '') not in blocklist]
@@ -5692,8 +5706,9 @@ def ua_redo_section():
         manifest = _load_candidates_manifest()
         existing = manifest.get(school, [])
         kept = [c for c in existing if c.get('category') != category]
-        # Fresh fetch for just this category
-        new_cands = fetch_candidates_for_category(school, category)
+        # Fresh fetch for just this category — pass city for better pool queries
+        city      = _school_city(school)
+        new_cands = fetch_candidates_for_category(school, category, city=city)
         blocklist = _load_blocklist()
         if blocklist:
             new_cands = [c for c in new_cands if c.get('url', '') not in blocklist]
@@ -6032,7 +6047,7 @@ def api_admin_fetch_candidates():
     try:
         if category:
             from harvest_candidates import fetch_candidates_for_category
-            new_candidates = fetch_candidates_for_category(school, category)
+            new_candidates = fetch_candidates_for_category(school, category, city=_school_city(school))
         else:
             from harvest_candidates import fetch_candidates
             new_candidates = fetch_candidates(school)

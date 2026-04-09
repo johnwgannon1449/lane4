@@ -616,8 +616,8 @@ function _setSectionStatus(type, status, count) {
     idle:      '',
     loading:   `${spinner} Loading candidates…`,
     retrying:  `${spinner} ${count} / ${TARGET_PER_CAT} — retrying…`,
-    complete:  `✓ ${count} loaded`,
-    exhausted: count > 0 ? `Only ${count} usable found` : `No results found`,
+    complete:  `✓ ${count} / ${TARGET_PER_CAT}`,
+    exhausted: `${count} / ${TARGET_PER_CAT}${count < TARGET_PER_CAT ? ' — sources exhausted' : ''}`,
     failed:    `⚠ Failed — click Fetch More to retry`,
   };
 

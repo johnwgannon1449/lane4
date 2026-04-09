@@ -42,7 +42,7 @@ COMMONS_API     = 'https://commons.wikimedia.org/w/api.php'
 PEXELS_URL      = 'https://api.pexels.com/v1/search'
 GOOGLE_CSE_URL  = 'https://www.googleapis.com/customsearch/v1'
 
-MIN_WIDTH  = 500
+MIN_WIDTH  = 600   # reject images narrower than 600px (low-resolution filter)
 MIN_HEIGHT = 280
 MAX_CANDIDATES = 80   # up to ~24 per category × 3 categories
 CRAWL_WORKERS  = 6
@@ -105,8 +105,20 @@ BAD_TOKENS = [
     'college-ranking', 'top-college', 'top_college', '#1-', 'no1-',
     'best-value', 'best_value', 'school-badge', 'college-badge',
     # Screenshots / composites / illustrations
-    'screenshot', 'collage', 'composite', 'illustration', 'rendering',
+    'screenshot', 'collage', 'composite', 'illustration',
     'infographic', 'graphic_', '_graphic', 'promo-graphic',
+    # Architectural renderings (not real photos)
+    'rendering', 'architectural_rendering', 'architectural-rendering',
+    '_rendering.', '-rendering.', 'render_', 'concept_render',
+    # Maps / satellite imagery
+    'satellite_map', 'satellite-map', 'satellite_view', 'satellite-view',
+    'google_maps', 'googlemaps', 'streetview', 'street-view',
+    # Document / scan artifacts
+    'document_scan', 'document-scan', 'docuscan', 'scan_', '_scan.',
+    # Watermarks
+    'watermark_', '_watermark', 'watermarked',
+    # Stock photo watermark domains
+    'getty', 'shutterstock', 'alamy', 'dreamstime', 'istockphoto',
     # Social / marketing overlays
     'instagram-', 'facebook-', 'social-post', 'twitter-', 'ad-', '-ad.',
     # Very small thumbnails
@@ -1322,21 +1334,31 @@ def fetch_candidates(school: str, domains_cache: dict | None = None) -> list[dic
 # give consistently fresh results on every press.
 _MORE_GOOGLE_QUERIES: dict[str, list[str]] = {
     'pool': [
-        '{school} natatorium OR swimming pool',
+        '{school} natatorium swimming pool',
         '{school} aquatic center',
-        '{school} swimming pool',
-        '{school} pool facility',
+        '{school} natatorium',
+        '{school} swim team pool',
+        '{school} athletics swimming',
+        '{school} swimming pool facility',
         '{school} swimming diving facility',
         '{school} aquatics swim team',
     ],
     'student_life': [
-        '{school} students campus life',
+        '{school} students campus',
+        '{school} student life',
+        '{school} campus life',
+        '{school} students studying',
+        '{school} student activities',
         '{school} student union campus',
         '{school} college students campus',
         '{school} campus events students',
     ],
     'campus': [
         '{school} campus',
+        '{school} university campus',
+        '{school} campus aerial',
+        '{school} campus quad',
+        '{school} campus buildings',
         '{school} campus aerial view',
         '{school} university buildings',
         '{school} campus grounds',
@@ -1351,19 +1373,26 @@ _DDG_QUERIES: dict[str, list[str]] = {
         '"{school}" aquatic center',
         '"{school}" swimming pool',
         '"{school}" natatorium',
+        '"{school}" swim team pool',
+        '"{school}" athletics swimming',
         '"{school}" swimming diving pool',
         '"{school}" aquatics swimming',
         '"{school}" swim team pool facility',
     ],
     'student_life': [
-        '"{school}" students campus life',
+        '"{school}" students campus',
+        '"{school}" student life',
+        '"{school}" campus life',
+        '"{school}" students studying',
+        '"{school}" student activities',
         '"{school}" college students campus',
         '"{school}" student union',
-        '"{school}" campus life students',
     ],
     'campus': [
         '"{school}" campus',
         '"{school}" university campus',
+        '"{school}" campus aerial',
+        '"{school}" campus quad',
         '"{school}" campus buildings',
         '"{school}" university exterior',
     ],
@@ -1373,13 +1402,15 @@ _CATEGORY_PAGE_TYPE = {'pool': 'swim', 'student_life': 'student_life', 'campus':
 
 
 def fetch_candidates_for_category(school: str, category: str,
-                                   target: int = 20) -> list[dict]:
+                                   target: int = 20, city: str | None = None) -> list[dict]:
     """Fetch additional candidates for a specific display category.
 
-    Priority: (1) site-restricted DDG on school domain, (2) Google CSE,
-    (3) general DDG fallback (always runs when under target — DDG bug fix),
-    (4) Wikimedia Commons.  Deduplicates against the existing manifest so
-    every press returns genuinely new images.
+    Priority: (1) city-targeted pool queries when city is provided, (2) site-restricted
+    DDG on school domain, (3) Google CSE, (4) general DDG fallback (always runs when
+    under target — DDG bug fix), (5) Wikimedia Commons.  Deduplicates against the
+    existing manifest so every press returns genuinely new images.
+
+    city — school city (e.g. "Walla Walla") used to build targeted pool queries.
     """
     domains_cache = _load_domains()
     existing_urls: set[str] = {c['url'] for c in load_manifest().get(school, [])}
@@ -1395,8 +1426,21 @@ def fetch_candidates_for_category(school: str, category: str,
             seen.add(item['url'])
             new_results.append(item)
 
-    queries = [q.format(school=sq)
-               for q in _MORE_GOOGLE_QUERIES.get(category, _MORE_GOOGLE_QUERIES['campus'])]
+    # ── City-targeted pool queries (highest specificity) ─────────────────────
+    # Prepend city-based queries for pool so we find the actual facility first.
+    base_queries = list(_MORE_GOOGLE_QUERIES.get(category, _MORE_GOOGLE_QUERIES['campus']))
+    if category == 'pool' and city:
+        city_queries = [
+            f'{sq} {city} aquatic center',
+            f'{sq} {city} natatorium',
+            f'{sq} {city} swimming pool',
+            f'{sq} swim team pool',
+            f'{sq} athletics swimming',
+        ]
+        base_queries = city_queries + base_queries
+
+    queries = [q.format(school=sq) if '{school}' in q else q
+               for q in base_queries]
 
     # ── Site-restricted DDG (highest quality — images from school's own site) ─
     domain = domains_cache.get(school) or get_school_domain(school, domains_cache)
