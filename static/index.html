@@ -1572,7 +1572,11 @@ let OB_STATE = {};
 let OB_MANUAL_IDX = 0;
 
 // ── Brand recognition scores for D3 schools (0–10) ─────────────
+// Two types of recognition combined:
+//   Academic prestige (widely known name / reputation)
+//   D3 Swim program strength (well-known in the sport, conf champions)
 const D3_BRAND = {
+  // Top academic brands
   'Williams College':10, 'Amherst College':10, 'Swarthmore College':10,
   'Pomona College':10, 'University of Chicago':10,
   'MIT':10, 'Massachusetts Institute of Technology':10,
@@ -1605,49 +1609,54 @@ const D3_BRAND = {
   'Gettysburg College':6, 'College of Wooster':6,
   'Ohio Wesleyan University':6, 'Willamette University':6,
   'Ithaca College':6, 'Gustavus Adolphus College':6,
+  // Well-known D3 swim programs (recognizable in the sport)
+  'Augustana College':7,              // CCIW powerhouse, frequent conference champion
+  'Wheaton College':6,                // CCIW, historically strong
+  'North Central College':5,          // CCIW
+  'York College of Pennsylvania':6,   // MAC, dominant program
+  'Messiah University':6,             // MAC, strong program
+  'Widener University':5,             // MAC
+  'Misericordia University':5,        // MAC
+  'Rowan University':6,               // NJAC, large program
+  'Salisbury University':6,           // CAC, strong program
+  'Christopher Newport University':5, // CAC
+  'SUNY Geneseo':5,                   // SUNYAC
+  'SUNY New Paltz':5,                 // SUNYAC
+  'Springfield College':6,            // NEWMAC, well-known athletic school
+  'Calvin University':5,              // MIAA
+  'Hope College':6,                   // MIAA, historically strong
+  'Alma College':5,                   // MIAA
+  'Pacific University':5,             // NWC
+  'Linfield University':5,            // NWC
 };
 
 // ── Top-6 reveal selection ──────────────────────────────────────
-// Spec: 3 realistic fits (strong swim score, prefer recognizable)
-//       + up to 3 stretch options (brand score ≥ 7, adjPts ≥ -5)
-//       If stretch pool is thin, fill remaining slots from realistic.
+// Only schools with adjPts > 0 are legitimate fits — the scoring engine
+// cannot produce meaningful "stretch" scores for schools beyond the
+// swimmer's competitive range (they floor at 0 regardless of how far off).
+// Brand recognition acts as a tiebreaker within the competitive pool:
+// when two schools have similar swim scores, prefer the recognizable one.
 function obSelectBalancedTop6(results) {
   const all = results || [];
-  if (all.length <= 6) return all.filter(r => r.adjPts > -6);
 
-  // ── Realistic pool: solid swim fit (adjPts ≥ 2)
-  //    Sort by: adjPts + light brand bonus (prefer recognizable when similar)
-  const realistic = all
-    .filter(r => r.adjPts >= 2)
-    .map(r => ({ ...r, _selScore: r.adjPts + (D3_BRAND[r.school] || 0) * 0.3 }))
+  // All schools where the swimmer genuinely competes (adjPts > 0)
+  const eligible = all.filter(r => r.adjPts > 0);
+  if (eligible.length <= 6) return eligible;
+
+  // Blend swim score + brand recognition + conference finish so recognizable
+  // and stronger programs surface when swim scores are tied.
+  //   Brand bonus (0.5 weight): brand-7 school gains 3.5 pts
+  //   confFinish bonus: 1st-place program gains +1.4, 2nd gains +1.2, etc.
+  //   Both bonuses together cannot overcome a meaningful adjPts gap.
+  const blended = eligible
+    .map(r => {
+      const brand   = D3_BRAND[r.school] || 0;
+      const confBonus = r.confFinish2026 ? Math.max(0, 8 - r.confFinish2026) * 0.2 : 0;
+      return { ...r, _selScore: r.adjPts + brand * 0.5 + confBonus };
+    })
     .sort((a, b) => b._selScore - a._selScore);
 
-  // ── Stretch pool: just below competitive + must be a recognizable brand
-  //    adjPts between -5 and 2, brand score ≥ 7
-  //    Sort purely by brand recognition (not swim score — they're all "reach")
-  const stretchMin = -5, stretchMax = 2, stretchBrandMin = 7;
-  const stretch = all
-    .filter(r => r.adjPts >= stretchMin && r.adjPts < stretchMax
-                 && (D3_BRAND[r.school] || 0) >= stretchBrandMin)
-    .sort((a, b) => (D3_BRAND[b.school] || 0) - (D3_BRAND[a.school] || 0));
-
-  // Build the final 6: take 3 realistic, then fill up to 3 from stretch,
-  // then back-fill from realistic if stretch is thin.
-  const used = new Set();
-  const pick = [];
-
-  const takePick = (pool, max) => {
-    for (const r of pool) {
-      if (pick.length >= max) break;
-      if (!used.has(r.school)) { pick.push(r); used.add(r.school); }
-    }
-  };
-
-  takePick(realistic, 3);          // 3 realistic fits
-  takePick(stretch,   6);          // up to 3 stretch (will stop at 6 total)
-  takePick(realistic, 6);          // back-fill with more realistic if stretch was thin
-
-  return pick.slice(0, 6);
+  return blended.slice(0, 6);
 }
 
 // ── Swim potential badge ────────────────────────────────────────
