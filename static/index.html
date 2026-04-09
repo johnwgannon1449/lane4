@@ -462,7 +462,6 @@
     .time-pill-del:hover { color: #EF4444; }
 
     /* ── MY LIST TAB ─────────────────────────────────────────── */
-    .list-school-card { background: var(--white); border: 1.5px solid var(--border); border-radius: 12px; margin-bottom: 0.75rem; border-left-width: 4px; }
     .list-school-header { display: flex; flex-direction: column; padding: 0.9rem 1.1rem; cursor: pointer; border-radius: 12px 12px 0 0; }
     .list-school-header:hover { background: var(--bg); }
     .list-school-name { font-family: 'Fraunces', serif; font-weight: 700; font-size: 1rem; color: var(--navy); }
@@ -499,11 +498,62 @@
     .list-health-exp p { margin: 0 0 0.55em; }
     .list-health-exp p:last-child { margin-bottom: 0; }
     .crm-body { border-top: 1px solid var(--border); padding: 1rem 1.1rem; }
+    /* ── Pipeline bar on My List cards ─────────────────────────── */
+    .pipeline-bar {
+      display: flex; align-items: center; gap: 0.45rem;
+      margin: 0.45rem 0 0.1rem; padding: 0.3rem 0.5rem;
+      border-radius: 6px; cursor: pointer; position: relative;
+      background: var(--bg); border: 1px solid var(--border); width: fit-content;
+    }
+    .pipeline-bar:hover { border-color: #94A3B8; }
+    .pipeline-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+    .pipeline-label { font-size: 0.8rem; font-weight: 700; }
+    .pipeline-change { font-size: 0.68rem; color: var(--muted); white-space: nowrap; }
+
+    /* ── DD header pipeline row ──────────────────────────────── */
+    .dd-pipeline-row {
+      display: flex; align-items: center; gap: 0.45rem;
+      margin-top: 0.6rem; padding: 0.35rem 0.6rem;
+      border-radius: 6px; cursor: pointer; position: relative; width: fit-content;
+      background: var(--bg); border: 1px solid var(--border);
+    }
+    .dd-pipeline-row:hover { border-color: #94A3B8; }
+
+    /* ── Jump nav (deep dive) ────────────────────────────────── */
+    .dd-jump-nav {
+      display: flex; flex-wrap: wrap; gap: 0.4rem;
+      padding: 0.75rem 0 0.25rem; margin-bottom: 0.5rem;
+    }
+    .dd-jump-link {
+      font-size: 0.74rem; font-weight: 600; color: var(--blue);
+      background: var(--blue-l); padding: 3px 10px; border-radius: 20px;
+      text-decoration: none; cursor: pointer; border: none;
+      font-family: 'Figtree', sans-serif;
+    }
+    .dd-jump-link:hover { background: #DBEAFE; }
+
+    /* ── Collapsible deep sections ───────────────────────────── */
+    .deep-section.ds-collapsible .deep-section-title { cursor: pointer; }
+    .deep-section.ds-collapsible .deep-section-title:hover { opacity: 0.8; }
+    .ds-toggle-row {
+      display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;
+    }
+    .ds-toggle-btn {
+      font-family: 'Figtree', sans-serif; font-size: 0.74rem; font-weight: 600;
+      color: var(--blue); background: none; border: none; cursor: pointer; white-space: nowrap;
+      padding: 0; flex-shrink: 0;
+    }
+    .ds-toggle-btn:hover { opacity: 0.75; }
+
+    /* ── Card separation ────────────────────────────────────────── */
+    .list-school-card { background: var(--white); border: 1.5px solid var(--border); border-radius: 12px; margin-bottom: 1rem; border-left-width: 4px; box-shadow: 0 1px 4px rgba(0,0,0,.04); }
+
+    /* ── Status dropdown ─────────────────────────────────────── */
     .status-dd-wrap { position: relative; flex-shrink: 0; }
     .status-dropdown {
-      position: absolute; right: 0; top: calc(100% + 6px); z-index: 200;
+      position: absolute; left: 0; top: calc(100% + 4px); z-index: 200;
       background: var(--white); border: 1.5px solid var(--border); border-radius: 10px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.12); min-width: 150px; overflow: hidden;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.12); min-width: 200px; overflow: hidden;
     }
     .status-dd-item {
       display: block; width: 100%; text-align: left; padding: 9px 14px;
@@ -1112,13 +1162,19 @@ function formatCost(n) {
 }
 
 const STATUS_CONFIG = {
-  researching: { label: 'Researching',       color: '#64748B' },
-  emailed:     { label: 'Emailed Coach',      color: '#2563EB' },
-  visit:       { label: 'Visit Scheduled',    color: '#7C3AED' },
-  applied:     { label: 'Applied',            color: '#D97706' },
-  committed:   { label: 'Committed 🎉',       color: '#059669' },
-  pass:        { label: 'Not the Right Fit',  color: '#94A3B8' },
+  interested:   { label: 'Interested',                   color: '#64748B' },
+  contacted:    { label: 'Contacted Coach',               color: '#2563EB' },
+  responded:    { label: 'Coach Responded',               color: '#7C3AED' },
+  conversation: { label: 'Recruiting Conversation',      color: '#0891B2' },
+  visit:        { label: 'Visit Scheduled',               color: '#D97706' },
+  support:      { label: 'Coach Support for Admissions',  color: '#EA580C' },
+  accepted:     { label: 'Accepted',                     color: '#16A34A' },
+  committed:    { label: 'Committed 🎉',                 color: '#059669' },
 };
+// Back-compat: remap old stage keys saved in localStorage
+function _migratePipelineStage(s) {
+  return { researching: 'interested', emailed: 'contacted', applied: 'accepted', pass: 'interested' }[s] || s;
+}
 
 const VIBE_QUESTIONS = [
   { id: 'campus',   question: 'What kind of campus feel matters most?',
@@ -2061,7 +2117,7 @@ function _buildCardHtml(r, i) {
         ${!isOOU ? `<button class="btn btn-primary" onclick='openDeepDive(${JSON.stringify(r.school)})'>Deep Dive →</button>` : ''}
         ${inList
           ? `<button class="btn btn-added" disabled>✓ On My List</button>`
-          : `<button class="btn btn-secondary" onclick='addToList(${JSON.stringify(r.school)}, ${i})'>+ Add to List</button>`}
+          : `<button class="btn btn-primary" onclick='addToList(${JSON.stringify(r.school)}, ${i})'>+ Add to List</button>`}
         <button class="btn btn-ghost" onclick='hideSchool(${JSON.stringify(r.school)})'>Hide</button>
       </div>
     </div>
@@ -2263,7 +2319,7 @@ function eliminate(school) { hideSchool(school); }
 function addToList(school, idx) {
   if (!MY_LIST.includes(school)) {
     MY_LIST.push(school);
-    CRM_DATA[school] = CRM_DATA[school] || { status: 'researching', notes: [], reminders: [] };
+    CRM_DATA[school] = CRM_DATA[school] || { status: 'interested', notes: [], reminders: [] };
   }
   // Update button in the card
   const card = document.getElementById('rcard-' + idx);
@@ -2404,6 +2460,10 @@ async function openDeepDive(school) {
       return null;
     }
 
+    const _ddCrm = CRM_DATA[school] || {};
+    _ddCrm.status = _migratePipelineStage(_ddCrm.status || 'interested');
+    const _ddCfg = STATUS_CONFIG[_ddCrm.status] || STATUS_CONFIG.interested;
+
     content.innerHTML = `
       <div class="deep-dive-header">
         <div class="deep-dive-school">${esc(school)}</div>
@@ -2416,6 +2476,20 @@ async function openDeepDive(school) {
           ${meta.hiddenIvy ? '<span class="badge badge-ivy">Hidden Ivy</span>' : ''}
           ${meta.stem      ? '<span class="badge badge-stem">STEM</span>' : ''}
         </div>
+        ${inList ? `
+        <div class="dd-pipeline-row" onclick='toggleStatusDD(${JSON.stringify(school)}, event)'>
+          <span class="pipeline-dot" style="background:${_ddCfg.color};"></span>
+          <span style="font-size:0.8rem;font-weight:700;color:${_ddCfg.color};">${esc(_ddCfg.label)}</span>
+          <span style="font-size:0.7rem;color:var(--muted);">· recruiting stage ▾</span>
+          ${OPEN_STATUS_DD === school ? `
+          <div class="status-dropdown">
+            ${Object.entries(STATUS_CONFIG).map(([k, v]) =>
+              `<button class="status-dd-item ${_ddCrm.status === k ? 'active' : ''}"
+                style="${_ddCrm.status === k ? `background:${v.color};` : ''}"
+                onclick='setCrmStatusDD(${JSON.stringify(school)}, "${k}", event)'>${v.label}</button>`
+            ).join('')}
+          </div>` : ''}
+        </div>` : ''}
       </div>
 
       ${_ddHero ? `
@@ -2427,6 +2501,14 @@ async function openDeepDive(school) {
       <div class="dd-photos">
         ${_ddLife ? `<div class="dd-photo-wrap"><img class="dd-photo" src="${esc(_ddLife)}" alt="${esc(school)} student life" loading="lazy" onerror="this.closest('.dd-photo-wrap').remove()"><span class="dd-photo-label">Student Life</span></div>` : ''}
         ${_ddSwim ? `<div class="dd-photo-wrap"><img class="dd-photo" src="${esc(_ddSwim)}" alt="${esc(school)} pool" loading="lazy" onerror="this.closest('.dd-photo-wrap').remove()"><span class="dd-photo-label">Aquatics</span></div>` : ''}
+      </div>` : ''}
+
+      ${mainSections.length > 2 ? `
+      <div class="dd-jump-nav">
+        ${mainSections.map(s => {
+          const _id = 'dds-' + s.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+          return `<button class="dd-jump-link" onclick="document.getElementById('${_id}')?.scrollIntoView({behavior:'smooth',block:'start'})">${esc(s.title)}</button>`;
+        }).join('')}
       </div>` : ''}
 
       ${bottomLine ? `
@@ -2441,6 +2523,7 @@ async function openDeepDive(school) {
           ? buildAdmTableHTML(meta, JAMES.gpa, JAMES.sat || 0, JAMES.actScore || 0)
           : '';
         const moreId = 'ddmore-' + Math.random().toString(36).slice(2, 8);
+        const _secId = 'dds-' + s.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 
         // Section identity comes from the backend-assigned type — no title parsing.
         const _sType = s.type || 'content';
@@ -2483,12 +2566,20 @@ async function openDeepDive(school) {
           ? esc(_dispMajor + ' at ' + school)
           : esc(s.title);
 
+        const shouldCollapse = (_sType === 'student_experience' || _sType === 'outcomes');
+        const bodyId = 'dsb-' + moreId;
+
         return `
-        <div class="deep-section">
-          <div class="deep-section-title">${_displayTitle}</div>
-          ${admTable}
-          <div class="${isAdm ? 'adm-prose' : 'deep-section-body'}">${esc(s.body)}</div>
-          ${moreHtml}
+        <div class="deep-section ${shouldCollapse ? 'ds-collapsible' : ''}" id="${_secId}">
+          <div class="ds-toggle-row">
+            <div class="deep-section-title">${_displayTitle}</div>
+            ${shouldCollapse ? `<button class="ds-toggle-btn" onclick="_dsToggle('${bodyId}', this)" data-more="Show ▾" data-less="Hide ▴">Show ▾</button>` : ''}
+          </div>
+          <div id="${bodyId}" ${shouldCollapse ? 'style="display:none;"' : ''}>
+            ${admTable}
+            <div class="${isAdm ? 'adm-prose' : 'deep-section-body'}">${esc(s.body)}</div>
+            ${moreHtml}
+          </div>
         </div>`;
       }).join('')}
 
@@ -2504,7 +2595,7 @@ async function openDeepDive(school) {
       <div class="deep-dive-actions" style="border-top:1px solid var(--border);padding-top:1rem;margin-top:1.25rem;">
         ${inList
           ? `<button class="btn btn-added" disabled>✓ On My List</button>`
-          : `<button class="btn btn-secondary" id="dd-add-btn" onclick='ddAddToList(${JSON.stringify(school)})'>+ Add to List</button>`}
+          : `<button class="btn btn-primary" id="dd-add-btn" onclick='ddAddToList(${JSON.stringify(school)})'>+ Add to List</button>`}
         <button class="btn btn-secondary" onclick='showCoachEmail(${JSON.stringify(school)})'>Draft Coach Email →</button>
         <button class="btn btn-secondary" onclick='printDeepDive(${JSON.stringify(school)})' style="margin-left:auto;">🖨 Save as PDF</button>
       </div>
@@ -2527,6 +2618,14 @@ function _ddToggleMore(id, btn, moreLabel, lessLabel) {
   const open = el.style.display !== 'none';
   el.style.display = open ? 'none' : 'block';
   btn.textContent  = open ? (moreLabel || 'More ▾') : (lessLabel || 'Less ▴');
+}
+
+function _dsToggle(bodyId, btn) {
+  const el   = document.getElementById(bodyId);
+  if (!el) return;
+  const open = el.style.display !== 'none';
+  el.style.display = open ? 'none' : 'block';
+  btn.textContent  = open ? (btn.dataset.more || 'Show ▾') : (btn.dataset.less || 'Hide ▴');
 }
 
 async function _ddLoadAcademic(id) {
@@ -2660,8 +2759,9 @@ function _printCardHtml(school) {
   const result  = ALL_RESULTS.find(r => r.school === school) || {};
   const meta    = result.meta || {};
   const adm     = result.admission || {};
-  const crm     = CRM_DATA[school] || { status: 'researching', notes: [], reminders: [] };
-  const cfg     = STATUS_CONFIG[crm.status] || STATUS_CONFIG.researching;
+  const crm     = CRM_DATA[school] || { status: 'interested', notes: [], reminders: [] };
+  crm.status    = _migratePipelineStage(crm.status || 'interested');
+  const cfg     = STATUS_CONFIG[crm.status] || STATUS_CONFIG.interested;
   const adjTier = result.adjTier || '';
   const offerVal  = crm.cost?.offer != null ? crm.cost.offer : null;
   const costNum   = offerVal !== null ? offerVal : costEstimate(meta);
@@ -2733,8 +2833,9 @@ async function printListWithDeepDives() {
 
   const schoolsHtml = dives.map(({ school, data }, i) => {
     const result    = ALL_RESULTS.find(r => r.school === school) || {};
-    const crm       = CRM_DATA[school] || { status: 'researching', notes: [], reminders: [] };
-    const cfg       = STATUS_CONFIG[crm.status] || STATUS_CONFIG.researching;
+    const crm       = CRM_DATA[school] || { status: 'interested', notes: [], reminders: [] };
+    crm.status      = _migratePipelineStage(crm.status || 'interested');
+    const cfg       = STATUS_CONFIG[crm.status] || STATUS_CONFIG.interested;
     const divider   = i > 0 ? '<hr class="school-divider">' : '';
     let diveHtml = '';
     if (data.error) {
@@ -2814,7 +2915,7 @@ function copyEmail() {
 function addToListDirect(school) {
   if (!MY_LIST.includes(school)) {
     MY_LIST.push(school);
-    CRM_DATA[school] = CRM_DATA[school] || { status: 'researching', notes: [], reminders: [] };
+    CRM_DATA[school] = CRM_DATA[school] || { status: 'interested', notes: [], reminders: [] };
   }
   updateBadges();
   saveToStorage();
@@ -2957,8 +3058,9 @@ function renderMyList() {
   })() : '';
 
   el.innerHTML = _healthHtml + MY_LIST.map((school, si) => {
-    const crm    = CRM_DATA[school] || { status: 'researching', notes: [], reminders: [] };
-    const cfg    = STATUS_CONFIG[crm.status] || STATUS_CONFIG.researching;
+    const crm    = CRM_DATA[school] || { status: 'interested', notes: [], reminders: [] };
+    crm.status   = _migratePipelineStage(crm.status || 'interested');
+    const cfg    = STATUS_CONFIG[crm.status] || STATUS_CONFIG.interested;
     const result = ALL_RESULTS.find(r => r.school === school);
     const meta   = result?.meta || {};
     const adm    = result?.admission || {};
@@ -3019,7 +3121,23 @@ function renderMyList() {
           </div>
           <span class="toggle-arrow" style="margin-top:2px;">${isOpen ? '▴' : '▾'}</span>
         </div>
-        <div class="list-school-badges">
+
+        <!-- Pipeline bar — always visible, click to change stage -->
+        <div class="pipeline-bar" onclick='toggleStatusDD(${JSON.stringify(school)}, event)'>
+          <span class="pipeline-dot" style="background:${cfg.color};"></span>
+          <span class="pipeline-label" style="color:${cfg.color};">${esc(cfg.label)}</span>
+          <span class="pipeline-change">▾ change stage</span>
+          ${OPEN_STATUS_DD === school ? `
+          <div class="status-dropdown">
+            ${Object.entries(STATUS_CONFIG).map(([k, v]) =>
+              `<button class="status-dd-item ${crm.status === k ? 'active' : ''}"
+                style="${crm.status === k ? `background:${v.color};` : ''}"
+                onclick='setCrmStatusDD(${JSON.stringify(school)}, "${k}", event)'>${v.label}</button>`
+            ).join('')}
+          </div>` : ''}
+        </div>
+
+        <div class="list-school-badges" style="grid-template-columns:minmax(0,1.5fr) minmax(0,1.5fr) minmax(0,0.6fr) minmax(0,1.2fr);">
           <!-- slot 1: admission -->
           <div class="list-badge-slot">
             ${adm.label ? `<span class="list-badge" style="background:${safeAdmColor(adm)};color:#fff;">${esc(adm.label)}</span>` : ''}
@@ -3037,19 +3155,6 @@ function renderMyList() {
             ${meta.ivyLeague ? `<span class="list-badge" style="background:#1E3A5F;color:#fff;">Ivy</span>` : ''}
             ${meta.hiddenIvy ? `<span class="list-badge" style="background:var(--violet-l);color:var(--violet);">H.Ivy</span>` : ''}
             ${meta.stem ? `<span class="list-badge" style="background:var(--blue-l);color:var(--blue);">STEM</span>` : ''}
-          </div>
-          <!-- slot 5: status button -->
-          <div class="status-dd-wrap">
-            <button class="list-badge" style="background:${cfg.color};color:#fff;border:none;cursor:pointer;width:auto;"
-              onclick='toggleStatusDD(${JSON.stringify(school)}, event)'>${esc(cfg.label)} <span style="font-size:0.6rem;opacity:0.85;">▾</span></button>
-            ${OPEN_STATUS_DD === school ? `
-            <div class="status-dropdown">
-              ${Object.entries(STATUS_CONFIG).map(([k, v]) =>
-                `<button class="status-dd-item ${crm.status === k ? 'active' : ''}"
-                  style="${crm.status === k ? `background:${v.color};` : ''}"
-                  onclick='setCrmStatusDD(${JSON.stringify(school)}, "${k}", event)'>${v.label}</button>`
-              ).join('')}
-            </div>` : ''}
           </div>
         </div>
       </div>
@@ -3197,7 +3302,7 @@ function toggleCRM(school) {
 function setCost(school, inputId) {
   const raw = parseInt(document.getElementById(inputId)?.value, 10);
   if (!raw || raw < 1000) return;
-  if (!CRM_DATA[school]) CRM_DATA[school] = { status: 'researching', notes: [], reminders: [] };
+  if (!CRM_DATA[school]) CRM_DATA[school] = { status: 'interested', notes: [], reminders: [] };
   CRM_DATA[school].cost = { offer: raw };
   saveToStorage();
   renderMyList();
@@ -3211,7 +3316,7 @@ function resetCost(school) {
 }
 
 function setCrmStatus(school, status) {
-  if (!CRM_DATA[school]) CRM_DATA[school] = { status: 'researching', notes: [], reminders: [] };
+  if (!CRM_DATA[school]) CRM_DATA[school] = { status: 'interested', notes: [], reminders: [] };
   CRM_DATA[school].status = status;
   saveToStorage();
   renderMyList();
@@ -3225,11 +3330,27 @@ function toggleStatusDD(school, event) {
 
 function setCrmStatusDD(school, status, event) {
   event.stopPropagation();
-  if (!CRM_DATA[school]) CRM_DATA[school] = { status: 'researching', notes: [], reminders: [] };
+  if (!CRM_DATA[school]) CRM_DATA[school] = { status: 'interested', notes: [], reminders: [] };
   CRM_DATA[school].status = status;
   OPEN_STATUS_DD = null;
   saveToStorage();
   renderMyList();
+  _refreshDDPipeline(school, status);
+}
+
+function _refreshDDPipeline(school, status) {
+  // Update the deep dive pipeline row if it's visible for this school
+  const row = document.querySelector('.dd-pipeline-row');
+  if (!row) return;
+  const cfg = STATUS_CONFIG[status] || STATUS_CONFIG.interested;
+  const dot = row.querySelector('.pipeline-dot');
+  if (dot) dot.style.background = cfg.color;
+  const spans = row.querySelectorAll('span');
+  // spans[0] = dot (div), spans[1] = label text
+  if (spans.length >= 2) { spans[1].textContent = cfg.label; spans[1].style.color = cfg.color; }
+  // Remove the open dropdown
+  const dd = row.querySelector('.status-dropdown');
+  if (dd) dd.remove();
 }
 
 document.addEventListener('click', () => {
@@ -3240,7 +3361,7 @@ function addNote(school, si) {
   const cat  = document.getElementById('note-cat-' + si)?.value || 'General';
   const text = document.getElementById('note-text-' + si)?.value?.trim();
   if (!text) return;
-  if (!CRM_DATA[school]) CRM_DATA[school] = { status: 'researching', notes: [], reminders: [] };
+  if (!CRM_DATA[school]) CRM_DATA[school] = { status: 'interested', notes: [], reminders: [] };
   const note = { id: Date.now(), cat, text, date: fmtDate(new Date()) };
   CRM_DATA[school].notes = [note, ...CRM_DATA[school].notes];
   renderMyList();
@@ -3257,7 +3378,7 @@ function addReminder(school, si) {
   const text = document.getElementById('rem-text-' + si)?.value?.trim();
   const date = document.getElementById('rem-date-' + si)?.value;
   if (!text || !date) return;
-  if (!CRM_DATA[school]) CRM_DATA[school] = { status: 'researching', notes: [], reminders: [] };
+  if (!CRM_DATA[school]) CRM_DATA[school] = { status: 'interested', notes: [], reminders: [] };
   const rem = { id: Date.now(), text, date, completed: false, completedAt: null };
   CRM_DATA[school].reminders = [...CRM_DATA[school].reminders, rem]
     .sort((a, b) => a.date.localeCompare(b.date));
@@ -4173,7 +4294,7 @@ function browseRowHtml(s) {
 function addToBrowseList(school) {
   if (!MY_LIST.includes(school)) {
     MY_LIST.push(school);
-    CRM_DATA[school] = CRM_DATA[school] || { status: 'researching', notes: [], reminders: [] };
+    CRM_DATA[school] = CRM_DATA[school] || { status: 'interested', notes: [], reminders: [] };
     saveToStorage();
     updateBadges();
   }
