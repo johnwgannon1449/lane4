@@ -213,7 +213,6 @@ header {
   transition:border-color 0.15s, box-shadow 0.15s;
 }
 .cand-card:hover { box-shadow:var(--shadow); }
-.cand-card.is-assigned { border-color:var(--green); box-shadow:0 0 0 2px rgba(22,163,74,.12); }
 .cand-img {
   width:100%; aspect-ratio:16/9; object-fit:cover; display:block; cursor:pointer;
   background:var(--bg);
@@ -281,6 +280,30 @@ header {
 }
 .page-bottom-save .save-summary {
   font-size:0.83rem; color:var(--muted);
+}
+
+/* ── Selected / saved card visuals ── */
+.cand-card.is-assigned { border-color:var(--green); box-shadow:0 0 0 3px rgba(22,163,74,.18); }
+.cand-img-wrap { position:relative; overflow:hidden; }
+.cand-check {
+  position:absolute; top:6px; right:6px;
+  background:var(--green); color:#fff;
+  width:22px; height:22px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-size:12px; font-weight:800; pointer-events:none;
+  box-shadow:0 1px 4px rgba(0,0,0,.35); z-index:1;
+}
+.pinned-row {
+  display:flex; align-items:center; gap:0.35rem;
+  padding:3px 6px; background:var(--green-l);
+  border-bottom:1px solid #86EFAC;
+}
+.pinned-badge {
+  font-size:0.68rem; font-weight:700;
+  color:var(--green); display:flex; align-items:center; gap:3px;
+}
+.autofill-indicator {
+  font-size:0.72rem; color:var(--blue); display:flex; align-items:center; gap:0.3rem;
 }
 
 /* ── Status messages ── */
@@ -563,6 +586,8 @@ function refreshSchoolDot(name) {
 // ══════════════════════════════════════════════════════════════════════════
 // SCHOOL DETAIL
 // ══════════════════════════════════════════════════════════════════════════
+const TARGET_PER_CAT = 16;   // desired candidate count per section
+
 async function selectSchool(name) {
   ACTIVE_SCHOOL = name;
   SEL = { campus: [], pool: [], life: [] };
@@ -583,14 +608,134 @@ async function selectSchool(name) {
     CURRENT_CANDIDATES = data.candidates || [];
     CURRENT_STORED     = data.stored     || {};
 
+    // Pre-populate SEL from saved curated data
     const cur = data.curated || {};
     SEL.campus = [...(cur.hero_images         || [])];
     SEL.pool   = [...(cur.pool_images         || [])];
     SEL.life   = [...(cur.student_life_images || [])];
 
+    // Always inject previously saved images into the candidate pool so they
+    // are always visible and clearly marked even if not in the current manifest
+    _injectSavedIntoPool();
+
     renderDetail();
+
+    // Auto-populate sections below threshold — non-blocking background fetch
+    _autoFillSections(name);
+
   } catch(e) {
     panel.innerHTML = `<div class="status-msg err">Failed to load: ${e.message}</div>`;
+  }
+}
+
+// ── Inject saved/selected image URLs into CURRENT_CANDIDATES so they always
+//    appear at the top of their section grid, regardless of manifest state.
+function _injectSavedIntoPool() {
+  const existing = new Set(CURRENT_CANDIDATES.map(c => c.url));
+  const pairs = [
+    ...SEL.campus.map(u => ({ url: u, category: 'campus',       _pinned: true, score: 999 })),
+    ...SEL.pool.map(u =>   ({ url: u, category: 'pool',         _pinned: true, score: 999 })),
+    ...SEL.life.map(u =>   ({ url: u, category: 'student_life', _pinned: true, score: 999 })),
+  ];
+  // Prepend in reverse so SEL order is preserved at the top
+  for (const c of [...pairs].reverse()) {
+    if (!existing.has(c.url)) {
+      CURRENT_CANDIDATES.unshift(c);
+      existing.add(c.url);
+    }
+  }
+}
+
+// ── Auto-fill sections below TARGET_PER_CAT in the background.
+//    Does not block UI — updates each section in-place as results arrive.
+async function _autoFillSections(name) {
+  const realCands = CURRENT_CANDIDATES.filter(c => !c._pinned);
+
+  // If there are no real candidates at all, do a full school fetch first
+  if (realCands.length === 0) {
+    await _bgFullFetch(name);
+    return;
+  }
+
+  // Otherwise fill thin categories sequentially (to avoid hammering the server)
+  const cats = [
+    { cat: 'campus',       type: 'campus' },
+    { cat: 'pool',         type: 'pool'   },
+    { cat: 'student_life', type: 'life'   },
+  ];
+  for (const { cat, type } of cats) {
+    // Stop if the user has navigated away
+    if (ACTIVE_SCHOOL !== name) return;
+    const count = CURRENT_CANDIDATES.filter(c => c.category === cat && !c._pinned).length;
+    if (count < TARGET_PER_CAT) {
+      await _bgFetchCategory(name, cat, type);
+    }
+  }
+}
+
+// ── Full school fetch (for schools with zero candidates) ──────────────────
+async function _bgFullFetch(name) {
+  // Show spinner on all three section buttons
+  ['campus','pool','life'].forEach(t => {
+    const btn = document.getElementById(`btn-more-${t}`);
+    const sta = document.getElementById(`sec-status-${t}`);
+    if (btn) { btn.disabled = true; }
+    if (sta) { sta.textContent = 'Auto-filling…'; sta.className = 'section-status'; }
+  });
+  const btn = document.getElementById('btn-fetch');
+  if (btn) { btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Auto-fetching…'; }
+
+  try {
+    const res = await fetch('/api/ua/fetch-candidates', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ school: name }),
+    });
+    if (res.ok && ACTIVE_SCHOOL === name) {
+      const res2 = await fetch('/api/ua/candidates/' + encodeURIComponent(name));
+      if (res2.ok) {
+        const data2 = await res2.json();
+        CURRENT_CANDIDATES = data2.candidates || [];
+        _injectSavedIntoPool();
+        const s = ALL_SCHOOLS.find(x => x.name === name);
+        if (s) s.has_candidates = true;
+        refreshSchoolDot(name);
+        renderStats();
+        renderDetail();
+      }
+    }
+  } catch {}
+
+  if (ACTIVE_SCHOOL === name) {
+    const b = document.getElementById('btn-fetch');
+    if (b) { b.disabled = false; b.textContent = 'Refresh Candidates'; }
+  }
+}
+
+// ── Per-category background fill ─────────────────────────────────────────
+async function _bgFetchCategory(name, category, type) {
+  const btn = document.getElementById(`btn-more-${type}`);
+  const sta = document.getElementById(`sec-status-${type}`);
+  if (btn) { btn.disabled = true; }
+  if (sta) {
+    sta.innerHTML = '<span class="autofill-indicator"><span class="spinner-dark"></span> Auto-filling…</span>';
+    sta.className = 'section-status';
+  }
+  try {
+    const res = await fetch('/api/ua/fetch-more', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ school: name, category }),
+    });
+    const data = await res.json();
+    if (res.ok && data.candidates && ACTIVE_SCHOOL === name) {
+      CURRENT_CANDIDATES = data.candidates;
+      _injectSavedIntoPool();
+      _rerenderSection(type);
+      if (sta) { sta.textContent = ''; sta.className = 'section-status'; }
+    }
+  } catch {}
+  if (ACTIVE_SCHOOL === name) {
+    const b = document.getElementById(`btn-more-${type}`);
+    if (b) { b.disabled = false; b.textContent = 'Fetch More'; }
   }
 }
 
@@ -609,7 +754,7 @@ function renderDetail() {
       </div>
       <div class="school-actions">
         <div id="fetch-status" style="font-size:0.8rem;color:var(--muted);align-self:center;"></div>
-        <button class="btn btn-secondary" id="btn-fetch" onclick="fetchCandidates('${esc(name)}')">Fetch Candidates</button>
+        <button class="btn btn-secondary" id="btn-fetch" onclick="fetchCandidates('${esc(name)}')">Refresh Candidates</button>
         <button class="btn btn-green" id="btn-save-top" onclick="saveSelections('${esc(name)}')" ${totalSel === 0 ? 'disabled' : ''}>
           Save Selections${totalSel > 0 ? ' ('+totalSel+')' : ''}
         </button>
@@ -635,12 +780,18 @@ function renderDetail() {
 function renderTypeSection(type, label, emoji) {
   const selUrls  = SEL[type];
   const catKey   = typeToCategory(type);
-  const cands    = CURRENT_CANDIDATES.filter(c => c.category === catKey);
   const hasSelClass = selUrls.length > 0 ? 'has-sel' : '';
+
+  // Pinned (saved) images always first, then the rest sorted by score desc
+  const allCands  = CURRENT_CANDIDATES.filter(c => c.category === catKey);
+  const pinned    = allCands.filter(c => c._pinned);
+  const regular   = allCands.filter(c => !c._pinned).sort((a,b) => (b.score||0) - (a.score||0));
+  const cands     = [...pinned, ...regular];
+  const realCount = regular.length;
 
   const selHtml = selUrls.length > 0
     ? `<div class="sel-strip">${selUrls.map((url, i) => selThumbHtml(url, i, type, selUrls.length)).join('')}</div>`
-    : `<div class="sel-empty">No images selected for ${label} yet</div>`;
+    : `<div class="sel-empty">No images selected for ${label} yet — click + buttons below to add</div>`;
 
   return `
     <div class="type-section" id="section-${type}">
@@ -648,6 +799,7 @@ function renderTypeSection(type, label, emoji) {
         <span class="type-title">${emoji} ${label}</span>
         <span class="type-count ${hasSelClass}">${selUrls.length} selected</span>
         <div class="type-header-actions">
+          <div class="section-status" id="sec-status-${type}" style="margin-right:0.25rem;"></div>
           <button class="btn btn-secondary btn-sm" id="btn-more-${type}"
                   onclick="fetchMoreSection('${esc(ACTIVE_SCHOOL)}', '${catKey}', '${type}')">
             Fetch More
@@ -659,14 +811,13 @@ function renderTypeSection(type, label, emoji) {
         </div>
       </div>
       ${selHtml}
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.6rem;">
-        <div class="cands-label">Candidates · ${cands.length}</div>
-        <div class="section-status" id="sec-status-${type}"></div>
+      <div class="cands-label" style="margin-bottom:0.6rem;">
+        Candidates · ${realCount}${pinned.length > 0 ? ` + ${pinned.length} saved` : ''}
       </div>
       <div class="cand-grid" id="cand-grid-${type}">
         ${cands.map(c => candCardHtml(c, type)).join('')}
         ${cands.length === 0
-          ? `<div class="no-cands" style="grid-column:1/-1;">No ${label} candidates yet — click Fetch Candidates or Fetch More.</div>`
+          ? `<div class="no-cands" style="grid-column:1/-1;">No ${label} candidates — auto-filling in background…</div>`
           : ''}
       </div>
     </div>`;
@@ -692,10 +843,11 @@ function selThumbHtml(url, idx, type, total) {
 }
 
 function candCardHtml(c, sectionType) {
-  const url  = c.url || '';
-  const cat  = c.category || 'campus';
-  const conf = c.pool_confidence != null ? c.pool_confidence : null;
-  const attr = c.pool_attribution || '';
+  const url     = c.url || '';
+  const cat     = c.category || 'campus';
+  const isPinned = !!c._pinned;
+  const conf    = c.pool_confidence != null ? c.pool_confidence : null;
+  const attr    = c.pool_attribution || '';
 
   const campusIdx = SEL.campus.indexOf(url);
   const poolIdx   = SEL.pool.indexOf(url);
@@ -704,6 +856,17 @@ function candCardHtml(c, sectionType) {
   const assignedType = campusIdx >= 0 ? 'campus' : poolIdx >= 0 ? 'pool' : lifeIdx >= 0 ? 'life' : null;
   const assignedPos  = assignedType === 'campus' ? campusIdx : assignedType === 'pool' ? poolIdx : assignedType === 'life' ? lifeIdx : -1;
   const isTop        = assignedPos === 0;
+
+  // Pinned-saved row (only for injected saved images not yet in manifest)
+  const pinnedRowHtml = isPinned ? `
+    <div class="pinned-row">
+      <span class="pinned-badge">📌 Saved</span>
+    </div>` : '';
+
+  // Checkmark overlay for all selected images
+  const checkHtml = assignedType
+    ? `<div class="cand-check">✓</div>`
+    : '';
 
   let assignHtml = '';
   if (assignedType) {
@@ -737,20 +900,24 @@ function candCardHtml(c, sectionType) {
     const confNum = conf != null ? conf : 0;
     const dotColor = confNum >= 0.7 ? '#16A34A' : confNum >= 0.4 ? '#D97706' : '#94A3B8';
     const confLabel = conf != null ? `${Math.round(confNum * 100)}%` : '?';
-    const attrText = attr || (conf == null ? 'No attribution data' : '');
+    const attrText = attr || '';
     poolAttrHtml = `
       <div class="pool-attr">
         <span class="pool-conf-dot" style="background:${dotColor}" title="Pool confidence: ${confLabel}"></span>
-        <span class="pool-attr-text" title="${esc(attrText || '')}">${esc(attrText) || '<em style="opacity:.6">No attribution</em>'}</span>
+        <span class="pool-attr-text" title="${esc(attrText)}">${attrText ? esc(attrText) : '<em style="opacity:.6">No attribution</em>'}</span>
         <span style="font-size:0.65rem;color:${dotColor};font-weight:700;flex-shrink:0;">${confLabel}</span>
       </div>`;
   }
 
   return `
     <div class="cand-card ${assignedType ? 'is-assigned' : ''}" id="cand-${btoa(url).replace(/[^a-zA-Z0-9]/g,'')}">
-      <img class="cand-img" src="${esc(url)}" loading="lazy"
-           onclick="window.open('${esc(url)}','_blank')"
-           onerror="this.parentElement.remove()" />
+      ${pinnedRowHtml}
+      <div class="cand-img-wrap">
+        <img class="cand-img" src="${esc(url)}" loading="lazy"
+             onclick="window.open('${esc(url)}','_blank')"
+             onerror="this.parentElement.parentElement.style.opacity='0.3'" />
+        ${checkHtml}
+      </div>
       ${poolAttrHtml}
       <div class="cand-meta">${assignHtml}</div>
     </div>`;
@@ -850,6 +1017,7 @@ async function fetchMoreSection(name, category, type) {
     const data = await res.json();
     if (!res.ok || data.error) throw new Error(data.error || 'Unknown error');
     CURRENT_CANDIDATES = data.candidates || CURRENT_CANDIDATES;
+    _injectSavedIntoPool();   // always keep saved images pinned
     const added = data.added || 0;
     showToast(`Added ${added} new image${added !== 1 ? 's' : ''} to ${type}`);
     if (statusEl) { statusEl.textContent = `+${added} new`; statusEl.className = 'section-status ok'; }
@@ -881,10 +1049,8 @@ async function redoSection(name, category, type) {
     const data = await res.json();
     if (!res.ok || data.error) throw new Error(data.error || 'Unknown error');
     CURRENT_CANDIDATES = data.candidates || CURRENT_CANDIDATES;
-    // Clear selections for this type since the pool was wiped
-    if (type === 'campus') SEL.campus = SEL.campus.filter(u => CURRENT_CANDIDATES.some(c => c.url === u));
-    if (type === 'pool')   SEL.pool   = SEL.pool.filter(u => CURRENT_CANDIDATES.some(c => c.url === u));
-    if (type === 'life')   SEL.life   = SEL.life.filter(u => CURRENT_CANDIDATES.some(c => c.url === u));
+    _injectSavedIntoPool();   // always keep saved images pinned
+    // Selections stay as-is — saved images are re-injected above
     const count = data.count || 0;
     showToast(`Redo complete — ${count} fresh ${type} images`);
     if (statusEl) { statusEl.textContent = `${count} fresh`; statusEl.className = 'section-status ok'; }
