@@ -1,0 +1,70 @@
+Please update the Lane4 app with the following changes. This is a focused UX / workflow pass. Do not add speculative recruiting probability scores or anything that implies false precision. Keep Lane4 honest, practical, and grounded in real data.
+1. Replace the current old pipeline dropdown in My List
+There is already an older status dropdown/tag concept on school cards in My List (for example things like “Researching”). Replace that old concept with a clearer recruiting pipeline.
+New pipeline stages:
+Interested
+Contacted Coach
+Coach Responded
+Recruiting Conversation
+Visit Scheduled
+Coach Support for Admissions
+Accepted
+Committed
+Requirements:
+Remove/replace the old dropdown status concept with this new pipeline
+Make the pipeline more visually prominent on each My List school card
+The pipeline should be visible without expanding the card
+Use a dropdown or segmented control, whichever fits the current UI best
+Persist the selected stage per school per user
+Show the pipeline stage in My List and also in the Deep Dive header for that school
+Keep the presentation clean and practical, not flashy
+2. Deep Dive page UX improvements
+Improve readability of long Deep Dive pages.
+Changes:
+Keep Bottom Line always expanded
+Collapse long lower-value sections by default, especially:
+Campus Life
+Outcomes
+extended academic/program detail sections
+Keep the page easy to scan on mobile/tablet
+Add simple jump links / anchor navigation near the top if easy to implement cleanly
+3. My List page improvements
+Improve readability and usability when multiple schools are on the list.
+Changes:
+Add clearer separation between school cards
+Ensure the new recruiting pipeline is clearly visible without expanding
+Keep reminders clearly associated with the correct school
+Preserve current notes / cost / reminder functionality
+4. Reminders UX
+Improve reminder clarity and consistency.
+Changes:
+Always show the school name clearly in the Reminders tab
+Ensure reminder completion/deletion syncs correctly between:
+My List
+Reminders tab
+Keep reminder actions simple and reliable
+5. Explore page improvements
+Improve search/discovery UX.
+Changes:
+Make Add to List more visually prominent
+Confirm partial school-name search works cleanly
+Confirm similar-school suggestions load correctly and display consistently
+6. Performance / polish
+Check for obvious performance and rendering issues.
+Changes:
+Review Deep Dive pages for unnecessary render/reload behavior
+Lazy-load or defer long content sections if helpful
+Ensure smooth scrolling and stable layout on tablet/mobile
+7. QA pass
+Please test the following before finishing:
+login/logout flow
+session persistence
+add/remove school from list
+reminder creation/completion/deletion
+recruiting pipeline save/update behavior
+Deep Dive header showing the correct pipeline stage
+Important:
+Do not change the overall design system or branding
+Do not invent probability scores or “coach fit” numbers
+Keep the product honest and grounded in real inputs
+This pass is about clarity, workflow, and usefulness
