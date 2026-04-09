@@ -1,0 +1,137 @@
+We need one more focused fix to the Lane4 admin image curator. The last pass did not work.
+This is no longer mainly a relevance problem. It now looks like a fetch orchestration / state management / background processing bug.
+Observed problems:
+after a few schools, candidate generation degrades badly
+Pool often gets stuck at 0 and never fills
+sections do not reliably reach 16 candidates
+Redo Section clears images but does NOT automatically refill the section
+blank candidate cards sometimes appear
+auto-fill says it is running in background but does not complete reliably
+Fetch More often still fails to produce enough images
+We need to make the curator reliable and deterministic.
+Goal
+When I open a school:
+Campus should auto-fill to 16 usable candidates
+Pool should auto-fill to 16 usable candidates
+Student Life should auto-fill to 16 usable candidates
+If a section cannot hit 16, it should keep trying through fallback logic until the search space is truly exhausted.
+No babysitting.
+No manual extra clicks required just to get a normal working batch.
+1. Fix auto-fill orchestration so it actually completes
+Right now auto-fill appears to begin but often stalls or partially completes.
+Please refactor the per-school candidate loading flow so it is deterministic:
+When a school opens:
+load existing saved selections first
+start independent candidate fill jobs for:
+Campus
+Pool
+Student Life
+each section should continue fetching until:
+it has 16 usable candidates, or
+all fallback strategies are exhausted
+section completion should be tracked explicitly in state
+Add explicit per-section states like:
+idle
+loading
+retrying
+complete
+exhausted
+failed
+Do not rely on vague “auto-filling in background” behavior without completion tracking.
+2. Fix degradation after several schools
+The system seems to get worse after a few schools, especially for Pool.
+Investigate and fix likely causes such as:
+stale async state carrying across schools
+unfinished promises from prior school still mutating current school state
+request throttling/rate-limit handling failing silently
+candidate arrays not resetting cleanly
+background jobs leaking across school changes
+section fetches being cancelled or orphaned
+global queue exhaustion
+Important:
+When switching schools, all fetch state must be scoped to that school only.
+No prior school job should be able to overwrite or poison the current school.
+Use a per-school request/session token so old async results are ignored if the user has moved on.
+3. Redo Section must immediately refill
+Current behavior is wrong:
+Redo Section clears candidates, then I still have to manually fetch again.
+Fix it so Redo Section does this:
+clear current candidate pool for that section
+preserve saved/selected images unless explicitly removed
+immediately launch a fresh refill for that section
+continue until it reaches 16 usable candidates or is exhausted
+Redo must be a one-click “start over and refill” action.
+4. Fetch More must actually add more
+Current Fetch More behavior is weak/inconsistent.
+Fix Fetch More so it:
+requests a real new batch for that section
+avoids duplicates and near-duplicates
+appends only new usable candidates
+keeps searching until it adds a meaningful batch or truly exhausts search
+Do not return tiny partial trickles unless there is genuinely nothing else.
+Target:
+Fetch More should try to add up to 16 additional usable candidates for that section
+5. Remove blank candidate cards
+Blank/empty cards should never render.
+If an image candidate lacks:
+usable image URL
+resolved metadata
+or passes no display checks
+do not render it.
+Only render fully valid candidate cards.
+6. Add real per-section progress and completion visibility
+Right now it is too hard to tell whether the system is still working or has silently stalled.
+For each section, show clear status text such as:
+Loading candidates...
+9 / 16 loaded
+Retrying with fallback sources...
+Complete: 16 loaded
+Exhausted: only 6 usable found
+Failed: retry section
+This should make the tool debuggable and usable.
+7. Add retry/fallback chain per section
+Do not use one brittle fetch attempt.
+For each section, use a fallback chain.
+Campus
+Try multiple source/query passes until 16 are found.
+Pool
+Pool needs the strongest fallback behavior.
+If first pass fails, automatically retry with alternate facility/athletics-focused searches and attribution filters.
+Do not stop after one weak pass.
+Student Life
+Retry with broader student/campus-life queries if initial results are sparse.
+The important thing is:
+section fill should keep going automatically until success or true exhaustion.
+8. Preserve saved images cleanly
+Previously saved/selected images should always remain visible and pinned in their section.
+New candidate fetching must not:
+hide them
+duplicate them
+replace them
+clear them accidentally
+Selected images and candidate images should be separate concepts in state.
+9. Do not silently fail on rate limits or source failures
+If external fetch/search is rate-limited or fails:
+catch it explicitly
+retry with backoff
+move to fallback source/query path
+surface status in UI if needed
+Do not fail silently and leave a section stuck at 0.
+10. QA this with difficult consecutive schools
+Test several schools in a row, not just one:
+Johns Hopkins
+Hamilton
+Amherst
+Swarthmore
+Case Western
+Verify that after moving through multiple schools:
+auto-fill still works
+Pool still fills
+state from prior schools does not leak
+Redo immediately refills
+Fetch More meaningfully adds candidates
+blank cards do not appear
+Important:
+This pass is about reliability and completion, not cosmetic tweaks.
+The curator should behave like this:
+Open school → existing saved images visible → each section auto-fills toward 16 → progress visible → Redo refills automatically → Fetch More actually adds more.
