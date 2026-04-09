@@ -1,0 +1,91 @@
+Update the Lane4 **Top 6 onboarding reveal logic** so the first schools shown feel recognizable, exciting, and credible.
+
+Do NOT change the swim scoring engine, recruiting likelihood calculations, or school ranking math.
+This change only affects **which schools are chosen for the initial Top 6 reveal.**
+
+---
+
+GOAL
+
+---
+
+The first six schools a swimmer sees should feel exciting and believable.
+
+Whenever possible, the Top 6 should consist of **recognizable schools that are realistic swim options**, with a few exciting stretch schools included only when they are genuinely plausible.
+
+The goal is for the swimmer to immediately think:
+
+"I know that school. I could swim there."
+
+---
+
+TOP 6 SELECTION RULES
+
+---
+
+When building the Top 6 reveal:
+
+1. Start with all schools where the swimmer has a legitimate swim fit according to the current scoring model.
+
+2. From this set, prioritize schools with **strong brand recognition** when swim scores are similar.
+
+Examples of recognizable schools include:
+
+• strong academic brands
+• well-known D3 programs
+• recognizable regional universities
+• schools swimmers frequently discuss during recruiting
+
+3. The Top 6 should ideally include:
+
+• **3 realistic swim fits**
+Schools where the swimmer has strong conference scoring potential.
+
+• **up to 3 stretch options**
+Schools that are slightly faster but still within a believable range.
+
+4. Stretch schools should only appear if they are **genuinely exciting or recognizable**.
+
+Examples:
+
+A well-known program
+A highly ranked academic school
+A historically strong swim program
+
+Do NOT include obscure schools as stretch options.
+
+If exciting stretch schools do not exist, fill remaining slots with additional realistic fits instead.
+
+---
+
+CARD CONTENT
+
+---
+
+Each Top 6 school card should include:
+
+School Name
+Swim Potential Badge (Podium Potential / A Final Potential / Conference Scorer etc.)
+School Tagline (already generated elsewhere in the system)
+Location
+School Image if available
+
+---
+
+IMPORTANT PRINCIPLE
+
+---
+
+The Top 6 list is a **curated reveal moment**, not a strict ranking.
+
+When multiple schools have similar swim-fit scores, always prefer the school that a swimmer is more likely to recognize or feel excited about.
+
+This improves engagement while remaining honest to the swim data.
+
+---
+
+GOAL EXPERIENCE
+
+---
+
+The swimmer should see the Top 6 and immediately recognize at least a few schools and feel motivated to explore further.

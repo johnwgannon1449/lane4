@@ -1607,27 +1607,47 @@ const D3_BRAND = {
   'Ithaca College':6, 'Gustavus Adolphus College':6,
 };
 
-// ── Balanced top-6 selection ────────────────────────────────────
+// ── Top-6 reveal selection ──────────────────────────────────────
+// Spec: 3 realistic fits (strong swim score, prefer recognizable)
+//       + up to 3 stretch options (brand score ≥ 7, adjPts ≥ -5)
+//       If stretch pool is thin, fill remaining slots from realistic.
 function obSelectBalancedTop6(results) {
-  const eligible = (results || []).filter(r => r.adjPts > 0);
-  if (eligible.length <= 6) return eligible;
+  const all = results || [];
+  if (all.length <= 6) return all.filter(r => r.adjPts > -6);
 
-  const bySwim = [...eligible].sort((a, b) => b.adjPts - a.adjPts);
-  const tier1  = bySwim.slice(0, 2);
-  const used   = new Set(tier1.map(r => r.school));
+  // ── Realistic pool: solid swim fit (adjPts ≥ 2)
+  //    Sort by: adjPts + light brand bonus (prefer recognizable when similar)
+  const realistic = all
+    .filter(r => r.adjPts >= 2)
+    .map(r => ({ ...r, _selScore: r.adjPts + (D3_BRAND[r.school] || 0) * 0.3 }))
+    .sort((a, b) => b._selScore - a._selScore);
 
-  const candidates = bySwim.filter(r => !used.has(r.school)).slice(0, 23);
-  const blended    = candidates.map(r => ({
-    ...r,
-    _selScore: r.adjPts + (D3_BRAND[r.school] || 0) * 0.5,
-  })).sort((a, b) => b._selScore - a._selScore);
+  // ── Stretch pool: just below competitive + must be a recognizable brand
+  //    adjPts between -5 and 2, brand score ≥ 7
+  //    Sort purely by brand recognition (not swim score — they're all "reach")
+  const stretchMin = -5, stretchMax = 2, stretchBrandMin = 7;
+  const stretch = all
+    .filter(r => r.adjPts >= stretchMin && r.adjPts < stretchMax
+                 && (D3_BRAND[r.school] || 0) >= stretchBrandMin)
+    .sort((a, b) => (D3_BRAND[b.school] || 0) - (D3_BRAND[a.school] || 0));
 
-  const tier2 = blended.slice(0, 2);
-  tier2.forEach(r => used.add(r.school));
+  // Build the final 6: take 3 realistic, then fill up to 3 from stretch,
+  // then back-fill from realistic if stretch is thin.
+  const used = new Set();
+  const pick = [];
 
-  const tier3 = blended.filter(r => !used.has(r.school)).slice(0, 2);
+  const takePick = (pool, max) => {
+    for (const r of pool) {
+      if (pick.length >= max) break;
+      if (!used.has(r.school)) { pick.push(r); used.add(r.school); }
+    }
+  };
 
-  return [...tier1, ...tier2, ...tier3].slice(0, 6);
+  takePick(realistic, 3);          // 3 realistic fits
+  takePick(stretch,   6);          // up to 3 stretch (will stop at 6 total)
+  takePick(realistic, 6);          // back-fill with more realistic if stretch was thin
+
+  return pick.slice(0, 6);
 }
 
 // ── Swim potential badge ────────────────────────────────────────
