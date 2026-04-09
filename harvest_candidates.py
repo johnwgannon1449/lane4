@@ -1372,12 +1372,14 @@ _DDG_QUERIES: dict[str, list[str]] = {
 _CATEGORY_PAGE_TYPE = {'pool': 'swim', 'student_life': 'student_life', 'campus': 'campus'}
 
 
-def fetch_candidates_for_category(school: str, category: str) -> list[dict]:
+def fetch_candidates_for_category(school: str, category: str,
+                                   target: int = 20) -> list[dict]:
     """Fetch additional candidates for a specific display category.
 
     Priority: (1) site-restricted DDG on school domain, (2) Google CSE,
-    (3) general DDG fallback, (4) Wikimedia Commons.  Deduplicates against
-    the existing manifest so every press returns genuinely new images.
+    (3) general DDG fallback (always runs when under target — DDG bug fix),
+    (4) Wikimedia Commons.  Deduplicates against the existing manifest so
+    every press returns genuinely new images.
     """
     domains_cache = _load_domains()
     existing_urls: set[str] = {c['url'] for c in load_manifest().get(school, [])}
@@ -1406,44 +1408,57 @@ def fetch_candidates_for_category(school: str, category: str) -> list[dict]:
                              f'site:{domain_host} aquatic center',
                              f'site:{domain_host} natatorium',
                              f'site:{domain_host} swimming diving',
-                             f'site:{domain_host} swim team aquatics'],
+                             f'site:{domain_host} swim team aquatics',
+                             f'site:{domain_host} recreation center pool',
+                             f'site:{domain_host} athletics aquatics'],
             'campus':       [f'site:{domain_host} campus aerial buildings',
                              f'site:{domain_host} campus visit tour',
+                             f'site:{domain_host} campus life',
                              f'site:{domain_host} campus'],
             'student_life': [f'site:{domain_host} student life campus',
-                             f'site:{domain_host} students campus life'],
+                             f'site:{domain_host} students campus life',
+                             f'site:{domain_host} student activities events'],
         }
         for q in _SITE_Q.get(category, _SITE_Q['campus']):
-            for img in _ddg_image_search(q, page_type=page_type, n=10):
+            if len(new_results) >= target:
+                break
+            for img in _ddg_image_search(q, page_type=page_type, n=12):
                 img['score'] = round(img.get('score', 2.0) + 1.5, 3)
                 _add_if_new(img)
-            if len(new_results) >= 24:
-                break
 
     # ── Google CSE (best quality when key + cx are valid) ────────────────────
-    cse_before = len(new_results)
-    if GOOGLE_CSE_KEY:
+    if GOOGLE_CSE_KEY and len(new_results) < target:
         for q in queries:
+            if len(new_results) >= target:
+                break
             for start in (1, 11):  # two pages = up to 20 results per query
                 for img in _google_cse_search(q, page_type=page_type, n=10, start=start):
                     _add_if_new(img)
-                if len(new_results) >= 24:
+                if len(new_results) >= target:
                     break
-            if len(new_results) >= 24:
-                break
 
-    # ── General DDG fallback (quoted school name, last resort) ───────────────
-    if len(new_results) == cse_before:
+    # ── General DDG fallback — ALWAYS runs when still under target ────────────
+    # Bug fix: previously only ran when CSE added zero results (wrong — CSE can
+    # add 2–3 images and block DDG from filling the remaining 10+ slots).
+    if len(new_results) < target:
         ddg_queries = [q.format(school=sq)
                        for q in _DDG_QUERIES.get(category, _DDG_QUERIES['campus'])]
+        # Pool gets extra fallback queries for schools without named natatoriums
+        if category == 'pool':
+            ddg_queries += [
+                f'"{sq}" recreation center swimming pool',
+                f'"{sq}" athletic facility pool',
+                f'"{sq}" varsity pool facility',
+                f'"{sq}" swim meet pool',
+            ]
         for q in ddg_queries:
-            for img in _ddg_image_search(q, page_type=page_type, n=10):
+            if len(new_results) >= target:
+                break
+            for img in _ddg_image_search(q, page_type=page_type, n=12):
                 # Penalise (but keep) images not mentioning this school
                 if not _url_mentions_school(school, img):
                     img['score'] = round(img.get('score', 2.0) - 1.0, 3)
                 _add_if_new(img)
-            if len(new_results) >= 24:
-                break
 
     # ── Wikimedia Commons (campus only — supplements DDG results) ────────────
     # Pool and student_life are skipped here: Commons returns generic hotel/resort

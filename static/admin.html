@@ -310,9 +310,10 @@ header {
 .status-msg { font-size:0.83rem; color:var(--muted); padding:0.6rem 0; }
 .status-msg.ok  { color:var(--green); }
 .status-msg.err { color:var(--red); }
-.section-status { font-size:0.78rem; color:var(--muted); min-height:1.2rem; }
-.section-status.ok  { color:var(--green); }
-.section-status.err { color:var(--red); }
+.section-status { font-size:0.78rem; color:var(--muted); min-height:1.2rem; display:flex; align-items:center; gap:0.3rem; }
+.section-status.ok   { color:var(--green); }
+.section-status.err  { color:var(--red); }
+.section-status.warn { color:#D97706; }
 
 /* ── Admins panel ── */
 #view-admins { padding:2.5rem; max-width:580px; }
@@ -584,14 +585,146 @@ function refreshSchoolDot(name) {
 }
 
 // ══════════════════════════════════════════════════════════════════════════
-// SCHOOL DETAIL
+// FILL ENGINE — session-token-gated, parallel, per-section with retry
 // ══════════════════════════════════════════════════════════════════════════
-const TARGET_PER_CAT = 16;   // desired candidate count per section
+const TARGET_PER_CAT = 16;   // desired real candidates per section
+const MAX_FILL_RETRIES = 3;  // retry attempts per section
+let _SCHOOL_TOKEN = 0;       // incremented on every selectSchool — stale jobs check this
+
+// Per-section status: idle | loading | retrying | complete | exhausted | failed
+const _SEC = {
+  campus: { status: 'idle', count: 0 },
+  pool:   { status: 'idle', count: 0 },
+  life:   { status: 'idle', count: 0 },
+};
+
+function _sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+function _realCount(category) {
+  return CURRENT_CANDIDATES.filter(c => c.category === category && !c._pinned).length;
+}
+
+function _setSectionStatus(type, status, count) {
+  const catKey = typeToCategory(type);
+  _SEC[type] = { status, count };
+
+  const el = document.getElementById(`sec-status-${type}`);
+  if (!el) return;
+
+  const spinner = `<span class="spinner-dark"></span>`;
+  const labels = {
+    idle:      '',
+    loading:   `${spinner} Loading candidates…`,
+    retrying:  `${spinner} ${count} / ${TARGET_PER_CAT} — retrying…`,
+    complete:  `✓ ${count} loaded`,
+    exhausted: count > 0 ? `Only ${count} usable found` : `No results found`,
+    failed:    `⚠ Failed — click Fetch More to retry`,
+  };
+
+  const isGood = status === 'complete';
+  const isWarn = status === 'exhausted';
+  const isErr  = status === 'failed';
+  el.innerHTML = labels[status] || '';
+  el.className = `section-status${isGood ? ' ok' : isErr ? ' err' : isWarn ? ' warn' : ''}`;
+
+  // Update the candidate count label inside the section
+  const grid = document.getElementById(`cand-grid-${type}`);
+  const label = grid ? grid.previousElementSibling : null;
+  if (label && label.classList.contains('cands-label')) {
+    const pinned = CURRENT_CANDIDATES.filter(c => c.category === catKey && c._pinned).length;
+    label.textContent = `Candidates · ${count}${pinned > 0 ? ` + ${pinned} saved` : ''}`;
+  }
+}
+
+// Core fill loop for one section — retries until TARGET or exhausted.
+// Guarded by session token so stale school changes don't corrupt state.
+async function _fillSection(type, category, name, token, { retries = MAX_FILL_RETRIES, forceRefresh = false } = {}) {
+  const btn = document.getElementById(`btn-more-${type}`);
+  if (btn) btn.disabled = true;
+
+  for (let attempt = 0; attempt < retries; attempt++) {
+    // Guard: has the user moved to a different school?
+    if (_SCHOOL_TOKEN !== token || ACTIVE_SCHOOL !== name) return;
+
+    const currentCount = _realCount(category);
+    if (currentCount >= TARGET_PER_CAT && !forceRefresh) {
+      _setSectionStatus(type, 'complete', currentCount);
+      if (btn) { btn.disabled = false; btn.textContent = 'Fetch More'; }
+      return;
+    }
+
+    _setSectionStatus(type, attempt === 0 ? 'loading' : 'retrying', currentCount);
+
+    try {
+      const res = await fetch('/api/ua/fetch-more', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ school: name, category }),
+      });
+      const data = await res.json();
+
+      // Guard again after the await
+      if (_SCHOOL_TOKEN !== token || ACTIVE_SCHOOL !== name) return;
+
+      if (res.ok && Array.isArray(data.candidates)) {
+        CURRENT_CANDIDATES = data.candidates;
+        _injectSavedIntoPool();
+        _rerenderSection(type);
+        const newCount = _realCount(category);
+        if (newCount >= TARGET_PER_CAT) {
+          _setSectionStatus(type, 'complete', newCount);
+          if (btn) { btn.disabled = false; btn.textContent = 'Fetch More'; }
+          return;
+        }
+        // More data came back but still under target — retry if attempts remain
+        if (attempt < retries - 1) {
+          await _sleep(1500);
+          forceRefresh = false; // only force on first call
+          continue;
+        }
+        _setSectionStatus(type, 'exhausted', newCount);
+      } else {
+        // API error — retry after backoff
+        if (attempt < retries - 1) {
+          await _sleep(2500);
+          continue;
+        }
+        _setSectionStatus(type, 'failed', _realCount(category));
+      }
+    } catch(e) {
+      if (_SCHOOL_TOKEN !== token || ACTIVE_SCHOOL !== name) return;
+      if (attempt < retries - 1) {
+        _setSectionStatus(type, 'retrying', _realCount(category));
+        await _sleep(2500);
+        continue;
+      }
+      _setSectionStatus(type, 'failed', _realCount(category));
+    }
+    break;
+  }
+
+  if (_SCHOOL_TOKEN === token && ACTIVE_SCHOOL === name) {
+    if (btn) { btn.disabled = false; btn.textContent = 'Fetch More'; }
+  }
+}
+
+// Launch fill for all three sections in parallel.
+function _autoFillSections(name, token) {
+  // Fire and forget — each section manages its own state.
+  // Parallel (no await) so a slow Pool doesn't block Campus/Life.
+  _fillSection('campus', 'campus',       name, token);
+  _fillSection('pool',   'pool',         name, token);
+  _fillSection('life',   'student_life', name, token);
+}
 
 async function selectSchool(name) {
+  const token = ++_SCHOOL_TOKEN;   // invalidate all prior school's async jobs
   ACTIVE_SCHOOL = name;
   SEL = { campus: [], pool: [], life: [] };
   CURRENT_CANDIDATES = [];
+  _SEC.campus = { status: 'idle', count: 0 };
+  _SEC.pool   = { status: 'idle', count: 0 };
+  _SEC.life   = { status: 'idle', count: 0 };
 
   document.querySelectorAll('.school-item').forEach(el =>
     el.classList.toggle('active', el.dataset.school === name)
@@ -601,35 +734,34 @@ async function selectSchool(name) {
   panel.innerHTML = '<div class="status-msg">Loading…</div>';
 
   try {
-    const res  = await fetch('/api/ua/candidates/' + encodeURIComponent(name));
+    const res = await fetch('/api/ua/candidates/' + encodeURIComponent(name));
     if (!res.ok) throw new Error(await res.text());
     const data = await res.json();
+
+    if (_SCHOOL_TOKEN !== token) return;  // user switched schools during fetch
 
     CURRENT_CANDIDATES = data.candidates || [];
     CURRENT_STORED     = data.stored     || {};
 
-    // Pre-populate SEL from saved curated data
     const cur = data.curated || {};
     SEL.campus = [...(cur.hero_images         || [])];
     SEL.pool   = [...(cur.pool_images         || [])];
     SEL.life   = [...(cur.student_life_images || [])];
 
-    // Always inject previously saved images into the candidate pool so they
-    // are always visible and clearly marked even if not in the current manifest
     _injectSavedIntoPool();
-
     renderDetail();
 
-    // Auto-populate sections below threshold — non-blocking background fetch
-    _autoFillSections(name);
+    // Kick off parallel auto-fill for sections below target
+    _autoFillSections(name, token);
 
   } catch(e) {
-    panel.innerHTML = `<div class="status-msg err">Failed to load: ${e.message}</div>`;
+    if (_SCHOOL_TOKEN === token) {
+      panel.innerHTML = `<div class="status-msg err">Failed to load: ${e.message}</div>`;
+    }
   }
 }
 
-// ── Inject saved/selected image URLs into CURRENT_CANDIDATES so they always
-//    appear at the top of their section grid, regardless of manifest state.
+// ── Inject saved/selected image URLs as pinned cards at the top ───────────
 function _injectSavedIntoPool() {
   const existing = new Set(CURRENT_CANDIDATES.map(c => c.url));
   const pairs = [
@@ -637,105 +769,11 @@ function _injectSavedIntoPool() {
     ...SEL.pool.map(u =>   ({ url: u, category: 'pool',         _pinned: true, score: 999 })),
     ...SEL.life.map(u =>   ({ url: u, category: 'student_life', _pinned: true, score: 999 })),
   ];
-  // Prepend in reverse so SEL order is preserved at the top
   for (const c of [...pairs].reverse()) {
     if (!existing.has(c.url)) {
       CURRENT_CANDIDATES.unshift(c);
       existing.add(c.url);
     }
-  }
-}
-
-// ── Auto-fill sections below TARGET_PER_CAT in the background.
-//    Does not block UI — updates each section in-place as results arrive.
-async function _autoFillSections(name) {
-  const realCands = CURRENT_CANDIDATES.filter(c => !c._pinned);
-
-  // If there are no real candidates at all, do a full school fetch first
-  if (realCands.length === 0) {
-    await _bgFullFetch(name);
-    return;
-  }
-
-  // Otherwise fill thin categories sequentially (to avoid hammering the server)
-  const cats = [
-    { cat: 'campus',       type: 'campus' },
-    { cat: 'pool',         type: 'pool'   },
-    { cat: 'student_life', type: 'life'   },
-  ];
-  for (const { cat, type } of cats) {
-    // Stop if the user has navigated away
-    if (ACTIVE_SCHOOL !== name) return;
-    const count = CURRENT_CANDIDATES.filter(c => c.category === cat && !c._pinned).length;
-    if (count < TARGET_PER_CAT) {
-      await _bgFetchCategory(name, cat, type);
-    }
-  }
-}
-
-// ── Full school fetch (for schools with zero candidates) ──────────────────
-async function _bgFullFetch(name) {
-  // Show spinner on all three section buttons
-  ['campus','pool','life'].forEach(t => {
-    const btn = document.getElementById(`btn-more-${t}`);
-    const sta = document.getElementById(`sec-status-${t}`);
-    if (btn) { btn.disabled = true; }
-    if (sta) { sta.textContent = 'Auto-filling…'; sta.className = 'section-status'; }
-  });
-  const btn = document.getElementById('btn-fetch');
-  if (btn) { btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Auto-fetching…'; }
-
-  try {
-    const res = await fetch('/api/ua/fetch-candidates', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ school: name }),
-    });
-    if (res.ok && ACTIVE_SCHOOL === name) {
-      const res2 = await fetch('/api/ua/candidates/' + encodeURIComponent(name));
-      if (res2.ok) {
-        const data2 = await res2.json();
-        CURRENT_CANDIDATES = data2.candidates || [];
-        _injectSavedIntoPool();
-        const s = ALL_SCHOOLS.find(x => x.name === name);
-        if (s) s.has_candidates = true;
-        refreshSchoolDot(name);
-        renderStats();
-        renderDetail();
-      }
-    }
-  } catch {}
-
-  if (ACTIVE_SCHOOL === name) {
-    const b = document.getElementById('btn-fetch');
-    if (b) { b.disabled = false; b.textContent = 'Refresh Candidates'; }
-  }
-}
-
-// ── Per-category background fill ─────────────────────────────────────────
-async function _bgFetchCategory(name, category, type) {
-  const btn = document.getElementById(`btn-more-${type}`);
-  const sta = document.getElementById(`sec-status-${type}`);
-  if (btn) { btn.disabled = true; }
-  if (sta) {
-    sta.innerHTML = '<span class="autofill-indicator"><span class="spinner-dark"></span> Auto-filling…</span>';
-    sta.className = 'section-status';
-  }
-  try {
-    const res = await fetch('/api/ua/fetch-more', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ school: name, category }),
-    });
-    const data = await res.json();
-    if (res.ok && data.candidates && ACTIVE_SCHOOL === name) {
-      CURRENT_CANDIDATES = data.candidates;
-      _injectSavedIntoPool();
-      _rerenderSection(type);
-      if (sta) { sta.textContent = ''; sta.className = 'section-status'; }
-    }
-  } catch {}
-  if (ACTIVE_SCHOOL === name) {
-    const b = document.getElementById(`btn-more-${type}`);
-    if (b) { b.disabled = false; b.textContent = 'Fetch More'; }
   }
 }
 
@@ -782,8 +820,10 @@ function renderTypeSection(type, label, emoji) {
   const catKey   = typeToCategory(type);
   const hasSelClass = selUrls.length > 0 ? 'has-sel' : '';
 
-  // Pinned (saved) images always first, then the rest sorted by score desc
-  const allCands  = CURRENT_CANDIDATES.filter(c => c.category === catKey);
+  // Pinned (saved) images always first, then the rest sorted by score desc.
+  // Filter out any entry without a valid URL to prevent blank cards.
+  const validUrl = c => typeof c.url === 'string' && c.url.startsWith('http');
+  const allCands  = CURRENT_CANDIDATES.filter(c => c.category === catKey && validUrl(c));
   const pinned    = allCands.filter(c => c._pinned);
   const regular   = allCands.filter(c => !c._pinned).sort((a,b) => (b.score||0) - (a.score||0));
   const cands     = [...pinned, ...regular];
@@ -1003,60 +1043,46 @@ async function fetchCandidates(name) {
 // FETCH MORE (PER SECTION)
 // ══════════════════════════════════════════════════════════════════════════
 async function fetchMoreSection(name, category, type) {
-  const btn = document.getElementById(`btn-more-${type}`);
-  const statusEl = document.getElementById(`sec-status-${type}`);
-  if (!btn) return;
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spinner-dark"></span> Fetching…';
-  if (statusEl) { statusEl.textContent = 'Fetching more images…'; statusEl.className = 'section-status'; }
-  try {
-    const res  = await fetch('/api/ua/fetch-more', {
-      method: 'POST', headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({school: name, category}),
-    });
-    const data = await res.json();
-    if (!res.ok || data.error) throw new Error(data.error || 'Unknown error');
-    CURRENT_CANDIDATES = data.candidates || CURRENT_CANDIDATES;
-    _injectSavedIntoPool();   // always keep saved images pinned
-    const added = data.added || 0;
-    showToast(`Added ${added} new image${added !== 1 ? 's' : ''} to ${type}`);
-    if (statusEl) { statusEl.textContent = `+${added} new`; statusEl.className = 'section-status ok'; }
-    _rerenderSection(type);
-    _updateSaveButtons();
-  } catch(e) {
-    showToast('Fetch more failed: ' + e.message);
-    if (statusEl) { statusEl.textContent = 'Failed: ' + e.message; statusEl.className = 'section-status err'; }
-    if (btn) { btn.disabled = false; btn.textContent = 'Fetch More'; }
-  }
+  // Delegate entirely to the fill engine — it handles retry, status, and state guards.
+  const token = _SCHOOL_TOKEN;
+  await _fillSection(type, category, name, token, { retries: MAX_FILL_RETRIES, forceRefresh: true });
+  _updateSaveButtons();
 }
 
 // ══════════════════════════════════════════════════════════════════════════
 // REDO SECTION
 // ══════════════════════════════════════════════════════════════════════════
 async function redoSection(name, category, type) {
-  if (!confirm(`Redo the ${type} section for ${name}? This will discard current ${type} candidates and fetch fresh ones.`)) return;
+  if (!confirm(`Redo the ${type} section for ${name}? This will wipe current ${type} candidates and fetch a fresh batch.`)) return;
+
+  const token = _SCHOOL_TOKEN;
   const btn = document.getElementById(`btn-redo-${type}`);
   const statusEl = document.getElementById(`sec-status-${type}`);
-  if (!btn) return;
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spinner-dark"></span> Redoing…';
-  if (statusEl) { statusEl.textContent = 'Fetching fresh images…'; statusEl.className = 'section-status'; }
+  if (btn) { btn.disabled = true; btn.innerHTML = '<span class="spinner-dark"></span> Clearing…'; }
+  if (statusEl) { statusEl.textContent = 'Clearing section…'; statusEl.className = 'section-status'; }
+
   try {
-    const res  = await fetch('/api/ua/redo-section', {
+    const res = await fetch('/api/ua/redo-section', {
       method: 'POST', headers: {'Content-Type':'application/json'},
       body: JSON.stringify({school: name, category}),
     });
     const data = await res.json();
     if (!res.ok || data.error) throw new Error(data.error || 'Unknown error');
+
+    if (_SCHOOL_TOKEN !== token || ACTIVE_SCHOOL !== name) return;
+
     CURRENT_CANDIDATES = data.candidates || CURRENT_CANDIDATES;
-    _injectSavedIntoPool();   // always keep saved images pinned
-    // Selections stay as-is — saved images are re-injected above
-    const count = data.count || 0;
-    showToast(`Redo complete — ${count} fresh ${type} images`);
-    if (statusEl) { statusEl.textContent = `${count} fresh`; statusEl.className = 'section-status ok'; }
+    _injectSavedIntoPool();
     _rerenderSection(type);
     _updateSaveButtons();
+    if (btn) { btn.disabled = false; btn.textContent = 'Redo Section'; }
+
+    // Immediately kick off a fresh fill — this is the "one-click redo + refill" behaviour
+    await _fillSection(type, category, name, token, { retries: MAX_FILL_RETRIES, forceRefresh: true });
+    _updateSaveButtons();
+
   } catch(e) {
+    if (_SCHOOL_TOKEN !== token || ACTIVE_SCHOOL !== name) return;
     showToast('Redo failed: ' + e.message);
     if (statusEl) { statusEl.textContent = 'Failed: ' + e.message; statusEl.className = 'section-status err'; }
     if (btn) { btn.disabled = false; btn.textContent = 'Redo Section'; }
