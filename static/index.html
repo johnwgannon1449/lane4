@@ -907,47 +907,38 @@
     .sc-ignore-seed-btn { font-size: 0.7rem; padding: 0.18rem 0.5rem; background: transparent; color: var(--muted); border: 1px solid var(--border); border-radius: 4px; cursor: pointer; }
     .sc-ignore-seed-btn:hover { background: var(--border); }
 
-    /* ── Academic scroll picker ──────────────────────────────────── */
-    #acad-picker-overlay {
+    /* ── Academic step modal ─────────────────────────────────────── */
+    #acad-step-overlay {
       position: fixed; inset: 0; z-index: 600; background: rgba(0,0,0,0.45);
-      display: none; align-items: flex-end;
+      display: none; align-items: center; justify-content: center; padding: 1rem;
     }
-    #acad-picker-overlay.open { display: flex; }
-    #acad-picker-sheet {
-      background: var(--white); border-radius: 20px 20px 0 0; width: 100%;
-      padding-bottom: env(safe-area-inset-bottom, 0px);
+    #acad-step-overlay.open { display: flex; }
+    #acad-step-sheet {
+      background: var(--white); border-radius: 18px; width: 100%; max-width: 310px;
+      padding: 1.5rem 1.25rem 1.25rem; box-shadow: 0 10px 36px rgba(0,0,0,0.22);
     }
-    .picker-header {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 1rem 1.25rem; border-bottom: 1px solid var(--border);
+    .step-modal-title {
+      font-weight: 700; font-size: 0.78rem; text-transform: uppercase;
+      letter-spacing: 0.1em; color: var(--muted); text-align: center; margin-bottom: 1.1rem;
     }
-    .picker-title { font-weight: 700; font-size: 1rem; color: var(--navy); }
-    .picker-btn { background: none; border: none; cursor: pointer; font-size: 0.95rem; padding: 4px 8px; border-radius: 6px; }
-    .picker-btn-cancel { color: var(--muted); }
-    .picker-btn-done { color: var(--blue); font-weight: 700; }
-    .picker-drum-wrap { position: relative; height: 216px; overflow: hidden; }
-    #picker-drum {
-      height: 100%; overflow-y: scroll; scroll-snap-type: y mandatory;
-      scrollbar-width: none; -ms-overflow-style: none;
+    .step-control-row {
+      display: flex; align-items: center; justify-content: center;
+      gap: 1.1rem; margin-bottom: 1.35rem;
     }
-    #picker-drum::-webkit-scrollbar { display: none; }
-    .picker-item {
-      height: 52px; scroll-snap-align: center; display: flex;
-      align-items: center; justify-content: center;
-      font-size: 1.2rem; font-weight: 600; color: var(--navy);
+    .step-btn {
+      width: 52px; height: 52px; border-radius: 50%; border: 2px solid var(--border);
+      background: var(--bg); color: var(--navy); font-size: 1.5rem; font-weight: 600;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      user-select: none; -webkit-user-select: none; transition: background 0.1s, border-color 0.1s;
+      touch-action: none;
     }
-    .picker-spacer { height: 82px; flex-shrink: 0; display: block; }
-    .picker-sel-band {
-      position: absolute; top: 50%; transform: translateY(-50%); left: 0; right: 0;
-      height: 52px; background: var(--bg);
-      border-top: 1.5px solid var(--border); border-bottom: 1.5px solid var(--border);
-      pointer-events: none; z-index: 2;
+    .step-btn:active { background: var(--blue); color: var(--white); border-color: var(--blue); }
+    .step-val-display {
+      font-family: 'Fraunces', serif; font-size: 2.4rem; font-weight: 700;
+      color: var(--navy); min-width: 7rem; text-align: center; line-height: 1;
     }
-    .picker-fade-top, .picker-fade-bot {
-      position: absolute; left: 0; right: 0; height: 72px; pointer-events: none; z-index: 3;
-    }
-    .picker-fade-top { top: 0; background: linear-gradient(to bottom, rgba(255,255,255,0.96), transparent); }
-    .picker-fade-bot { bottom: 0; background: linear-gradient(to top, rgba(255,255,255,0.96), transparent); }
+    .step-modal-actions { display: flex; gap: 0.5rem; }
+    .step-modal-actions button { flex: 1; }
     /* ── Academic status + tap line ──────────────────────────────── */
     .acad-status-pill {
       display: inline-block; font-size: 0.68rem; font-weight: 700;
@@ -1250,10 +1241,10 @@
 <div class="tab-panel" id="panel-profile">
   <div class="wrap">
 
-    <!-- ── PREMIUM RECRUITING HEADER (rendered by JS) ───────────── -->
+    <!-- A. Recruiting Profile Header (JS-rendered) -->
     <div id="prof-header-block" style="padding:1.5rem 0 1.1rem;border-bottom:1px solid var(--border);margin-bottom:1.5rem;"></div>
 
-    <!-- ── BEST TIMES (SCY) ───────────────────────────────────── -->
+    <!-- B. Best Times (SCY) -->
     <div id="prof-times-outer" style="margin-bottom:1.5rem;">
       <div class="section-label" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.5rem;">
         Best Times <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:0.75rem;color:var(--muted);">(SCY)</span>
@@ -1265,60 +1256,35 @@
       </div>
     </div>
 
-    <!-- ── ACADEMIC INTERESTS ─────────────────────────────────── -->
+    <!-- C. Academic Interests -->
     <div class="section-label" style="margin-top:0.25rem;">Academic Interests</div>
-    <div class="card" style="margin-bottom:1rem;padding:0.9rem 1rem;">
+    <div class="card" style="margin-bottom:1.25rem;padding:0.9rem 1rem;">
       <div style="font-size:0.78rem;color:var(--muted);margin-bottom:0.6rem;">Select up to 2 — shapes the academic section of every deep dive</div>
       <div id="major-picker-profile"></div>
     </div>
 
-    <!-- ── SWIMCLOUD ───────────────────────────────────────────── -->
-    <div class="section-label" style="margin-top:1rem;">SwimCloud Times</div>
-    <div class="card" id="sc-card" style="margin-bottom:1.5rem;padding:1rem 1.1rem;">
-      <div id="sc-status-inner">
-        <span class="sc-link-prompt">Link your SwimCloud profile to auto-import your best times ranked by motivational standards.</span><br/>
-        <button class="sc-link-btn" onclick="scOpenSearch()">Link SwimCloud Profile</button>
-      </div>
-    </div>
-
-    <!-- ── PREFERENCES ────────────────────────────────────────── -->
-    <div class="section-label" style="margin-top:2rem;">
-      Preferences
-      <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:0.78rem;color:var(--muted);">— personalizes your search results and deep dives</span>
-    </div>
-    <div class="card" style="margin-bottom:2rem;">
+    <!-- D. Recruiting Preferences -->
+    <div class="section-label" style="margin-top:0.25rem;">Recruiting Preferences</div>
+    <div class="card" style="margin-bottom:1.25rem;">
       <div id="pref-questions"></div>
       <div class="pref-save-row">
-        <button class="btn" onclick="savePreferences()">Save Preferences</button>
-        <span class="pref-saved-msg" id="pref-saved-msg">Preferences saved ✓</span>
+        <button class="btn" onclick="savePreferences()">Save</button>
+        <span class="pref-saved-msg" id="pref-saved-msg">Saved ✓</span>
       </div>
     </div>
 
-    <!-- ── ANYTHING ELSE ──────────────────────────────────────── -->
-    <div class="section-label" style="margin-top:1.5rem;">Anything else?
-      <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:0.78rem;color:var(--muted);">— optional, free-form</span>
-    </div>
-    <div class="card" style="margin-bottom:2rem;">
-      <div class="vibe-q">
-        <div class="vibe-q-label" style="margin-bottom:0.6rem;">Tell Lane4 anything else that matters — academics, team culture, geography, coaching style, family factors, anything</div>
-        <textarea id="other-prefs-input" class="other-prefs-ta"
-          placeholder="e.g. I want a school with a strong pre-med track near a city, and a team with a head coach who's invested in individual development…"
-          rows="4"
-          oninput="OTHER_PREFS = this.value; localStorage.setItem('lane4_other_prefs', OTHER_PREFS); schedulePush();"
-          onblur="clearTimeout(_syncTimer); pushToServer();"></textarea>
-      </div>
-    </div>
-
-    <!-- ── ACCOUNT / DANGER ZONE ─────────────────────────────── -->
-    <div class="danger-zone">
-      <div id="profile-account-row" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;padding-bottom:0.9rem;border-bottom:1px solid var(--border);">
-        <div>
-          <div style="font-size:0.75rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:0.15rem;">Signed in as</div>
-          <div id="profile-email" style="font-size:0.88rem;color:var(--navy);font-weight:500;">—</div>
+    <!-- E. Connections + Account (compact combined card) -->
+    <div class="section-label" style="margin-top:0.25rem;">Connections</div>
+    <div class="card" id="sc-card" style="margin-bottom:2rem;padding:1rem 1.1rem;">
+      <div id="sc-status-inner"></div>
+      <div style="margin-top:0.9rem;padding-top:0.9rem;border-top:1px solid var(--border);">
+        <div style="font-size:0.63rem;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--muted);margin-bottom:0.25rem;">Account</div>
+        <div id="profile-email" style="font-size:0.88rem;color:var(--navy);font-weight:500;margin-bottom:0.65rem;">—</div>
+        <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+          <button class="btn btn-sm" onclick="authLogout()" style="font-size:0.78rem;padding:6px 14px;background:none;border:1.5px solid var(--border);color:var(--muted);">Log Out</button>
+          <button class="btn btn-sm" onclick="confirmStartNewSwimmer()" style="font-size:0.78rem;padding:6px 14px;background:none;border:1.5px solid var(--border);color:var(--muted);">Start New Swimmer</button>
         </div>
-        <button class="btn btn-sm" onclick="authLogout()" style="font-size:0.78rem;padding:6px 13px;background:none;border:1.5px solid var(--border);color:var(--muted);">Sign out</button>
       </div>
-      <button class="btn btn-primary" onclick="confirmStartNewSwimmer()">Start New Swimmer</button>
     </div>
 
   </div>
@@ -4929,20 +4895,20 @@ function _academicTapHtml() {
   const aps = JAMES.apCount;
   const parts = [];
   parts.push(gpa
-    ? `<span class="acad-tap-seg" onclick="openPicker('gpa')">${gpa} GPA</span>`
-    : `<span class="acad-tap-empty" onclick="openPicker('gpa')">+ Add GPA</span>`);
+    ? `<span class="acad-tap-seg" onclick="openStepModal('gpa')">${gpa} GPA</span>`
+    : `<span class="acad-tap-empty" onclick="openStepModal('gpa')">+ Add GPA</span>`);
   parts.push('<span class="acad-tap-sep">•</span>');
   if (act) {
-    parts.push(`<span class="acad-tap-seg" onclick="openPicker('act')">${act} ACT</span>`);
+    parts.push(`<span class="acad-tap-seg" onclick="openStepModal('act')">${act} ACT</span>`);
   } else {
     parts.push(sat
-      ? `<span class="acad-tap-seg" onclick="openPicker('sat')">${sat} SAT</span>`
-      : `<span class="acad-tap-empty" onclick="openPicker('sat')">+ Add SAT</span>`);
+      ? `<span class="acad-tap-seg" onclick="openStepModal('sat')">${sat} SAT</span>`
+      : `<span class="acad-tap-empty" onclick="openStepModal('sat')">+ Add SAT</span>`);
   }
   parts.push('<span class="acad-tap-sep">•</span>');
   parts.push(aps
-    ? `<span class="acad-tap-seg" onclick="openPicker('ap')">${aps} APs</span>`
-    : `<span class="acad-tap-empty" onclick="openPicker('ap')">+ Add APs</span>`);
+    ? `<span class="acad-tap-seg" onclick="openStepModal('ap')">${aps} APs</span>`
+    : `<span class="acad-tap-empty" onclick="openStepModal('ap')">+ Add APs</span>`);
   return `<div class="acad-tap-row">${parts.join('')}</div>`;
 }
 
@@ -4988,88 +4954,102 @@ function renderProfile() {
   renderMajorPickerProfile();
   renderTimes();
   renderSwimCloud();
-  renderVibeQuestions();
   renderPreferences();
 }
 
-// ── Academic scroll picker ────────────────────────────────────────
-let _pickerType   = null;
-let _pickerValues = [];
-const _PICKER_H   = 52;
+// ── Academic step-control modal ──────────────────────────────────
+let _stepType = null;
+let _stepVal  = null;
+let _stepHoldTimer    = null;
+let _stepHoldInterval = null;
 
-function openPicker(type) {
-  const cfgs = {
-    gpa: {
-      title: 'GPA',
-      values: Array.from({length: Math.round((4.6-2.5)/0.1)+1}, (_,i) => +(2.5+i*0.1).toFixed(1)),
-      format: v => v.toFixed(1) + ' GPA',
-      current: () => JAMES.gpa,
-      def: 3.5
-    },
-    sat: {
-      title: 'SAT',
-      values: Array.from({length: (1600-940)/10+1}, (_,i) => 940+i*10),
-      format: v => v.toLocaleString() + ' SAT',
-      current: () => JAMES.sat,
-      def: 1240
-    },
-    ap: {
-      title: 'APs',
-      values: Array.from({length: 16}, (_,i) => i),
-      format: v => v === 1 ? '1 AP' : v + ' APs',
-      current: () => JAMES.apCount,
-      def: 6
-    },
-    act: {
-      title: 'ACT',
-      values: Array.from({length: 36-18+1}, (_,i) => 18+i),
-      format: v => v + ' ACT',
-      current: () => JAMES.actScore || ACT_SCORE,
-      def: 28
-    },
-  };
-  const cfg = cfgs[type];
+const _STEP_CFG = {
+  gpa: {
+    title: 'GPA',
+    min: 2.5, max: 4.6, step: 0.1, decimals: 1,
+    format: v => v.toFixed(1) + ' GPA',
+    current: () => JAMES.gpa, def: 3.5,
+  },
+  sat: {
+    title: 'SAT Score',
+    min: 940, max: 1600, step: 10, decimals: 0,
+    format: v => v.toLocaleString() + ' SAT',
+    current: () => JAMES.sat, def: 1240,
+  },
+  ap: {
+    title: 'APs by Graduation',
+    min: 0, max: 15, step: 1, decimals: 0,
+    format: v => v === 1 ? '1 AP' : v + ' APs',
+    current: () => JAMES.apCount, def: 6,
+  },
+  act: {
+    title: 'ACT Score',
+    min: 18, max: 36, step: 1, decimals: 0,
+    format: v => v + ' ACT',
+    current: () => JAMES.actScore || ACT_SCORE, def: 28,
+  },
+};
+
+function openStepModal(type) {
+  const cfg = _STEP_CFG[type];
   if (!cfg) return;
-  _pickerType   = type;
-  _pickerValues = cfg.values;
-
-  document.getElementById('picker-title').textContent = cfg.title;
-
-  const items = document.getElementById('picker-items');
-  items.innerHTML =
-    `<div class="picker-spacer"></div>` +
-    _pickerValues.map(v => `<div class="picker-item">${esc(cfg.format(v))}</div>`).join('') +
-    `<div class="picker-spacer"></div>`;
-
+  _stepType = type;
   const cur = cfg.current();
-  let idx = _pickerValues.findIndex(v => String(v) === String(cur));
-  if (idx < 0) idx = _pickerValues.findIndex(v => v === cfg.def);
-  if (idx < 0) idx = 0;
-
-  const drum = document.getElementById('picker-drum');
-  drum.scrollTop = idx * _PICKER_H;
-
-  document.getElementById('acad-picker-overlay').classList.add('open');
+  _stepVal = (cur !== null && cur !== undefined && cur !== '') ? +cur : cfg.def;
+  document.getElementById('step-modal-title').textContent = cfg.title;
+  _renderStepVal();
+  document.getElementById('acad-step-overlay').classList.add('open');
   document.body.style.overflow = 'hidden';
 }
 
-function closePicker() {
-  const ov = document.getElementById('acad-picker-overlay');
+function closeStepModal() {
+  const ov = document.getElementById('acad-step-overlay');
   if (ov) ov.classList.remove('open');
   document.body.style.overflow = '';
-  _pickerType = null;
+  _clearStepHold();
+  _stepType = null;
 }
 
-async function savePicker() {
-  if (!_pickerType) { closePicker(); return; }
-  const drum = document.getElementById('picker-drum');
-  const idx  = Math.max(0, Math.min(Math.round(drum.scrollTop / _PICKER_H), _pickerValues.length - 1));
-  const val  = _pickerValues[idx];
-  if (_pickerType === 'gpa')  { JAMES.gpa = val; }
-  if (_pickerType === 'sat')  { JAMES.sat = val; }
-  if (_pickerType === 'ap')   { JAMES.apCount = val; }
-  if (_pickerType === 'act')  { JAMES.actScore = val; ACT_SCORE = val; }
-  closePicker();
+function _renderStepVal() {
+  const cfg = _STEP_CFG[_stepType];
+  if (!cfg) return;
+  const el = document.getElementById('step-val-display');
+  if (el) el.textContent = cfg.format(_stepVal);
+}
+
+function _stepChange(dir) {
+  const cfg = _STEP_CFG[_stepType];
+  if (!cfg) return;
+  const raw = _stepVal + dir * cfg.step;
+  _stepVal = Math.max(cfg.min, Math.min(cfg.max,
+    cfg.decimals > 0 ? +raw.toFixed(cfg.decimals) : Math.round(raw)));
+  _renderStepVal();
+}
+
+function stepStart(dir) {
+  _stepChange(dir);
+  _clearStepHold();
+  _stepHoldTimer = setTimeout(() => {
+    _stepHoldInterval = setInterval(() => _stepChange(dir), 80);
+  }, 380);
+}
+
+function stepEnd() { _clearStepHold(); }
+
+function _clearStepHold() {
+  clearTimeout(_stepHoldTimer);
+  clearInterval(_stepHoldInterval);
+  _stepHoldTimer = null;
+  _stepHoldInterval = null;
+}
+
+async function saveStepModal() {
+  if (!_stepType) { closeStepModal(); return; }
+  if (_stepType === 'gpa') JAMES.gpa = _stepVal;
+  if (_stepType === 'sat') JAMES.sat = _stepVal;
+  if (_stepType === 'ap')  JAMES.apCount = _stepVal;
+  if (_stepType === 'act') { JAMES.actScore = _stepVal; ACT_SCORE = _stepVal; }
+  closeStepModal();
   renderProfile();
   saveToStorage();
   try { await refreshScores(); } catch(_) {}
@@ -5762,21 +5742,20 @@ function scDismissPR() {
 // ════════════════════════════════════════════════════════════════
 boot();
 </script>
-<!-- ── Academic scroll picker modal ──────────────────────────── -->
-<div id="acad-picker-overlay" onclick="closePicker()">
-  <div id="acad-picker-sheet" onclick="event.stopPropagation()">
-    <div class="picker-header">
-      <button class="picker-btn picker-btn-cancel" onclick="closePicker()">Cancel</button>
-      <div class="picker-title" id="picker-title">GPA</div>
-      <button class="picker-btn picker-btn-done" onclick="savePicker()">Done</button>
+<!-- ── Academic step-control modal ───────────────────────────── -->
+<div id="acad-step-overlay" onclick="closeStepModal()">
+  <div id="acad-step-sheet" onclick="event.stopPropagation()">
+    <div class="step-modal-title" id="step-modal-title">GPA</div>
+    <div class="step-control-row">
+      <button class="step-btn"
+        onpointerdown="stepStart(-1)" onpointerup="stepEnd()" onpointerleave="stepEnd()">−</button>
+      <div class="step-val-display" id="step-val-display">3.5 GPA</div>
+      <button class="step-btn"
+        onpointerdown="stepStart(1)" onpointerup="stepEnd()" onpointerleave="stepEnd()">+</button>
     </div>
-    <div class="picker-drum-wrap">
-      <div class="picker-sel-band"></div>
-      <div class="picker-fade-top"></div>
-      <div class="picker-fade-bot"></div>
-      <div id="picker-drum">
-        <div id="picker-items" style="display:flex;flex-direction:column;"></div>
-      </div>
+    <div class="step-modal-actions">
+      <button class="btn btn-secondary" onclick="closeStepModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveStepModal()">Save</button>
     </div>
   </div>
 </div>

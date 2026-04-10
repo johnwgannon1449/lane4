@@ -1,0 +1,145 @@
+The recent profile update only partially landed.
+Some header improvements were made, but the overall profile UX is still wrong.
+IMPORTANT
+Do NOT change:
+recruiting logic
+school ranking logic
+deep dive logic
+swim sync logic
+database schema
+This patch is profile UX / layout / interaction only.
+1. REMOVE THE CURRENT BOTTOM-SHEET SCROLL PICKERS
+The new academic pickers are a UX failure.
+Current problems:
+they open jammed at the bottom of the screen
+the selected value is visually blocked / awkward
+they feel clunky and confusing
+they do not feel premium
+Remove the current iOS-style drum wheel / bottom-sheet picker implementation entirely.
+Do NOT keep trying to patch it.
+2. REPLACE WITH SIMPLE CENTER MODAL + STEP CONTROLS
+Academic editing should use a small centered modal with very clean controls.
+For each field:
+GPA
+value range: 2.5 to 4.6
+step: 0.1
+SAT
+value range: 940 to 1600
+step: 10
+APs
+value range: 0 to 15
+step: 1
+ACT
+value range: 18 to 36
+step: 1
+Interaction pattern:
+[ – ]   1460   [ + ]
+or press-and-hold stepper buttons.
+Requirements:
+modal opens centered on page
+current selected value is large and obvious
+plus / minus controls are easy to tap
+include Save and Cancel
+this should feel fast and premium, not gimmicky
+Do NOT use wheels / drums / bottom sheets.
+3. KEEP THE HEADER IMPROVEMENTS, BUT FINISH THE PROFILE PAGE
+The top header is directionally better, but the profile page below it is still a mess.
+We need a true profile overhaul, not just a nicer top block.
+The page should have only these major sections, in this order:
+A. Recruiting Profile Header
+Keep and refine:
+swimmer name
+class year
+swim identity
+Lane4 Recruiting Profile
+academic line
+academic recruit status
+top events
+B. Best Times
+Keep as a clean single list.
+C. Academic Interests
+Keep majors.
+D. Recruiting Preferences
+Keep only the reduced set:
+geography
+academic intensity
+team competitiveness
+financial aid
+E. Connections / Account
+Small and compact:
+SwimCloud connected
+signed in as
+log out
+start new swimmer
+That is it.
+4. REMOVE THE OLD PROFILE CLUTTER
+The following must be removed from the main profile flow:
+oversized SwimCloud block styling
+giant preferences container styling
+freeform “Anything else?” box
+bottom sign-out section as a standalone full-width area
+leftover legacy layout sections from the old profile page
+Right now the page still looks like old profile UI underneath a new header.
+That must stop.
+This should feel like one coherent page, not old and new UI stitched together.
+5. MAKE SWIMCLOUD A SMALL CONNECTIONS CARD
+Current SwimCloud section is too visually large.
+Replace it with a compact panel near the bottom:
+Connections
+
+SwimCloud Connected
+Joseph Gannon • Neptune Swimming
+[View profile] [Re-sync] [Unlink]
+
+Account
+signedin@email.com
+[Log Out]   [Start New Swimmer]
+This section should be clearly secondary.
+The profile is about the athlete, not the connection plumbing.
+6. MOVE LOG OUT OUT OF THE PAGE BODY
+Do not leave Log Out buried at the bottom of the profile body.
+We already want Profile nav to open a dropdown.
+Implement / preserve this:
+Top nav Profile ▾
+View Profile
+Log Out
+Also keep Log Out available inside the compact Connections card.
+But remove the current ugly bottom-page sign-out row.
+7. TIGHTEN RECRUITING PREFERENCES
+The preferences section should be smaller and more intentional.
+Keep only:
+Where are you open to?
+Academic environment
+Team competitiveness
+Need-based aid
+Remove:
+freeform anything else
+extra helper copy
+oversized empty padding
+anything not directly used in search results or deep dives
+This should feel like a small tuning panel, not half the profile page.
+8. MAKE THE PROFILE FEEL PREMIUM
+Visual goals:
+tighter vertical spacing
+fewer giant boxes
+stronger typographic hierarchy
+clearer separation between primary content and secondary settings
+no oversized empty areas
+cleaner edit affordances
+The page should feel like:
+a premium athlete recruiting profile
+Not:
+a settings form with some athlete info on top
+9. SUCCESS CRITERIA
+After this patch:
+the bad bottom-sheet scroll pickers are gone
+academics edit in a clean centered modal with plus/minus controls
+old leftover profile UI is removed
+no freeform “Anything else?”
+SwimCloud and account become compact secondary sections
+Log Out is obvious in Profile dropdown
+the page feels cohesive, premium, and athlete-first
+The swimmer should feel like:
+“This is my recruiting profile.”
+Not:
+“This app still has forms everywhere.”
