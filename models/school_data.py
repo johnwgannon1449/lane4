@@ -1,0 +1,1807 @@
+# School metadata constants extracted from main.py
+# TEAM_NAME_MAP, CONF_DIVISION, SCHOOL_META, OOU_SCHOOL_META, _oou_lookup
+
+# These are the ONLY 9 places where workbook text differs from canonical names.
+# Flagged explicitly per guardrail — no silent guessing.
+# ---------------------------------------------------------------------------
+TEAM_NAME_MAP = {
+    "McDaniel College Swim Team":     ("McDaniel College",                 "trailing qualifier"),
+    "Rochester Institute of Technol": ("Rochester Institute of Technology", "truncated at 30 chars"),
+    "Rensselaer Polytechnic Institu": ("Rensselaer Polytechnic Institute",  "truncated at 30 chars"),
+    "Union College (New York)":        ("Union College",                     "parenthetical qualifier"),
+    "Massachusetts Institute of Tec": ("MIT",                               "truncated — schema uses 'MIT'"),
+    "Worcester Polytechnic Institut": ("Worcester Polytechnic Institute",   "truncated at 30 chars"),
+    "Wheaton College (Ma)":            ("Wheaton College (MA)",              "wrong casing"),
+    "Whitworth University Swim Team": ("Whitworth University",              "trailing qualifier"),
+    "California Institute of Techno": ("Caltech",                           "truncated — schema uses 'Caltech'"),
+    "Saint Johns University":          ("Saint John's University",           "missing apostrophe"),
+    "Harvard Men's Swimming":          ("Harvard University",                 "gendered PDF team name artifact"),
+    # UAA schools — snapshot uses full institutional names; SCHOOL_META uses short forms
+    "Brandeis University":             ("Brandeis",                          "SCHOOL_META uses short name"),
+    "Carnegie Mellon University":      ("Carnegie Mellon",                   "SCHOOL_META drops University"),
+    "Case Western Reserve Universit":  ("Case Western",                      "truncated + SCHOOL_META short name"),
+    "Case Western Reserve University": ("Case Western",                      "SCHOOL_META uses short name"),
+    "Emory University":                ("Emory",                             "SCHOOL_META drops University"),
+    "New York University":             ("NYU",                               "SCHOOL_META uses abbreviation"),
+    "University of Chicago":           ("Chicago",                           "SCHOOL_META uses city name"),
+    "University of Rochester":         ("Rochester",                         "SCHOOL_META uses city name"),
+    "Washington University St Louis":  ("Washington (Mo)",                   "SCHOOL_META uses location suffix"),
+    "Washington University in St. Lou":("Washington (Mo)",                   "SCHOOL_META uses location suffix"),
+}
+
+# ---------------------------------------------------------------------------
+# Conference → NCAA division label (used by build_school_universe)
+CONF_DIVISION: dict[str, str] = {
+    # ── D1 ────────────────────────────────────────────────────────────────────
+    "ACC":            "D1", "ASUN":          "D1", "America East":  "D1",
+    "Atlantic 10":    "D1", "Big 12":        "D1", "Big East":      "D1",
+    "Big Ten":        "D1", "Big West":      "D1", "CAA":           "D1",
+    "Horizon League": "D1", "Ivy League":    "D1", "MAAC":          "D1",
+    "MPSF":           "D1", "Patriot":       "D1", "SEC":           "D1",
+    "Summit League":  "D1", "WAC":           "D1",
+    # ── D2 ────────────────────────────────────────────────────────────────────
+    "GLIAC":          "D2", "PSAC":          "D2", "SAC":           "D2",
+    # ── D3 ────────────────────────────────────────────────────────────────────
+    "CCIW":           "D3", "Centennial":    "D3", "Colorado College": "D3",
+    "Landmark":       "D3", "Liberty League":"D3", "MAC":           "D3",
+    "MIAC":           "D3", "NCAC":          "D3", "NESCAC":        "D3",
+    "NEWMAC":         "D3", "NWC":           "D3", "ODAC":          "D3",
+    "SCIAC":          "D3", "UAA":           "D3",
+    # ── NAIA ──────────────────────────────────────────────────────────────────
+    "PCSC":           "NAIA",
+}
+
+# SCHOOL_META — per-school metadata for all 76 programs
+# Fields: accept (int %), satMedian (int), hiddenIvy (bool), stem (bool),
+#         merit ("none"|"moderate"|"high"), location (str), vibe (str),
+#         moonshot (bool, optional)
+# Keys must match canonical names after TEAM_NAME_MAP normalization.
+# ---------------------------------------------------------------------------
+SCHOOL_META = {
+    # ── CENTENNIAL ───────────────────────────────────────────────────────────
+    "Johns Hopkins University": {
+        "accept": 7, "satMedian": 1510, "sat25": 1530, "sat75": 1560, "gpaMean": 3.93, "hiddenIvy": True, "stem": True,
+        "merit": "none", "location": "Baltimore, MD",
+        "vibe": "Research powerhouse where pre-med and STEM culture run the campus",
+    },
+    "Gettysburg College": {
+        "accept": 43, "satMedian": 1230, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Gettysburg, PA",
+        "vibe": "Historic campus with strong Greek life and leadership culture",
+    },
+    "Swarthmore College": {
+        "accept": 7, "satMedian": 1505, "sat25": 1490, "sat75": 1550, "gpaMean": 3.91, "hiddenIvy": True, "stem": True,
+        "merit": "none", "location": "Swarthmore, PA",
+        "vibe": "Academically intense and collaborative with Quaker roots",
+    },
+    "Dickinson College": {
+        "accept": 48, "satMedian": 1235, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Carlisle, PA",
+        "vibe": "Sustainability-focused with strong international programs",
+    },
+    "Franklin & Marshall College": {
+        "accept": 34, "satMedian": 1280, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Lancaster, PA",
+        "vibe": "Pre-professional culture with strong pre-law and alumni network",
+    },
+    "Ursinus College": {
+        "accept": 67, "satMedian": 1130, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Collegeville, PA",
+        "vibe": "Warm undergraduate-focused campus with strong research access",
+    },
+    "Washington College": {
+        "accept": 75, "satMedian": 1095, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Chestertown, MD",
+        "vibe": "Small waterfront campus; close community and strong writing tradition",
+    },
+    "McDaniel College": {
+        "accept": 82, "satMedian": 1100, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Westminster, MD",
+        "vibe": "Friendly and personal campus with strong teacher education programs",
+    },
+    # ── LIBERTY LEAGUE ───────────────────────────────────────────────────────
+    "Ithaca College": {
+        "accept": 68, "satMedian": 1180, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "Ithaca, NY",
+        "vibe": "Creative and artsy; media, music, and performance everywhere",
+    },
+    "Rochester Institute of Technology": {
+        "accept": 73, "satMedian": 1295, "hiddenIvy": False, "stem": True,
+        "merit": "moderate", "location": "Rochester, NY",
+        "vibe": "Tech and project-driven culture built around co-ops and real careers",
+    },
+    "Rensselaer Polytechnic Institute": {
+        "accept": 63, "satMedian": 1410, "sat25": 1280, "sat75": 1480, "hiddenIvy": False, "stem": True,
+        "merit": "moderate", "location": "Troy, NY",
+        "vibe": "Pure engineering culture; hard-working students who live for problems",
+    },
+    "Clarkson University": {
+        "accept": 80, "satMedian": 1205, "hiddenIvy": False, "stem": True,
+        "merit": "high", "location": "Potsdam, NY",
+        "vibe": "Tight-knit STEM community in the North Country; outdoorsy and close",
+    },
+    "Union College": {
+        "accept": 38, "satMedian": 1335, "hiddenIvy": False, "stem": True,
+        "merit": "moderate", "location": "Schenectady, NY",
+        "vibe": "Liberal arts meets engineering; theme houses and strong traditions",
+    },
+    "Skidmore College": {
+        "accept": 29, "satMedian": 1300, "sat25": 1230, "sat75": 1390, "gpaMean": 3.76, "hiddenIvy": False, "stem": False,
+        "merit": "none", "location": "Saratoga Springs, NY",
+        "vibe": "Creative and arts-forward campus in a lively upstate NY town",
+    },
+    "Vassar College": {
+        "accept": 18, "satMedian": 1455, "sat25": 1400, "sat75": 1540, "gpaMean": 3.82, "hiddenIvy": True, "stem": False,
+        "merit": "none", "location": "Poughkeepsie, NY",
+        "vibe": "Progressive intellectual culture; students who love big ideas",
+    },
+    "St. Lawrence University": {
+        "accept": 60, "satMedian": 1230, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Canton, NY",
+        "vibe": "Outdoorsy North Country campus with a close community and athletics",
+    },
+    "Hobart and William Smith": {
+        "accept": 58, "satMedian": 1185, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Geneva, NY",
+        "vibe": "Lakeside dual-college campus with strong social scene and sailing",
+    },
+    "Bard College": {
+        "accept": 64, "satMedian": 1265, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "Annandale-on-Hudson, NY",
+        "vibe": "Artsy and progressive with discussion-heavy classes and bohemian feel",
+    },
+    # ── NCAC ─────────────────────────────────────────────────────────────────
+    "Denison University": {
+        "accept": 28, "satMedian": 1325, "sat25": 1200, "sat75": 1400, "gpaMean": 3.73, "hiddenIvy": True, "stem": False,
+        "merit": "high", "location": "Granville, OH",
+        "vibe": "Beautiful hilltop campus; ambitious academics and a strong social scene",
+    },
+    "Kenyon College": {
+        "accept": 33, "satMedian": 1370, "hiddenIvy": True, "stem": False,
+        "merit": "none", "location": "Gambier, OH",
+        "vibe": "Literary and deeply intellectual; famous writing program in rural Ohio",
+    },
+    "John Carroll University": {
+        "accept": 80, "satMedian": 1135, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "University Heights, OH",
+        "vibe": "Jesuit values; service-oriented with strong business programs",
+    },
+    "DePauw University": {
+        "accept": 67, "satMedian": 1195, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Greencastle, IN",
+        "vibe": "Greek life-heavy with strong communications and music programs",
+    },
+    "Wabash College": {
+        "accept": 69, "satMedian": 1165, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Crawfordsville, IN",
+        "vibe": "All-male liberal arts with intense brotherhood and strong traditions",
+    },
+    "College of Wooster": {
+        "accept": 57, "satMedian": 1195, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Wooster, OH",
+        "vibe": "Every senior writes a thesis; close-knit with strong independent study",
+    },
+    "Oberlin College": {
+        "accept": 33, "satMedian": 1385, "hiddenIvy": True, "stem": False,
+        "merit": "none", "location": "Oberlin, OH",
+        "vibe": "Progressive and artistic; famous conservatory and engaged campus politics",
+    },
+    "Ohio Wesleyan University": {
+        "accept": 83, "satMedian": 1150, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Delaware, OH",
+        "vibe": "Emphasis on global experience; internship-focused with civic engagement",
+    },
+    "Wittenberg University": {
+        "accept": 86, "satMedian": 1125, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Springfield, OH",
+        "vibe": "Lutheran-rooted campus; personal and strong in teacher education",
+    },
+    # ── NESCAC ───────────────────────────────────────────────────────────────
+    "Williams College": {
+        "accept": 9, "satMedian": 1510, "sat25": 1500, "sat75": 1560, "gpaMean": 3.94, "hiddenIvy": True, "stem": False,
+        "merit": "none", "location": "Williamstown, MA",
+        "vibe": "Consistently ranked #1 LAC; mountain campus with elite academics",
+    },
+    "Tufts University": {
+        "accept": 9, "satMedian": 1500, "sat25": 1390, "sat75": 1540, "gpaMean": 3.87, "hiddenIvy": True, "stem": True,
+        "merit": "none", "location": "Medford, MA",
+        "vibe": "Globally minded near Boston; research-intensive with elite academics",
+    },
+    "Amherst College": {
+        "accept": 9, "satMedian": 1515, "sat25": 1500, "sat75": 1560, "gpaMean": 3.93, "hiddenIvy": True, "stem": False,
+        "merit": "none", "location": "Amherst, MA",
+        "vibe": "Open curriculum, no required courses; fiercely intellectual with 5-College access",
+    },
+    "Connecticut College": {
+        "accept": 38, "satMedian": 1315, "hiddenIvy": False, "stem": False,
+        "merit": "none", "location": "New London, CT",
+        "vibe": "Student self-governance model; students run nearly everything on campus",
+    },
+    "Bates College": {
+        "accept": 13, "satMedian": 1430, "sat25": 1330, "sat75": 1500, "gpaMean": 3.78, "hiddenIvy": True, "stem": False,
+        "merit": "none", "location": "Lewiston, ME",
+        "vibe": "Politically engaged and outdoorsy; tight community in coastal Maine",
+    },
+    "Hamilton College": {
+        "accept": 14, "satMedian": 1440, "sat25": 1360, "sat75": 1500, "gpaMean": 3.79, "hiddenIvy": True, "stem": False,
+        "merit": "none", "location": "Clinton, NY",
+        "vibe": "Writing-intensive; every major leads to a thesis on a beautiful rural campus",
+    },
+    "Bowdoin College": {
+        "accept": 9, "satMedian": 1495, "sat25": 1470, "sat75": 1540, "gpaMean": 3.86, "hiddenIvy": True, "stem": False,
+        "merit": "none", "location": "Brunswick, ME",
+        "vibe": "Outdoorsy and intellectual in coastal Maine; sustainability and community",
+    },
+    "Middlebury College": {
+        "accept": 13, "satMedian": 1445, "sat25": 1390, "sat75": 1520, "gpaMean": 3.83, "hiddenIvy": True, "stem": False,
+        "merit": "none", "location": "Middlebury, VT",
+        "vibe": "Environmental passion meets rigorous academics in a beautiful Vermont setting",
+    },
+    "Colby College": {
+        "accept": 11, "satMedian": 1435, "sat25": 1360, "sat75": 1490, "gpaMean": 3.79, "hiddenIvy": True, "stem": False,
+        "merit": "none", "location": "Waterville, ME",
+        "vibe": "Liberal arts in the Maine wilderness; entrepreneurial with a tight community",
+    },
+    "Trinity College": {
+        "accept": 34, "satMedian": 1310, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "Hartford, CT",
+        "vibe": "Classic New England campus with strong city partnerships and Greek life",
+    },
+    "Wesleyan University": {
+        "accept": 17, "satMedian": 1455, "sat25": 1410, "sat75": 1530, "gpaMean": 3.85, "hiddenIvy": True, "stem": False,
+        "merit": "none", "location": "Middletown, CT",
+        "vibe": "Quirky and politically active; film and social sciences define the culture",
+    },
+    # ── NEWMAC ───────────────────────────────────────────────────────────────
+    "MIT": {
+        "accept": 4, "satMedian": 1565, "sat25": 1500, "sat75": 1580, "gpaMean": 3.97, "hiddenIvy": False, "stem": True,
+        "merit": "none", "moonshot": True, "location": "Cambridge, MA",
+        "vibe": "The world's most famous STEM institution; unmatched resources and intensity",
+    },
+    "U.S. Coast Guard Academy": {
+        "accept": 14, "satMedian": 1265, "sat25": 1190, "sat75": 1360, "hiddenIvy": False, "stem": True,
+        "merit": "none", "location": "New London, CT",
+        "vibe": "Military service academy; full scholarship, intense discipline, meaningful mission",
+    },
+    "Worcester Polytechnic Institute": {
+        "accept": 58, "satMedian": 1370, "hiddenIvy": False, "stem": True,
+        "merit": "high", "location": "Worcester, MA",
+        "vibe": "Project-based learning at a tech school with strong industry connections",
+    },
+    "Babson College": {
+        "accept": 24, "satMedian": 1330, "sat25": 1260, "sat75": 1410, "gpaMean": 3.65, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "Wellesley, MA",
+        "vibe": "#1 entrepreneurship school; every freshman runs a real business for credit",
+    },
+    "Wheaton College (MA)": {
+        "accept": 71, "satMedian": 1200, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Norton, MA",
+        "vibe": "Small and personal campus reinventing itself with a bold connected curriculum",
+    },
+    "Springfield College": {
+        "accept": 77, "satMedian": 1095, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Springfield, MA",
+        "vibe": "Birthplace of basketball; health sciences and PT define the campus culture",
+    },
+    "Clark University": {
+        "accept": 52, "satMedian": 1225, "hiddenIvy": False, "stem": True,
+        "merit": "high", "location": "Worcester, MA",
+        "vibe": "Free fifth year for any grad program; research-first culture in an urban campus",
+    },
+    # ── NWC ──────────────────────────────────────────────────────────────────
+    "Whitworth University": {
+        "accept": 89, "satMedian": 1175, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Spokane, WA",
+        "vibe": "Christian liberal arts in the Pacific Northwest with strong education programs",
+    },
+    "University of Puget Sound": {
+        "accept": 87, "satMedian": 1200, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Tacoma, WA",
+        "vibe": "NW outdoor culture meets classic liberal arts; tight-knit campus",
+    },
+    "Linfield University": {
+        "accept": 88, "satMedian": 1120, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "McMinnville, OR",
+        "vibe": "Small Oregon liberal arts in wine country; personal and community-focused",
+    },
+    "Whitman College": {
+        "accept": 46, "satMedian": 1295, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "Walla Walla, WA",
+        "vibe": "Quirky Pacific NW intellectual gem with outdoor access and high grad school rates",
+    },
+    "Pacific Lutheran University": {
+        "accept": 87, "satMedian": 1125, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Tacoma, WA",
+        "vibe": "Lutheran values in the Pacific Northwest; strong music and education programs",
+    },
+    "Lewis & Clark College": {
+        "accept": 65, "satMedian": 1275, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "Portland, OR",
+        "vibe": "Hippie-intellectual Portland culture; environmental law and social justice focus",
+    },
+    "Willamette University": {
+        "accept": 81, "satMedian": 1190, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Salem, OR",
+        "vibe": "NW LAC with strong law school connections and active civic engagement",
+    },
+    "George Fox University": {
+        "accept": 93, "satMedian": 1090, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Newberg, OR",
+        "vibe": "Christian university with strong community, athletics, and business programs",
+    },
+    # ── SCIAC ────────────────────────────────────────────────────────────────
+    "Pomona-Pitzer": {
+        "accept": 7, "satMedian": 1510, "sat25": 1470, "sat75": 1550, "gpaMean": 3.91, "hiddenIvy": True, "stem": True,
+        "merit": "none", "location": "Claremont, CA",
+        "vibe": "Elite SoCal LAC in the Claremont Consortium; 5 colleges sharing resources",
+    },
+    "Claremont-Mudd-Scripps": {
+        "accept": 9, "satMedian": 1490, "sat25": 1470, "sat75": 1560, "gpaMean": 3.9, "hiddenIvy": True, "stem": True,
+        "merit": "none", "location": "Claremont, CA",
+        "vibe": "Harvey Mudd's STEM intensity meets Scripps' creative and humanistic edge",
+    },
+    "Chapman University": {
+        "accept": 52, "satMedian": 1230, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Orange, CA",
+        "vibe": "Film school prestige meets SoCal sunshine; entrepreneurial and media-forward",
+    },
+    "Caltech": {
+        "accept": 3, "satMedian": 1560, "sat25": 1530, "sat75": 1580, "gpaMean": 3.97, "hiddenIvy": False, "stem": True,
+        "merit": "none", "moonshot": True, "location": "Pasadena, CA",
+        "vibe": "Hardest STEM school to enter in America; Nobel laureates teach undergrads",
+    },
+    "Whittier College": {
+        "accept": 73, "satMedian": 1100, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Whittier, CA",
+        "vibe": "Liberal arts with strong Latino heritage and close community feel in SoCal",
+    },
+    "Cal Lutheran University": {
+        "accept": 61, "satMedian": 1125, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Thousand Oaks, CA",
+        "vibe": "Lutheran roots in Ventura County; strong business and communications programs",
+    },
+    "Occidental College": {
+        "accept": 37, "satMedian": 1295, "hiddenIvy": False, "stem": False,
+        "merit": "none", "location": "Los Angeles, CA",
+        "vibe": "Progressive urban LAC in Eagle Rock; politics and international relations culture",
+    },
+    "University of Redlands": {
+        "accept": 67, "satMedian": 1140, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Redlands, CA",
+        "vibe": "Inland Empire LAC; strong music, environmental studies, and pre-law culture",
+    },
+    "University of La Verne": {
+        "accept": 65, "satMedian": 1080, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "La Verne, CA",
+        "vibe": "Close-knit SoCal campus with strong business and criminal justice programs",
+    },
+    # ── UAA ──────────────────────────────────────────────────────────────────
+    # Names are abbreviated in the workbook — kept as-is (not truncation, just short forms)
+    "Emory": {
+        "accept": 12, "satMedian": 1470, "sat25": 1360, "sat75": 1530, "gpaMean": 3.87, "hiddenIvy": False, "stem": False,
+        "merit": "none", "location": "Atlanta, GA",
+        "vibe": "Research powerhouse in Atlanta; dominant pre-med culture and strong social scene",
+    },
+    "NYU": {
+        "accept": 12, "satMedian": 1460, "sat25": 1350, "sat75": 1530, "gpaMean": 3.79, "hiddenIvy": False, "stem": False,
+        "merit": "none", "location": "New York, NY",
+        "vibe": "Urban campus without borders; Greenwich Village is your quad in the heart of NYC",
+    },
+    "Chicago": {
+        "accept": 6, "satMedian": 1530, "sat25": 1510, "sat75": 1570, "gpaMean": 3.94, "hiddenIvy": False, "stem": False,
+        "merit": "none", "location": "Chicago, IL",
+        "vibe": "Intellectual intensity above all else; famous for taking ideas more seriously than sleep",
+    },
+    "Washington (Mo)": {
+        "accept": 14, "satMedian": 1500, "sat25": 1480, "sat75": 1560, "gpaMean": 3.94, "hiddenIvy": False, "stem": True,
+        "merit": "none", "location": "St. Louis, MO",
+        "vibe": "Research powerhouse in the Midwest; strong pre-med, engineering, and business",
+    },
+    "Carnegie Mellon": {
+        "accept": 11, "satMedian": 1535, "sat25": 1460, "sat75": 1560, "gpaMean": 3.87, "hiddenIvy": False, "stem": True,
+        "merit": "none", "location": "Pittsburgh, PA",
+        "vibe": "Top CS and engineering with a rigorous, career-driven campus culture",
+    },
+    "Case Western": {
+        "accept": 30, "satMedian": 1455, "sat25": 1430, "sat75": 1560, "gpaMean": 3.82, "hiddenIvy": False, "stem": True,
+        "merit": "high", "location": "Cleveland, OH",
+        "vibe": "STEM-focused research university; pre-med and engineering define campus life",
+    },
+    "Rochester": {
+        "accept": 29, "satMedian": 1440, "sat25": 1380, "sat75": 1530, "gpaMean": 3.83, "hiddenIvy": False, "stem": True,
+        "merit": "high", "location": "Rochester, NY",
+        "vibe": "Research-intensive with strong engineering, optics, and pre-med programs",
+    },
+    "Brandeis": {
+        "accept": 37, "satMedian": 1420, "sat25": 1380, "sat75": 1530, "gpaMean": 3.79, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "Waltham, MA",
+        "vibe": "Social justice mission and research strength near Boston with a unique founding story",
+    },
+    # ── MIAC ─────────────────────────────────────────────────────────────────
+    "Gustavus Adolphus College": {
+        "accept": 72, "satMedian": 1195, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Saint Peter, MN",
+        "vibe": "Lutheran liberal arts with Swedish heritage and strong athletics in Minnesota",
+    },
+    "Carleton College": {
+        "accept": 18, "satMedian": 1495, "sat25": 1470, "sat75": 1540, "gpaMean": 3.89, "hiddenIvy": False, "stem": False,
+        "merit": "none", "location": "Northfield, MN",
+        "vibe": "One of the Midwest's best LACs; intellectual culture with top grad school placement",
+    },
+    "Saint John's University": {
+        "accept": 75, "satMedian": 1145, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Collegeville, MN",
+        "vibe": "Coordinate college with Saint Benedict; Benedictine tradition and strong community",
+    },
+    "Macalester College": {
+        "accept": 28, "satMedian": 1430, "sat25": 1380, "sat75": 1520, "gpaMean": 3.85, "hiddenIvy": False, "stem": False,
+        "merit": "none", "location": "Saint Paul, MN",
+        "vibe": "Globally focused and politically active urban LAC with high international enrollment",
+    },
+    "Saint Olaf College": {
+        "accept": 48, "satMedian": 1270, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Northfield, MN",
+        "vibe": "Norwegian Lutheran roots; world-famous music programs and close Minnesota community",
+    },
+    "Hamline University": {
+        "accept": 82, "satMedian": 1130, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Saint Paul, MN",
+        "vibe": "Urban liberal arts with social justice focus; personal and accessible in Twin Cities",
+    },
+    # ── MIAC (remaining 4 — 6 already above) ─────────────────────────────────
+    "Augsburg University": {
+        "accept": 72, "satMedian": 1115, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Minneapolis, MN",
+        "vibe": "Urban Lutheran campus in Minneapolis with strong social work and nursing programs",
+    },
+    "College of Saint Benedict": {
+        "accept": 69, "satMedian": 1175, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "St. Joseph, MN",
+        "vibe": "Women's college partnered with Saint John's; strong Catholic identity and close community",
+    },
+    "Concordia College": {
+        "accept": 60, "satMedian": 1150, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Moorhead, MN",
+        "vibe": "Lutheran liberal arts on the Minnesota-North Dakota border; strong music and global programs",
+    },
+    "Saint Catherine University": {
+        "accept": 62, "satMedian": 1110, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "St. Paul, MN",
+        "vibe": "Catholic women's university in the Twin Cities with strong health sciences programs",
+    },
+    # ── NEWMAC (remaining 3 — 7 already above) ───────────────────────────────
+    "Mount Holyoke College": {
+        "accept": 49, "satMedian": 1335, "hiddenIvy": False, "stem": False,
+        "merit": "none", "location": "South Hadley, MA",
+        "vibe": "Historic women's college in the Pioneer Valley; Seven Sisters with strong social science traditions",
+    },
+    "Smith College": {
+        "accept": 33, "satMedian": 1390, "hiddenIvy": False, "stem": False,
+        "merit": "none", "location": "Northampton, MA",
+        "vibe": "Premier women's liberal arts college; consistently top-ranked with exceptional alumnae network",
+    },
+    "Wellesley College": {
+        "accept": 14, "satMedian": 1440, "sat25": 1370, "sat75": 1510, "gpaMean": 3.87, "hiddenIvy": True, "stem": False,
+        "merit": "none", "location": "Wellesley, MA",
+        "vibe": "Elite women's college near Boston; Hillary Clinton and Madeline Albright territory",
+    },
+    # ── ODAC ─────────────────────────────────────────────────────────────────
+    "Bridgewater College": {
+        "accept": 63, "satMedian": 1100, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Bridgewater, VA",
+        "vibe": "Small Church of the Brethren college in the Shenandoah Valley with a close athletic community",
+    },
+    "Greensboro College": {
+        "accept": 47, "satMedian": 1065, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Greensboro, NC",
+        "vibe": "Methodist-affiliated urban college; small and personal with strong arts and teacher ed programs",
+    },
+    "Hampden-Sydney College": {
+        "accept": 65, "satMedian": 1185, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Hampden Sydney, VA",
+        "vibe": "All-male liberal arts college with a strong honor code tradition and close brotherhood",
+    },
+    "Hollins University": {
+        "accept": 62, "satMedian": 1160, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Roanoke, VA",
+        "vibe": "Women's university in the Blue Ridge with creative writing fame and an equestrian program",
+    },
+    "Randolph College": {
+        "accept": 62, "satMedian": 1150, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Lynchburg, VA",
+        "vibe": "Small coed liberal arts college with an equestrian program and strong individualized attention",
+    },
+    "Randolph-Macon College": {
+        "accept": 58, "satMedian": 1175, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Ashland, VA",
+        "vibe": "Methodist-affiliated LAC near Richmond with strong pre-law and business tracks",
+    },
+    "Roanoke College Swimming Maroo": {
+        "accept": 65, "satMedian": 1150, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Salem, VA",
+        "vibe": "Lutheran liberal arts college in the Blue Ridge foothills with a strong athletics tradition",
+    },
+    "Sweet Briar College": {
+        "accept": 47, "satMedian": 1130, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Sweet Briar, VA",
+        "vibe": "Women's college with an equestrian program on a stunning Virginia estate; intimate and resilient",
+    },
+    "University of Lynchburg": {
+        "accept": 60, "satMedian": 1120, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Lynchburg, VA",
+        "vibe": "Disciples of Christ-affiliated campus with strong health sciences and a growing athletics profile",
+    },
+    "Virginia Wesleyan University": {
+        "accept": 74, "satMedian": 1090, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Norfolk, VA",
+        "vibe": "Methodist university near Virginia Beach with a student-centered campus and growing athletics",
+    },
+    "Washington and Lee University": {
+        "accept": 21, "satMedian": 1455, "sat25": 1390, "sat75": 1520, "gpaMean": 3.82, "hiddenIvy": True, "stem": False,
+        "merit": "none", "location": "Lexington, VA",
+        "vibe": "Honor-code-driven LAC with an exceptional law school pipeline and Southern intellectual tradition",
+    },
+    # ── CCIW ─────────────────────────────────────────────────────────────────
+    "Augustana College": {
+        "accept": 66, "satMedian": 1175, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Rock Island, IL",
+        "vibe": "Swedish Lutheran LAC on the Mississippi with strong pre-health and music programs",
+    },
+    "Carroll University": {
+        "accept": 71, "satMedian": 1165, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Waukesha, WI",
+        "vibe": "Presbyterian-rooted campus near Milwaukee with strong physical therapy and nursing programs",
+    },
+    "Carthage College": {
+        "accept": 62, "satMedian": 1155, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Kenosha, WI",
+        "vibe": "Lutheran-affiliated college on Lake Michigan with a semester-based calendar and strong arts",
+    },
+    "Illinois Wesleyan University": {
+        "accept": 61, "satMedian": 1205, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Bloomington, IL",
+        "vibe": "Highly selective for a Midwest LAC; strong theatre, pre-law, and business in a college town",
+    },
+    "Millikin University": {
+        "accept": 59, "satMedian": 1115, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Decatur, IL",
+        "vibe": "Performance-focused LAC with a nationally known entrepreneurship program and strong arts",
+    },
+    "North Central College": {
+        "accept": 62, "satMedian": 1190, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Naperville, IL",
+        "vibe": "Methodist-affiliated college in Chicago's suburbs with strong business and pre-professional programs",
+    },
+    "Wheaton College": {
+        "accept": 64, "satMedian": 1300, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Wheaton, IL",
+        "vibe": "Evangelical Christian LAC with rigorous academics; produces many graduate school attendees",
+    },
+    # ── LANDMARK ─────────────────────────────────────────────────────────────
+    "Catholic University of America": {
+        "accept": 76, "satMedian": 1175, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Washington, DC",
+        "vibe": "The national university of the Catholic Church; DC location enables strong internship access",
+    },
+    "Drew University": {
+        "accept": 63, "satMedian": 1205, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Madison, NJ",
+        "vibe": "Methodis LAC in NJ suburbs; small and personal with strong connections to NYC and Wall Street",
+    },
+    "Elizabethtown College": {
+        "accept": 67, "satMedian": 1165, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Elizabethtown, PA",
+        "vibe": "Church of the Brethren college in Lancaster County; strong occupational therapy and social work",
+    },
+    "Goucher College": {
+        "accept": 73, "satMedian": 1200, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Baltimore, MD",
+        "vibe": "Globally focused LAC near Baltimore; every student studies abroad and faculty are highly accessible",
+    },
+    "Juniata College": {
+        "accept": 68, "satMedian": 1165, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Huntingdon, PA",
+        "vibe": "Student-designed majors and strong pre-health in rural Pennsylvania; personal and innovative",
+    },
+    "Lycoming College": {
+        "accept": 72, "satMedian": 1100, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Williamsport, PA",
+        "vibe": "Methodist LAC in north-central PA; generous merit aid and strong undergraduate research",
+    },
+    "Moravian University": {
+        "accept": 70, "satMedian": 1145, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Bethlehem, PA",
+        "vibe": "Historic Moravian campus in Bethlehem; strong nursing, business, and community engagement",
+    },
+    "Susquehanna University": {
+        "accept": 81, "satMedian": 1160, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Selinsgrove, PA",
+        "vibe": "Lutheran LAC on the Susquehanna River; strong communications and creative writing programs",
+    },
+    "University of Scranton": {
+        "accept": 72, "satMedian": 1195, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Scranton, PA",
+        "vibe": "Jesuit university in the Pocono foothills; strong business, health sciences, and service culture",
+    },
+    "Wilkes University": {
+        "accept": 73, "satMedian": 1125, "hiddenIvy": False, "stem": True,
+        "merit": "high", "location": "Wilkes-Barre, PA",
+        "vibe": "Engineering and health sciences focus in northeast PA; hands-on and career-oriented",
+    },
+    # ── MAC ───────────────────────────────────────────────────────────────────
+    "Arcadia University": {
+        "accept": 62, "satMedian": 1175, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Glenside, PA",
+        "vibe": "Global-focused LAC in Philadelphia's suburbs with a stunning castle campus and strong study-abroad",
+    },
+    "Fairleigh Dickinson University": {
+        "accept": 80, "satMedian": 1085, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Teaneck, NJ",
+        "vibe": "Multi-campus metro NJ university with strong business and pharmacy programs",
+    },
+    "Hood College Swimming": {
+        "accept": 62, "satMedian": 1170, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Frederick, MD",
+        "vibe": "Small coed LAC in Frederick's historic district with strong biomedical science and education",
+    },
+    "King's College": {
+        "accept": 71, "satMedian": 1115, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Wilkes-Barre, PA",
+        "vibe": "Catholic LAC in northeast PA with strong physician assistant and business programs",
+    },
+    "Lebanon Valley College": {
+        "accept": 66, "satMedian": 1155, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Annville, PA",
+        "vibe": "United Methodist LAC in central PA; strong physical therapy, music, and athletic training",
+    },
+    "Messiah University": {
+        "accept": 63, "satMedian": 1195, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Mechanicsburg, PA",
+        "vibe": "Christian university with strong nursing, engineering, and social work near Harrisburg",
+    },
+    "Misericordia University": {
+        "accept": 68, "satMedian": 1125, "hiddenIvy": False, "stem": True,
+        "merit": "high", "location": "Dallas, PA",
+        "vibe": "Health sciences powerhouse in northeast PA; outstanding PT, OT, and nursing programs",
+    },
+    "Stevens Institute of Technolog": {
+        "accept": 42, "satMedian": 1400, "sat25": 1310, "sat75": 1480, "hiddenIvy": False, "stem": True,
+        "merit": "moderate", "location": "Hoboken, NJ",
+        "vibe": "Engineering and tech university on the Hudson with a stunning Manhattan skyline view",
+    },
+    "Stevenson University": {
+        "accept": 57, "satMedian": 1100, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Owings Mills, MD",
+        "vibe": "Career-focused university near Baltimore with strong forensics, nursing, and business programs",
+    },
+    "Widener University": {
+        "accept": 64, "satMedian": 1115, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Chester, PA",
+        "vibe": "Engineering, nursing, and law-pipeline campus near Philadelphia with strong professional programs",
+    },
+    "York College of Pennsylvania": {
+        "accept": 61, "satMedian": 1145, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "York, PA",
+        "vibe": "Business and nursing-focused university in south-central PA; career-oriented and affordable",
+    },
+    # ── MAAC ─────────────────────────────────────────────────────────────────
+    "Canisius University": {
+        "accept": 81, "satMedian": 1155, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Buffalo, NY",
+        "vibe": "Jesuit university in Buffalo with strong business, health sciences, and athletics identity",
+    },
+    "Fairfield University": {
+        "accept": 60, "satMedian": 1275, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "Fairfield, CT",
+        "vibe": "Jesuit university on Connecticut's Gold Coast; strong business and nursing near NYC",
+    },
+    "Iona University": {
+        "accept": 72, "satMedian": 1120, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "New Rochelle, NY",
+        "vibe": "Irish Christian Brothers university 20 minutes from Manhattan; strong business and communications",
+    },
+    "Manhattan University": {
+        "accept": 76, "satMedian": 1165, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Riverdale, NY",
+        "vibe": "Christian Brothers university in the Bronx with strong engineering and education programs",
+    },
+    "Marist University": {
+        "accept": 49, "satMedian": 1230, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "Poughkeepsie, NY",
+        "vibe": "Scenic Hudson Valley campus with strong fashion, communications, and business programs",
+    },
+    "Merrimack College": {
+        "accept": 77, "satMedian": 1175, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "North Andover, MA",
+        "vibe": "Augustinian university north of Boston with strong health sciences and business programs",
+    },
+    "Mount Saint Mary's University": {
+        "accept": 75, "satMedian": 1115, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Emmitsburg, MD",
+        "vibe": "Catholic university in the Blue Ridge foothills with a close community and strong nursing",
+    },
+    "Niagara University": {
+        "accept": 78, "satMedian": 1115, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Niagara University, NY",
+        "vibe": "Vincentian Catholic university near Niagara Falls; strong education, social work, and business",
+    },
+    "Rider University": {
+        "accept": 72, "satMedian": 1120, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Lawrenceville, NJ",
+        "vibe": "Business and education-focused university near Princeton with Westminster Choir College",
+    },
+    "Sacred Heart University": {
+        "accept": 72, "satMedian": 1180, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "Fairfield, CT",
+        "vibe": "Catholic university in affluent coastal Connecticut with strong PT, nursing, and athletics",
+    },
+    "Saint Peter's University": {
+        "accept": 80, "satMedian": 1095, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Jersey City, NJ",
+        "vibe": "Jesuit university across from lower Manhattan; strong business and pre-health in an urban setting",
+    },
+    "Siena University": {
+        "accept": 71, "satMedian": 1145, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Loudonville, NY",
+        "vibe": "Franciscan Catholic university near Albany with strong business, biology, and social work",
+    },
+    # ── PATRIOT ──────────────────────────────────────────────────────────────
+    "American University": {
+        "accept": 35, "satMedian": 1310, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "Washington, DC",
+        "vibe": "International relations and politics powerhouse in DC; students go straight from class to Capitol Hill",
+    },
+    "Boston University": {
+        "accept": 14, "satMedian": 1450, "sat25": 1350, "sat75": 1500, "gpaMean": 3.73, "hiddenIvy": False, "stem": True,
+        "merit": "moderate", "location": "Boston, MA",
+        "vibe": "Large research university on the Charles with elite engineering, business, and communications",
+    },
+    "Bucknell University": {
+        "accept": 36, "satMedian": 1345, "hiddenIvy": False, "stem": True,
+        "merit": "moderate", "location": "Lewisburg, PA",
+        "vibe": "Selective LAC-meets-engineering in central PA; strong alumni network and Greek life culture",
+    },
+    "Colgate University": {
+        "accept": 21, "satMedian": 1420, "sat25": 1380, "sat75": 1510, "gpaMean": 3.82, "hiddenIvy": True, "stem": False,
+        "merit": "none", "location": "Hamilton, NY",
+        "vibe": "Highly selective rural NY LAC with strong preprofessional culture and loyal athletic fanbase",
+    },
+    "College of the Holy Cross": {
+        "accept": 32, "satMedian": 1360, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "Worcester, MA",
+        "vibe": "Jesuit LAC with rigorous core curriculum and strong Jesuit service tradition in New England",
+    },
+    "Lafayette College": {
+        "accept": 33, "satMedian": 1325, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "Easton, PA",
+        "vibe": "Engineering-meets-liberal arts on a hilltop campus; strong alumni network and Division 1 rivalry",
+    },
+    "Lehigh University": {
+        "accept": 33, "satMedian": 1385, "hiddenIvy": False, "stem": True,
+        "merit": "moderate", "location": "Bethlehem, PA",
+        "vibe": "STEM-forward research university with a strong engineering and business culture in the Lehigh Valley",
+    },
+    "Loyola University": {
+        "accept": 54, "satMedian": 1265, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "Baltimore, MD",
+        "vibe": "Jesuit university overlooking Baltimore; strong business, communications, and service programs",
+    },
+    "United States Military Academy": {
+        "accept": 9, "satMedian": 1270, "sat25": 1200, "sat75": 1400, "hiddenIvy": False, "stem": True,
+        "merit": "none", "location": "West Point, NY",
+        "vibe": "West Point — full scholarship, intense commitment, and guaranteed career in military leadership",
+    },
+    "United States Navy Academy": {
+        "accept": 9, "satMedian": 1290, "sat25": 1220, "sat75": 1390, "hiddenIvy": False, "stem": True,
+        "merit": "none", "location": "Annapolis, MD",
+        "vibe": "Annapolis — full scholarship, rigorous engineering curriculum, and a Navy or Marine career ahead",
+    },
+    # ── IVY LEAGUE ───────────────────────────────────────────────────────────
+    "Brown University": {
+        "accept": 5, "satMedian": 1510, "sat25": 1440, "sat75": 1570, "gpaMean": 3.94, "hiddenIvy": False, "ivyLeague": True, "stem": False,
+        "merit": "none", "location": "Providence, RI",
+        "vibe": "Open Curriculum Ivy gives students unusual freedom — Brown is the most academically flexible of the eight",
+    },
+    "Columbia University": {
+        "accept": 4, "satMedian": 1530, "sat25": 1470, "sat75": 1560, "gpaMean": 3.92, "hiddenIvy": False, "ivyLeague": True, "stem": True,
+        "merit": "none", "location": "New York, NY",
+        "vibe": "Ivy in Morningside Heights — the Core Curriculum meets the greatest city on earth",
+    },
+    "Cornell University": {
+        "accept": 7, "satMedian": 1490, "sat25": 1400, "sat75": 1560, "gpaMean": 3.89, "hiddenIvy": False, "ivyLeague": True, "stem": True,
+        "merit": "none", "location": "Ithaca, NY",
+        "vibe": "The broadest Ivy — engineering, agriculture, hotel, and arts all on one spectacular gorge campus",
+    },
+    "Dartmouth College": {
+        "accept": 6, "satMedian": 1510, "sat25": 1440, "sat75": 1560, "gpaMean": 3.95, "hiddenIvy": False, "ivyLeague": True, "stem": False,
+        "merit": "none", "location": "Hanover, NH",
+        "vibe": "Smallest Ivy with fierce alumni loyalty; outdoor culture, Greek life, and an undergrad-first focus",
+    },
+    "Harvard University": {
+        "accept": 3, "satMedian": 1540, "sat25": 1460, "sat75": 1570, "gpaMean": 3.95, "hiddenIvy": False, "ivyLeague": True, "stem": True,
+        "merit": "none", "location": "Cambridge, MA",
+        "vibe": "The most recognized university brand in the world — extraordinary in every dimension",
+    },
+    "Princeton University": {
+        "accept": 4, "satMedian": 1530, "sat25": 1460, "sat75": 1570, "gpaMean": 3.94, "hiddenIvy": False, "ivyLeague": True, "stem": True,
+        "merit": "none", "location": "Princeton, NJ",
+        "vibe": "No-loan financial aid and the strongest endowment per student of any university in America",
+    },
+    "University of Pennsylvania": {
+        "accept": 6, "satMedian": 1510, "sat25": 1450, "sat75": 1560, "gpaMean": 3.9, "hiddenIvy": False, "ivyLeague": True, "stem": True,
+        "merit": "none", "location": "Philadelphia, PA",
+        "vibe": "Wharton, Penn Medicine, and interdisciplinary programs in one of America's greatest college cities",
+    },
+    "Yale University": {
+        "accept": 5, "satMedian": 1535, "sat25": 1460, "sat75": 1570, "gpaMean": 3.95, "hiddenIvy": False, "ivyLeague": True, "stem": False,
+        "merit": "none", "location": "New Haven, CT",
+        "vibe": "Architecture, drama, law, and music in a campus that looks like what college is supposed to look like",
+    },
+    # ── ACC ───────────────────────────────────────────────────────────────────
+    "Boston College": {
+        "accept": 19, "satMedian": 1410, "sat25": 1360, "sat75": 1520, "gpaMean": 3.87, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "Chestnut Hill, MA",
+        "vibe": "Jesuit university with major football culture and strong pre-law, finance, and nursing programs",
+    },
+    "California, University of, Ber": {
+        "accept": 14, "satMedian": 1415, "sat25": 1310, "sat75": 1530, "gpaMean": 3.9, "hiddenIvy": False, "stem": True,
+        "merit": "none", "location": "Berkeley, CA",
+        "vibe": "The flagship UC — world-class research, Nobel laureates, and legendary campus activism",
+    },
+    "Duke University": {
+        "accept": 6, "satMedian": 1530, "sat25": 1450, "sat75": 1570, "gpaMean": 3.94, "hiddenIvy": False, "stem": True,
+        "merit": "none", "location": "Durham, NC",
+        "vibe": "Elite research university with a powerhouse basketball program and a beautiful Gothic campus",
+    },
+    "Florida State University": {
+        "accept": 25, "satMedian": 1265, "sat25": 1230, "sat75": 1390, "gpaMean": 3.69, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "Tallahassee, FL",
+        "vibe": "Major public flagship with strong business, film, and performing arts in Florida's capital city",
+    },
+    "Georgia Institute of Technolog": {
+        "accept": 17, "satMedian": 1440, "sat25": 1360, "sat75": 1530, "gpaMean": 3.87, "hiddenIvy": False, "stem": True,
+        "merit": "moderate", "location": "Atlanta, GA",
+        "vibe": "Top-3 public engineering school; demanding but with a world-class alumni network and Atlanta access",
+    },
+    "Louisville, University of": {
+        "accept": 70, "satMedian": 1170, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Louisville, KY",
+        "vibe": "Urban research university in Louisville with strong health sciences, business, and engineering",
+    },
+    "North Carolina State Universit": {
+        "accept": 47, "satMedian": 1290, "hiddenIvy": False, "stem": True,
+        "merit": "moderate", "location": "Raleigh, NC",
+        "vibe": "NC's engineering and agriculture flagship in Research Triangle; career-focused and highly connected",
+    },
+    "North Carolina, University of": {
+        "accept": 17, "satMedian": 1340, "sat25": 1300, "sat75": 1490, "gpaMean": 3.89, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "Chapel Hill, NC",
+        "vibe": "The birthplace of public higher education in America; research powerhouse with a legendary campus",
+    },
+    "Notre Dame, University of": {
+        "accept": 13, "satMedian": 1500, "sat25": 1400, "sat75": 1550, "gpaMean": 3.94, "hiddenIvy": False, "stem": True,
+        "merit": "none", "location": "Notre Dame, IN",
+        "vibe": "Elite Catholic university with a massive football identity, strong business, and an unmatched alumni network",
+    },
+    "Pittsburgh, University of": {
+        "accept": 53, "satMedian": 1310, "hiddenIvy": False, "stem": True,
+        "merit": "high", "location": "Pittsburgh, PA",
+        "vibe": "Major research university in a revitalized city; strong STEM, business, and health sciences",
+    },
+    "Southern Methodist University": {
+        "accept": 45, "satMedian": 1380, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Dallas, TX",
+        "vibe": "Well-heeled Dallas campus with Dedman School of Law and a strong pre-law and business culture",
+    },
+    "Stanford University": {
+        "accept": 4, "satMedian": 1530, "sat25": 1440, "sat75": 1570, "gpaMean": 3.96, "hiddenIvy": False, "stem": True,
+        "merit": "none", "moonshot": True, "location": "Stanford, CA",
+        "vibe": "Silicon Valley's university — extraordinary in every dimension, and nearly impossible to enter",
+    },
+    "University of Miami (Florida)": {
+        "accept": 23, "satMedian": 1380, "sat25": 1290, "sat75": 1440, "gpaMean": 3.75, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "Coral Gables, FL",
+        "vibe": "Selective private research university in South Florida; strong music, marine science, and business",
+    },
+    "VA Tech": {
+        "accept": 57, "satMedian": 1305, "hiddenIvy": False, "stem": True,
+        "merit": "moderate", "location": "Blacksburg, VA",
+        "vibe": "Engineering and architecture powerhouse in the Blue Ridge; strong Hokie athletics culture",
+    },
+    "Virginia, University of": {
+        "accept": 20, "satMedian": 1425, "sat25": 1340, "sat75": 1520, "gpaMean": 3.88, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "Charlottesville, VA",
+        "vibe": "Jefferson's academical village — academically elite public flagship with strong honor culture",
+    },
+    # ── BIG TEN ───────────────────────────────────────────────────────────────
+    "Indiana University": {
+        "accept": 82, "satMedian": 1220, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "Bloomington, IN",
+        "vibe": "Big Ten flagship with a world-class music school, strong business, and a classic college-town feel",
+    },
+    "Iowa, University of": {
+        "accept": 85, "satMedian": 1185, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "Iowa City, IA",
+        "vibe": "Big Ten flagship with the nation's top-ranked creative writing program and strong health sciences",
+    },
+    "Michigan, University of": {
+        "accept": 18, "satMedian": 1445, "sat25": 1340, "sat75": 1530, "gpaMean": 3.89, "hiddenIvy": False, "stem": True,
+        "merit": "none", "location": "Ann Arbor, MI",
+        "vibe": "The Michigan Difference — elite public university with a massive endowment and All-American campus",
+    },
+    "Northwestern University": {
+        "accept": 7, "satMedian": 1530, "sat25": 1440, "sat75": 1550, "gpaMean": 3.94, "hiddenIvy": True, "stem": True,
+        "merit": "none", "location": "Evanston, IL",
+        "vibe": "The Ivy of the Midwest — elite research university on Lake Michigan with a powerhouse journalism school",
+    },
+    "Ohio State University": {
+        "accept": 52, "satMedian": 1335, "hiddenIvy": False, "stem": True,
+        "merit": "moderate", "location": "Columbus, OH",
+        "vibe": "Massive flagship with world-class research, medicine, and one of America's most passionate fanbases",
+    },
+    "Pennsylvania State University": {
+        "accept": 56, "satMedian": 1245, "hiddenIvy": False, "stem": True,
+        "merit": "moderate", "location": "State College, PA",
+        "vibe": "Penn State pride is legendary; massive STEM and business programs in a quintessential college town",
+    },
+    "Purdue University": {
+        "accept": 68, "satMedian": 1290, "hiddenIvy": False, "stem": True,
+        "merit": "moderate", "location": "West Lafayette, IN",
+        "vibe": "Engineering powerhouse that launched more Fortune 500 leaders than almost any school in America",
+    },
+    "Rutgers University": {
+        "accept": 67, "satMedian": 1225, "hiddenIvy": False, "stem": True,
+        "merit": "moderate", "location": "New Brunswick, NJ",
+        "vibe": "New Jersey's flagship public university with strong pharmacy, business, and public policy programs",
+    },
+    "University of California, Los": {
+        "accept": 9, "satMedian": 1405, "sat25": 1280, "sat75": 1530, "gpaMean": 3.9, "hiddenIvy": False, "stem": True,
+        "merit": "none", "location": "Los Angeles, CA",
+        "vibe": "UCLA — elite public research university in LA with Bruin athletics and world-class film and medicine",
+    },
+    "University of Illinois": {
+        "accept": 62, "satMedian": 1310, "hiddenIvy": False, "stem": True,
+        "merit": "moderate", "location": "Urbana-Champaign, IL",
+        "vibe": "Top-5 public engineering school; massive campus with elite CS, business, and architecture programs",
+    },
+    "University of Minnesota": {
+        "accept": 75, "satMedian": 1275, "hiddenIvy": False, "stem": True,
+        "merit": "moderate", "location": "Minneapolis, MN",
+        "vibe": "Big Ten flagship in the Twin Cities with strong medical, law, and business schools",
+    },
+    "University of Nebraska-Lincoln": {
+        "accept": 80, "satMedian": 1190, "hiddenIvy": False, "stem": True,
+        "merit": "moderate", "location": "Lincoln, NE",
+        "vibe": "Nebraska Cornhusker pride meets strong engineering and agriculture in a welcoming college town",
+    },
+    "University of Southern Califor": {
+        "accept": 12, "satMedian": 1455, "sat25": 1360, "sat75": 1530, "gpaMean": 3.87, "hiddenIvy": False, "stem": True,
+        "merit": "none", "location": "Los Angeles, CA",
+        "vibe": "USC — elite private research university in LA; elite alumni network, film school, and strong athletics",
+    },
+    "Wisconsin, University of, Madi": {
+        "accept": 57, "satMedian": 1355, "hiddenIvy": False, "stem": True,
+        "merit": "moderate", "location": "Madison, WI",
+        "vibe": "UW-Madison — top public research university on a beautiful lakefront campus; strong in nearly everything",
+    },
+    # ── SEC ───────────────────────────────────────────────────────────────────
+    "Auburn University": {
+        "accept": 80, "satMedian": 1255, "hiddenIvy": False, "stem": True,
+        "merit": "moderate", "location": "Auburn, AL",
+        "vibe": "War Eagle — strong engineering, business, and pharmacy programs in a tight-knit college town",
+    },
+    "Georgia, University of": {
+        "accept": 45, "satMedian": 1340, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "Athens, GA",
+        "vibe": "Georgia Bulldogs — elite public flagship with a legendary campus town and strong business programs",
+    },
+    "Kentucky, University of": {
+        "accept": 95, "satMedian": 1195, "hiddenIvy": False, "stem": True,
+        "merit": "moderate", "location": "Lexington, KY",
+        "vibe": "Wildcat country — strong pharmacy, business, and engineering programs in the Horse Capital of the World",
+    },
+    "Louisiana State University": {
+        "accept": 73, "satMedian": 1215, "hiddenIvy": False, "stem": True,
+        "merit": "moderate", "location": "Baton Rouge, LA",
+        "vibe": "LSU — Tiger Stadium is the loudest place in college football; strong engineering and mass comm",
+    },
+    "Missouri": {
+        "accept": 80, "satMedian": 1225, "hiddenIvy": False, "stem": True,
+        "merit": "moderate", "location": "Columbia, MO",
+        "vibe": "Mizzou — top journalism school in America and a flagship with strong agriculture and business",
+    },
+    "South Carolina, University of": {
+        "accept": 66, "satMedian": 1250, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "Columbia, SC",
+        "vibe": "Gamecocks flagship with a top-ranked international business school and strong nursing programs",
+    },
+    "Texas A&M University": {
+        "accept": 57, "satMedian": 1245, "hiddenIvy": False, "stem": True,
+        "merit": "moderate", "location": "College Station, TX",
+        "vibe": "Aggie tradition runs deep — one of America's largest engineering and agriculture programs",
+    },
+    "University of Alabama": {
+        "accept": 80, "satMedian": 1215, "hiddenIvy": False, "stem": True,
+        "merit": "moderate", "location": "Tuscaloosa, AL",
+        "vibe": "Roll Tide — massive flagship with strong engineering, business, and enormous SEC football culture",
+    },
+    "University of Arkansas": {
+        "accept": 79, "satMedian": 1205, "hiddenIvy": False, "stem": True,
+        "merit": "moderate", "location": "Fayetteville, AR",
+        "vibe": "Razorbacks flagship in the Ozarks with a strong Walton School of Business and growing research profile",
+    },
+    "University of Florida": {
+        "accept": 23, "satMedian": 1385, "sat25": 1310, "sat75": 1470, "gpaMean": 3.89, "hiddenIvy": False, "stem": True,
+        "merit": "moderate", "location": "Gainesville, FL",
+        "vibe": "Top-5 public university — UF has elite research, Gator athletics, and an outstanding value proposition",
+    },
+    "University of Tennessee": {
+        "accept": 67, "satMedian": 1235, "hiddenIvy": False, "stem": True,
+        "merit": "moderate", "location": "Knoxville, TN",
+        "vibe": "Vol Nation — Tennessee orange campus on the Tennessee River with strong business and engineering",
+    },
+    "University of Texas": {
+        "accept": 29, "satMedian": 1360, "sat25": 1230, "sat75": 1460, "gpaMean": 3.72, "hiddenIvy": False, "stem": True,
+        "merit": "moderate", "location": "Austin, TX",
+        "vibe": "UT Austin — What starts here changes the world; massive flagship in the live music capital",
+    },
+    "Vanderbilt University": {
+        "accept": 7, "satMedian": 1530, "sat25": 1460, "sat75": 1560, "gpaMean": 3.92, "hiddenIvy": False, "stem": True,
+        "merit": "none", "location": "Nashville, TN",
+        "vibe": "Elite private research university in Nashville; Vandy offers Ivy-caliber academics with SEC athletics",
+    },
+    # ── BIG 12 ────────────────────────────────────────────────────────────────
+    "Arizona State University": {
+        "accept": 88, "satMedian": 1215, "hiddenIvy": False, "stem": True,
+        "merit": "moderate", "location": "Tempe, AZ",
+        "vibe": "America's largest innovation university; strong engineering, business, and journalism in the Sunbelt",
+    },
+    "Brigham Young University": {
+        "accept": 65, "satMedian": 1265, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "Provo, UT",
+        "vibe": "LDS flagship with strong accounting, animation, and pre-law — honor code shapes daily campus life",
+    },
+    "Iowa State University": {
+        "accept": 92, "satMedian": 1185, "hiddenIvy": False, "stem": True,
+        "merit": "moderate", "location": "Ames, IA",
+        "vibe": "Cyclones — top-10 design school, strong engineering and agriculture, welcoming Midwest culture",
+    },
+    "Texas Christian University": {
+        "accept": 45, "satMedian": 1290, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "Fort Worth, TX",
+        "vibe": "TCU — selective Methodist university in Fort Worth with strong business and communications",
+    },
+    "University of Arizona": {
+        "accept": 84, "satMedian": 1195, "hiddenIvy": False, "stem": True,
+        "merit": "moderate", "location": "Tucson, AZ",
+        "vibe": "Wildcats flagship in the Sonoran Desert; strong optics, astronomy, and business programs",
+    },
+    "University of Cincinnati": {
+        "accept": 86, "satMedian": 1215, "hiddenIvy": False, "stem": True,
+        "merit": "moderate", "location": "Cincinnati, OH",
+        "vibe": "Bearcats flagship with a top-10 co-op program; pioneered cooperative education in America",
+    },
+    "University of Houston": {
+        "accept": 65, "satMedian": 1200, "hiddenIvy": False, "stem": True,
+        "merit": "moderate", "location": "Houston, TX",
+        "vibe": "Cougars — urban research university in Houston with strong engineering and entrepreneurship",
+    },
+    "University of Kansas": {
+        "accept": 93, "satMedian": 1195, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "Lawrence, KS",
+        "vibe": "KU — Jayhawks flagship with a legendary pharmacy program and top-ranked journalism school",
+    },
+    "University of Utah": {
+        "accept": 84, "satMedian": 1235, "hiddenIvy": False, "stem": True,
+        "merit": "moderate", "location": "Salt Lake City, UT",
+        "vibe": "Utes — flagship with access to world-class skiing and strong gaming, engineering, and health programs",
+    },
+    "West Virginia University": {
+        "accept": 79, "satMedian": 1170, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "Morgantown, WV",
+        "vibe": "Mountaineers flagship with strong forensic science, pharmacy, and a tight-knit Appalachian community",
+    },
+    # ── BIG EAST ──────────────────────────────────────────────────────────────
+    "Butler University": {
+        "accept": 72, "satMedian": 1225, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Indianapolis, IN",
+        "vibe": "Selective private university with a gorgeous campus and strong pharmacy, business, and performing arts",
+    },
+    "Connecticut, University of": {
+        "accept": 56, "satMedian": 1280, "hiddenIvy": False, "stem": True,
+        "merit": "moderate", "location": "Storrs, CT",
+        "vibe": "UConn — flagship with elite nursing, business, and pharmacy programs and a historic basketball tradition",
+    },
+    "Georgetown University": {
+        "accept": 12, "satMedian": 1490, "sat25": 1380, "sat75": 1550, "gpaMean": 3.89, "hiddenIvy": False, "stem": False,
+        "merit": "none", "location": "Washington, DC",
+        "vibe": "Elite Jesuit university in DC — politics, pre-law, and international relations on Capitol Hill's doorstep",
+    },
+    "Providence College": {
+        "accept": 50, "satMedian": 1235, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "Providence, RI",
+        "vibe": "Dominican Catholic college with a required Western civilization core and a passionate Friar basketball culture",
+    },
+    "Seton Hall University": {
+        "accept": 73, "satMedian": 1225, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "South Orange, NJ",
+        "vibe": "Catholic university 14 miles from Manhattan; strong diplomacy, nursing, and business programs",
+    },
+    "Villanova University": {
+        "accept": 24, "satMedian": 1415, "sat25": 1310, "sat75": 1470, "gpaMean": 3.8, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "Villanova, PA",
+        "vibe": "Augustinian university near Philadelphia; highly selective with elite business, nursing, and law pipeline",
+    },
+    "Xavier University": {
+        "accept": 74, "satMedian": 1185, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Cincinnati, OH",
+        "vibe": "Jesuit university in Cincinnati with strong business, pre-health, and a passionate Musketeer basketball culture",
+    },
+    # ── AMERICA EAST ──────────────────────────────────────────────────────────
+    "Binghamton University": {
+        "accept": 43, "satMedian": 1295, "hiddenIvy": False, "stem": True,
+        "merit": "moderate", "location": "Binghamton, NY",
+        "vibe": "SUNY flagship known as the Public Ivy of New York; strong business, engineering, and nursing",
+    },
+    "Bryant University": {
+        "accept": 71, "satMedian": 1200, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "Smithfield, RI",
+        "vibe": "Business-focused university near Providence with a strong actuarial science and data analytics track",
+    },
+    "Maine, University of": {
+        "accept": 89, "satMedian": 1155, "hiddenIvy": False, "stem": True,
+        "merit": "moderate", "location": "Orono, ME",
+        "vibe": "Maine's flagship land-grant with strong forestry, marine science, and engineering in the North Woods",
+    },
+    "New Hampshire, University of": {
+        "accept": 82, "satMedian": 1200, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "Durham, NH",
+        "vibe": "New England's flagship with strong ocean engineering, environmental science, and a vibrant campus culture",
+    },
+    "New Jersey Institute of Techno": {
+        "accept": 68, "satMedian": 1270, "hiddenIvy": False, "stem": True,
+        "merit": "moderate", "location": "Newark, NJ",
+        "vibe": "NJIT — urban tech university with strong CS, architecture, and engineering 20 minutes from NYC",
+    },
+    "University of Maryland Baltimo": {
+        "accept": 52, "satMedian": 1240, "hiddenIvy": False, "stem": True,
+        "merit": "moderate", "location": "Baltimore, MD",
+        "vibe": "UMBC — ranked #1 for transforming undergraduate education; strong STEM and Meyerhoff Scholars program",
+    },
+    "Vermont, University of": {
+        "accept": 63, "satMedian": 1245, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "Burlington, VT",
+        "vibe": "UVM — New England's outdoor university in Burlington; strong environmental, health, and agriculture",
+    },
+    "Virginia Military Institute": {
+        "accept": 63, "satMedian": 1170, "hiddenIvy": False, "stem": True,
+        "merit": "moderate", "location": "Lexington, VA",
+        "vibe": "VMI — America's oldest state military college; rigorous discipline, camaraderie, and leadership",
+    },
+    # ── ATLANTIC 10 ───────────────────────────────────────────────────────────
+    "Davidson College": {
+        "accept": 19, "satMedian": 1400, "sat25": 1350, "sat75": 1490, "gpaMean": 3.83, "hiddenIvy": True, "stem": False,
+        "merit": "none", "location": "Davidson, NC",
+        "vibe": "Elite honor-code LAC near Charlotte; consistently tops national rankings and places students at top grad schools",
+    },
+    "Duquesne University": {
+        "accept": 73, "satMedian": 1155, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Pittsburgh, PA",
+        "vibe": "Spiritan Catholic university on a hilltop in Pittsburgh with strong pharmacy, business, and law pipeline",
+    },
+    "Fordham University": {
+        "accept": 49, "satMedian": 1305, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "New York, NY",
+        "vibe": "Jesuit university in the Bronx and Lincoln Center — Rose Hill campus meets the heart of Manhattan",
+    },
+    "George Mason University": {
+        "accept": 87, "satMedian": 1235, "hiddenIvy": False, "stem": True,
+        "merit": "moderate", "location": "Fairfax, VA",
+        "vibe": "Northern Virginia's flagship; tech corridor access, strong CS, policy, and economics near DC",
+    },
+    "George Washington University": {
+        "accept": 43, "satMedian": 1365, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "Washington, DC",
+        "vibe": "Urban university two blocks from the White House; political science and international affairs culture",
+    },
+    "La Salle University": {
+        "accept": 79, "satMedian": 1115, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Philadelphia, PA",
+        "vibe": "De La Salle Brothers Catholic university in Philadelphia with strong nursing and business programs",
+    },
+    "Saint Louis University": {
+        "accept": 65, "satMedian": 1265, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "St. Louis, MO",
+        "vibe": "Jesuit university with a top aviation program and strong pre-health in the Gateway City",
+    },
+    "St Bonaventure University": {
+        "accept": 79, "satMedian": 1140, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "St. Bonaventure, NY",
+        "vibe": "Franciscan university in the Southern Tier with a nationally respected journalism program",
+    },
+    "University of Rhode Island": {
+        "accept": 80, "satMedian": 1190, "hiddenIvy": False, "stem": True,
+        "merit": "moderate", "location": "Kingston, RI",
+        "vibe": "URI — strong pharmacy, engineering, and ocean science programs in coastal Rhode Island",
+    },
+    "University of Richmond": {
+        "accept": 28, "satMedian": 1380, "sat25": 1240, "sat75": 1420, "gpaMean": 3.79, "hiddenIvy": False, "stem": False,
+        "merit": "none", "location": "Richmond, VA",
+        "vibe": "Selective private university with a beautiful campus; strong business, law pipeline, and generous aid",
+    },
+    # ── CAA ───────────────────────────────────────────────────────────────────
+    "Campbell University": {
+        "accept": 61, "satMedian": 1160, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Buies Creek, NC",
+        "vibe": "Baptist university in North Carolina with a highly regarded pharmacy and law school",
+    },
+    "Drexel University": {
+        "accept": 77, "satMedian": 1295, "hiddenIvy": False, "stem": True,
+        "merit": "high", "location": "Philadelphia, PA",
+        "vibe": "Co-op powerhouse in Philadelphia — Drexel students graduate with up to 18 months of real work experience",
+    },
+    "Monmouth University": {
+        "accept": 85, "satMedian": 1130, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "West Long Branch, NJ",
+        "vibe": "NJ shore university near NYC with a stunning campus and strong communications and business programs",
+    },
+    "Northeastern University": {
+        "accept": 7, "satMedian": 1490, "sat25": 1440, "sat75": 1550, "gpaMean": 3.84, "hiddenIvy": False, "stem": True,
+        "merit": "none", "location": "Boston, MA",
+        "vibe": "Co-op model taken to the extreme — Northeastern's network places students at the world's top employers",
+    },
+    "Stony Brook University": {
+        "accept": 49, "satMedian": 1295, "hiddenIvy": False, "stem": True,
+        "merit": "moderate", "location": "Stony Brook, NY",
+        "vibe": "SUNY's research flagship on Long Island; strong STEM and medical programs with a large international community",
+    },
+    "Towson University": {
+        "accept": 84, "satMedian": 1155, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "Towson, MD",
+        "vibe": "Maryland's largest university by enrollment; strong education, health professions, and business programs",
+    },
+    "University of North Carolina W": {
+        "accept": 73, "satMedian": 1185, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "Wilmington, NC",
+        "vibe": "UNCW — coastal NC campus with outstanding marine biology, film, and business programs",
+    },
+    "William and Mary": {
+        "accept": 33, "satMedian": 1400, "sat25": 1280, "sat75": 1470, "gpaMean": 3.79, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "Williamsburg, VA",
+        "vibe": "America's second-oldest university and the 'Public Ivy' of Virginia; strong law, business, and history",
+    },
+    # ── ASUN ──────────────────────────────────────────────────────────────────
+    "Bellarmine University": {
+        "accept": 62, "satMedian": 1150, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Louisville, KY",
+        "vibe": "Catholic LAC in Louisville with strong nursing, education, and a student-focused campus community",
+    },
+    "Delaware": {
+        "accept": 75, "satMedian": 1210, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "Newark, DE",
+        "vibe": "UD — flagship with a top-ranked physical therapy program and strong business and engineering",
+    },
+    "Florida Atlantic University": {
+        "accept": 64, "satMedian": 1150, "hiddenIvy": False, "stem": True,
+        "merit": "moderate", "location": "Boca Raton, FL",
+        "vibe": "Sun Belt university in South Florida with growing research profile and strong engineering programs",
+    },
+    "Florida Gulf Coast University": {
+        "accept": 78, "satMedian": 1130, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "Fort Myers, FL",
+        "vibe": "Young and growing Southwest Florida university with strong business and health sciences programs",
+    },
+    "Gardner-Webb University": {
+        "accept": 75, "satMedian": 1100, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Boiling Springs, NC",
+        "vibe": "Baptist-affiliated university in the North Carolina foothills with strong nursing and education",
+    },
+    "Georgia Southern University": {
+        "accept": 81, "satMedian": 1140, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "Statesboro, GA",
+        "vibe": "Eagle Nation — growing Sun Belt university with strong business, IT, and health sciences programs",
+    },
+    "Old Dominion University": {
+        "accept": 91, "satMedian": 1110, "hiddenIvy": False, "stem": True,
+        "merit": "moderate", "location": "Norfolk, VA",
+        "vibe": "ODU — Hampton Roads research university with strong engineering, maritime, and health sciences",
+    },
+    "Queens University of Charlotte": {
+        "accept": 70, "satMedian": 1150, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Charlotte, NC",
+        "vibe": "Presbyterian-affiliated urban university in Charlotte with strong nursing and business programs",
+    },
+    "Univ North Carolina Asheville": {
+        "accept": 79, "satMedian": 1165, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "Asheville, NC",
+        "vibe": "UNCA — liberal arts focus in one of America's most vibrant mountain cities; strong humanities",
+    },
+    "University of North Florida": {
+        "accept": 75, "satMedian": 1165, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "Jacksonville, FL",
+        "vibe": "UNF — coastal Jacksonville campus with strong business, education, and health sciences programs",
+    },
+    # ── BIG WEST ──────────────────────────────────────────────────────────────
+    "Cal State Bakersfield": {
+        "accept": 71, "satMedian": 1085, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "Bakersfield, CA",
+        "vibe": "CSU campus in California's Central Valley with strong nursing, criminal justice, and business",
+    },
+    "Grand Canyon University": {
+        "accept": 73, "satMedian": 1145, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "Phoenix, AZ",
+        "vibe": "Christian university in Phoenix with rapid growth, strong nursing, and a vibrant athletics culture",
+    },
+    "Seattle U": {
+        "accept": 79, "satMedian": 1200, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "Seattle, WA",
+        "vibe": "Jesuit university on Capitol Hill with strong business, nursing, and law pipeline in a world-class city",
+    },
+    "UC Davis": {
+        "accept": 39, "satMedian": 1270, "hiddenIvy": False, "stem": True,
+        "merit": "moderate", "location": "Davis, CA",
+        "vibe": "UC Davis — world's top agriculture and veterinary school; bike-friendly campus near Sacramento",
+    },
+    "UC San Diego": {
+        "accept": 24, "satMedian": 1370, "sat25": 1290, "sat75": 1450, "gpaMean": 3.9, "hiddenIvy": False, "stem": True,
+        "merit": "moderate", "location": "La Jolla, CA",
+        "vibe": "UCSD — elite research campus with top-3 global ranking in oceanography and strong STEM programs",
+    },
+    "UC Santa Barbara": {
+        "accept": 26, "satMedian": 1330, "sat25": 1270, "sat75": 1440, "gpaMean": 3.83, "hiddenIvy": False, "stem": True,
+        "merit": "moderate", "location": "Santa Barbara, CA",
+        "vibe": "UCSB — stunning ocean campus with Nobel-laureate faculty and a strong surf and research culture",
+    },
+    "University of Hawaii": {
+        "accept": 61, "satMedian": 1140, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "Honolulu, HI",
+        "vibe": "UH Manoa — flagship in paradise; strong marine biology, Asian studies, and education programs",
+    },
+    "University of San Diego": {
+        "accept": 49, "satMedian": 1250, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "San Diego, CA",
+        "vibe": "Catholic university on a stunning mesa overlooking the Pacific with strong law and business programs",
+    },
+    # ── HORIZON LEAGUE ────────────────────────────────────────────────────────
+    "Cleveland State University": {
+        "accept": 72, "satMedian": 1160, "hiddenIvy": False, "stem": True,
+        "merit": "moderate", "location": "Cleveland, OH",
+        "vibe": "Urban research university in downtown Cleveland with strong engineering, law, and health sciences",
+    },
+    "Green Bay Phoenix": {
+        "accept": 85, "satMedian": 1155, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "Green Bay, WI",
+        "vibe": "UW-Green Bay — interdisciplinary focus and strong environmental science programs in Packer country",
+    },
+    "IU Indianapolis": {
+        "accept": 80, "satMedian": 1155, "hiddenIvy": False, "stem": True,
+        "merit": "moderate", "location": "Indianapolis, IN",
+        "vibe": "IU's urban campus in Indiana's capital; strong health sciences, business, and law programs",
+    },
+    "Northern Kentucky University": {
+        "accept": 86, "satMedian": 1155, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "Highland Heights, KY",
+        "vibe": "Growing metro-Cincinnati university with strong business, nursing, and computer science programs",
+    },
+    "Oakland University": {
+        "accept": 76, "satMedian": 1175, "hiddenIvy": False, "stem": True,
+        "merit": "moderate", "location": "Rochester, MI",
+        "vibe": "Oakland — suburban Detroit university with strong engineering, business, and health sciences programs",
+    },
+    "University of Wisconsin-Milwau": {
+        "accept": 85, "satMedian": 1170, "hiddenIvy": False, "stem": True,
+        "merit": "moderate", "location": "Milwaukee, WI",
+        "vibe": "UWM — urban research campus in Milwaukee with strong engineering, architecture, and nursing programs",
+    },
+    "Youngstown State University": {
+        "accept": 72, "satMedian": 1125, "hiddenIvy": False, "stem": True,
+        "merit": "moderate", "location": "Youngstown, OH",
+        "vibe": "Regional university with strong engineering and health sciences serving the Mahoning Valley",
+    },
+    # ── GLIAC ─────────────────────────────────────────────────────────────────
+    "Augustana University": {
+        "accept": 72, "satMedian": 1155, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Sioux Falls, SD",
+        "vibe": "Lutheran university in the Sioux Falls metro; strong business, education, and nursing programs",
+    },
+    "Davenport University": {
+        "accept": 71, "satMedian": 1100, "hiddenIvy": False, "stem": True,
+        "merit": "high", "location": "Grand Rapids, MI",
+        "vibe": "Career-focused university with strong cybersecurity, business, and healthcare administration",
+    },
+    "Grand Valley State University": {
+        "accept": 82, "satMedian": 1150, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "Allendale, MI",
+        "vibe": "GVSU — one of Michigan's fastest-growing universities; strong education, nursing, and business",
+    },
+    "Lake Superior State University": {
+        "accept": 75, "satMedian": 1100, "hiddenIvy": False, "stem": True,
+        "merit": "moderate", "location": "Sault Ste. Marie, MI",
+        "vibe": "Small STEM-focused university on the Canada border with strong robotics and fisheries programs",
+    },
+    "Northern Michigan University": {
+        "accept": 76, "satMedian": 1135, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "Marquette, MI",
+        "vibe": "NMU — outdoor recreation capital of the UP; strong nursing, education, and culinary programs",
+    },
+    "Saginaw Valley State Universit": {
+        "accept": 82, "satMedian": 1090, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "University Center, MI",
+        "vibe": "Regional Michigan university with strong nursing, education, and engineering technology programs",
+    },
+    "St Cloud State University (M)": {
+        "accept": 79, "satMedian": 1130, "hiddenIvy": False, "stem": True,
+        "merit": "moderate", "location": "St. Cloud, MN",
+        "vibe": "SCSU — one of Minnesota's largest universities; strong aviation, engineering, and business programs",
+    },
+    "Wayne State University": {
+        "accept": 75, "satMedian": 1155, "hiddenIvy": False, "stem": True,
+        "merit": "moderate", "location": "Detroit, MI",
+        "vibe": "Urban research university in Detroit's Midtown; strong medicine, law, and engineering programs",
+    },
+    # ── MPSF ─────────────────────────────────────────────────────────────────
+    "Cal Baptist University": {
+        "accept": 77, "satMedian": 1130, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Riverside, CA",
+        "vibe": "Christian university in the Inland Empire with a growing athletics program and strong nursing",
+    },
+    "Idaho, University of": {
+        "accept": 80, "satMedian": 1175, "hiddenIvy": False, "stem": True,
+        "merit": "moderate", "location": "Moscow, ID",
+        "vibe": "Idaho's flagship land-grant with strong forestry, engineering, and agriculture in a college-town setting",
+    },
+    "New Mexico State University": {
+        "accept": 97, "satMedian": 1100, "hiddenIvy": False, "stem": True,
+        "merit": "moderate", "location": "Las Cruces, NM",
+        "vibe": "NMSU — Aggie engineering and agriculture in the Mesilla Valley near the Rio Grande",
+    },
+    "Northern Arizona University": {
+        "accept": 76, "satMedian": 1125, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "Flagstaff, AZ",
+        "vibe": "Ponderosa pine campus at 7,000 feet; strong nursing, education, and hotel management programs",
+    },
+    "Northern Colorado, University": {
+        "accept": 80, "satMedian": 1140, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "Greeley, CO",
+        "vibe": "UNC Bears — strong education, health sciences, and performing arts in northern Colorado",
+    },
+    "Pepperdine University": {
+        "accept": 36, "satMedian": 1340, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "Malibu, CA",
+        "vibe": "Christian university on a Pacific Ocean bluff in Malibu; strong law, business, and international programs",
+    },
+    "US Air Force Academy": {
+        "accept": 11, "satMedian": 1340, "sat25": 1240, "sat75": 1410, "hiddenIvy": False, "stem": True,
+        "merit": "none", "location": "Colorado Springs, CO",
+        "vibe": "Full scholarship service academy with rigorous STEM curriculum and a guaranteed Air Force career",
+    },
+    "Univ Texas Rio Grande Valley": {
+        "accept": 100, "satMedian": 1025, "hiddenIvy": False, "stem": True,
+        "merit": "moderate", "location": "Edinburg, TX",
+        "vibe": "UTRGV — open-access Hispanic-serving institution along the Rio Grande with strong STEM growth",
+    },
+    "University of Incarnate Word": {
+        "accept": 82, "satMedian": 1090, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "San Antonio, TX",
+        "vibe": "Catholic university in San Antonio with strong nursing, optometry, and pharmacy programs",
+    },
+    "University of the Pacific": {
+        "accept": 67, "satMedian": 1215, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "Stockton, CA",
+        "vibe": "West Coast private with a top pharmacy school, conservatory of music, and accelerated dental program",
+    },
+    # ── SUMMIT LEAGUE ─────────────────────────────────────────────────────────
+    "Eastern Illinois University": {
+        "accept": 57, "satMedian": 1100, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "Charleston, IL",
+        "vibe": "Regional Illinois university with strong education, business, and athletic training programs",
+    },
+    "South Dakota State University": {
+        "accept": 81, "satMedian": 1190, "hiddenIvy": False, "stem": True,
+        "merit": "moderate", "location": "Brookings, SD",
+        "vibe": "SDSU — land-grant flagship with strong agriculture, engineering, and pharmacy programs",
+    },
+    "University of Denver": {
+        "accept": 68, "satMedian": 1310, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "Denver, CO",
+        "vibe": "Private research university in the Mile High City with strong business, law, and international programs",
+    },
+    "University of Nebraska Omaha": {
+        "accept": 80, "satMedian": 1165, "hiddenIvy": False, "stem": True,
+        "merit": "moderate", "location": "Omaha, NE",
+        "vibe": "Urban NU campus in Omaha with strong IT, business, and criminal justice programs",
+    },
+    "University of South Dakota": {
+        "accept": 87, "satMedian": 1175, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "Vermillion, SD",
+        "vibe": "South Dakota's flagship with a top law school, strong health sciences, and a close campus community",
+    },
+    "University of Southern Indiana": {
+        "accept": 80, "satMedian": 1095, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "Evansville, IN",
+        "vibe": "Regional university in southwest Indiana with strong dental hygiene, nursing, and engineering tech",
+    },
+    "University of St. Thomas MN": {
+        "accept": 77, "satMedian": 1230, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "St. Paul, MN",
+        "vibe": "Catholic university in the Twin Cities; strong business, law, and education with a large alumni network",
+    },
+    # ── WAC ───────────────────────────────────────────────────────────────────
+    "Air Force": {
+        "accept": 11, "satMedian": 1340, "sat25": 1240, "sat75": 1410, "hiddenIvy": False, "stem": True,
+        "merit": "none", "location": "Colorado Springs, CO",
+        "vibe": "Full scholarship service academy with rigorous STEM curriculum and a guaranteed Air Force career",
+    },
+    "California Baptist": {
+        "accept": 73, "satMedian": 1130, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Riverside, CA",
+        "vibe": "Christian university in the Inland Empire with a growing athletics program and strong nursing",
+    },
+    "Grand Canyon": {
+        "accept": 73, "satMedian": 1145, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "Phoenix, AZ",
+        "vibe": "Christian university in Phoenix with rapid growth, strong nursing, and a vibrant athletics culture",
+    },
+    "Idaho": {
+        "accept": 80, "satMedian": 1175, "hiddenIvy": False, "stem": True,
+        "merit": "moderate", "location": "Moscow, ID",
+        "vibe": "Idaho's flagship land-grant with strong forestry, engineering, and agriculture in a college-town setting",
+    },
+    "New Mexico State": {
+        "accept": 97, "satMedian": 1100, "hiddenIvy": False, "stem": True,
+        "merit": "moderate", "location": "Las Cruces, NM",
+        "vibe": "NMSU — Aggie engineering and agriculture in the Mesilla Valley near the Rio Grande",
+    },
+    "Northern Arizona": {
+        "accept": 76, "satMedian": 1125, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "Flagstaff, AZ",
+        "vibe": "Ponderosa pine campus at 7,000 feet; strong nursing, education, and hotel management programs",
+    },
+    "Northern Colorado": {
+        "accept": 80, "satMedian": 1140, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "Greeley, CO",
+        "vibe": "UNC Bears — strong education, health sciences, and performing arts in northern Colorado",
+    },
+    "Seattle": {
+        "accept": 79, "satMedian": 1200, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "Seattle, WA",
+        "vibe": "Jesuit university on Capitol Hill with strong business, nursing, and law pipeline in a world-class city",
+    },
+    "University of Nevada Las Vegas": {
+        "accept": 83, "satMedian": 1130, "hiddenIvy": False, "stem": True,
+        "merit": "moderate", "location": "Las Vegas, NV",
+        "vibe": "UNLV — urban research university with top hospitality and hotel management programs in Las Vegas",
+    },
+    "University of Texas Rio Grande": {
+        "accept": 100, "satMedian": 1025, "hiddenIvy": False, "stem": True,
+        "merit": "moderate", "location": "Edinburg, TX",
+        "vibe": "UTRGV — open-access Hispanic-serving institution along the Rio Grande with strong STEM growth",
+    },
+    "University of Wyoming": {
+        "accept": 96, "satMedian": 1155, "hiddenIvy": False, "stem": True,
+        "merit": "moderate", "location": "Laramie, WY",
+        "vibe": "Wyoming's only four-year university; strong engineering, geology, and agriculture at 7,200 feet",
+    },
+    "Utah Tech University": {
+        "accept": 100, "satMedian": 1080, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "St. George, UT",
+        "vibe": "Open-access university in Utah's red rock country with strong healthcare, business, and technology",
+    },
+    # ── PCSC ─────────────────────────────────────────────────────────────────
+    "Arizona Christian University": {
+        "accept": 44, "satMedian": 1085, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Phoenix, AZ",
+        "vibe": "Christian liberal arts in metro Phoenix; small and student-focused with strong ministry programs",
+    },
+    "Azusa Pacific University": {
+        "accept": 51, "satMedian": 1155, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Azusa, CA",
+        "vibe": "Evangelical Christian university in the San Gabriel Valley with strong nursing and music programs",
+    },
+    "Biola University": {
+        "accept": 60, "satMedian": 1200, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "La Mirada, CA",
+        "vibe": "Evangelical university near LA with a strong biblical studies core and excellent nursing program",
+    },
+    "California State University, E": {
+        "accept": 72, "satMedian": 1055, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "Hayward, CA",
+        "vibe": "Cal State East Bay — diverse urban campus in the East Bay with strong business and nursing programs",
+    },
+    "College of Idaho": {
+        "accept": 90, "satMedian": 1150, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Caldwell, ID",
+        "vibe": "Small Idaho LAC with generous merit aid and a close-knit campus community near Boise",
+    },
+    "Concordia University Irvine": {
+        "accept": 73, "satMedian": 1130, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Irvine, CA",
+        "vibe": "Lutheran university in Orange County; strong business and education in a Southern California setting",
+    },
+    "Fresno Pacific University": {
+        "accept": 49, "satMedian": 1075, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Fresno, CA",
+        "vibe": "Mennonite Christian university in the Central Valley with strong teacher education programs",
+    },
+    "Ottawa University of Arizona": {
+        "accept": 82, "satMedian": 1050, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Surprise, AZ",
+        "vibe": "Baptist-affiliated university in the Phoenix metro with small class sizes and career-focused programs",
+    },
+    "Simpson University": {
+        "accept": 53, "satMedian": 1070, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Redding, CA",
+        "vibe": "Christian LAC in Northern California with strong biblical studies and teacher education programs",
+    },
+    "Soka University": {
+        "accept": 36, "satMedian": 1240, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Aliso Viejo, CA",
+        "vibe": "Unique Buddhist-inspired liberal arts university with a strong global citizenship mission and full scholarships",
+    },
+    "The Master's University": {
+        "accept": 46, "satMedian": 1190, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "Santa Clarita, CA",
+        "vibe": "Conservative Christian university in the Santa Clarita Valley with a strong biblical studies emphasis",
+    },
+    "University of Alaska Fairbanks": {
+        "accept": 77, "satMedian": 1105, "hiddenIvy": False, "stem": True,
+        "merit": "moderate", "location": "Fairbanks, AK",
+        "vibe": "UAF — world-class arctic research with strong engineering, geophysics, and wildlife biology programs",
+    },
+    "University of California, Sant": {
+        "accept": 47, "satMedian": 1240, "hiddenIvy": False, "stem": True,
+        "merit": "moderate", "location": "Santa Cruz, CA",
+        "vibe": "UC Santa Cruz — redwood campus culture with strong marine science, CS, and social justice programs",
+    },
+    "Westmont College": {
+        "accept": 71, "satMedian": 1290, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "Santa Barbara, CA",
+        "vibe": "Selective Christian LAC in the Santa Barbara hills; strong academics with evangelical community values",
+    },
+    # ── PSAC ─────────────────────────────────────────────────────────────────
+    "Bloomsburg University": {
+        "accept": 77, "satMedian": 1080, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "Bloomsburg, PA",
+        "vibe": "PASSHE university in the Susquehanna Valley with strong nursing, education, and business programs",
+    },
+    "East Stroudsburg University": {
+        "accept": 79, "satMedian": 1080, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "East Stroudsburg, PA",
+        "vibe": "Poconos campus with strong health, physical education, and tourism and hospitality programs",
+    },
+    "Gannon University": {
+        "accept": 80, "satMedian": 1150, "hiddenIvy": False, "stem": True,
+        "merit": "high", "location": "Erie, PA",
+        "vibe": "Catholic university in Erie with strong engineering, PA studies, and health sciences programs",
+    },
+    "Indiana University of PA": {
+        "accept": 72, "satMedian": 1085, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "Indiana, PA",
+        "vibe": "IUP — western PA regional university with strong education, criminology, and culinary programs",
+    },
+    "Kutztown University": {
+        "accept": 78, "satMedian": 1075, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "Kutztown, PA",
+        "vibe": "PASSHE campus in Pennsylvania Dutch Country with strong education, art, and communication programs",
+    },
+    "Lock Haven University": {
+        "accept": 82, "satMedian": 1050, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "Lock Haven, PA",
+        "vibe": "Small river-town Pennsylvania campus with strong health science, education, and outdoor recreation",
+    },
+    "Millersville University": {
+        "accept": 75, "satMedian": 1095, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "Millersville, PA",
+        "vibe": "Lancaster County campus with strong education, meteorology, and social work programs",
+    },
+    "PennWest Edinboro University": {
+        "accept": 84, "satMedian": 1050, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "Edinboro, PA",
+        "vibe": "Northwest Pennsylvania campus known for strong art, education, and social work programs",
+    },
+    "PennWest University Clarion": {
+        "accept": 82, "satMedian": 1050, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "Clarion, PA",
+        "vibe": "Rural western Pennsylvania campus with strong communication, education, and business programs",
+    },
+    "PennWest University,California": {
+        "accept": 81, "satMedian": 1050, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "California, PA",
+        "vibe": "PASSHE campus along the Monongahela with strong education, sport management, and criminal justice",
+    },
+    "Shippensburg University of PA": {
+        "accept": 81, "satMedian": 1075, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "Shippensburg, PA",
+        "vibe": "South-central PA campus with strong business, public administration, and criminal justice programs",
+    },
+    "West Chester University": {
+        "accept": 62, "satMedian": 1165, "hiddenIvy": False, "stem": False,
+        "merit": "moderate", "location": "West Chester, PA",
+        "vibe": "Philadelphia suburb campus with strong music, education, nursing, and a large and active student body",
+    },
+    # ── SAC ───────────────────────────────────────────────────────────────────
+    "Carson-Newman University": {
+        "accept": 73, "satMedian": 1120, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Jefferson City, TN",
+        "vibe": "Baptist university in the East Tennessee hills with strong nursing, education, and athletics programs",
+    },
+    "Catawba College": {
+        "accept": 53, "satMedian": 1080, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Salisbury, NC",
+        "vibe": "Reformed Church-affiliated LAC in the Carolina Piedmont with strong business and education programs",
+    },
+    "Lenoir-Rhyne University": {
+        "accept": 67, "satMedian": 1115, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Hickory, NC",
+        "vibe": "Lutheran university in the North Carolina foothills with strong nursing, business, and education",
+    },
+    "Mars Hill University": {
+        "accept": 62, "satMedian": 1075, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Mars Hill, NC",
+        "vibe": "Baptist-affiliated mountain university near Asheville with strong education and criminal justice",
+    },
+    "Wingate University": {
+        "accept": 65, "satMedian": 1110, "hiddenIvy": False, "stem": False,
+        "merit": "high", "location": "Wingate, NC",
+        "vibe": "Baptist-affiliated university near Charlotte with strong pharmacy, business, and education programs",
+    },
+    # ── COLORADO COLLEGE (lone remaining school) ──────────────────────────────
+    "Bryn Mawr College Owls": {
+        "accept": 34, "satMedian": 1385, "hiddenIvy": True, "stem": False,
+        "merit": "none", "location": "Bryn Mawr, PA",
+        "vibe": "Elite Seven Sisters college near Philadelphia; rigorous academics and a powerful women's leadership network",
+    },
+}
+
+# ── Out-of-universe well-known schools ───────────────────────────────────────
+# Metadata for commonly searched schools outside our scored pool.
+# Keys are the canonical display names (title-cased as users would type them).
+# Fields match SCHOOL_META conventions; ivyLeague=True adds the Ivy badge.
+OOU_SCHOOL_META = {
+    # Ivy League
+    "Harvard":      {"accept": 4,  "satMedian": 1580, "ivyLeague": True,  "merit": "none",     "location": "Cambridge, MA",     "vibe": "The most storied name in higher education — ultra-selective by any measure."},
+    "Yale":         {"accept": 5,  "satMedian": 1570, "ivyLeague": True,  "merit": "none",     "location": "New Haven, CT",      "vibe": "World-class academics, drama, and debate — near-impossible odds."},
+    "Princeton":    {"accept": 4,  "satMedian": 1580, "ivyLeague": True,  "merit": "none",     "location": "Princeton, NJ",      "vibe": "Legendary campus, no-loan financial aid, and 4% acceptance."},
+    "Columbia":     {"accept": 4,  "satMedian": 1560, "ivyLeague": True,  "merit": "none",     "location": "New York, NY",       "vibe": "Ivy in the heart of Manhattan — urban energy meets academic prestige."},
+    "Brown":        {"accept": 6,  "satMedian": 1555, "ivyLeague": True,  "merit": "none",     "location": "Providence, RI",     "vibe": "Open Curriculum gives students unusual freedom to design their education."},
+    "Dartmouth":    {"accept": 6,  "satMedian": 1560, "ivyLeague": True,  "merit": "none",     "location": "Hanover, NH",        "vibe": "Tight-knit Ivy with a strong outdoors culture and fierce alumni loyalty."},
+    "Cornell":      {"accept": 9,  "satMedian": 1510, "ivyLeague": True,  "merit": "none",     "location": "Ithaca, NY",         "vibe": "The most accessible Ivy — broad programs, engineering powerhouse."},
+    "Penn":         {"accept": 7,  "satMedian": 1535, "ivyLeague": True,  "merit": "none",     "location": "Philadelphia, PA",   "vibe": "Wharton business, Penn Medicine, and strong interdisciplinary programs."},
+    "UPenn":        {"accept": 7,  "satMedian": 1535, "ivyLeague": True,  "merit": "none",     "location": "Philadelphia, PA",   "vibe": "Wharton business, Penn Medicine, and strong interdisciplinary programs."},
+    # Elite non-Ivy
+    "MIT":          {"accept": 4,  "satMedian": 1580, "stem": True,       "merit": "none",     "location": "Cambridge, MA",      "vibe": "Global STEM leader — demanding, collaborative, and transformative."},
+    "Stanford":     {"accept": 4,  "satMedian": 1560, "stem": True,       "merit": "none",     "location": "Stanford, CA",       "vibe": "Silicon Valley's university — entrepreneurship and research at scale."},
+    "Duke":         {"accept": 6,  "satMedian": 1540, "merit": "none",    "location": "Durham, NC",       "vibe": "Elite academics meets ACC athletics in a beautiful residential campus."},
+    "Northwestern": {"accept": 7,  "satMedian": 1530, "merit": "none",    "location": "Evanston, IL",     "vibe": "Quarter system, Big Ten athletics, and one of the strongest journalism schools."},
+    "Georgetown":   {"accept": 12, "satMedian": 1470, "merit": "none",    "location": "Washington, DC",   "vibe": "Jesuit traditions, global affairs, and unmatched access to DC institutions."},
+    "Notre Dame":   {"accept": 13, "satMedian": 1480, "merit": "none",    "location": "Notre Dame, IN",   "vibe": "Catholic identity, storied football, and a fiercely loyal alumni network."},
+    "Vanderbilt":   {"accept": 7,  "satMedian": 1540, "merit": "moderate","location": "Nashville, TN",    "vibe": "Southern hospitality meets elite academics in a vibrant music city."},
+    "Emory":        {"accept": 11, "satMedian": 1480, "hiddenIvy": True,  "merit": "moderate", "location": "Atlanta, GA",        "vibe": "Hidden Ivy with top pre-med programs and CDC proximity."},
+    "Tufts":        {"accept": 11, "satMedian": 1490, "hiddenIvy": True,  "merit": "none",     "location": "Medford, MA",        "vibe": "Hidden Ivy bridging liberal arts and research, just outside Boston."},
+    "Wake Forest":  {"accept": 21, "satMedian": 1400, "sat25": 1290, "sat75": 1480, "gpaMean": 3.82, "merit": "moderate","location": "Winston-Salem, NC","vibe": "Small research university with a pro-human motto and strong business school."},
+    "Boston College": {"accept": 15,"satMedian": 1430,"sat25": 1360,"sat75": 1520,"gpaMean": 3.87,"merit": "none",    "location": "Chestnut Hill, MA","vibe": "Jesuit institution with strong business, nursing, and law programs."},
+    "Boston University": {"accept": 19,"satMedian": 1400,"sat25": 1350,"sat75": 1500,"gpaMean": 3.73,"merit": "moderate","location": "Boston, MA",   "vibe": "Large urban research university with 300+ programs along the Charles River."},
+    "Northeastern": {"accept": 7,  "satMedian": 1490,"sat25": 1440,"sat75": 1550,"gpaMean": 3.84,"stem": True,       "merit": "moderate", "location": "Boston, MA",         "vibe": "Co-op powerhouse — students graduate with up to two years of work experience."},
+    "Rice":         {"accept": 9,  "satMedian": 1540, "sat25": 1490, "sat75": 1570, "gpaMean": 3.92, "stem": True,       "merit": "none",     "location": "Houston, TX",        "vibe": "Tiny but mighty — residential college system and elite engineering."},
+    "University of Chicago": {"accept": 7,"satMedian": 1560,"hiddenIvy": True,"merit": "none","location": "Chicago, IL",         "vibe": "Rigorously intellectual — the life of the mind in the heart of Chicago."},
+    "UChicago":     {"accept": 7,  "satMedian": 1560, "hiddenIvy": True,  "merit": "none",     "location": "Chicago, IL",        "vibe": "Rigorously intellectual — the life of the mind in the heart of Chicago."},
+    "Carnegie Mellon": {"accept": 11,"satMedian": 1530,"stem": True,      "merit": "none",     "location": "Pittsburgh, PA",     "vibe": "CS and engineering titan with one of the world's top drama programs."},
+    "WashU":        {"accept": 12, "satMedian": 1530, "hiddenIvy": True,  "merit": "moderate", "location": "St. Louis, MO",      "vibe": "Washington University — Hidden Ivy with generous merit aid and strong med school."},
+    "Washington University": {"accept": 12,"satMedian": 1530,"hiddenIvy": True,"merit": "moderate","location": "St. Louis, MO",  "vibe": "Hidden Ivy with generous merit aid and a strong medical school."},
+    "Bowdoin":      {"accept": 9,  "satMedian": 1490, "hiddenIvy": True,  "merit": "none",     "location": "Brunswick, ME",      "vibe": "Stunning Maine campus, need-blind admissions, and a powerhouse swim tradition."},
+    "Middlebury":   {"accept": 13, "satMedian": 1430, "hiddenIvy": True,  "merit": "none",     "location": "Middlebury, VT",     "vibe": "World-renowned language programs and a stunning Vermont campus."},
+    "Colby":        {"accept": 10, "satMedian": 1420, "hiddenIvy": True,  "merit": "none",     "location": "Waterville, ME",     "vibe": "NESCAC liberal arts with need-blind admissions and strong athletics."},
+    "Colgate":      {"accept": 21, "satMedian": 1400, "hiddenIvy": True,  "merit": "none",     "location": "Hamilton, NY",       "vibe": "Strong academics in a tight-knit upstate NY community."},
+}
+
+# Case-insensitive lookup helper
+def _oou_lookup(name: str) -> dict | None:
+    name_l = name.lower().strip()
+    for k, v in OOU_SCHOOL_META.items():
+        if k.lower() == name_l:
+            return v
+    # partial: e.g. "Harvard University" → "Harvard"
+    for k, v in OOU_SCHOOL_META.items():
+        if k.lower() in name_l or name_l in k.lower():
+            return v
+    return None
