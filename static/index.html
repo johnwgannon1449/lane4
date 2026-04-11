@@ -1315,7 +1315,7 @@ let _myListMarkers    = null;   // Leaflet layer group
 
 async function loadSchoolImages() {
   try {
-    const r = await fetch('/school_images.json');
+    const r = await fetch('/data/school_images.json');
     if (r.ok) SCHOOL_IMAGES = await r.json();
   } catch(_) {}
 }

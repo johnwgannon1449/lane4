@@ -27,7 +27,7 @@ import urllib.parse
 import urllib.request
 import argparse
 
-MANIFEST_PATH = os.path.join('static', 'school_images.json')
+MANIFEST_PATH = os.path.join('static', 'data', 'school_images.json')
 NAMES_PATH    = 'school_names.json'
 
 # ── Google CSE config ────────────────────────────────────────────────────────

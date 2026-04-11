@@ -29,7 +29,7 @@ from bs4 import BeautifulSoup
 # ── paths ─────────────────────────────────────────────────────────────────────
 SCRIPT_DIR = Path(__file__).parent
 ROOT_DIR   = SCRIPT_DIR.parent
-MANIFEST   = ROOT_DIR / 'static' / 'school_images.json'
+MANIFEST   = ROOT_DIR / 'static' / 'data' / 'school_images.json'
 DATA_DIR   = ROOT_DIR / 'data'
 DEBUG_OUT  = DATA_DIR / 'school_images_debug.json'
 SITES_FILE = DATA_DIR / 'school_websites.json'

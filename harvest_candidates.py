@@ -30,8 +30,8 @@ import argparse
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from html.parser import HTMLParser
 
-CANDIDATES_PATH = os.path.join('static', 'candidates_manifest.json')
-DOMAINS_PATH    = os.path.join('static', 'school_domains.json')
+CANDIDATES_PATH = os.path.join('static', 'data', 'candidates_manifest.json')
+DOMAINS_PATH    = os.path.join('static', 'data', 'school_domains.json')
 NAMES_PATH      = 'school_names.json'
 
 PEXELS_KEY      = os.environ.get('PEXELS_KEY', '')

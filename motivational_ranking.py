@@ -19,7 +19,7 @@ import os
 import re
 
 _STANDARDS: dict | None = None
-_STANDARDS_PATH = os.path.join(os.path.dirname(__file__), "static", "usa_motivational_times_17_18_scy.json")
+_STANDARDS_PATH = os.path.join(os.path.dirname(__file__), "static", "data", "usa_motivational_times_17_18_scy.json")
 
 # Ordered anchors (A-level, dict-key) — slowest to fastest.
 # BB is intentionally excluded: it is stored in the JSON for reference only
