@@ -63,6 +63,8 @@ from admin.image_curation import (
     _push_curated_to_school_images, _rebuild_school_images_from_curated,
     _load_blocklist, _save_blocklist, _load_school_images, _save_school_images,
 )
+from routes.static_pages import static_pages_bp
+from routes.utility import utility_bp
 
 
 # ---------------------------------------------------------------------------
@@ -412,6 +414,10 @@ def _init_db_background():
         print(f'[startup] DB init warning: {_e} — admin auth may be unavailable')
 
 threading.Thread(target=_init_db_background, daemon=True).start()
+_rebuild_school_images_from_curated()
+
+app.register_blueprint(static_pages_bp)
+app.register_blueprint(utility_bp)
 
 
 def _get_anthropic():
@@ -431,26 +437,6 @@ def _get_anthropic():
 # ---------------------------------------------------------------------------
 # Routes
 # ---------------------------------------------------------------------------
-
-# --- STATIC / PAGE SERVE ROUTES ---
-
-@app.route('/')
-def index():
-    resp = send_from_directory('static', 'index.html')
-    resp.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
-    resp.headers['Pragma'] = 'no-cache'
-    resp.headers['Expires'] = '0'
-    return resp
-
-@app.route('/login', methods=['GET'])
-def login_page():
-    """Standalone login page for returning swimmers."""
-    return send_from_directory('static', 'login.html')
-
-
-@app.route('/debug-ui')
-def debug_ui():
-    return send_from_directory('static', 'debug_ui.html')
 
 @app.route('/api/meta', methods=['GET'])
 def meta():
@@ -2126,80 +2112,6 @@ def api_admin_rebuild_school_images():
     """Sync all curated selections → school_images.json. Useful after bulk curation."""
     n = _rebuild_school_images_from_curated()
     return jsonify({'ok': True, 'updated': n})
-
-
-# --- UTILITY / DEBUG ROUTES ---
-
-@app.route('/api/health', methods=['GET'])
-def health():
-    key_ok = bool(os.environ.get('ANTHROPIC_API_KEY', '').strip())
-    swim_data_schools = sum(1 for s in EXPLORE_SCHOOLS if s.get('hasSwimData'))
-    return jsonify({
-        'status':              'ok',
-        # ── Primary universe (source of truth) ───
-        'universeSource':      'output/lane4_snapshot_compatible.csv',
-        'totalSchools':        len(EXPLORE_SCHOOLS),
-        'schoolsWithSwimData': swim_data_schools,
-        'conferenceOnlySchools': len(EXPLORE_SCHOOLS) - swim_data_schools,
-        # ── Enrichment sources ────────────────────
-        'enrichmentSource':    'output/all_event_anchors.csv',
-        'benchmarks':          len(BENCHMARKS),
-        'enrichmentRecords':   len(TEAMS_LIST),
-        'admissionRecords':    len(SCHOOL_META),
-        'normalized':          len(NORMALIZATION_LOG),
-        'anthropicKey':        key_ok,
-    })
-
-@app.route('/snapshot', methods=['GET'])
-def download_snapshot():
-    """Serve the latest Lane4 team-tier snapshot CSV for download."""
-    return send_from_directory('output', 'lane4_snapshot.csv', as_attachment=True)
-
-
-# Sync curated picks → school_images.json once all helpers are defined
-_rebuild_school_images_from_curated()
-
-@app.route('/api/resetadmin-lane4-2026')
-def api_reset_admin():
-    from werkzeug.security import generate_password_hash
-    new_hash = generate_password_hash('4Freediver')
-    results = {}
-    try:
-        with get_db() as conn:
-            with conn.cursor() as cur:
-                cur.execute("UPDATE admins SET password_hash = %s WHERE email = 'johngannon@pacesupply.com'", (new_hash,))
-                results['admin_rows'] = cur.rowcount
-                cur.execute("""INSERT INTO users (email, password_hash)
-                               VALUES ('johngannon@pacesupply.com', %s)
-                               ON CONFLICT (email) DO UPDATE SET password_hash = EXCLUDED.password_hash""",
-                            (new_hash,))
-                results['user_rows'] = cur.rowcount
-        results['ok'] = True
-    except Exception as e:
-        results['error'] = str(e)
-    return jsonify(results)
-
-
-@app.route('/api/dbcheck')
-def api_dbcheck():
-    import os
-    from urllib.parse import urlparse
-    url = os.environ.get('DATABASE_URL', '')
-    p = urlparse(url)
-    info = {'host': p.hostname, 'db': p.path.lstrip('/')}
-    try:
-        with get_db() as conn:
-            with conn.cursor() as cur:
-                cur.execute("SELECT COUNT(*) FROM users")
-                info['user_count'] = cur.fetchone()[0]
-                cur.execute("SELECT COUNT(*) FROM admins")
-                info['admin_count'] = cur.fetchone()[0]
-                cur.execute("SELECT LEFT(password_hash,20) FROM users WHERE email='johngannon@pacesupply.com'")
-                row = cur.fetchone()
-                info['user_hash_prefix'] = row[0] if row else None
-    except Exception as e:
-        info['error'] = str(e)
-    return jsonify(info)
 
 
 if __name__ == '__main__':
