@@ -15,7 +15,7 @@ except ImportError:
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask import Blueprint, request, jsonify, session, redirect, send_from_directory
 from auth import admin_required
-from db import get_db
+from db import get_db, using_sqlite
 from state import EXPLORE_SCHOOLS
 from models.school_data import SCHOOL_META
 from admin.image_curation import (
@@ -30,6 +30,11 @@ legacy_admin_bp = Blueprint('legacy_admin', __name__)
 # ── Pre-fetch tracking ────────────────────────────────────────────────────────
 _prefetch_running: set[str] = set()
 _prefetch_lock = threading.Lock()
+
+
+def _is_duplicate_error(exc: Exception) -> bool:
+    msg = str(exc).lower()
+    return 'unique' in msg or 'duplicate' in msg
 
 
 def _school_city(school_name: str) -> str | None:
@@ -58,9 +63,13 @@ def api_admin_login():
         return jsonify({'error': 'Email and password required'}), 400
     try:
         with get_db() as conn:
-            with conn.cursor() as cur:
-                cur.execute('SELECT password_hash FROM admins WHERE email = %s', (email,))
+            if using_sqlite():
+                cur = conn.execute('SELECT password_hash FROM admins WHERE email = ?', (email,))
                 row = cur.fetchone()
+            else:
+                with conn.cursor() as cur:
+                    cur.execute('SELECT password_hash FROM admins WHERE email = %s', (email,))
+                    row = cur.fetchone()
         if not row or not check_password_hash(row[0], password):
             return jsonify({'error': 'Incorrect email or password'}), 401
         session['admin_email'] = email
@@ -90,9 +99,14 @@ def api_admin_list_admins():
     """List all admin accounts."""
     try:
         with get_db() as conn:
-            with conn.cursor() as cur:
-                cur.execute('SELECT email, created_by, created_at FROM admins ORDER BY created_at')
-                rows = cur.fetchall()
+            if using_sqlite():
+                rows = conn.execute(
+                    'SELECT email, created_by, created_at FROM admins ORDER BY created_at'
+                ).fetchall()
+            else:
+                with conn.cursor() as cur:
+                    cur.execute('SELECT email, created_by, created_at FROM admins ORDER BY created_at')
+                    rows = cur.fetchall()
         return jsonify([
             {'email': r[0], 'created_by': r[1] or 'bootstrap', 'created_at': str(r[2])}
             for r in rows
@@ -116,17 +130,24 @@ def api_admin_create_admin():
     pw_hash  = generate_password_hash(password)
     try:
         with get_db() as conn:
-            with conn.cursor() as cur:
-                cur.execute(
-                    'INSERT INTO admins (email, password_hash, created_by) VALUES (%s, %s, %s)',
-                    (email, pw_hash, creator)
-                )
-            conn.commit()
+            if using_sqlite():
+                with conn:
+                    conn.execute(
+                        'INSERT INTO admins (email, password_hash, created_by) VALUES (?, ?, ?)',
+                        (email, pw_hash, creator)
+                    )
+            else:
+                with conn.cursor() as cur:
+                    cur.execute(
+                        'INSERT INTO admins (email, password_hash, created_by) VALUES (%s, %s, %s)',
+                        (email, pw_hash, creator)
+                    )
+                conn.commit()
         print(f'[admin] {creator} created new admin: {email}')
         return jsonify({'ok': True, 'email': email})
-    except psycopg2.errors.UniqueViolation:
-        return jsonify({'error': 'An admin with that email already exists'}), 409
     except Exception as e:
+        if _is_duplicate_error(e):
+            return jsonify({'error': 'An admin with that email already exists'}), 409
         return jsonify({'error': str(e)}), 500
 
 

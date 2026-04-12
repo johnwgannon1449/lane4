@@ -325,6 +325,28 @@ def search():
                 parts    = [p for p in [adm_lbl, swim_lbl] if p and p not in ('Unknown', '')]
                 r['aiWhy'] = ' · '.join(parts[:2])
 
+            if not schools:
+                fallback = _pre_sort(all_results, query, eliminated, my_list)[:6]
+                for r in fallback:
+                    adm_lbl  = r.get('admission', {}).get('label', '')
+                    swim_lbl = r.get('adjTier', '')
+                    parts    = [p for p in [adm_lbl, swim_lbl] if p and p not in ('Unknown', '')]
+                    r['aiWhy'] = ' · '.join(parts[:2])
+                return jsonify({
+                    'answer': 'No exact matches survived the fit filters, so here are the closest alternatives from the full pool.',
+                    'schools': fallback,
+                    'directMatch': False,
+                    'fallbackUsed': True,
+                    '_debug': {
+                        'intent':       intent,
+                        'aiCandidates': candidate_names,
+                        'mapped':       [r['school'] for r in candidates],
+                        'removed':      removed_debug,
+                        'kept':         [],
+                        'finalTop6':    [r['school'] for r in fallback[:6]],
+                    },
+                })
+
             # ── DEBUG — visible in DevTools → Network tab ───────────────────
             survived_reason = (
                 'objective query — AI order preserved, no filtering'

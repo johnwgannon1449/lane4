@@ -10,7 +10,7 @@ except ImportError:
 
 from flask import Blueprint, request, jsonify, session, send_from_directory
 from auth import user_admin_required
-from db import get_db
+from db import get_db, get_dict_cursor, using_sqlite
 from state import EXPLORE_SCHOOLS
 from models.school_data import SCHOOL_META
 from admin.image_curation import (
@@ -229,13 +229,19 @@ def ua_list_admins():
     """Return all admin records for the admin management UI."""
     try:
         with get_db() as conn:
-            with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-                cur.execute("""
-                    SELECT email, active, created_by,
-                           TO_CHAR(created_at AT TIME ZONE 'UTC', 'YYYY-MM-DD HH24:MI') AS created_at
-                    FROM admins
-                    ORDER BY created_at
-                """)
+            with get_dict_cursor(conn) as cur:
+                sql = (
+                    """SELECT email, active, created_by, created_at
+                        FROM admins
+                        ORDER BY created_at"""
+                    if using_sqlite()
+                    else
+                    """SELECT email, active, created_by,
+                              TO_CHAR(created_at AT TIME ZONE 'UTC', 'YYYY-MM-DD HH24:MI') AS created_at
+                       FROM admins
+                       ORDER BY created_at"""
+                )
+                cur.execute(sql)
                 rows = [dict(r) for r in cur.fetchall()]
         return jsonify(rows)
     except Exception as e:
@@ -253,6 +259,14 @@ def ua_create_admin():
     created_by = session.get('email', 'unknown')
     try:
         with get_db() as conn:
+            if using_sqlite():
+                with conn:
+                    conn.execute("""
+                        INSERT INTO admins (email, active, created_by)
+                        VALUES (?, 1, ?)
+                        ON CONFLICT(email) DO UPDATE SET active = 1
+                    """, (email, created_by))
+                return jsonify({'ok': True, 'email': email})
             with conn.cursor() as cur:
                 cur.execute("""
                     INSERT INTO admins (email, active, created_by)

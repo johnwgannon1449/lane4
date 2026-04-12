@@ -4,6 +4,7 @@ __pycache__/
 .env
 .venv/
 venv/
+lane4_local.db
 *.egg-info/
 dist/
 build/

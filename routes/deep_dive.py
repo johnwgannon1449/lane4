@@ -494,18 +494,26 @@ def coach_email():
     top3  = result['top3']
     best  = top3[0] if top3 else None
 
-    if best is None:
-        return jsonify({'error': 'No scored events found for this school'}), 400
-
     # Performance descriptor
-    if best['place'] <= 1.5:
+    if best is None:
+        perf = 'still working toward being a scorer at your conference meet level'
+        second = ''
+        fit_sentence = (
+            "I know I am not yet at a projected scoring level for your conference, "
+            "but I am improving and very interested in your program.\n\n"
+        )
+    elif best['place'] <= 1.5:
         perf = f"projected to win the {best['event']}"
+        second = f" I also project to score in the {top3[1]['event']}." if len(top3) > 1 else ''
+        fit_sentence = ''
     elif best['place'] <= 3.5:
         perf = f"projected to podium in the {best['event']}"
+        second = f" I also project to score in the {top3[1]['event']}." if len(top3) > 1 else ''
+        fit_sentence = ''
     else:
         perf = f"projected as a conference A finalist in the {best['event']}"
-
-    second     = f" I also project to score in the {top3[1]['event']}." if len(top3) > 1 else ''
+        second = f" I also project to score in the {top3[1]['event']}." if len(top3) > 1 else ''
+        fit_sentence = ''
     stem_note  = ' Your programs in engineering and CS align directly with my academic direction.' if meta.get('stem') else ''
     merit_note = " I've also been looking closely at your merit scholarship opportunities." if meta.get('merit') == 'high' else ''
 
@@ -526,6 +534,7 @@ def coach_email():
         f"in {result['school']}'s swim program.\n\n"
         f"At the {result['conference']} conference level, I'm {perf}.{second} "
         f"My current bests include {times_text}.\n\n"
+        f"{fit_sentence}"
         f"Academically I carry a {gpa} GPA"
         + (f", {sat} SAT" if sat else "")
         + (f" / {act_score} ACT" if act_score else "")

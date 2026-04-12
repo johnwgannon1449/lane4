@@ -1,5 +1,6 @@
 # Search prompt builders and response parsers extracted from main.py.
 import re, json
+from scoring.primitives import place_label
 
 def _build_student_context(name, gpa, sat, act, times, vibe, other_prefs) -> str:
     """Build a concise student context string for GUIDED/CONSTRAINED prompts."""
@@ -132,4 +133,3 @@ def _build_vibe_lines(vibe, other_prefs=''):
     if other_prefs and other_prefs.strip():
         lines.append(f"  - Additional preferences: {other_prefs.strip()}")
     return '\n'.join(lines)
-

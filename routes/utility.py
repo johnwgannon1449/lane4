@@ -5,7 +5,7 @@ from werkzeug.security import generate_password_hash
 from flask import Blueprint, jsonify, send_from_directory
 from state import EXPLORE_SCHOOLS, BENCHMARKS, TEAMS_LIST, NORMALIZATION_LOG
 from models.school_data import SCHOOL_META
-from db import get_db
+from db import get_db, using_sqlite
 
 utility_bp = Blueprint('utility', __name__)
 
@@ -43,19 +43,34 @@ def api_reset_admin():
     results = {}
     try:
         with get_db() as conn:
-            with conn.cursor() as cur:
-                cur.execute(
-                    "UPDATE admins SET password_hash = %s WHERE email = 'johngannon@pacesupply.com'",
-                    (new_hash,)
-                )
-                results['admin_rows'] = cur.rowcount
-                cur.execute(
-                    """INSERT INTO users (email, password_hash)
-                       VALUES ('johngannon@pacesupply.com', %s)
-                       ON CONFLICT (email) DO UPDATE SET password_hash = EXCLUDED.password_hash""",
-                    (new_hash,)
-                )
-                results['user_rows'] = cur.rowcount
+            if using_sqlite():
+                with conn:
+                    cur = conn.execute(
+                        "UPDATE admins SET password_hash = ? WHERE email = 'johngannon@pacesupply.com'",
+                        (new_hash,)
+                    )
+                    results['admin_rows'] = cur.rowcount
+                    cur = conn.execute(
+                        """INSERT INTO users (email, password_hash)
+                           VALUES ('johngannon@pacesupply.com', ?)
+                           ON CONFLICT(email) DO UPDATE SET password_hash = excluded.password_hash""",
+                        (new_hash,)
+                    )
+                    results['user_rows'] = cur.rowcount
+            else:
+                with conn.cursor() as cur:
+                    cur.execute(
+                        "UPDATE admins SET password_hash = %s WHERE email = 'johngannon@pacesupply.com'",
+                        (new_hash,)
+                    )
+                    results['admin_rows'] = cur.rowcount
+                    cur.execute(
+                        """INSERT INTO users (email, password_hash)
+                           VALUES ('johngannon@pacesupply.com', %s)
+                           ON CONFLICT (email) DO UPDATE SET password_hash = EXCLUDED.password_hash""",
+                        (new_hash,)
+                    )
+                    results['user_rows'] = cur.rowcount
         results['ok'] = True
     except Exception as e:
         results['error'] = str(e)
@@ -66,19 +81,30 @@ def api_reset_admin():
 def api_dbcheck():
     url = os.environ.get('DATABASE_URL', '')
     p = urlparse(url)
-    info = {'host': p.hostname, 'db': p.path.lstrip('/')}
+    info = {'host': p.hostname, 'db': p.path.lstrip('/') or 'lane4_local.db'}
     try:
         with get_db() as conn:
-            with conn.cursor() as cur:
-                cur.execute("SELECT COUNT(*) FROM users")
+            if using_sqlite():
+                cur = conn.execute("SELECT COUNT(*) FROM users")
                 info['user_count'] = cur.fetchone()[0]
-                cur.execute("SELECT COUNT(*) FROM admins")
+                cur = conn.execute("SELECT COUNT(*) FROM admins")
                 info['admin_count'] = cur.fetchone()[0]
-                cur.execute(
-                    "SELECT LEFT(password_hash,20) FROM users WHERE email='johngannon@pacesupply.com'"
+                cur = conn.execute(
+                    "SELECT substr(password_hash,1,20) FROM users WHERE email='johngannon@pacesupply.com'"
                 )
                 row = cur.fetchone()
                 info['user_hash_prefix'] = row[0] if row else None
+            else:
+                with conn.cursor() as cur:
+                    cur.execute("SELECT COUNT(*) FROM users")
+                    info['user_count'] = cur.fetchone()[0]
+                    cur.execute("SELECT COUNT(*) FROM admins")
+                    info['admin_count'] = cur.fetchone()[0]
+                    cur.execute(
+                        "SELECT LEFT(password_hash,20) FROM users WHERE email='johngannon@pacesupply.com'"
+                    )
+                    row = cur.fetchone()
+                    info['user_hash_prefix'] = row[0] if row else None
     except Exception as e:
         info['error'] = str(e)
     return jsonify(info)

@@ -1,4 +1,6 @@
 import os
+import sqlite3
+from contextlib import contextmanager
 try:
     import psycopg2
     import psycopg2.extras
@@ -7,19 +9,76 @@ except ImportError:
     _HAS_PSYCOPG2 = False
 from werkzeug.security import generate_password_hash
 
+_SQLITE_PATH = os.path.join(os.path.dirname(__file__), 'lane4_local.db')
+
+
+def using_sqlite() -> bool:
+    return not bool(os.environ.get('DATABASE_URL'))
+
+
+@contextmanager
+def get_dict_cursor(conn):
+    if using_sqlite():
+        cur = conn.cursor()
+        try:
+            yield cur
+        finally:
+            cur.close()
+        return
+    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+        yield cur
+
 # ---------------------------------------------------------------------------
 # DATABASE
 # ---------------------------------------------------------------------------
 def get_db():
-    if not _HAS_PSYCOPG2:
-        raise RuntimeError('psycopg2 not available — admin auth disabled')
     db_url = os.environ.get('DATABASE_URL')
-    if not db_url:
-        raise RuntimeError('DATABASE_URL not set — admin auth disabled')
-    return psycopg2.connect(db_url, connect_timeout=10)
+    if db_url:
+        if not _HAS_PSYCOPG2:
+            raise RuntimeError('psycopg2 not available — database auth disabled')
+        return psycopg2.connect(db_url, connect_timeout=10)
+
+    conn = sqlite3.connect(_SQLITE_PATH)
+    conn.row_factory = sqlite3.Row
+    conn.execute('PRAGMA foreign_keys = ON')
+    return conn
 
 def _init_db():
     """Create tables if they don't exist (safe to run on every startup)."""
+    if using_sqlite():
+        with get_db() as conn:
+            with conn:
+                conn.execute("""
+                    CREATE TABLE IF NOT EXISTS users (
+                        id            INTEGER PRIMARY KEY AUTOINCREMENT,
+                        email         TEXT UNIQUE NOT NULL,
+                        password_hash TEXT NOT NULL,
+                        created_at    TEXT DEFAULT CURRENT_TIMESTAMP
+                    )
+                """)
+                conn.execute("""
+                    CREATE TABLE IF NOT EXISTS sync_data (
+                        id         INTEGER PRIMARY KEY AUTOINCREMENT,
+                        user_id    INTEGER NOT NULL,
+                        data_key   TEXT NOT NULL,
+                        data_value TEXT,
+                        updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
+                        UNIQUE (user_id, data_key),
+                        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+                    )
+                """)
+                conn.execute("""
+                    CREATE TABLE IF NOT EXISTS admins (
+                        id            INTEGER PRIMARY KEY AUTOINCREMENT,
+                        email         TEXT UNIQUE NOT NULL,
+                        password_hash TEXT,
+                        created_by    TEXT,
+                        created_at    TEXT DEFAULT CURRENT_TIMESTAMP,
+                        active        INTEGER NOT NULL DEFAULT 1
+                    )
+                """)
+        return
+
     with get_db() as conn:
         with conn.cursor() as cur:
             cur.execute("""
@@ -69,23 +128,36 @@ def _bootstrap_initial_admin():
     bootstrap_email = 'johngannon@pacesupply.com'
     try:
         with get_db() as conn:
-            with conn.cursor() as cur:
-                # Ensure the seed admin always exists and is active
-                cur.execute("""
-                    INSERT INTO admins (email, active, created_by)
-                    VALUES (%s, TRUE, 'bootstrap')
-                    ON CONFLICT (email) DO UPDATE SET active = TRUE
-                """, (bootstrap_email,))
-                # Optionally attach a password for the legacy curator login
-                initial_password = os.environ.get('ADMIN_PASSWORD', '')
-                if initial_password:
-                    pw_hash = generate_password_hash(initial_password)
-                    cur.execute(
-                        'UPDATE admins SET password_hash = %s WHERE email = %s AND password_hash IS NULL',
-                        (pw_hash, bootstrap_email)
-                    )
-                print(f'[admin bootstrap] Seed admin verified: {bootstrap_email}')
-            conn.commit()
+            if using_sqlite():
+                with conn:
+                    conn.execute("""
+                        INSERT INTO admins (email, active, created_by)
+                        VALUES (?, 1, 'bootstrap')
+                        ON CONFLICT(email) DO UPDATE SET active = 1
+                    """, (bootstrap_email,))
+                    initial_password = os.environ.get('ADMIN_PASSWORD', '')
+                    if initial_password:
+                        pw_hash = generate_password_hash(initial_password)
+                        conn.execute(
+                            'UPDATE admins SET password_hash = ? WHERE email = ? AND password_hash IS NULL',
+                            (pw_hash, bootstrap_email)
+                        )
+            else:
+                with conn.cursor() as cur:
+                    cur.execute("""
+                        INSERT INTO admins (email, active, created_by)
+                        VALUES (%s, TRUE, 'bootstrap')
+                        ON CONFLICT (email) DO UPDATE SET active = TRUE
+                    """, (bootstrap_email,))
+                    initial_password = os.environ.get('ADMIN_PASSWORD', '')
+                    if initial_password:
+                        pw_hash = generate_password_hash(initial_password)
+                        cur.execute(
+                            'UPDATE admins SET password_hash = %s WHERE email = %s AND password_hash IS NULL',
+                            (pw_hash, bootstrap_email)
+                        )
+                    conn.commit()
+            print(f'[admin bootstrap] Seed admin verified: {bootstrap_email}')
     except Exception as e:
         print(f'[admin bootstrap] Error: {e}')
 
@@ -96,6 +168,10 @@ def _is_user_admin(email: str) -> bool:
         return False
     try:
         with get_db() as conn:
+            if using_sqlite():
+                cur = conn.cursor()
+                cur.execute('SELECT 1 FROM admins WHERE email = ? AND active = 1', (email,))
+                return cur.fetchone() is not None
             with conn.cursor() as cur:
                 cur.execute('SELECT 1 FROM admins WHERE email = %s AND active = TRUE', (email,))
                 return cur.fetchone() is not None

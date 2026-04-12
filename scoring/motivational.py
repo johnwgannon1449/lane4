@@ -14,6 +14,10 @@ def _load_usa_standards() -> dict:
         try:
             with open(path) as f:
                 _USA_STANDARDS_CACHE = json.load(f)
+            if 'men' not in _USA_STANDARDS_CACHE and 'boys' in _USA_STANDARDS_CACHE:
+                _USA_STANDARDS_CACHE['men'] = _USA_STANDARDS_CACHE['boys']
+            if 'women' not in _USA_STANDARDS_CACHE and 'girls' in _USA_STANDARDS_CACHE:
+                _USA_STANDARDS_CACHE['women'] = _USA_STANDARDS_CACHE['girls']
         except Exception:
             _USA_STANDARDS_CACHE = {}
     return _USA_STANDARDS_CACHE
@@ -72,4 +76,3 @@ def _a_tier_label(score: float) -> str:
     if score < 3.0: return 'AA'
     if score < 4.0: return 'AAA'
     return 'AAAA+'
-

@@ -9,7 +9,7 @@ except ImportError:
     _HAS_PSYCOPG2 = False
 
 from flask import Blueprint, request, jsonify, session
-from db import get_db
+from db import get_db, get_dict_cursor, using_sqlite
 from auth import login_required
 
 swimcloud_bp = Blueprint('swimcloud', __name__)
@@ -19,9 +19,14 @@ def _sc_load_swimmer_record(user_id: int) -> dict:
     """Load the user's saved 'swimmer' JSON from sync_data. Returns {} if missing."""
     try:
         with get_db() as conn:
-            with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            with get_dict_cursor(conn) as cur:
+                sql = (
+                    "SELECT data_value FROM sync_data WHERE user_id = ? AND data_key = 'swimmer'"
+                    if using_sqlite()
+                    else "SELECT data_value FROM sync_data WHERE user_id = %s AND data_key = 'swimmer'"
+                )
                 cur.execute(
-                    "SELECT data_value FROM sync_data WHERE user_id = %s AND data_key = 'swimmer'",
+                    sql,
                     (user_id,)
                 )
                 row = cur.fetchone()
