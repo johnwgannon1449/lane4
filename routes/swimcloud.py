@@ -38,40 +38,51 @@ def _sc_load_swimmer_record(user_id: int) -> dict:
     return {}
 
 
-@swimcloud_bp.route('/api/public/swimcloud/search', methods=['GET'])
-def sc_search_public():
-    """Public SwimCloud search — used during onboarding before account creation."""
-    q = (request.args.get('q') or '').strip()
-    if not q:
-        return jsonify({'error': 'Query required'}), 400
-    try:
-        from swimcloud_client import search_swimmers
-        results = search_swimmers(q)
-        return jsonify({'results': results})
-    except Exception as e:
-        print(f'[swimcloud/public/search] {e}')
-        return jsonify({'error': 'SwimCloud search failed', 'detail': str(e)}), 502
+@swimcloud_bp.route('/api/public/swimcloud/process-times', methods=['POST'])
+def sc_process_times_public():
+    """
+    Process raw SwimCloud fastest-times data sent from the browser.
 
+    The browser fetches SwimCloud directly (bypasses server IP-blocking), then
+    POSTs the raw JSON here.  No outbound calls are made by the server.
 
-@swimcloud_bp.route('/api/public/swimcloud/propose', methods=['GET'])
-def sc_propose_public():
-    """Public SwimCloud propose — used during onboarding before account creation."""
-    swimmer_id = (request.args.get('swimmer_id') or '').strip()
-    gender     = (request.args.get('gender') or 'men').strip()
-    if not swimmer_id:
-        return jsonify({'error': 'swimmer_id required'}), 400
-    try:
-        from swimcloud_client import get_swimmer_scy_bests
-        from motivational_ranking import rank_swimcloud_bests
-        scy_bests, profile_info, seed_prs = get_swimmer_scy_bests(swimmer_id)
-        effective_gender = profile_info.get('gender') or gender
-        if not scy_bests:
-            return jsonify({'swimmer': profile_info, 'proposed': [], 'seed_prs': []})
-        top10 = rank_swimcloud_bests(scy_bests, effective_gender, n=10)
-        return jsonify({'swimmer': profile_info, 'proposed': top10, 'seed_prs': seed_prs})
-    except Exception as e:
-        print(f'[swimcloud/public/propose] {e}')
-        return jsonify({'error': 'SwimCloud time fetch failed', 'detail': str(e)}), 502
+    Body: { swimmer_id, gender, raw_times: [...] }
+    Returns: { swimmer: {gender}, proposed: [...], seed_prs: [...] }
+    """
+    body      = request.get_json(silent=True) or {}
+    raw_times = body.get('raw_times') or []
+    gender    = (body.get('gender') or 'men').strip()
+
+    if not isinstance(raw_times, list):
+        # SwimCloud sometimes wraps the list in {"results": [...]}
+        if isinstance(raw_times, dict):
+            raw_times = raw_times.get('results') or []
+        else:
+            return jsonify({'error': 'raw_times must be an array'}), 400
+
+    from swimcloud_client import extract_scy_bests, detect_gender_from_raw, extract_seed_prs
+    from motivational_ranking import rank_swimcloud_bests
+
+    scy_bests       = extract_scy_bests(raw_times)
+    detected_gender = detect_gender_from_raw(raw_times) or gender
+    seed_prs        = extract_seed_prs(raw_times, scy_bests)
+    top10           = rank_swimcloud_bests(scy_bests, detected_gender, n=10)
+
+    # rank_swimcloud_bests doesn't include tier labels — add them
+    for item in top10:
+        s = item.get('a_score', 0)
+        if s < 0:   item['tier'] = 'Sub-B'
+        elif s < 1: item['tier'] = 'B/BB'
+        elif s < 2: item['tier'] = 'A'
+        elif s < 3: item['tier'] = 'AA'
+        elif s < 4: item['tier'] = 'AAA'
+        else:       item['tier'] = 'AAAA+'
+
+    return jsonify({
+        'swimmer': {'gender': detected_gender},
+        'proposed': top10,
+        'seed_prs': seed_prs,
+    })
 
 
 @swimcloud_bp.route('/api/swimcloud/search', methods=['GET'])
@@ -197,3 +208,65 @@ def sc_check_prs():
     except Exception as e:
         print(f'[swimcloud/check-prs] {e}')
         return jsonify({'linked': True, 'has_new_prs': False, 'reason': 'fetch_error', 'detail': str(e)}), 200
+
+
+@swimcloud_bp.route('/api/swimcloud/check-prs-raw', methods=['POST'])
+@login_required
+def sc_check_prs_raw():
+    """
+    PR check using raw times fetched by the browser directly from SwimCloud.
+
+    Replaces /api/swimcloud/check-prs for the client-side approach.
+    Body: { raw_times: [...], gender: 'men'|'women' }
+    Returns same shape as /api/swimcloud/check-prs.
+    """
+    user_id   = session['user_id']
+    body      = request.get_json(silent=True) or {}
+    raw_times = body.get('raw_times') or []
+    gender    = (body.get('gender') or 'men').strip()
+
+    if not isinstance(raw_times, list):
+        if isinstance(raw_times, dict):
+            raw_times = raw_times.get('results') or []
+        else:
+            return jsonify({'linked': True, 'has_new_prs': False, 'reason': 'invalid_data'})
+
+    swimmer_rec = _sc_load_swimmer_record(user_id)
+    sc          = swimmer_rec.get('swimcloud') or {}
+
+    if not sc.get('swimmer_id'):
+        return jsonify({'linked': False})
+
+    from swimcloud_client import extract_scy_bests, detect_gender_from_raw
+    from motivational_ranking import rank_swimcloud_bests
+
+    scy_bests       = extract_scy_bests(raw_times)
+    detected_gender = detect_gender_from_raw(raw_times) or gender
+    sync_ts         = datetime.datetime.now(datetime.timezone.utc).isoformat()
+
+    if not scy_bests:
+        return jsonify({
+            'linked': True, 'has_new_prs': False,
+            'reason': 'no_scy_times', 'sync_timestamp': sync_ts,
+        })
+
+    top10    = rank_swimcloud_bests(scy_bests, detected_gender, n=10)
+    accepted = sc.get('accepted_events', {})
+    new_prs  = []
+    for ev in top10:
+        event = ev['event']
+        new_t = ev['time_sec']
+        old   = accepted.get(event, {})
+        old_t = old.get('time_sec') if isinstance(old, dict) else None
+        if old_t is None or new_t < old_t:
+            ev['old_time'] = old.get('time') if isinstance(old, dict) else None
+            new_prs.append(ev)
+
+    return jsonify({
+        'linked':         True,
+        'has_new_prs':    bool(new_prs),
+        'proposed':       top10,
+        'new_prs':        new_prs,
+        'swimmer':        {'gender': detected_gender},
+        'sync_timestamp': sync_ts,
+    })
