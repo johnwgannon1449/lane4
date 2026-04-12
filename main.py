@@ -1,6 +1,7 @@
-import os, json, re, time, threading
+import os, json, re, time, threading, sqlite3
 import urllib.request, urllib.parse
 import datetime
+from contextlib import contextmanager
 from flask import Flask, request, jsonify, send_from_directory, session, redirect
 from dotenv import load_dotenv
 from functools import wraps
@@ -46,16 +47,79 @@ LANE4_DEEP_DIVE_PROMPT = _load_deep_dive_prompt()
 # ---------------------------------------------------------------------------
 # DATABASE
 # ---------------------------------------------------------------------------
+_SQLITE_PATH = os.path.join(os.path.dirname(__file__), 'lane4_local.db')
+
+
+def using_sqlite() -> bool:
+    return not bool(os.environ.get('DATABASE_URL'))
+
+
 def get_db():
-    if not _HAS_PSYCOPG2:
-        raise RuntimeError('psycopg2 not available — admin auth disabled')
     db_url = os.environ.get('DATABASE_URL')
-    if not db_url:
-        raise RuntimeError('DATABASE_URL not set — admin auth disabled')
-    return psycopg2.connect(db_url, connect_timeout=10)
+    if db_url:
+        if not _HAS_PSYCOPG2:
+            raise RuntimeError('psycopg2 not available')
+        return psycopg2.connect(db_url, connect_timeout=10)
+    conn = sqlite3.connect(_SQLITE_PATH)
+    conn.row_factory = sqlite3.Row
+    conn.execute('PRAGMA foreign_keys = ON')
+    return conn
+
+
+@contextmanager
+def get_dict_cursor(conn):
+    """Yield a dict-row cursor for both SQLite and PostgreSQL."""
+    if using_sqlite():
+        cur = conn.cursor()
+        try:
+            yield cur
+        finally:
+            cur.close()
+        return
+    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+        yield cur
+
+
+def _is_duplicate_error(exc: Exception) -> bool:
+    msg = str(exc).lower()
+    return 'unique' in msg or 'duplicate' in msg
 
 def _init_db():
     """Create tables if they don't exist (safe to run on every startup)."""
+    if using_sqlite():
+        with get_db() as conn:
+            with conn:
+                conn.execute("""
+                    CREATE TABLE IF NOT EXISTS users (
+                        id            INTEGER PRIMARY KEY AUTOINCREMENT,
+                        email         TEXT UNIQUE NOT NULL,
+                        password_hash TEXT NOT NULL,
+                        created_at    TEXT DEFAULT CURRENT_TIMESTAMP
+                    )
+                """)
+                conn.execute("""
+                    CREATE TABLE IF NOT EXISTS sync_data (
+                        id         INTEGER PRIMARY KEY AUTOINCREMENT,
+                        user_id    INTEGER NOT NULL,
+                        data_key   TEXT NOT NULL,
+                        data_value TEXT,
+                        updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
+                        UNIQUE (user_id, data_key),
+                        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+                    )
+                """)
+                conn.execute("""
+                    CREATE TABLE IF NOT EXISTS admins (
+                        id            INTEGER PRIMARY KEY AUTOINCREMENT,
+                        email         TEXT UNIQUE NOT NULL,
+                        password_hash TEXT,
+                        created_by    TEXT,
+                        created_at    TEXT DEFAULT CURRENT_TIMESTAMP,
+                        active        INTEGER NOT NULL DEFAULT 1
+                    )
+                """)
+        return
+
     with get_db() as conn:
         with conn.cursor() as cur:
             cur.execute("""
@@ -105,23 +169,36 @@ def _bootstrap_initial_admin():
     bootstrap_email = 'johngannon@pacesupply.com'
     try:
         with get_db() as conn:
-            with conn.cursor() as cur:
-                # Ensure the seed admin always exists and is active
-                cur.execute("""
-                    INSERT INTO admins (email, active, created_by)
-                    VALUES (%s, TRUE, 'bootstrap')
-                    ON CONFLICT (email) DO UPDATE SET active = TRUE
-                """, (bootstrap_email,))
-                # Optionally attach a password for the legacy curator login
-                initial_password = os.environ.get('ADMIN_PASSWORD', '')
-                if initial_password:
-                    pw_hash = generate_password_hash(initial_password)
-                    cur.execute(
-                        'UPDATE admins SET password_hash = %s WHERE email = %s AND password_hash IS NULL',
-                        (pw_hash, bootstrap_email)
-                    )
-                print(f'[admin bootstrap] Seed admin verified: {bootstrap_email}')
-            conn.commit()
+            if using_sqlite():
+                with conn:
+                    conn.execute("""
+                        INSERT INTO admins (email, active, created_by)
+                        VALUES (?, 1, 'bootstrap')
+                        ON CONFLICT(email) DO UPDATE SET active = 1
+                    """, (bootstrap_email,))
+                    initial_password = os.environ.get('ADMIN_PASSWORD', '')
+                    if initial_password:
+                        pw_hash = generate_password_hash(initial_password)
+                        conn.execute(
+                            'UPDATE admins SET password_hash = ? WHERE email = ? AND password_hash IS NULL',
+                            (pw_hash, bootstrap_email)
+                        )
+            else:
+                with conn.cursor() as cur:
+                    cur.execute("""
+                        INSERT INTO admins (email, active, created_by)
+                        VALUES (%s, TRUE, 'bootstrap')
+                        ON CONFLICT (email) DO UPDATE SET active = TRUE
+                    """, (bootstrap_email,))
+                    initial_password = os.environ.get('ADMIN_PASSWORD', '')
+                    if initial_password:
+                        pw_hash = generate_password_hash(initial_password)
+                        cur.execute(
+                            'UPDATE admins SET password_hash = %s WHERE email = %s AND password_hash IS NULL',
+                            (pw_hash, bootstrap_email)
+                        )
+                conn.commit()
+        print(f'[admin bootstrap] Seed admin verified: {bootstrap_email}')
     except Exception as e:
         print(f'[admin bootstrap] Error: {e}')
 
@@ -132,6 +209,10 @@ def _is_user_admin(email: str) -> bool:
         return False
     try:
         with get_db() as conn:
+            if using_sqlite():
+                cur = conn.cursor()
+                cur.execute('SELECT 1 FROM admins WHERE email = ? AND active = 1', (email,))
+                return cur.fetchone() is not None
             with conn.cursor() as cur:
                 cur.execute('SELECT 1 FROM admins WHERE email = %s AND active = TRUE', (email,))
                 return cur.fetchone() is not None
@@ -188,18 +269,26 @@ def auth_register():
     pw_hash = generate_password_hash(password)
     try:
         with get_db() as conn:
-            with conn.cursor() as cur:
-                cur.execute(
-                    'INSERT INTO users (email, password_hash) VALUES (%s, %s) RETURNING id',
-                    (email, pw_hash)
-                )
-                user_id = cur.fetchone()[0]
+            if using_sqlite():
+                with conn:
+                    cur = conn.execute(
+                        'INSERT INTO users (email, password_hash) VALUES (?, ?)',
+                        (email, pw_hash)
+                    )
+                    user_id = cur.lastrowid
+            else:
+                with conn.cursor() as cur:
+                    cur.execute(
+                        'INSERT INTO users (email, password_hash) VALUES (%s, %s) RETURNING id',
+                        (email, pw_hash)
+                    )
+                    user_id = cur.fetchone()[0]
         session['user_id'] = user_id
         session['email']   = email
         return jsonify({'ok': True, 'email': email})
-    except psycopg2.errors.UniqueViolation:
-        return jsonify({'error': 'An account with that email already exists.'}), 409
     except Exception as e:
+        if _is_duplicate_error(e):
+            return jsonify({'error': 'An account with that email already exists.'}), 409
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/auth/login', methods=['POST'])
@@ -209,8 +298,11 @@ def auth_login():
     password = (body.get('password') or '').strip()
     try:
         with get_db() as conn:
-            with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-                cur.execute('SELECT id, password_hash FROM users WHERE email = %s', (email,))
+            with get_dict_cursor(conn) as cur:
+                sql = ('SELECT id, password_hash FROM users WHERE email = ?'
+                       if using_sqlite()
+                       else 'SELECT id, password_hash FROM users WHERE email = %s')
+                cur.execute(sql, (email,))
                 row = cur.fetchone()
         if not row or not check_password_hash(row['password_hash'], password):
             return jsonify({'error': 'Incorrect email or password.'}), 401
@@ -248,13 +340,21 @@ def data_load():
     user_id = session['user_id']
     try:
         with get_db() as conn:
-            with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-                cur.execute(
-                    'SELECT data_key, data_value FROM sync_data WHERE user_id = %s',
-                    (user_id,)
-                )
+            with get_dict_cursor(conn) as cur:
+                sql = ('SELECT data_key, data_value FROM sync_data WHERE user_id = ?'
+                       if using_sqlite()
+                       else 'SELECT data_key, data_value FROM sync_data WHERE user_id = %s')
+                cur.execute(sql, (user_id,))
                 rows = cur.fetchall()
-        result = {r['data_key']: r['data_value'] for r in rows}
+        result = {}
+        for row in rows:
+            value = row['data_value']
+            if using_sqlite() and isinstance(value, str):
+                try:
+                    value = json.loads(value)
+                except json.JSONDecodeError:
+                    pass
+            result[row['data_key']] = value
         return jsonify({'ok': True, 'data': result})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
@@ -266,17 +366,30 @@ def data_save():
     body    = request.get_json(silent=True) or {}
     try:
         with get_db() as conn:
-            with conn.cursor() as cur:
-                for key, value in body.items():
-                    if key not in _ALLOWED_KEYS:
-                        continue
-                    cur.execute(
-                        '''INSERT INTO sync_data (user_id, data_key, data_value, updated_at)
-                           VALUES (%s, %s, %s::jsonb, NOW())
-                           ON CONFLICT (user_id, data_key)
-                           DO UPDATE SET data_value = EXCLUDED.data_value, updated_at = NOW()''',
-                        (user_id, key, json.dumps(value))
-                    )
+            if using_sqlite():
+                with conn:
+                    for key, value in body.items():
+                        if key not in _ALLOWED_KEYS:
+                            continue
+                        conn.execute(
+                            '''INSERT INTO sync_data (user_id, data_key, data_value, updated_at)
+                               VALUES (?, ?, ?, CURRENT_TIMESTAMP)
+                               ON CONFLICT(user_id, data_key)
+                               DO UPDATE SET data_value = excluded.data_value, updated_at = CURRENT_TIMESTAMP''',
+                            (user_id, key, json.dumps(value))
+                        )
+            else:
+                with conn.cursor() as cur:
+                    for key, value in body.items():
+                        if key not in _ALLOWED_KEYS:
+                            continue
+                        cur.execute(
+                            '''INSERT INTO sync_data (user_id, data_key, data_value, updated_at)
+                               VALUES (%s, %s, %s::jsonb, NOW())
+                               ON CONFLICT (user_id, data_key)
+                               DO UPDATE SET data_value = EXCLUDED.data_value, updated_at = NOW()''',
+                            (user_id, key, json.dumps(value))
+                        )
         return jsonify({'ok': True})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
@@ -289,11 +402,11 @@ def _sc_load_swimmer_record(user_id: int) -> dict:
     """Load the user's saved 'swimmer' JSON from sync_data. Returns {} if missing."""
     try:
         with get_db() as conn:
-            with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-                cur.execute(
-                    "SELECT data_value FROM sync_data WHERE user_id = %s AND data_key = 'swimmer'",
-                    (user_id,)
-                )
+            with get_dict_cursor(conn) as cur:
+                sql = ("SELECT data_value FROM sync_data WHERE user_id = ? AND data_key = 'swimmer'"
+                       if using_sqlite()
+                       else "SELECT data_value FROM sync_data WHERE user_id = %s AND data_key = 'swimmer'")
+                cur.execute(sql, (user_id,))
                 row = cur.fetchone()
         if row and row['data_value']:
             val = row['data_value']
@@ -5790,13 +5903,15 @@ def ua_list_admins():
     """Return all admin records for the admin management UI."""
     try:
         with get_db() as conn:
-            with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-                cur.execute("""
-                    SELECT email, active, created_by,
-                           TO_CHAR(created_at AT TIME ZONE 'UTC', 'YYYY-MM-DD HH24:MI') AS created_at
-                    FROM admins
-                    ORDER BY created_at
-                """)
+            with get_dict_cursor(conn) as cur:
+                if using_sqlite():
+                    cur.execute('SELECT email, active, created_by, created_at FROM admins ORDER BY created_at')
+                else:
+                    cur.execute("""
+                        SELECT email, active, created_by,
+                               TO_CHAR(created_at AT TIME ZONE 'UTC', 'YYYY-MM-DD HH24:MI') AS created_at
+                        FROM admins ORDER BY created_at
+                    """)
                 rows = [dict(r) for r in cur.fetchall()]
         return jsonify(rows)
     except Exception as e:
@@ -5814,16 +5929,22 @@ def ua_create_admin():
     created_by = session.get('email', 'unknown')
     try:
         with get_db() as conn:
-            with conn.cursor() as cur:
-                cur.execute("""
-                    INSERT INTO admins (email, active, created_by)
-                    VALUES (%s, TRUE, %s)
-                    ON CONFLICT (email) DO UPDATE SET active = TRUE
-                    RETURNING email
-                """, (email, created_by))
-                result = cur.fetchone()
-            conn.commit()
-        return jsonify({'ok': True, 'email': result[0]})
+            if using_sqlite():
+                with conn:
+                    conn.execute("""
+                        INSERT INTO admins (email, active, created_by)
+                        VALUES (?, 1, ?)
+                        ON CONFLICT(email) DO UPDATE SET active = 1
+                    """, (email, created_by))
+            else:
+                with conn.cursor() as cur:
+                    cur.execute("""
+                        INSERT INTO admins (email, active, created_by)
+                        VALUES (%s, TRUE, %s)
+                        ON CONFLICT (email) DO UPDATE SET active = TRUE
+                    """, (email, created_by))
+                conn.commit()
+        return jsonify({'ok': True, 'email': email})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
@@ -5902,17 +6023,24 @@ def api_admin_create_admin():
     pw_hash  = generate_password_hash(password)
     try:
         with get_db() as conn:
-            with conn.cursor() as cur:
-                cur.execute(
-                    'INSERT INTO admins (email, password_hash, created_by) VALUES (%s, %s, %s)',
-                    (email, pw_hash, creator)
-                )
-            conn.commit()
+            if using_sqlite():
+                with conn:
+                    conn.execute(
+                        'INSERT INTO admins (email, password_hash, created_by) VALUES (?, ?, ?)',
+                        (email, pw_hash, creator)
+                    )
+            else:
+                with conn.cursor() as cur:
+                    cur.execute(
+                        'INSERT INTO admins (email, password_hash, created_by) VALUES (%s, %s, %s)',
+                        (email, pw_hash, creator)
+                    )
+                conn.commit()
         print(f'[admin] {creator} created new admin: {email}')
         return jsonify({'ok': True, 'email': email})
-    except psycopg2.errors.UniqueViolation:
-        return jsonify({'error': 'An admin with that email already exists'}), 409
     except Exception as e:
+        if _is_duplicate_error(e):
+            return jsonify({'error': 'An admin with that email already exists'}), 409
         return jsonify({'error': str(e)}), 500
 
 
@@ -6296,14 +6424,24 @@ def api_reset_admin():
     results = {}
     try:
         with get_db() as conn:
-            with conn.cursor() as cur:
-                cur.execute("UPDATE admins SET password_hash = %s WHERE email = 'johngannon@pacesupply.com'", (new_hash,))
-                results['admin_rows'] = cur.rowcount
-                cur.execute("""INSERT INTO users (email, password_hash)
-                               VALUES ('johngannon@pacesupply.com', %s)
-                               ON CONFLICT (email) DO UPDATE SET password_hash = EXCLUDED.password_hash""",
-                            (new_hash,))
-                results['user_rows'] = cur.rowcount
+            if using_sqlite():
+                with conn:
+                    cur = conn.execute("UPDATE admins SET password_hash = ? WHERE email = 'johngannon@pacesupply.com'", (new_hash,))
+                    results['admin_rows'] = cur.rowcount
+                    conn.execute("""INSERT INTO users (email, password_hash)
+                                   VALUES ('johngannon@pacesupply.com', ?)
+                                   ON CONFLICT(email) DO UPDATE SET password_hash = excluded.password_hash""",
+                                (new_hash,))
+                    results['user_rows'] = 1
+            else:
+                with conn.cursor() as cur:
+                    cur.execute("UPDATE admins SET password_hash = %s WHERE email = 'johngannon@pacesupply.com'", (new_hash,))
+                    results['admin_rows'] = cur.rowcount
+                    cur.execute("""INSERT INTO users (email, password_hash)
+                                   VALUES ('johngannon@pacesupply.com', %s)
+                                   ON CONFLICT (email) DO UPDATE SET password_hash = EXCLUDED.password_hash""",
+                                (new_hash,))
+                    results['user_rows'] = cur.rowcount
         results['ok'] = True
     except Exception as e:
         results['error'] = str(e)
@@ -6312,21 +6450,29 @@ def api_reset_admin():
 
 @app.route('/api/dbcheck')
 def api_dbcheck():
-    import os
     from urllib.parse import urlparse
     url = os.environ.get('DATABASE_URL', '')
-    p = urlparse(url)
-    info = {'host': p.hostname, 'db': p.path.lstrip('/')}
+    p   = urlparse(url)
+    info = {'host': p.hostname, 'db': p.path.lstrip('/') or 'lane4_local.db (sqlite)'}
     try:
         with get_db() as conn:
-            with conn.cursor() as cur:
-                cur.execute("SELECT COUNT(*) FROM users")
+            if using_sqlite():
+                cur = conn.execute('SELECT COUNT(*) FROM users')
                 info['user_count'] = cur.fetchone()[0]
-                cur.execute("SELECT COUNT(*) FROM admins")
+                cur = conn.execute('SELECT COUNT(*) FROM admins')
                 info['admin_count'] = cur.fetchone()[0]
-                cur.execute("SELECT LEFT(password_hash,20) FROM users WHERE email='johngannon@pacesupply.com'")
+                cur = conn.execute("SELECT substr(password_hash,1,20) FROM users WHERE email='johngannon@pacesupply.com'")
                 row = cur.fetchone()
                 info['user_hash_prefix'] = row[0] if row else None
+            else:
+                with conn.cursor() as cur:
+                    cur.execute('SELECT COUNT(*) FROM users')
+                    info['user_count'] = cur.fetchone()[0]
+                    cur.execute('SELECT COUNT(*) FROM admins')
+                    info['admin_count'] = cur.fetchone()[0]
+                    cur.execute("SELECT LEFT(password_hash,20) FROM users WHERE email='johngannon@pacesupply.com'")
+                    row = cur.fetchone()
+                    info['user_hash_prefix'] = row[0] if row else None
     except Exception as e:
         info['error'] = str(e)
     return jsonify(info)
