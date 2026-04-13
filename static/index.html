@@ -2045,10 +2045,16 @@ async function obS1Next() {
   const _s2timer = setTimeout(() => { if (s2head.textContent.startsWith('Checking')) s2head.textContent = 'Pulling your best times\u2026'; }, 2000);
 
   try {
-    const res     = await fetch('https://www.swimcloud.com/api/search/?q=' + encodeURIComponent(name) + '&type=swimmer');
-    const raw     = await res.json();
-    const results = (Array.isArray(raw) ? raw : [])
-      .filter(item => item.doc_type === 'Swimmers')
+    const res = await fetch('https://www.swimcloud.com/api/search/?q=' + encodeURIComponent(name) + '&type=swimmer');
+    const raw = await res.json();
+    // SwimCloud may return a flat array or an object with a results/swimmers key
+    const arr = Array.isArray(raw) ? raw
+              : Array.isArray(raw.results) ? raw.results
+              : Array.isArray(raw.swimmers) ? raw.swimmers
+              : [];
+    console.log('[SwimCloud search] raw type:', Array.isArray(raw) ? 'array' : typeof raw, '| items:', arr.length, '| first doc_type:', arr[0]?.doc_type);
+    const results = arr
+      .filter(item => !item.doc_type || item.doc_type === 'Swimmers' || item.doc_type === 'Swimmer')
       .map(item => {
         const m1 = (item.url  || '').match(/\/swimmer\/(\d+)/);
         const m2 = (item.id   || '').match(/swimmer\.(\d+)/);
@@ -2067,6 +2073,7 @@ async function obS1Next() {
       .slice(0, 10);
     obRenderMatchScreen(name, results);
   } catch(e) {
+    console.error('[SwimCloud search] fetch failed:', e);
     obRenderMatchScreen(name, []);
   }
 }
@@ -2078,8 +2085,12 @@ function obRenderMatchScreen(name, results) {
   if (results.length === 0) {
     headEl.textContent = 'Couldn\u2019t find \u201c' + name + '\u201d';
     bodyEl.innerHTML = `
-      <div class="ob-hero-sub" style="margin-top:0.6rem;">No profile found \u2014 no problem. You can enter your times manually.</div>
-      <button class="ob-submit" onclick="obGoManual()">Enter Times Manually \u2192</button>`;
+      <div class="ob-hero-sub" style="margin-top:0.6rem;">SwimCloud search came up empty. Try a different spelling, or paste your SwimCloud profile URL below.</div>
+      <div style="margin:1rem 0;">
+        <input id="ob-sc-url" type="text" class="ob-input" placeholder="https://www.swimcloud.com/swimmer/12345/" style="margin-bottom:0.5rem;" />
+        <button class="ob-submit" style="margin-bottom:0.75rem;" onclick="obTryScUrl()">Use This Profile \u2192</button>
+      </div>
+      <button class="ob-none-btn" onclick="obGoManual()">Skip \u2014 enter times manually instead</button>`;
     return;
   }
 
@@ -2140,6 +2151,16 @@ function obGoManual() {
   OB_STATE.swimmerId     = null;
   OB_STATE.proposedTimes = [];
   obRenderTimeValidation();
+}
+
+function obTryScUrl() {
+  const urlVal = (document.getElementById('ob-sc-url')?.value || '').trim();
+  const m = urlVal.match(/\/swimmer\/(\d+)/);
+  if (!m) {
+    alert('Please paste a full SwimCloud profile URL like: https://www.swimcloud.com/swimmer/12345/');
+    return;
+  }
+  obSelectSwimmer(m[1], OB_STATE.name, '', '');
 }
 
 function obRenderTimeValidation() {
