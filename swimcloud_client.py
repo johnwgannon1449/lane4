@@ -74,6 +74,14 @@ def _get_session() -> requests.Session:
 def _get(url: str, params: dict = None, timeout: int = 12) -> requests.Response:
     # Check for proxy URL (for Render deployment where SwimCloud blocks datacenter IPs)
     proxy_url = os.environ.get('SWIMCLOUD_PROXY_URL')
+    
+    # Public CORS proxy fallback (slower but works)
+    if not proxy_url and os.environ.get('USE_PUBLIC_PROXY', '').lower() == 'true':
+        proxy_url = 'https://corsproxy.io/'
+    
+    if proxy_url and 'swimcloud.com' in url:
+    # Check for proxy URL (for Render deployment where SwimCloud blocks datacenter IPs)
+    proxy_url = os.environ.get('SWIMCLOUD_PROXY_URL')
     if proxy_url and 'swimcloud.com' in url:
         # Route through proxy to bypass IP block
         proxy_params = {'url': url}
