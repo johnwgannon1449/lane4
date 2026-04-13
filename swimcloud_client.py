@@ -104,6 +104,16 @@ def _get_pw_page():
                 try: obj.close()   # type: ignore[union-attr]
                 except Exception: pass
         from playwright.sync_api import sync_playwright
+        # Ensure Chromium binary is present — installs it if the build step
+        # didn't run playwright install (e.g., first deploy or manual deploy).
+        try:
+            import subprocess, sys as _sys
+            subprocess.run(
+                [_sys.executable, "-m", "playwright", "install", "chromium"],
+                check=True, capture_output=True, timeout=180,
+            )
+        except Exception as _install_err:
+            print(f"[swimcloud/playwright] install chromium: {_install_err}")
         pw = sync_playwright().start()
         browser = pw.chromium.launch(
             headless=True,
