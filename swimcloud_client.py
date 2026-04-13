@@ -113,10 +113,25 @@ def _get_pw_page():
                 "--disable-gpu",
             ],
         )
-        ctx  = browser.new_context(viewport={"width": 1280, "height": 800})
+        ctx = browser.new_context(
+            viewport={"width": 1280, "height": 800},
+            user_agent=(
+                "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
+                "(KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+            ),
+            locale="en-US",
+        )
+        # Patch out headless-browser detection signals before any page loads.
+        # Cloudflare checks navigator.webdriver; removing it prevents escalation
+        # from a solvable managed challenge to an interactive Turnstile.
+        ctx.add_init_script("""
+            Object.defineProperty(navigator, 'webdriver', { get: () => undefined });
+            Object.defineProperty(navigator, 'languages', { get: () => ['en-US', 'en'] });
+            Object.defineProperty(navigator, 'plugins', { get: () => [1, 2, 3, 4, 5] });
+        """)
         page = ctx.new_page()
-        # Solve Cloudflare's managed challenge by loading the homepage in a
-        # real browser — sets cf_clearance + session cookies automatically.
+        # Visit the homepage — the real Chromium browser solves Cloudflare's
+        # managed challenge (runs the challenge JS, gets cf_clearance cookie).
         page.goto(_BASE + "/", timeout=30_000, wait_until="domcontentloaded")
         _PW_PLAYWRIGHT = pw
         _PW_BROWSER    = browser
