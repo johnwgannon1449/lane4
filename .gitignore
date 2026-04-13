@@ -9,3 +9,4 @@ lane4_local.db
 dist/
 build/
 .DS_Store
+.claude/
