@@ -5,28 +5,37 @@ Endpoints used (no auth required):
   Search:  GET https://www.swimcloud.com/api/search/?q=<name>&type=swimmer
   Times:   GET https://www.swimcloud.com/api/swimmers/<id>/profile_fastest_times/
 
-Uses curl_cffi with Chrome TLS/HTTP2 impersonation to pass Cloudflare's bot
-detection from datacenter IPs (Render). The session visits the SwimCloud
-homepage first to acquire session cookies, then makes API calls.
+Two-tier fetch strategy:
+  1. curl_cffi with Chrome TLS/HTTP2 impersonation — fast, works from
+     residential IPs. Falls through on 403 (Cloudflare challenge).
+  2. Playwright (real Chromium headless) — visits swimcloud.com homepage to
+     solve Cloudflare's managed challenge, then makes in-browser fetch() calls.
+     Used automatically on Render/datacenter IPs where curl_cffi gets 403.
 """
 
+import json
 import re
+import threading
 import time as _time
+import urllib.parse
+
 from curl_cffi import requests as cf_requests
 
-_SESSION = None
-_SESSION_BUILT = 0.0
-_SESSION_TTL = 1800  # 30 min — refresh session before clearance cookies expire
-
 _BASE = "https://www.swimcloud.com"
-# Extra headers layered on top of curl_cffi's Chrome impersonation defaults.
-# X-Requested-With tells SwimCloud's Django to return JSON instead of HTML.
+
+# Headers added on top of curl_cffi's Chrome impersonation.
+# X-Requested-With signals AJAX so SwimCloud returns JSON, not HTML.
 _API_HEADERS = {
     "Accept":           "application/json, text/plain, */*",
     "Accept-Language":  "en-US,en;q=0.9",
     "X-Requested-With": "XMLHttpRequest",
     "Referer":          "https://www.swimcloud.com/",
 }
+
+# ── curl_cffi session (fast path) ────────────────────────────────────────────
+_SESSION = None
+_SESSION_BUILT = 0.0
+_SESSION_TTL = 1800  # 30 min
 
 # SwimCloud stroke code → Lane4 suffix
 _STROKE = {
@@ -63,8 +72,6 @@ def _get_session():
         s = cf_requests.Session(impersonate="chrome124")
         s.headers.update(_API_HEADERS)
         try:
-            # Homepage visit establishes session cookies (csrftoken, region_id, etc.)
-            # that SwimCloud's API requires on subsequent calls.
             s.get(_BASE + "/", timeout=15)
         except Exception:
             pass
@@ -73,18 +80,107 @@ def _get_session():
     return _SESSION
 
 
+# ── Playwright browser singleton (fallback for datacenter IPs) ───────────────
+_PW_PLAYWRIGHT = None
+_PW_BROWSER    = None
+_PW_PAGE       = None
+_PW_PAGE_BUILT = 0.0
+_PW_LOCK       = threading.Lock()
+_PW_PAGE_TTL   = 1800  # 30 min — re-establish browser session periodically
+
+
+def _get_pw_page():
+    """Return a persistent Playwright page with an active SwimCloud session."""
+    global _PW_PLAYWRIGHT, _PW_BROWSER, _PW_PAGE, _PW_PAGE_BUILT
+    now = _time.time()
+    if _PW_PAGE is not None and (now - _PW_PAGE_BUILT) < _PW_PAGE_TTL:
+        return _PW_PAGE
+    with _PW_LOCK:
+        if _PW_PAGE is not None and (now - _PW_PAGE_BUILT) < _PW_PAGE_TTL:
+            return _PW_PAGE   # another thread beat us here
+        # Clean up stale objects
+        for obj in (_PW_PAGE, _PW_BROWSER, _PW_PLAYWRIGHT):
+            if obj is not None:
+                try: obj.close()   # type: ignore[union-attr]
+                except Exception: pass
+        from playwright.sync_api import sync_playwright
+        pw = sync_playwright().start()
+        browser = pw.chromium.launch(
+            headless=True,
+            args=[
+                "--no-sandbox",
+                "--disable-dev-shm-usage",
+                "--disable-gpu",
+            ],
+        )
+        ctx  = browser.new_context(viewport={"width": 1280, "height": 800})
+        page = ctx.new_page()
+        # Solve Cloudflare's managed challenge by loading the homepage in a
+        # real browser — sets cf_clearance + session cookies automatically.
+        page.goto(_BASE + "/", timeout=30_000, wait_until="domcontentloaded")
+        _PW_PLAYWRIGHT = pw
+        _PW_BROWSER    = browser
+        _PW_PAGE       = page
+        _PW_PAGE_BUILT = _time.time()
+        return page
+
+
+def _pw_fetch_json(url: str, params: dict | None = None):
+    """Run a fetch() inside the live Playwright page and return parsed JSON."""
+    if params:
+        url = url + "?" + urllib.parse.urlencode(params)
+    page = _get_pw_page()
+    result = page.evaluate(
+        """async (url) => {
+            const r = await fetch(url, {
+                headers: {
+                    "Accept": "application/json, text/plain, */*",
+                    "X-Requested-With": "XMLHttpRequest",
+                    "Referer": "https://www.swimcloud.com/"
+                }
+            });
+            if (!r.ok) throw new Error("HTTP " + r.status);
+            return r.json();
+        }""",
+        url,
+    )
+    return result
+
+
+class _JSONResponse:
+    """Thin wrapper so _pw_fetch_json fits the same interface as requests.Response."""
+    def __init__(self, data):
+        self._data       = data
+        self.status_code = 200
+    def json(self):        return self._data
+    def raise_for_status(self): pass
+
+
 def _get(url: str, params: dict | None = None, timeout: int = 15):
+    """
+    Fetch a SwimCloud URL and return a response-like object.
+
+    Fast path: curl_cffi (no browser overhead, works from residential IPs).
+    Fallback:  Playwright (real Chromium, always works, used on Render where
+               curl_cffi gets 403-challenged by Cloudflare WAF).
+    """
     global _SESSION, _SESSION_BUILT
-    s = _get_session()
-    r = s.get(url, params=params, timeout=timeout)
-    # If Cloudflare challenged us (session stale / new IP), reset and retry once.
-    if r.status_code == 403:
-        _SESSION = None
-        _SESSION_BUILT = 0.0
+    # ── Fast path ──────────────────────────────────────────────────────────
+    try:
         s = _get_session()
         r = s.get(url, params=params, timeout=timeout)
-    r.raise_for_status()
-    return r
+        if r.status_code != 403:
+            r.raise_for_status()
+            return r
+        # 403 → Cloudflare challenge; reset session so the homepage visit
+        # is retried fresh before we fall through to Playwright.
+        _SESSION = None
+        _SESSION_BUILT = 0.0
+    except Exception:
+        pass
+    # ── Playwright fallback ─────────────────────────────────────────────────
+    data = _pw_fetch_json(url, params)
+    return _JSONResponse(data)
 
 
 def sec_to_time_str(t_sec: float) -> str:
