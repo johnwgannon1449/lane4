@@ -5,19 +5,28 @@ Endpoints used (no auth required):
   Search:  GET https://www.swimcloud.com/api/search/?q=<name>&type=swimmer
   Times:   GET https://www.swimcloud.com/api/swimmers/<id>/profile_fastest_times/
 
-Uses curl_cffi with Chrome impersonation to bypass Cloudflare's TLS fingerprinting
-and bot-detection challenge even from datacenter IPs.
+SwimCloud's Cloudflare config hard-blocks Render's datacenter IPs.
+Requests are routed through a Cloudflare Worker proxy (set SWIMCLOUD_PROXY_URL
+env var to the worker's URL).  Falls back to direct curl_cffi for local dev.
+
+Worker code lives in cloudflare_worker/swimcloud_proxy.js
 """
 
+import os
 import re
 import time as _time
-from curl_cffi import requests as cf_requests
-
-_SESSION = None
-_SESSION_BUILT = 0.0
-_SESSION_TTL = 3600  # re-create session after 1 hour
+import urllib.parse
 
 _BASE = "https://www.swimcloud.com"
+
+# Set SWIMCLOUD_PROXY_URL in Render env vars to your CF Worker URL.
+# e.g. https://swimcloud-proxy.<your-subdomain>.workers.dev
+_PROXY_URL = os.environ.get("SWIMCLOUD_PROXY_URL", "").rstrip("/")
+
+# ── Fallback session (used in local dev when no proxy is configured) ─────────
+_SESSION = None
+_SESSION_BUILT = 0.0
+_SESSION_TTL = 3600
 
 # SwimCloud stroke code → Lane4 suffix
 _STROKE = {
@@ -47,19 +56,28 @@ _EVENT_MAP = {
 }
 
 
-def _get_session() -> cf_requests.Session:
+def _get_session():
     global _SESSION, _SESSION_BUILT
     now = _time.time()
     if _SESSION is None or (now - _SESSION_BUILT) > _SESSION_TTL:
-        s = cf_requests.Session(impersonate="chrome")
-        _SESSION = s
+        from curl_cffi import requests as cf_requests
+        _SESSION = cf_requests.Session(impersonate="chrome")
         _SESSION_BUILT = now
     return _SESSION
 
 
 def _get(url: str, params: dict | None = None, timeout: int = 20):
-    s = _get_session()
-    r = s.get(url, params=params, timeout=timeout)
+    """GET a SwimCloud URL, routing through the CF Worker proxy when configured."""
+    if params:
+        url = url + "?" + urllib.parse.urlencode(params)
+
+    if _PROXY_URL:
+        import requests as _req
+        proxy_target = _PROXY_URL + "/proxy?url=" + urllib.parse.quote(url, safe="")
+        r = _req.get(proxy_target, timeout=timeout)
+    else:
+        r = _get_session().get(url, timeout=timeout)
+
     r.raise_for_status()
     return r
 
