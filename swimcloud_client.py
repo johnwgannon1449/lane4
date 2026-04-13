@@ -130,9 +130,11 @@ def _get_pw_page():
             Object.defineProperty(navigator, 'plugins', { get: () => [1, 2, 3, 4, 5] });
         """)
         page = ctx.new_page()
-        # Visit the homepage — the real Chromium browser solves Cloudflare's
-        # managed challenge (runs the challenge JS, gets cf_clearance cookie).
-        page.goto(_BASE + "/", timeout=30_000, wait_until="domcontentloaded")
+        # Visit the homepage — real Chromium executes Cloudflare's managed
+        # challenge JS automatically, gets cf_clearance cookie, and lands on
+        # the actual SwimCloud homepage. networkidle ensures the challenge
+        # redirect cycle is fully complete before we start making API calls.
+        page.goto(_BASE + "/", timeout=30_000, wait_until="networkidle")
         _PW_PLAYWRIGHT = pw
         _PW_BROWSER    = browser
         _PW_PAGE       = page
