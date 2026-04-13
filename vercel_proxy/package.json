@@ -1,0 +1,12 @@
+{
+  "name": "swimcloud-proxy",
+  "version": "1.0.0",
+  "description": "Proxy for SwimCloud API",
+  "scripts": {
+    "dev": "vercel dev"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "vercel": "^28.0.0"
+  }
+}
