@@ -1315,7 +1315,7 @@ let _myListMarkers    = null;   // Leaflet layer group
 
 async function loadSchoolImages() {
   try {
-    const r = await fetch('/data/school_images.json');
+    const r = await fetch('/school_images.json');
     if (r.ok) SCHOOL_IMAGES = await r.json();
   } catch(_) {}
 }
@@ -2045,10 +2045,9 @@ async function obS1Next() {
   const _s2timer = setTimeout(() => { if (s2head.textContent.startsWith('Checking')) s2head.textContent = 'Pulling your best times\u2026'; }, 2000);
 
   try {
-    const res     = await fetch('/api/public/swimcloud/search?q=' + encodeURIComponent(name));
-    const data    = await res.json();
-    const results = (data.results || []).slice(0, 10);
-    obRenderMatchScreen(name, results);
+    const res  = await fetch('/api/public/swimcloud/search?q=' + encodeURIComponent(name));
+    const data = await res.json();
+    obRenderMatchScreen(name, data.results || []);
   } catch(e) {
     obRenderMatchScreen(name, []);
   }
@@ -2061,7 +2060,7 @@ function obRenderMatchScreen(name, results) {
   if (results.length === 0) {
     headEl.textContent = 'Couldn\u2019t find \u201c' + name + '\u201d';
     bodyEl.innerHTML = `
-      <div class="ob-hero-sub" style="margin-top:0.6rem;">No SwimCloud profile found \u2014 no problem. You can enter your times manually.</div>
+      <div class="ob-hero-sub" style="margin-top:0.6rem;">No profile found \u2014 no problem. You can enter your times manually.</div>
       <button class="ob-submit" onclick="obGoManual()">Enter Times Manually \u2192</button>`;
     return;
   }
@@ -2099,14 +2098,9 @@ async function obSelectSwimmer(swimmerId, displayName, team, gradYear) {
   // 2–3 random swimmer-native taglines, ~550 ms each → ~1.5–1.9 s total
   const s3lines = obPickRandom(OB_S3_POOL, 3);
   const [fetchResult] = await Promise.all([
-    (async () => {
-      try {
-        const res = await fetch(
-          `/api/public/swimcloud/propose?swimmer_id=${encodeURIComponent(swimmerId)}&gender=${OB_STATE.gender || 'men'}`
-        );
-        return res.json();
-      } catch(_) { return { proposed: [] }; }
-    })(),
+    fetch('/api/public/swimcloud/propose?swimmer_id=' + encodeURIComponent(swimmerId) + '&gender=' + (OB_STATE.gender || 'men'))
+      .then(r => r.json())
+      .catch(() => ({ proposed: [] })),
     obRunTaglines('ob-s3-msg', s3lines, 560),
   ]);
   OB_STATE.proposedTimes = (fetchResult && fetchResult.proposed) || [];
@@ -2119,7 +2113,6 @@ function obGoManual() {
   OB_STATE.proposedTimes = [];
   obRenderTimeValidation();
 }
-
 
 function obRenderTimeValidation() {
   obShowScreen(4);
@@ -5412,27 +5405,10 @@ async function scSearch() {
   if (msg) { msg.className='sc-modal-msg'; msg.textContent=''; }
   if (res) res.innerHTML = '';
   try {
-    const r       = await fetch('https://www.swimcloud.com/api/search/?q=' + encodeURIComponent(q) + '&type=swimmer');
-    if (!r.ok) throw new Error('SwimCloud returned ' + r.status);
-    const raw     = await r.json();
-    const results = (Array.isArray(raw) ? raw : [])
-      .filter(item => item.doc_type === 'Swimmers')
-      .map(item => {
-        const m1 = (item.url  || '').match(/\/swimmer\/(\d+)/);
-        const m2 = (item.id   || '').match(/swimmer\.(\d+)/);
-        const swimmer_id = (m1 && m1[1]) || (m2 && m2[1]);
-        if (!swimmer_id) return null;
-        return {
-          swimmer_id,
-          display_name: item.primary_text || item.name || '',
-          team:         item.team     || '',
-          grad_year:    null,
-          location:     item.location || '',
-          profile_url:  'https://www.swimcloud.com/swimmer/' + swimmer_id + '/',
-        };
-      })
-      .filter(Boolean)
-      .slice(0, 10);
+    const r = await fetch('/api/swimcloud/search?q=' + encodeURIComponent(q));
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.error || 'Search failed');
+    const results = d.results || [];
     _SC_RESULTS = results;  // store for safe index-based onclick access
     if (!results.length) {
       if (res) res.innerHTML = `<div style="font-size:0.82rem;color:var(--muted);padding:0.5rem 0;">No SwimCloud profiles found for "${esc(q)}". Try a different spelling or add a middle initial.</div>`;
@@ -5470,18 +5446,10 @@ async function scSelectSwimmer(swimmerId, displayName, team, gradYear, location,
     <div class="sc-modal-sub">Fetching SwimCloud times for <strong>${esc(displayName)}</strong>…</div>
     <div style="color:var(--muted);font-size:0.85rem;">Ranking by USA Swimming 17-18 SCY motivational standards…</div>`;
   try {
-    const gender  = (JAMES && JAMES.gender) || 'men';
-    const rawRes  = await fetch(`https://www.swimcloud.com/api/swimmers/${encodeURIComponent(swimmerId)}/profile_fastest_times/`);
-    if (!rawRes.ok) throw new Error('SwimCloud returned ' + rawRes.status);
-    const rawData  = await rawRes.json();
-    const rawTimes = Array.isArray(rawData) ? rawData : (rawData.results || []);
-    const r = await fetch('/api/public/swimcloud/process-times', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ swimmer_id: swimmerId, gender, raw_times: rawTimes }),
-    });
+    const gender = (JAMES && JAMES.gender) || 'men';
+    const r = await fetch(`/api/swimcloud/propose?swimmer_id=${encodeURIComponent(swimmerId)}&gender=${encodeURIComponent(gender)}`);
     const d = await r.json();
-    if (!r.ok) throw new Error(d.error || 'Failed to process times');
+    if (!r.ok) throw new Error(d.error || 'Failed to fetch times');
     const swimmer  = d.swimmer
       ? { ...d.swimmer, display_name: d.swimmer.display_name || displayName }
       : { swimmer_id: swimmerId, display_name: displayName, team, profile_url: profileUrl };
@@ -5697,31 +5665,9 @@ async function checkSwimCloudPRs() {
 }
 
 async function scRunPRCheck(force) {
-  const gender    = (JAMES && JAMES.gender) || 'men';
-  const swimmerId = JAMES && JAMES.swimcloud && JAMES.swimcloud.swimmer_id;
-  if (!swimmerId) return false;
-
-  // 48-hour client-side gate — avoids unnecessary SwimCloud fetch
-  if (!force) {
-    const lastSync = JAMES.swimcloud.last_sync_at;
-    if (lastSync) {
-      try {
-        const diff = Date.now() - new Date(lastSync).getTime();
-        if (diff < 48 * 3600 * 1000) return false;
-      } catch(_) {}
-    }
-  }
-
+  const gender = (JAMES && JAMES.gender) || 'men';
   try {
-    const rawRes  = await fetch(`https://www.swimcloud.com/api/swimmers/${encodeURIComponent(swimmerId)}/profile_fastest_times/`);
-    if (!rawRes.ok) return false;
-    const rawData  = await rawRes.json();
-    const rawTimes = Array.isArray(rawData) ? rawData : (rawData.results || []);
-    const r = await fetch('/api/swimcloud/check-prs-raw', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ raw_times: rawTimes, gender }),
-    });
+    const r = await fetch(`/api/swimcloud/check-prs?gender=${encodeURIComponent(gender)}`);
     if (!r.ok) return false;
     const d = await r.json();
     if (!d.linked) return false;

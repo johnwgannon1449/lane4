@@ -4,29 +4,27 @@ swimcloud_client.py — SwimCloud public API wrapper for Lane4.
 Endpoints used (no auth required):
   Search:  GET https://www.swimcloud.com/api/search/?q=<name>&type=swimmer
   Times:   GET https://www.swimcloud.com/api/swimmers/<id>/profile_fastest_times/
-
-SwimCloud's Cloudflare config hard-blocks Render's datacenter IPs.
-Requests are routed through a Cloudflare Worker proxy (set SWIMCLOUD_PROXY_URL
-env var to the worker's URL).  Falls back to direct curl_cffi for local dev.
-
-Worker code lives in cloudflare_worker/swimcloud_proxy.js
 """
 
-import os
 import re
 import time as _time
-import urllib.parse
+import requests
 
-_BASE = "https://www.swimcloud.com"
-
-# Set SWIMCLOUD_PROXY_URL in Render env vars to your CF Worker URL.
-# e.g. https://swimcloud-proxy.<your-subdomain>.workers.dev
-_PROXY_URL = os.environ.get("SWIMCLOUD_PROXY_URL", "").rstrip("/")
-
-# ── Fallback session (used in local dev when no proxy is configured) ─────────
 _SESSION = None
 _SESSION_BUILT = 0.0
-_SESSION_TTL = 3600
+_SESSION_TTL = 3600  # re-create session after 1 hour
+
+_BASE = "https://www.swimcloud.com"
+_HEADERS = {
+    "User-Agent": (
+        "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
+        "Chrome/122.0.0.0 Safari/537.36"
+    ),
+    "Accept":           "application/json, text/plain, */*",
+    "Accept-Language":  "en-US,en;q=0.9",
+    "X-Requested-With": "XMLHttpRequest",
+    "Referer":          "https://www.swimcloud.com/",
+}
 
 # SwimCloud stroke code → Lane4 suffix
 _STROKE = {
@@ -56,28 +54,24 @@ _EVENT_MAP = {
 }
 
 
-def _get_session():
+def _get_session() -> requests.Session:
     global _SESSION, _SESSION_BUILT
     now = _time.time()
     if _SESSION is None or (now - _SESSION_BUILT) > _SESSION_TTL:
-        from curl_cffi import requests as cf_requests
-        _SESSION = cf_requests.Session(impersonate="chrome")
+        s = requests.Session()
+        s.headers.update(_HEADERS)
+        try:
+            s.get(_BASE + "/", timeout=10)
+        except Exception:
+            pass
+        _SESSION = s
         _SESSION_BUILT = now
     return _SESSION
 
 
-def _get(url: str, params: dict | None = None, timeout: int = 20):
-    """GET a SwimCloud URL, routing through the CF Worker proxy when configured."""
-    if params:
-        url = url + "?" + urllib.parse.urlencode(params)
-
-    if _PROXY_URL:
-        import requests as _req
-        proxy_target = _PROXY_URL + "/proxy?url=" + urllib.parse.quote(url, safe="")
-        r = _req.get(proxy_target, timeout=timeout)
-    else:
-        r = _get_session().get(url, timeout=timeout)
-
+def _get(url: str, params: dict | None = None, timeout: int = 12) -> requests.Response:
+    s = _get_session()
+    r = s.get(url, params=params, timeout=timeout)
     r.raise_for_status()
     return r
 
