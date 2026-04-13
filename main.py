@@ -1,3 +1,4 @@
+from flask_cors import CORS
 import os, json, re, time, threading
 import datetime
 from flask import Flask, request, jsonify, send_from_directory, session, redirect
@@ -13,6 +14,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 load_dotenv()
 app = Flask(__name__, static_folder='static', static_url_path='')
+CORS(app)  # Enable CORS for all routes
 app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
 app.secret_key = os.environ.get('SESSION_SECRET', 'dev-secret-change-me')
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'

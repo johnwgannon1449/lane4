@@ -7,6 +7,8 @@ Endpoints used (no auth required):
 """
 
 import re
+import os
+import json
 import time as _time
 import requests
 
@@ -69,7 +71,20 @@ def _get_session() -> requests.Session:
     return _SESSION
 
 
-def _get(url: str, params: dict | None = None, timeout: int = 12) -> requests.Response:
+def _get(url: str, params: dict = None, timeout: int = 12) -> requests.Response:
+    # Check for proxy URL (for Render deployment where SwimCloud blocks datacenter IPs)
+    proxy_url = os.environ.get('SWIMCLOUD_PROXY_URL')
+    if proxy_url and 'swimcloud.com' in url:
+        # Route through proxy to bypass IP block
+        proxy_params = {'url': url}
+        if params:
+            proxy_params['params'] = json.dumps(params)
+        s = _get_session()
+        r = s.get(proxy_url, params=proxy_params, timeout=timeout)
+        r.raise_for_status()
+        return r
+    
+    # Direct request (for local development)
     s = _get_session()
     r = s.get(url, params=params, timeout=timeout)
     r.raise_for_status()
@@ -361,7 +376,7 @@ def extract_scy_bests(raw_times: list[dict]) -> dict[str, dict]:
     return bests
 
 
-def detect_gender_from_raw(raw_times: list[dict]) -> str | None:
+def detect_gender_from_raw(raw_times: list[dict]) -> str:
     """
     Detect swimmer gender from SwimCloud fastest_times records.
 
