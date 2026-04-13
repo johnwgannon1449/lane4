@@ -5,12 +5,13 @@ Endpoints used (no auth required):
   Search:  GET https://www.swimcloud.com/api/search/?q=<name>&type=swimmer
   Times:   GET https://www.swimcloud.com/api/swimmers/<id>/profile_fastest_times/
 
-Uses cloudscraper to bypass Cloudflare's bot-detection challenge.
+Uses curl_cffi with Chrome impersonation to bypass Cloudflare's TLS fingerprinting
+and bot-detection challenge even from datacenter IPs.
 """
 
 import re
 import time as _time
-import cloudscraper
+from curl_cffi import requests as cf_requests
 
 _SESSION = None
 _SESSION_BUILT = 0.0
@@ -46,17 +47,17 @@ _EVENT_MAP = {
 }
 
 
-def _get_session() -> cloudscraper.CloudScraper:
+def _get_session() -> cf_requests.Session:
     global _SESSION, _SESSION_BUILT
     now = _time.time()
     if _SESSION is None or (now - _SESSION_BUILT) > _SESSION_TTL:
-        s = cloudscraper.create_scraper()
+        s = cf_requests.Session(impersonate="chrome")
         _SESSION = s
         _SESSION_BUILT = now
     return _SESSION
 
 
-def _get(url: str, params: dict | None = None, timeout: int = 20) -> cloudscraper.CloudScraper:
+def _get(url: str, params: dict | None = None, timeout: int = 20):
     s = _get_session()
     r = s.get(url, params=params, timeout=timeout)
     r.raise_for_status()

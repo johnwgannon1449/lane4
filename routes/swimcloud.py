@@ -94,9 +94,12 @@ def sc_search_public():
     try:
         from swimcloud_client import search_swimmers
         results = search_swimmers(q)
+        print(f'[swimcloud/search-public] q={q!r} → {len(results)} results')
         return jsonify({'results': results})
     except Exception as e:
-        print(f'[swimcloud/search-public] {e}')
+        import traceback
+        print(f'[swimcloud/search-public] ERROR for q={q!r}: {e}')
+        print(traceback.format_exc())
         return jsonify({'error': 'SwimCloud search failed', 'detail': str(e)}), 502
 
 
