@@ -157,10 +157,11 @@ def _get_pw_page():
         """)
         page = ctx.new_page()
         # Visit the homepage — real Chromium executes Cloudflare's managed
-        # challenge JS automatically, gets cf_clearance cookie, and lands on
-        # the actual SwimCloud homepage. networkidle ensures the challenge
-        # redirect cycle is fully complete before we start making API calls.
-        page.goto(_BASE + "/", timeout=30_000, wait_until="networkidle")
+        # challenge JS, gets cf_clearance cookie, follows the redirect, and
+        # lands on the actual SwimCloud homepage.
+        # `load` (not networkidle) — analytics/ads may keep the network busy
+        # indefinitely; `load` fires when the main page + its resources are done.
+        page.goto(_BASE + "/", timeout=60_000, wait_until="load")
         _PW_PLAYWRIGHT = pw
         _PW_BROWSER    = browser
         _PW_PAGE       = page
