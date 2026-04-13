@@ -85,10 +85,65 @@ def sc_process_times_public():
     })
 
 
+@swimcloud_bp.route('/api/public/swimcloud/search', methods=['GET'])
+def sc_search_public():
+    """Search SwimCloud by name (public — used during onboarding). Returns up to 10 candidates."""
+    q = (request.args.get('q') or '').strip()
+    if not q:
+        return jsonify({'error': 'Query required'}), 400
+    try:
+        from swimcloud_client import search_swimmers
+        results = search_swimmers(q)
+        return jsonify({'results': results})
+    except Exception as e:
+        print(f'[swimcloud/search-public] {e}')
+        return jsonify({'error': 'SwimCloud search failed', 'detail': str(e)}), 502
+
+
+@swimcloud_bp.route('/api/public/swimcloud/propose', methods=['GET'])
+def sc_propose_public():
+    """
+    Fetch a swimmer's SCY times server-side and return top 10 ranked by A-score.
+    Public — used during onboarding before login.
+    Query params: swimmer_id, gender (men|women)
+    """
+    swimmer_id = (request.args.get('swimmer_id') or '').strip()
+    gender     = (request.args.get('gender') or 'men').strip()
+    if not swimmer_id:
+        return jsonify({'error': 'swimmer_id required'}), 400
+    try:
+        from swimcloud_client import get_swimmer_scy_bests
+        from motivational_ranking import rank_swimcloud_bests
+
+        scy_bests, profile_info, seed_prs = get_swimmer_scy_bests(swimmer_id)
+        effective_gender = profile_info.get('gender') or gender
+        if not scy_bests:
+            return jsonify({
+                'swimmer': profile_info,
+                'proposed': [],
+                'seed_prs': [],
+                'warning': 'No SCY times found for this swimmer on SwimCloud.',
+            })
+
+        top10 = rank_swimcloud_bests(scy_bests, effective_gender, n=10)
+        for item in top10:
+            s = item.get('a_score', 0)
+            if s < 0:   item['tier'] = 'Sub-B'
+            elif s < 1: item['tier'] = 'B/BB'
+            elif s < 2: item['tier'] = 'A'
+            elif s < 3: item['tier'] = 'AA'
+            elif s < 4: item['tier'] = 'AAA'
+            else:       item['tier'] = 'AAAA+'
+        return jsonify({'swimmer': profile_info, 'proposed': top10, 'seed_prs': seed_prs})
+    except Exception as e:
+        print(f'[swimcloud/propose-public] {e}')
+        return jsonify({'error': 'SwimCloud time fetch failed', 'detail': str(e)}), 502
+
+
 @swimcloud_bp.route('/api/swimcloud/search', methods=['GET'])
 @login_required
 def sc_search():
-    """Search SwimCloud by name. Returns up to 10 candidates."""
+    """Search SwimCloud by name (auth required). Returns up to 10 candidates."""
     q = (request.args.get('q') or '').strip()
     if not q:
         return jsonify({'error': 'Query required'}), 400

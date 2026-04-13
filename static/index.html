@@ -2045,35 +2045,11 @@ async function obS1Next() {
   const _s2timer = setTimeout(() => { if (s2head.textContent.startsWith('Checking')) s2head.textContent = 'Pulling your best times\u2026'; }, 2000);
 
   try {
-    const res = await fetch('https://www.swimcloud.com/api/search/?q=' + encodeURIComponent(name) + '&type=swimmer');
-    const raw = await res.json();
-    // SwimCloud may return a flat array or an object with a results/swimmers key
-    const arr = Array.isArray(raw) ? raw
-              : Array.isArray(raw.results) ? raw.results
-              : Array.isArray(raw.swimmers) ? raw.swimmers
-              : [];
-    console.log('[SwimCloud search] raw type:', Array.isArray(raw) ? 'array' : typeof raw, '| items:', arr.length, '| first doc_type:', arr[0]?.doc_type);
-    const results = arr
-      .filter(item => !item.doc_type || item.doc_type === 'Swimmers' || item.doc_type === 'Swimmer')
-      .map(item => {
-        const m1 = (item.url  || '').match(/\/swimmer\/(\d+)/);
-        const m2 = (item.id   || '').match(/swimmer\.(\d+)/);
-        const swimmer_id = (m1 && m1[1]) || (m2 && m2[1]);
-        if (!swimmer_id) return null;
-        return {
-          swimmer_id,
-          display_name: item.primary_text || item.name || '',
-          team:         item.team     || '',
-          grad_year:    null,
-          location:     item.location || '',
-          profile_url:  'https://www.swimcloud.com/swimmer/' + swimmer_id + '/',
-        };
-      })
-      .filter(Boolean)
-      .slice(0, 10);
+    const res     = await fetch('/api/public/swimcloud/search?q=' + encodeURIComponent(name));
+    const data    = await res.json();
+    const results = (data.results || []).slice(0, 10);
     obRenderMatchScreen(name, results);
   } catch(e) {
-    console.error('[SwimCloud search] fetch failed:', e);
     obRenderMatchScreen(name, []);
   }
 }
@@ -2085,12 +2061,8 @@ function obRenderMatchScreen(name, results) {
   if (results.length === 0) {
     headEl.textContent = 'Couldn\u2019t find \u201c' + name + '\u201d';
     bodyEl.innerHTML = `
-      <div class="ob-hero-sub" style="margin-top:0.6rem;">SwimCloud search came up empty. Try a different spelling, or paste your SwimCloud profile URL below.</div>
-      <div style="margin:1rem 0;">
-        <input id="ob-sc-url" type="text" class="ob-input" placeholder="https://www.swimcloud.com/swimmer/12345/" style="margin-bottom:0.5rem;" />
-        <button class="ob-submit" style="margin-bottom:0.75rem;" onclick="obTryScUrl()">Use This Profile \u2192</button>
-      </div>
-      <button class="ob-none-btn" onclick="obGoManual()">Skip \u2014 enter times manually instead</button>`;
+      <div class="ob-hero-sub" style="margin-top:0.6rem;">No SwimCloud profile found \u2014 no problem. You can enter your times manually.</div>
+      <button class="ob-submit" onclick="obGoManual()">Enter Times Manually \u2192</button>`;
     return;
   }
 
@@ -2129,15 +2101,10 @@ async function obSelectSwimmer(swimmerId, displayName, team, gradYear) {
   const [fetchResult] = await Promise.all([
     (async () => {
       try {
-        const rawRes  = await fetch(`https://www.swimcloud.com/api/swimmers/${encodeURIComponent(swimmerId)}/profile_fastest_times/`);
-        const rawData = await rawRes.json();
-        const rawTimes = Array.isArray(rawData) ? rawData : (rawData.results || []);
-        const proc = await fetch('/api/public/swimcloud/process-times', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ swimmer_id: swimmerId, gender: OB_STATE.gender || 'men', raw_times: rawTimes }),
-        });
-        return proc.json();
+        const res = await fetch(
+          `/api/public/swimcloud/propose?swimmer_id=${encodeURIComponent(swimmerId)}&gender=${OB_STATE.gender || 'men'}`
+        );
+        return res.json();
       } catch(_) { return { proposed: [] }; }
     })(),
     obRunTaglines('ob-s3-msg', s3lines, 560),
@@ -2153,15 +2120,6 @@ function obGoManual() {
   obRenderTimeValidation();
 }
 
-function obTryScUrl() {
-  const urlVal = (document.getElementById('ob-sc-url')?.value || '').trim();
-  const m = urlVal.match(/\/swimmer\/(\d+)/);
-  if (!m) {
-    alert('Please paste a full SwimCloud profile URL like: https://www.swimcloud.com/swimmer/12345/');
-    return;
-  }
-  obSelectSwimmer(m[1], OB_STATE.name, '', '');
-}
 
 function obRenderTimeValidation() {
   obShowScreen(4);

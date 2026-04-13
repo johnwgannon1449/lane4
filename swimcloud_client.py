@@ -4,27 +4,19 @@ swimcloud_client.py — SwimCloud public API wrapper for Lane4.
 Endpoints used (no auth required):
   Search:  GET https://www.swimcloud.com/api/search/?q=<name>&type=swimmer
   Times:   GET https://www.swimcloud.com/api/swimmers/<id>/profile_fastest_times/
+
+Uses cloudscraper to bypass Cloudflare's bot-detection challenge.
 """
 
 import re
 import time as _time
-import requests
+import cloudscraper
 
 _SESSION = None
 _SESSION_BUILT = 0.0
 _SESSION_TTL = 3600  # re-create session after 1 hour
 
 _BASE = "https://www.swimcloud.com"
-_HEADERS = {
-    "User-Agent": (
-        "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
-        "Chrome/122.0.0.0 Safari/537.36"
-    ),
-    "Accept":           "application/json, text/plain, */*",
-    "Accept-Language":  "en-US,en;q=0.9",
-    "X-Requested-With": "XMLHttpRequest",
-    "Referer":          "https://www.swimcloud.com/",
-}
 
 # SwimCloud stroke code → Lane4 suffix
 _STROKE = {
@@ -54,22 +46,17 @@ _EVENT_MAP = {
 }
 
 
-def _get_session() -> requests.Session:
+def _get_session() -> cloudscraper.CloudScraper:
     global _SESSION, _SESSION_BUILT
     now = _time.time()
     if _SESSION is None or (now - _SESSION_BUILT) > _SESSION_TTL:
-        s = requests.Session()
-        s.headers.update(_HEADERS)
-        try:
-            s.get(_BASE + "/", timeout=10)
-        except Exception:
-            pass
+        s = cloudscraper.create_scraper()
         _SESSION = s
         _SESSION_BUILT = now
     return _SESSION
 
 
-def _get(url: str, params: dict | None = None, timeout: int = 12) -> requests.Response:
+def _get(url: str, params: dict | None = None, timeout: int = 20) -> cloudscraper.CloudScraper:
     s = _get_session()
     r = s.get(url, params=params, timeout=timeout)
     r.raise_for_status()
