@@ -4,22 +4,24 @@ swimcloud_client.py — SwimCloud public API wrapper for Lane4.
 Endpoints used (no auth required):
   Search:  GET https://www.swimcloud.com/api/search/?q=<name>&type=swimmer
   Times:   GET https://www.swimcloud.com/api/swimmers/<id>/profile_fastest_times/
+
+Uses curl_cffi with Chrome TLS/HTTP2 impersonation to pass Cloudflare's bot
+detection from datacenter IPs (Render). The session visits the SwimCloud
+homepage first to acquire session cookies, then makes API calls.
 """
 
 import re
 import time as _time
-import requests
+from curl_cffi import requests as cf_requests
 
 _SESSION = None
 _SESSION_BUILT = 0.0
-_SESSION_TTL = 3600  # re-create session after 1 hour
+_SESSION_TTL = 1800  # 30 min — refresh session before clearance cookies expire
 
 _BASE = "https://www.swimcloud.com"
-_HEADERS = {
-    "User-Agent": (
-        "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
-        "Chrome/122.0.0.0 Safari/537.36"
-    ),
+# Extra headers layered on top of curl_cffi's Chrome impersonation defaults.
+# X-Requested-With tells SwimCloud's Django to return JSON instead of HTML.
+_API_HEADERS = {
     "Accept":           "application/json, text/plain, */*",
     "Accept-Language":  "en-US,en;q=0.9",
     "X-Requested-With": "XMLHttpRequest",
@@ -54,14 +56,16 @@ _EVENT_MAP = {
 }
 
 
-def _get_session() -> requests.Session:
+def _get_session():
     global _SESSION, _SESSION_BUILT
     now = _time.time()
     if _SESSION is None or (now - _SESSION_BUILT) > _SESSION_TTL:
-        s = requests.Session()
-        s.headers.update(_HEADERS)
+        s = cf_requests.Session(impersonate="chrome124")
+        s.headers.update(_API_HEADERS)
         try:
-            s.get(_BASE + "/", timeout=10)
+            # Homepage visit establishes session cookies (csrftoken, region_id, etc.)
+            # that SwimCloud's API requires on subsequent calls.
+            s.get(_BASE + "/", timeout=15)
         except Exception:
             pass
         _SESSION = s
@@ -69,9 +73,16 @@ def _get_session() -> requests.Session:
     return _SESSION
 
 
-def _get(url: str, params: dict | None = None, timeout: int = 12) -> requests.Response:
+def _get(url: str, params: dict | None = None, timeout: int = 15):
+    global _SESSION, _SESSION_BUILT
     s = _get_session()
     r = s.get(url, params=params, timeout=timeout)
+    # If Cloudflare challenged us (session stale / new IP), reset and retry once.
+    if r.status_code == 403:
+        _SESSION = None
+        _SESSION_BUILT = 0.0
+        s = _get_session()
+        r = s.get(url, params=params, timeout=timeout)
     r.raise_for_status()
     return r
 

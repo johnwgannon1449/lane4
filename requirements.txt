@@ -22,6 +22,7 @@ pydantic==2.12.5
 pydantic_core==2.41.5
 python-dotenv==1.2.2
 requests
+curl-cffi
 sniffio==1.3.1
 tqdm==4.67.3
 typing-inspection==0.4.2
