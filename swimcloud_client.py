@@ -15,11 +15,34 @@ Two-tier fetch strategy:
 
 import json
 import re
+import subprocess
+import sys as _sys
 import threading
 import time as _time
 import urllib.parse
 
 from curl_cffi import requests as cf_requests
+
+
+def _background_install_chromium():
+    """
+    Pre-install Playwright's Chromium binary in a background thread.
+    Runs immediately at module import so the binary is ready before the first
+    SwimCloud request arrives (avoids blocking the request thread).
+    """
+    try:
+        subprocess.run(
+            [_sys.executable, "-m", "playwright", "install", "chromium"],
+            check=True, capture_output=True, timeout=300,
+        )
+    except Exception as e:
+        print(f"[swimcloud] playwright install chromium (background): {e}")
+
+
+_chromium_install_thread = threading.Thread(
+    target=_background_install_chromium, daemon=True, name="pw-chromium-install"
+)
+_chromium_install_thread.start()
 
 _BASE = "https://www.swimcloud.com"
 
@@ -103,17 +126,10 @@ def _get_pw_page():
             if obj is not None:
                 try: obj.close()   # type: ignore[union-attr]
                 except Exception: pass
+        # Wait for the background Chromium install to finish (started at module
+        # import time). Timeout=90s keeps us safely inside Gunicorn's 120s limit.
+        _chromium_install_thread.join(timeout=90)
         from playwright.sync_api import sync_playwright
-        # Ensure Chromium binary is present — installs it if the build step
-        # didn't run playwright install (e.g., first deploy or manual deploy).
-        try:
-            import subprocess, sys as _sys
-            subprocess.run(
-                [_sys.executable, "-m", "playwright", "install", "chromium"],
-                check=True, capture_output=True, timeout=180,
-            )
-        except Exception as _install_err:
-            print(f"[swimcloud/playwright] install chromium: {_install_err}")
         pw = sync_playwright().start()
         browser = pw.chromium.launch(
             headless=True,
