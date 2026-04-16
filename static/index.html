@@ -3242,6 +3242,111 @@ function buildAdmTableHTML(meta, swimmerGpa, swimmerSat, swimmerAct) {
     </div>`;
 }
 
+const LOADING_LINES = [
+  "Measuring the pool. Yep, still 25 yards.",
+  "Asking the admissions office to act casual...",
+  "Confirming the dining hall has carb loading options...",
+  "Reviewing the locker room situation. Updates pending.",
+  "Checking if the library stays open past midnight. It does. You'll need it.",
+  "Verifying the campus has actual weather and not just vibes...",
+  "Confirming the coach knows what a taper is...",
+  "Checking if the pool smells like every other pool. It does.",
+  "Reviewing the team group chat energy...",
+  "Calculating miles from campus to nearest decent pizza...",
+  "Assessing whether the freshman dorms build character or just cold...",
+  "Confirming professors can pronounce his event correctly...",
+  "Checking if the alumni actually return calls...",
+  "Reviewing how many engineers ended up in finance anyway...",
+  "Measuring the gap between the brochure and reality...",
+  "Confirming the team has a good road trip playlist...",
+  "Checking if the campus tour guide mentioned the pool unprompted...",
+  "Verifying that competitive environment means students, not just swimmers...",
+  "Reviewing the coach's Twitter for red flags. None found.",
+  "Checking if anyone on the roster swam club with him...",
+  "Confirming the weight room is actually open at 5am...",
+  "Calculating how many APs it takes to impress this admissions office...",
+  "Reviewing the local coffee shop situation. Critical infrastructure.",
+  "Confirming the team celebrates taper week appropriately...",
+  "Checking how far the closest In-N-Out is. Far.",
+  "Verifying the school has heard of the UAA...",
+  "Reviewing whether the campus map makes any sense at all...",
+  "Confirming there is in fact a lane four available at practice...",
+  "Checking if the academic advisor swims. They do not.",
+  "Calculating the odds the coach already googled him...",
+  "Reviewing the student section energy at home meets...",
+  "Confirming the school has seen a 16:06 before and remained calm...",
+  "Checking if the major he wants actually has good professors or just famous ones...",
+  "Verifying the campus tour doesn't skip the pool...",
+  "Reviewing how many swimmers switched majors junior year...",
+  "Confirming the registrar and the practice schedule have never met...",
+  "Checking if his future teammates are people he'd actually want to road trip with...",
+  "Reviewing how the coaching staff handles a bad swim. Important data.",
+  "Confirming the campus has trees. Surprisingly variable.",
+  "Checking if the career center knows what lane four means...",
+  "Verifying the recruit weekend actually shows him the real campus...",
+  "Calculating how many hours between last final and conference championships...",
+  "Reviewing whether the school's ranking survived the latest US News drama...",
+  "Confirming this one belongs on the list. It does.",
+  "Checking if the team eats together or just tolerates each other...",
+  "Reviewing the freshman fifteen risk assessment. Inconclusive.",
+  "Confirming the coach replies to emails within 48 hours. Promising.",
+  "Checking if the campus looks as good in February as it does in the viewbook. It does not."
+];
+
+async function fetchDeepDiveStreaming(url, fetchBody, contentEl) {
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(fetchBody),
+  });
+
+  if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = '';
+  let loadingLinesCopy = [...LOADING_LINES];
+  let loadingInterval = null;
+
+  const rotateLoadingLine = () => {
+    if (loadingLinesCopy.length > 0) {
+      const idx = Math.floor(Math.random() * loadingLinesCopy.length);
+      const line = loadingLinesCopy[idx];
+      loadingLinesCopy.splice(idx, 1);
+      contentEl.innerHTML = `<div class="loading-state"><span class="spinner"></span> ${line}</div>`;
+    }
+  };
+
+  loadingInterval = setInterval(rotateLoadingLine, 1200);
+  rotateLoadingLine();
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+
+    buffer += decoder.decode(value, { stream: true });
+    const lines = buffer.split('\n');
+    buffer = lines.pop();
+
+    for (const line of lines) {
+      if (line.startsWith('data: ')) {
+        try {
+          const eventData = JSON.parse(line.slice(6));
+          if (eventData.done) {
+            clearInterval(loadingInterval);
+            return eventData;
+          }
+        } catch (e) {
+          // Skip malformed JSON lines
+        }
+      }
+    }
+  }
+
+  clearInterval(loadingInterval);
+  throw new Error('Stream ended without done event');
+}
+
 async function openDeepDive(school) {
   document.getElementById('explore-search').style.display    = 'none';
   document.getElementById('explore-deepdive').style.display  = 'block';
@@ -3253,19 +3358,14 @@ async function openDeepDive(school) {
   content.innerHTML = `<div class="loading-state"><span class="spinner"></span> Writing deep dive for ${esc(school)}…</div>`;
 
   try {
-    const res  = await fetch('/api/deep-dive', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        school,
-        vibeAnswers:    VIBE_STATE,
-        otherPrefs:     OTHER_PREFS,
-        primaryMajor:   JAMES.primaryMajor   || '',
-        secondaryMajor: JAMES.secondaryMajor || '',
-        profile:        buildCurrentProfile(),
-      }),
-    });
-    const data = await res.json();
+    const data = await fetchDeepDiveStreaming('/api/deep-dive', {
+      school,
+      vibeAnswers:    VIBE_STATE,
+      otherPrefs:     OTHER_PREFS,
+      primaryMajor:   JAMES.primaryMajor   || '',
+      secondaryMajor: JAMES.secondaryMajor || '',
+      profile:        buildCurrentProfile(),
+    }, content);
 
     if (data.error) {
       content.innerHTML = `<div class="err-box">⚠ ${esc(data.error)}</div>`;

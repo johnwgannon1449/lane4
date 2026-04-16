@@ -1,7 +1,8 @@
 """routes/deep_dive.py — Deep dive and coach-email content generation endpoints."""
 import re
+import json
 
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, Response, stream_with_context
 from prompts_config import LANE4_DEEP_DIVE_PROMPT
 from ai_client import _get_anthropic
 from models.swimmer_defaults import JAMES
@@ -107,6 +108,34 @@ def deep_dive_academic():
         return jsonify({'body': body})
     except Exception as e:
         return jsonify({'error': str(e)}), 200
+
+
+def _parse_sections(raw_text):
+    """Parse the raw deep dive text into structured sections."""
+    def _classify_section(t):
+        t = t.lower().strip()
+        if 'bottom line' in t:                              return 'bottom_line'
+        if t == 'academic program':                         return 'academic_program'
+        if t == 'campus life':                              return 'student_experience'
+        if t == 'outcomes':                                 return 'outcomes'
+        if t == 'more: academic':                           return 'more_academic'
+        if t == 'more: student experience':                 return 'more_student_experience'
+        if t == 'more: career paths':                       return 'more_career_paths'
+        return 'content'
+
+    parts  = re.split(r'^## ', raw_text, flags=re.MULTILINE)
+    sections = []
+    for part in parts:
+        part = part.strip()
+        if not part:
+            continue
+        lines = part.split('\n', 1)
+        title = lines[0].strip()
+        body  = lines[1].strip() if len(lines) > 1 else ''
+        if title and not title.startswith('#') and not title.startswith('---'):
+            sections.append({'title': title, 'body': body,
+                             'type': _classify_section(title)})
+    return sections
 
 
 @deep_dive_bp.route('/api/deep-dive', methods=['POST'])
@@ -410,55 +439,62 @@ def deep_dive():
             f"{_outcomes_section}"
         )
 
-    try:
-        resp = client.messages.create(
-            model='claude-sonnet-4-6',
-            max_tokens=3200,
-            system=system_prompt,
-            messages=[{'role': 'user', 'content': user_prompt}],
-        )
-        raw = resp.content[0].text
+    def _stream_deep_dive_response():
+        """Generator function that streams deep dive chunks and sends final parsed result."""
+        try:
+            # Send keepalive comment to confirm connection is live before Claude starts generating
+            yield ": keepalive\n\n"
 
-        # Split on section headers — per OUTPUT_SCHEMA response parsing spec
-        # Section identity uses fixed header strings, never title-text guessing.
+            full_text = ""
 
-        def _classify_section(t):
-            t = t.lower().strip()
-            if 'bottom line' in t:                              return 'bottom_line'
-            if t == 'academic program':                         return 'academic_program'
-            if t == 'campus life':                              return 'student_experience'
-            if t == 'outcomes':                                 return 'outcomes'
-            if t == 'more: academic':                           return 'more_academic'
-            if t == 'more: student experience':                 return 'more_student_experience'
-            if t == 'more: career paths':                       return 'more_career_paths'
-            return 'content'
+            # Stream text chunks from Claude API
+            with client.messages.stream(
+                model='claude-sonnet-4-6',
+                max_tokens=3200,
+                system=system_prompt,
+                messages=[{'role': 'user', 'content': user_prompt}],
+            ) as stream:
+                for text_chunk in stream.text_stream:
+                    # Yield each chunk as SSE format
+                    yield f"data: {json.dumps({'chunk': text_chunk})}\n\n"
+                    full_text += text_chunk
 
-        parts  = re.split(r'^## ', raw, flags=re.MULTILINE)
-        sections = []
-        for part in parts:
-            part = part.strip()
-            if not part:
-                continue
-            lines = part.split('\n', 1)
-            title = lines[0].strip()
-            body  = lines[1].strip() if len(lines) > 1 else ''
-            if title and not title.startswith('#') and not title.startswith('---'):
-                sections.append({'title': title, 'body': body,
-                                 'type': _classify_section(title)})
+            # Parse sections from complete text
+            sections = _parse_sections(full_text)
 
-        if not sections:
-            return jsonify({'error': 'AI returned empty deep dive', 'raw': raw}), 200
+            if not sections:
+                # Send error as final SSE event
+                yield f"data: {json.dumps({'error': 'AI returned empty deep dive', 'done': True})}\n\n"
+                return
 
-        return jsonify({
-            'school':    result['school'],
-            'sections':  sections,
-            'admission': result['admission'],
-            'adjTier':   result['adjTier'],
-            'meta':      meta,
-        })
+            # Send final event with parsed sections
+            final_event = {
+                'done': True,
+                'school': result['school'],
+                'sections': sections,
+                'admission': result['admission'],
+                'adjTier': result['adjTier'],
+                'meta': meta,
+            }
+            yield f"data: {json.dumps(final_event)}\n\n"
 
-    except Exception as e:
-        return jsonify({'error': 'Deep dive failed', 'detail': str(e)}), 200
+        except Exception as e:
+            # Send error as final SSE event
+            error_event = {
+                'error': 'Deep dive failed',
+                'detail': str(e),
+                'done': True
+            }
+            yield f"data: {json.dumps(error_event)}\n\n"
+
+    return Response(
+        stream_with_context(_stream_deep_dive_response()),
+        mimetype='text/event-stream',
+        headers={
+            'X-Accel-Buffering': 'no',
+            'Cache-Control': 'no-cache, no-transform',
+        }
+    )
 
 
 @deep_dive_bp.route('/api/coach-email', methods=['POST'])

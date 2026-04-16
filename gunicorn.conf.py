@@ -5,7 +5,8 @@ bind = f"0.0.0.0:{os.environ.get('PORT', '10000')}"
 
 # Single worker on Render free tier (512 MB RAM)
 workers = 1
-worker_class = "sync"
+worker_class = "gthread"  # Use threaded worker for SSE streaming support
+threads = 4  # 4 threads per worker for concurrent request handling
 
 # Give the worker plenty of time to handle long AI requests
 timeout = 120
