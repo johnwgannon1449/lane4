@@ -5,7 +5,7 @@ integrations = ["github:1.0.0"]
 
 [nix]
 channel = "stable-25_05"
-packages = ["cacert", "glibcLocales", "libxcrypt"]
+packages = ["cacert", "glibcLocales", "libxcrypt", "gh"]
 
 [workflows]
 runButton = "Project"

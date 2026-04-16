@@ -1,0 +1,267 @@
+Please make exactly these four changes to the codebase. Do not change anything else.
+
+---
+
+**Change 1: `gunicorn.conf.py`**
+
+Find the line:
+worker_class = "sync"
+
+Replace with:
+worker_class = "gthread"  # Use threaded worker for SSE streaming support
+threads = 4  # 4 threads per worker for concurrent request handling
+
+---
+
+**Change 2: `.replit`**
+
+Find the line:
+run = ["gunicorn", "--bind=0.0.0.0:5000", "--workers=2", "--timeout=120", "main:app"]
+
+Replace with:
+run = ["gunicorn", "-c", "gunicorn.conf.py", "main:app"]
+
+---
+
+**Change 3: `routes/deep_dive.py`**
+
+Add this import at the top (around line 4):
+import json
+
+Change the Flask imports to include Response and stream_with_context:
+from flask import Blueprint, request, jsonify, Response, stream_with_context
+
+Add this helper function before the @deep_dive_bp.route('/api/deep-dive'...) decorator (around line 112):
+
+def _parse_sections(raw_text):
+    """Parse the raw deep dive text into structured sections."""
+    def _classify_section(t):
+        t = t.lower().strip()
+        if 'bottom line' in t:                              return 'bottom_line'
+        if t == 'academic program':                         return 'academic_program'
+        if t == 'campus life':                              return 'student_experience'
+        if t == 'outcomes':                                 return 'outcomes'
+        if t == 'more: academic':                           return 'more_academic'
+        if t == 'more: student experience':                 return 'more_student_experience'
+        if t == 'more: career paths':                       return 'more_career_paths'
+        return 'content'
+
+    parts  = re.split(r'^## ', raw_text, flags=re.MULTILINE)
+    sections = []
+    for part in parts:
+        part = part.strip()
+        if not part:
+            continue
+        lines = part.split('\n', 1)
+        title = lines[0].strip()
+        body  = lines[1].strip() if len(lines) > 1 else ''
+        if title and not title.startswith('#') and not title.startswith('---'):
+            sections.append({'title': title, 'body': body,
+                             'type': _classify_section(title)})
+    return sections
+
+
+Then replace the entire try/except block at the end of the deep dive route function with this:
+
+    def _stream_deep_dive_response():
+        """Generator function that streams deep dive chunks and sends final parsed result."""
+        try:
+            # Send keepalive comment to confirm connection is live before Claude starts generating
+            yield ": keepalive\n\n"
+
+            full_text = ""
+
+            # Stream text chunks from Claude API
+            with client.messages.stream(
+                model='claude-sonnet-4-6',
+                max_tokens=3200,
+                system=system_prompt,
+                messages=[{'role': 'user', 'content': user_prompt}],
+            ) as stream:
+                for text_chunk in stream.text_stream:
+                    # Yield each chunk as SSE format
+                    yield f"data: {json.dumps({'chunk': text_chunk})}\n\n"
+                    full_text += text_chunk
+
+            # Parse sections from complete text
+            sections = _parse_sections(full_text)
+
+            if not sections:
+                # Send error as final SSE event
+                yield f"data: {json.dumps({'error': 'AI returned empty deep dive', 'done': True})}\n\n"
+                return
+
+            # Send final event with parsed sections
+            final_event = {
+                'done': True,
+                'school': result['school'],
+                'sections': sections,
+                'admission': result['admission'],
+                'adjTier': result['adjTier'],
+                'meta': meta,
+            }
+            yield f"data: {json.dumps(final_event)}\n\n"
+
+        except Exception as e:
+            # Send error as final SSE event
+            error_event = {
+                'error': 'Deep dive failed',
+                'detail': str(e),
+                'done': True
+            }
+            yield f"data: {json.dumps(error_event)}\n\n"
+
+    return Response(
+        stream_with_context(_stream_deep_dive_response()),
+        mimetype='text/event-stream',
+        headers={
+            'X-Accel-Buffering': 'no',
+            'Cache-Control': 'no-cache, no-transform',
+        }
+    )
+
+---
+
+**Change 4: `static/index.html`**
+
+Add the LOADING_LINES constant and fetchDeepDiveStreaming function before the openDeepDive function:
+
+const LOADING_LINES = [
+  "Measuring the pool. Yep, still 25 yards.",
+  "Asking the admissions office to act casual...",
+  "Confirming the dining hall has carb loading options...",
+  "Reviewing the locker room situation. Updates pending.",
+  "Checking if the library stays open past midnight. It does. You'll need it.",
+  "Verifying the campus has actual weather and not just vibes...",
+  "Confirming the coach knows what a taper is...",
+  "Checking if the pool smells like every other pool. It does.",
+  "Reviewing the team group chat energy...",
+  "Calculating miles from campus to nearest decent pizza...",
+  "Assessing whether the freshman dorms build character or just cold...",
+  "Confirming professors can pronounce his event correctly...",
+  "Checking if the alumni actually return calls...",
+  "Reviewing how many engineers ended up in finance anyway...",
+  "Measuring the gap between the brochure and reality...",
+  "Confirming the team has a good road trip playlist...",
+  "Checking if the campus tour guide mentioned the pool unprompted...",
+  "Verifying that competitive environment means students, not just swimmers...",
+  "Reviewing the coach's Twitter for red flags. None found.",
+  "Checking if anyone on the roster swam club with him...",
+  "Confirming the weight room is actually open at 5am...",
+  "Calculating how many APs it takes to impress this admissions office...",
+  "Reviewing the local coffee shop situation. Critical infrastructure.",
+  "Confirming the team celebrates taper week appropriately...",
+  "Checking how far the closest In-N-Out is. Far.",
+  "Verifying the school has heard of the UAA...",
+  "Reviewing whether the campus map makes any sense at all...",
+  "Confirming there is in fact a lane four available at practice...",
+  "Checking if the academic advisor swims. They do not.",
+  "Calculating the odds the coach already googled him...",
+  "Reviewing the student section energy at home meets...",
+  "Confirming the school has seen a 16:06 before and remained calm...",
+  "Checking if the major he wants actually has good professors or just famous ones...",
+  "Verifying the campus tour doesn't skip the pool...",
+  "Reviewing how many swimmers switched majors junior year...",
+  "Confirming the registrar and the practice schedule have never met...",
+  "Checking if his future teammates are people he'd actually want to road trip with...",
+  "Reviewing how the coaching staff handles a bad swim. Important data.",
+  "Confirming the campus has trees. Surprisingly variable.",
+  "Checking if the career center knows what lane four means...",
+  "Verifying the recruit weekend actually shows him the real campus...",
+  "Calculating how many hours between last final and conference championships...",
+  "Reviewing whether the school's ranking survived the latest US News drama...",
+  "Confirming this one belongs on the list. It does.",
+  "Checking if the team eats together or just tolerates each other...",
+  "Reviewing the freshman fifteen risk assessment. Inconclusive.",
+  "Confirming the coach replies to emails within 48 hours. Promising.",
+  "Checking if the campus looks as good in February as it does in the viewbook. It does not."
+];
+
+async function fetchDeepDiveStreaming(url, fetchBody, contentEl) {
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(fetchBody),
+  });
+
+  if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = '';
+  let loadingLinesCopy = [...LOADING_LINES];
+  let loadingInterval = null;
+
+  const rotateLoadingLine = () => {
+    if (loadingLinesCopy.length > 0) {
+      const idx = Math.floor(Math.random() * loadingLinesCopy.length);
+      const line = loadingLinesCopy[idx];
+      loadingLinesCopy.splice(idx, 1);
+      contentEl.innerHTML = `<div class="loading-state"><span class="spinner"></span> ${line}</div>`;
+    }
+  };
+
+  loadingInterval = setInterval(rotateLoadingLine, 1200);
+  rotateLoadingLine();
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+
+    buffer += decoder.decode(value, { stream: true });
+    const lines = buffer.split('\n');
+    buffer = lines.pop();
+
+    for (const line of lines) {
+      if (line.startsWith('data: ')) {
+        try {
+          const eventData = JSON.parse(line.slice(6));
+          if (eventData.done) {
+            clearInterval(loadingInterval);
+            return eventData;
+          }
+        } catch (e) {
+          // Skip malformed JSON lines
+        }
+      }
+    }
+  }
+
+  clearInterval(loadingInterval);
+  throw new Error('Stream ended without done event');
+}
+
+
+Then inside the openDeepDive function, replace this block:
+    const res  = await fetch('/api/deep-dive', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        school,
+        vibeAnswers:    VIBE_STATE,
+        otherPrefs:     OTHER_PREFS,
+        primaryMajor:   JAMES.primaryMajor   || '',
+        secondaryMajor: JAMES.secondaryMajor || '',
+        profile:        buildCurrentProfile(),
+      }),
+    });
+    const data = await res.json();
+
+With:
+    const data = await fetchDeepDiveStreaming('/api/deep-dive', {
+      school,
+      vibeAnswers:    VIBE_STATE,
+      otherPrefs:     OTHER_PREFS,
+      primaryMajor:   JAMES.primaryMajor   || '',
+      secondaryMajor: JAMES.secondaryMajor || '',
+      profile:        buildCurrentProfile(),
+    }, content);
+
+---
+
+After all four changes are made, run:
+git add -A
+git commit -m "feat: implement SSE streaming for deep dive with rotating loading lines"
+git push origin main
+
+Do not modify anything outside these four files.
