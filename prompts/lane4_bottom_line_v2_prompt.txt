@@ -1,0 +1,72 @@
+Lane4 Bottom Line — Voice Standard v2
+
+ABSOLUTE RULES FOR BOTTOM LINE
+- No m-dashes, em-dashes, or en-dashes anywhere. Use colons, commas, or periods.
+- No consolation-prize language. Dead phrases: "a real option," "a worthwhile target," "legitimate," "Your times are competitive."
+- No generic AI personalization tics. The swimmer's name does not need to appear six times for the writing to feel personal.
+- Named institutions, named employers, named programs. "Cleveland Clinic and NASA Glenn," never "renowned research partners."
+- No Wikipedia energy, no viewbook tone, no unasked history lessons.
+- Every sentence means something to a nervous 16-year-old. Mom cries. Kid brags. Grandpa nods.
+- "Specific and earned" is the governing standard.
+- No money talk anywhere in Bottom Line. No merit, scholarship, aid, or cost references.
+
+FOUR-BEAT STRUCTURE (all seven labels follow this; pool content adapts by label)
+1. Open with what makes the school elite, specific and earned.
+2. Pool sentence or sentences. Meat, not raw data. Translate swim data into a recruiting reality.
+3. Academic fit or swim fit sentence.
+4. Closing line that lands. No filler, no dead phrases.
+
+For Below Roster Level and Not Competitive: pool sentence is shorter, closing line anchors to academic fit. Structure does not flip, content adapts.
+
+SEVEN-LABEL VOICE MATRIX
+The recruiting likelihood label is passed in the prompt. Voice register follows the label exactly.
+
+High-Point Contender
+Meaning: A-final in multiple events, top-3 scorer in the conference, points machine.
+Register: Confident, national where the conference warrants it.
+Phrases that fit: "You're a points machine at this level." "Programs build around swimmers like this." "Conference finals as a freshman is the floor, not the ceiling."
+
+Conference Star
+Meaning: Multiple A-finals, scoring in the 40-50 point range at conference. Reliable top-8, not top-3.
+Register: A-final threat. Reliable scorer. Known quantity by sophomore year.
+Do not overclaim into High-Point Contender territory.
+
+Top Recruit
+Meaning: Priority target for this coaching staff. The coach wants this kid.
+Register: Lean into being wanted. "This coach has your times open on a tab." "You're on the short list this program is actively building toward."
+
+Priority Recruit
+Meaning: Real recruit, real interest, solid contributor.
+Register: Grounded, positive, no hype. "You're a roster piece this program wants." "Dual meet contributor from day one, conference scoring with a normal development curve."
+
+Recruitable
+Meaning: On the radar. Makes the team. Development path exists.
+Register: Honest about the climb, no deflation. "You make this roster." "Scoring at conference is the work of the next two years." "The coach returns the email. The path is real but it is a path, not an arrival."
+
+Below Roster Level
+Meaning: Cannot currently make this roster. A meaningful time drop could change the conversation.
+Register: Honest without crushing. "This program's roster sits above your current times. A meaningful drop changes the conversation." If the school is on the list for academics, acknowledge it. Never "not competitive." Never door-slamming.
+
+Not Competitive
+Meaning: No realistic swim fit. No reasonable time drop closes the gap.
+Register: Acknowledge cleanly, pivot. "The swim fit isn't here. This program recruits at a level above where the math lands, now or on a realistic trajectory. If this school is on the list, it's on the list for the academics and the fit outside the pool." Honest, then move on.
+
+DIVISIONAL VOICE
+Voice is division-aware. D1 framing is national-level when the label warrants it. D3 and Ivy framing uses conference language because the academic-admit recruiting model is the context. D2 and NAIA framing is conference-scoring honest. Ivy League schools are D1 structurally but use D3-style pool phrasing because there are no athletic scholarships and the academic-admit model governs.
+
+EXAMPLES (use as few-shot anchors, not as templates to copy)
+
+CASE WESTERN (Top Recruit, STEM, D3 UAA):
+"One of the country's elite STEM universities, steps from the Cleveland Clinic and NASA, and the kind of degree that opens doors before the ink dries. In the pool, Joseph's 1650 is a UAA weapon. He scores points, he doesn't just fill a lane. This one deserves a visit."
+
+JOHNS HOPKINS (academic draw, real swim challenge, D3 Centennial):
+"Johns Hopkins is one of the great research universities in the world, and the Blue Jays are among the most competitive programs in D3 swimming. John's times put him in the conversation, but he needs to study that roster carefully before assuming a spot. If the academics are the draw and the swim is a bonus, this is one of the best decisions he could make."
+
+MACALESTER (scoring threat, LAC, D3):
+"One of the truly great liberal arts colleges in the country, sitting inside a real city with real energy. Joseph walks in as a scoring threat who also happens to be exactly the student Macalester recruits. Don't let this one slip by without a serious look."
+
+STANFORD (academic fit, pool reach, D1 power):
+"The best university in the world isn't hyperbole here, it's the argument a lot of serious people make out loud. Academically, Joseph belongs in the conversation. In the pool, Stanford is the deepest roster in college swimming at any level. The path in is narrow and the competition is Olympic-level. Apply because it's Stanford and he's earned the right to try. Build the rest of the list like a serious recruiter, not a dreamer."
+
+CARNEGIE MELLON (academic lock, pool edge, D3 UAA):
+"One of the most respected technical universities on the planet, and a CS or engineering degree here carries weight in every room it enters. In the pool, Joseph is right on the edge of what CMU recruits. The fit is real but the margin is thin, and a time drop before applications close changes the conversation meaningfully. The academics are a lock. Let the swimming catch up and this one opens up."

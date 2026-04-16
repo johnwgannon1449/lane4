@@ -3,7 +3,7 @@ import re
 import json
 
 from flask import Blueprint, request, jsonify, Response, stream_with_context
-from prompts_config import LANE4_DEEP_DIVE_PROMPT
+from prompts_config import LANE4_DEEP_DIVE_PROMPT, LANE4_BOTTOM_LINE_V2_PROMPT, BOTTOM_LINE_V2
 from ai_client import _get_anthropic
 from models.swimmer_defaults import JAMES
 from models.school_data import _oou_lookup
@@ -294,7 +294,7 @@ def deep_dive():
         "at the current roster and committed recruits before assuming a spot."
     ) if conf_tier_short == '1A' else ''
 
-    system_prompt = (
+    _base_system = (
         LANE4_DEEP_DIVE_PROMPT + "\n\n"
         "Lane4 Technical Vocabulary (always apply):\n"
         "- Never use the word 'tier' — describe programs as 'Super Powerhouse', 'Powerhouse', "
@@ -306,6 +306,10 @@ def deep_dive():
         "- Respond using markdown sections starting with ## for each section title.\n"
         "- 2-3 sentences per section. Short paragraphs. Strong declarative sentences."
     )
+    if BOTTOM_LINE_V2:
+        system_prompt = _base_system + "\n\n" + LANE4_BOTTOM_LINE_V2_PROMPT
+    else:
+        system_prompt = _base_system
 
     ivy_note = '\nThis is an Ivy League school — need-based aid only, no merit scholarships.' if meta.get('ivyLeague') else ''
 
@@ -362,6 +366,37 @@ def deep_dive():
         "Sound informed. Name specifics where possible. Do not promote.\n"
     )
 
+    # Bottom Line instruction — v2 (label-aware) or v1 (original)
+    _adj_tier  = result.get('adjTier', '')
+    _division  = result.get('division', '')
+    _conf_name = result.get('conference', '')
+
+    if BOTTOM_LINE_V2:
+        _bl_oou_instruction = (
+            "## Bottom Line\n"
+            "No swim data for this school. Focus on academic and personal fit.\n"
+            "Follow the Bottom Line v2 voice standard in your system prompt.\n"
+            "Structure: (1) Open with what makes the school elite, specific and earned. "
+            "(2) Academic fit sentence: honest, specific, not generic praise. "
+            "(3) What choosing this school means for swimming, honestly. "
+            "(4) Closing line that lands. No filler.\n"
+            "Roughly 3-5 sentences. No m-dashes. No money talk. No consolation-prize language.\n"
+        )
+        _bl_inuniverse_instruction = (
+            "## Bottom Line\n"
+            f"RECRUITING LIKELIHOOD: {_adj_tier} | DIVISION: {_division} | CONFERENCE: {_conf_name}\n"
+            "Follow the Bottom Line v2 voice standard and seven-label voice matrix in your system prompt.\n"
+            "Structure: (1) Open with what makes the school elite, specific and earned. "
+            "(2) Pool sentence(s): meat not raw data, voice register matches the recruiting likelihood label above exactly. "
+            "(3) Academic fit sentence. "
+            "(4) Closing line that lands. No filler.\n"
+            "Roughly 3-5 sentences. No m-dashes. No money talk. No consolation-prize language.\n"
+        )
+    else:
+        # v1 original instructions (rollback path)
+        _bl_oou_instruction        = "## Bottom Line\n2-3 sentences. School value + academic/personal fit + overall verdict.\n"
+        _bl_inuniverse_instruction = "## Bottom Line\n2-3 sentences. Swim reality + school value + overall verdict. No hedging.\n"
+
     if is_oou:
         user_prompt = (
             f"Write a deep dive for {swimmer_name} considering {result['school']}.\n\n"
@@ -377,8 +412,7 @@ def deep_dive():
             "NOTE: This school is not in our swim recruiting database. The swimmer is comparing it "
             "against D3 options — be honest about what choosing this school means for swim.\n\n"
             "Write exactly these sections in this order:\n\n"
-            "## Bottom Line\n"
-            "2-3 sentences. School value + academic/personal fit + overall verdict.\n"
+            f"{_bl_oou_instruction}"
             f"## What {result['school']} Is Known For\n"
             "School identity. Make it feel important and real. Prestige when deserved. 3-4 sentences.\n"
             f"{acad_section_instr}"
@@ -414,8 +448,7 @@ def deep_dive():
             "Swim fit is explained ONCE in 'In the Pool' — do not repeat it elsewhere. "
             "Use the free response lightly and naturally — no overpersonalization. "
             "Use 'Hidden Ivy' naturally if applicable.\n\n"
-            "## Bottom Line\n"
-            "2-3 sentences. Swim reality + school value + overall verdict. No hedging.\n"
+            f"{_bl_inuniverse_instruction}"
             "## In the Pool\n"
             "Where this swimmer lands on the team. What that means. Trajectory if they hold or drop time. "
             "Sound like a coach talking plainly. No internal metrics.\n"
