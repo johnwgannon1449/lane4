@@ -5,6 +5,7 @@ import json
 from flask import Blueprint, request, jsonify, Response, stream_with_context
 from prompts_config import LANE4_DEEP_DIVE_PROMPT, LANE4_BOTTOM_LINE_V2_PROMPT, BOTTOM_LINE_V2
 from ai_client import _get_anthropic
+from services.pregen import get_or_generate_school_content, get_or_generate_program_content
 from models.swimmer_defaults import JAMES
 from models.school_data import _oou_lookup
 from scoring.admission import _oou_admission
@@ -110,6 +111,93 @@ def deep_dive_academic():
         return jsonify({'error': str(e)}), 200
 
 
+def _inject_cached_sections(sections, school_cached, program_cached,
+                             school_name, major, minor):
+    """Replace live-generated sections with cached pre-generated versions where available.
+
+    Cached content from pregen.py stores headings inside the text blobs:
+      academic_program_main  : "Physics at Case Western\\nbody..."
+      academic_program_more  : "More: Going Deeper\\nbody..."
+      campus_life_more       : "More: Life Outside the Pool\\nbody..."
+      known_for / campus_life_main / minor_content : body only (no embedded heading)
+    """
+    if not school_cached and not program_cached:
+        return sections
+
+    def _split_hb(text):
+        """Split 'Heading\\nbody' into (heading, body). Returns (text, '') if no newline."""
+        if not text:
+            return '', ''
+        parts = text.split('\n', 1)
+        return parts[0].strip(), (parts[1].strip() if len(parts) > 1 else '')
+
+    result_sections = []
+    for section in sections:
+        stype      = section.get('type', 'content')
+        title_low  = section.get('title', '').lower()
+
+        # What School Is Known For
+        if 'is known for' in title_low and school_cached.get('known_for'):
+            result_sections.append({
+                'title': f"What {school_name} Is Known For",
+                'body':  school_cached['known_for'],
+                'type':  'content',
+            })
+            continue
+
+        # Campus Life main body
+        if stype == 'student_experience' and school_cached.get('campus_life_main'):
+            result_sections.append({
+                'title': 'Campus Life',
+                'body':  school_cached['campus_life_main'],
+                'type':  'student_experience',
+            })
+            continue
+
+        # More: Student Experience  →  More: Life Outside the Pool
+        if stype == 'more_student_experience' and school_cached.get('campus_life_more'):
+            _, more_body = _split_hb(school_cached['campus_life_more'])
+            result_sections.append({
+                'title': 'More: Life Outside the Pool',
+                'body':  more_body or school_cached['campus_life_more'],
+                'type':  'more_student_experience',
+            })
+            continue
+
+        # Academic Program main body
+        if stype == 'academic_program' and program_cached.get('academic_program_main'):
+            acad_title, acad_body = _split_hb(program_cached['academic_program_main'])
+            result_sections.append({
+                'title': acad_title or 'Academic Program',
+                'body':  acad_body or program_cached['academic_program_main'],
+                'type':  'academic_program',
+            })
+            continue
+
+        # More: Academic  →  More: Going Deeper
+        if stype == 'more_academic' and program_cached.get('academic_program_more'):
+            _, more_body = _split_hb(program_cached['academic_program_more'])
+            result_sections.append({
+                'title': 'More: Going Deeper',
+                'body':  more_body or program_cached['academic_program_more'],
+                'type':  'more_academic',
+            })
+            continue
+
+        result_sections.append(section)
+
+    # Append Minor section (new type — never generated live)
+    if minor and program_cached.get('minor_content'):
+        minor_title, minor_body = _split_hb(program_cached['minor_content'])
+        result_sections.append({
+            'title': minor_title or f'Minor in {minor}',
+            'body':  minor_body or program_cached['minor_content'],
+            'type':  'minor',
+        })
+
+    return result_sections
+
+
 def _parse_sections(raw_text):
     """Parse the raw deep dive text into structured sections."""
     def _classify_section(t):
@@ -119,7 +207,9 @@ def _parse_sections(raw_text):
         if t == 'campus life':                              return 'student_experience'
         if t == 'outcomes':                                 return 'outcomes'
         if t == 'more: academic':                           return 'more_academic'
+        if t == 'more: going deeper':                       return 'more_academic'
         if t == 'more: student experience':                 return 'more_student_experience'
+        if t == 'more: life outside the pool':              return 'more_student_experience'
         if t == 'more: career paths':                       return 'more_career_paths'
         return 'content'
 
@@ -476,6 +566,34 @@ def deep_dive():
             # Send keepalive comment to confirm connection is live before Claude starts generating
             yield ": keepalive\n\n"
 
+            # Fetch pre-generated cached sections (or trigger Haiku generation on first miss).
+            # This blocks before the Claude stream starts, but the SSE connection is already
+            # open so the client shows a loading state. On a cache hit this is near-instant.
+            _school_cached  = {}
+            _program_cached = {}
+            try:
+                _school_cached = get_or_generate_school_content(
+                    school_name=result['school'],
+                    division=result.get('division', ''),
+                    conference=result.get('conference', ''),
+                    region=meta.get('location', ''),
+                    school_type=meta.get('type', ''),
+                    meta={k: meta.get(k, '') for k in (
+                        'freshmanHousing', 'greekLife', 'residentialPattern',
+                        'athleteIntegration', 'genderRatio', 'townVibe',
+                        'campusTemperature',
+                    )},
+                )
+                if academic_direction:
+                    _program_cached = get_or_generate_program_content(
+                        school_name=result['school'],
+                        major=academic_direction,
+                        minor=minor or '',
+                        division=result.get('division', ''),
+                    )
+            except Exception as _pregen_err:
+                print(f'[deep_dive] pregen error: {_pregen_err}')
+
             full_text = ""
 
             # Stream text chunks from Claude API
@@ -492,6 +610,12 @@ def deep_dive():
 
             # Parse sections from complete text
             sections = _parse_sections(full_text)
+
+            # Swap in cached pre-generated sections where available
+            sections = _inject_cached_sections(
+                sections, _school_cached, _program_cached,
+                result['school'], academic_direction, minor,
+            )
 
             if not sections:
                 # Send error as final SSE event
