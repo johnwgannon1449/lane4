@@ -19,7 +19,7 @@ from prompts_config import (
     MINOR_PROMPT,
 )
 
-_HAIKU_MODEL       = 'claude-haiku-4-5-20251001'
+_HAIKU_MODEL       = 'claude-sonnet-4-6-20250514'
 _WEB_SEARCH        = {'type': 'web_search_20250305', 'name': 'web_search', 'max_uses': 5}
 _CALL_TIMEOUT_SECS = 60
 
