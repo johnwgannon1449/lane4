@@ -5159,17 +5159,14 @@ def deep_dive():
     ap_detail = f", {ap_count} projected APs" if ap_count else ""
 
     # Structured major inputs (take priority over vibe career/academic fallback)
-    primary_major   = (prof_ovr.get('primaryMajor')   or data.get('primaryMajor',   '')).strip()
-    secondary_major = (prof_ovr.get('secondaryMajor') or data.get('secondaryMajor', '')).strip()
+    primary_major = (prof_ovr.get('primaryMajor') or data.get('primaryMajor', '')).strip()
+    minor         = (prof_ovr.get('minor')         or data.get('minor',         '')).strip()
 
     # Determine academic direction for optional section.
-    # Source of truth: primaryMajor (structured picker), then secondaryMajor.
+    # Source of truth: primaryMajor (structured picker), minor field.
     # Fallback: academicGoal from vibe (vibe.academic). Never inferred from career vibe.
     if primary_major:
-        _major_parts = [primary_major]
-        if secondary_major:
-            _major_parts.append(secondary_major)
-        academic_direction = ' / '.join(_major_parts)
+        academic_direction = primary_major
     else:
         academic_raw = (vibe_answers.get('academic') or '').strip()
         _generic = academic_raw in ('', 'Genuinely want to be well-rounded')

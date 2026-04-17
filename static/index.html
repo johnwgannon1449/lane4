@@ -1592,7 +1592,7 @@ function loadFromStorage() {
     if (vibe) VIBE_STATE = JSON.parse(vibe);
     // Backfill new fields for profiles saved before this version
     if (JAMES && !Array.isArray(JAMES.potentialMajors)) {
-      JAMES.potentialMajors = [JAMES.primaryMajor, JAMES.secondaryMajor].filter(Boolean);
+      JAMES.potentialMajors = [JAMES.primaryMajor, JAMES.secondaryMajor || JAMES.minor].filter(Boolean);
     }
     if (JAMES && !JAMES.academicGoal) {
       JAMES.academicGoal = (VIBE_STATE && VIBE_STATE.academic) || '';
@@ -2326,7 +2326,7 @@ async function obBuildAndFinish() {
     gender:         OB_STATE.gender,
     gpa: 0, sat: 0, mathSat: 0, actScore: 0, apCount: 0,
     satProjected: 0, potentialMajors: [], primaryMajor: '',
-    secondaryMajor: '', academicGoal: '',
+    minor: '', academicGoal: '',
     times: OB_STATE.confirmedTimes,
     vibe: {},
   };
@@ -2576,7 +2576,7 @@ async function loadFromServer() {
     if (d.preferences && typeof d.preferences === 'object' && Object.keys(d.preferences).length > 0) PREFERENCES = d.preferences;
     // Backfill new fields in case server data pre-dates this version
     if (!Array.isArray(JAMES.potentialMajors)) {
-      JAMES.potentialMajors = [JAMES.primaryMajor, JAMES.secondaryMajor].filter(Boolean);
+      JAMES.potentialMajors = [JAMES.primaryMajor, JAMES.secondaryMajor || JAMES.minor].filter(Boolean);
     }
     if (!JAMES.academicGoal)    JAMES.academicGoal    = (VIBE_STATE && VIBE_STATE.academic) || '';
     if (!JAMES.gender)          JAMES.gender          = 'men';
@@ -3362,8 +3362,8 @@ async function openDeepDive(school) {
       school,
       vibeAnswers:    VIBE_STATE,
       otherPrefs:     OTHER_PREFS,
-      primaryMajor:   JAMES.primaryMajor   || '',
-      secondaryMajor: JAMES.secondaryMajor || '',
+      primaryMajor:   JAMES.primaryMajor || '',
+      minor:          JAMES.minor        || '',
       profile:        buildCurrentProfile(),
     }, content);
 
@@ -3471,7 +3471,7 @@ async function openDeepDive(school) {
         if (_sType === 'academic_program') {
           // Academic Program — "More about this program" button present when this section exists.
           // Major from structured picker only: JAMES.primaryMajor (synced from potentialMajors).
-          const _major = JAMES.primaryMajor || JAMES.secondaryMajor || '';
+          const _major = JAMES.primaryMajor || '';
           window._ddAcadArgs = window._ddAcadArgs || {};
           window._ddAcadArgs[moreId] = {
             school: school,
@@ -3500,7 +3500,7 @@ async function openDeepDive(school) {
 
         // For academic_program sections, show "{major} at {school}" from structured data,
         // not the fixed LLM header ("Academic Program") used for reliable classification.
-        const _dispMajor = JAMES.primaryMajor || JAMES.secondaryMajor || '';
+        const _dispMajor = JAMES.primaryMajor || '';
         const _displayTitle = (_sType === 'academic_program' && _dispMajor)
           ? esc(_dispMajor + ' at ' + school)
           : esc(s.title);
@@ -3754,8 +3754,8 @@ async function printListWithDeepDives() {
           school,
           vibeAnswers:    VIBE_STATE,
           otherPrefs:     OTHER_PREFS,
-          primaryMajor:   JAMES.primaryMajor   || '',
-          secondaryMajor: JAMES.secondaryMajor || '',
+          primaryMajor:   JAMES.primaryMajor || '',
+          minor:          JAMES.minor        || '',
           profile:        buildCurrentProfile(),
         }),
       });
@@ -4554,8 +4554,8 @@ function buildCurrentProfile() {
     satProjected:    JAMES.satProjected,
     mathSat:         JAMES.mathSat,
     potentialMajors: Array.isArray(JAMES.potentialMajors) ? JAMES.potentialMajors : [],
-    primaryMajor:    JAMES.primaryMajor   || '',
-    secondaryMajor:  JAMES.secondaryMajor || '',
+    primaryMajor:    JAMES.primaryMajor || '',
+    minor:           JAMES.minor        || '',
     academicGoal:    (VIBE_STATE && VIBE_STATE.academic) || JAMES.academicGoal || '',
     times:           JAMES.times,
     vibe:            JAMES.vibe,
@@ -4585,8 +4585,8 @@ function toggleEditStats() {
 
 // ── Major picker ────────────────────────────────────────────────
 function _syncMajors() {
-  JAMES.primaryMajor   = (JAMES.potentialMajors || [])[0] || '';
-  JAMES.secondaryMajor = (JAMES.potentialMajors || [])[1] || '';
+  JAMES.primaryMajor = (JAMES.potentialMajors || [])[0] || '';
+  JAMES.minor        = (JAMES.potentialMajors || [])[1] || '';
 }
 
 function _majorsSelected() {
@@ -4600,16 +4600,23 @@ function _renderMajorPickerInto(containerId, searchId, dropdownId) {
   const container = document.getElementById(containerId);
   if (!container) return;
   const selected = _majorsSelected();
-  const canAdd   = selected.length < 2;
+  const hasMajor = selected.length >= 1;
+  const hasMinor = selected.length >= 2;
+  const searchPlaceholder = hasMajor ? 'Type to search minors…' : 'Type to search majors…';
+  const canAdd = !hasMinor;
+
+  // Build chips: first chip is Major, second is Minor
+  const chipsHtml = selected.map((m, i) => {
+    const roleLabel = i === 0 ? 'Major' : 'Minor';
+    return `<span class="major-chip"><span style="font-size:0.72rem;opacity:0.7;margin-right:0.2rem;">${roleLabel}:</span>${esc(m)}<button type="button" class="major-chip-remove" onclick="removeMajor(${i})">✕</button></span>`;
+  }).join('');
+
   container.innerHTML =
-    `<div class="major-chips">${
-      selected.map((m, i) =>
-        `<span class="major-chip">${esc(m)}<button type="button" class="major-chip-remove" onclick="removeMajor(${i})">✕</button></span>`
-      ).join('')
-    }${!canAdd ? '<span style="font-size:0.78rem;color:var(--muted);margin-left:0.3rem;">max 2 selected</span>' : ''}</div>${
+    `<div class="major-chips">${chipsHtml}</div>${
       canAdd
         ? `<div style="position:relative;">
-             <input type="text" id="${searchId}" autocomplete="off" placeholder="Type to search majors…"
+             ${hasMajor ? '<div style="font-size:0.8rem;color:var(--muted);margin-bottom:0.3rem;">+ Add a minor</div>' : ''}
+             <input type="text" id="${searchId}" autocomplete="off" placeholder="${searchPlaceholder}"
                oninput="filterMajors(this.value,'${dropdownId}')" onfocus="filterMajors(this.value,'${dropdownId}')"
                style="width:100%;box-sizing:border-box;padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:0.95rem;font-family:inherit;color:var(--navy);background:var(--white);">
              <div id="${dropdownId}" style="display:none;position:absolute;top:calc(100% + 2px);left:0;right:0;z-index:200;background:var(--white);border:1.5px solid var(--border);border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,0.10);max-height:200px;overflow-y:auto;"></div>
@@ -4700,10 +4707,12 @@ function renderStats() {
   const _oldMajorDisplay = document.getElementById('major-display');
   if (_oldMajorDisplay) _oldMajorDisplay.remove();
   if (JAMES.primaryMajor) {
-    const majorParts = [JAMES.primaryMajor, JAMES.secondaryMajor].filter(Boolean).join(' / ');
+    const minorLine = JAMES.minor
+      ? `<div>Minor: <strong>${esc(JAMES.minor)}</strong></div>`
+      : '';
     el.insertAdjacentHTML('afterend',
       `<div id="major-display" style="font-size:0.8rem;color:var(--blue-d);margin-top:0.35rem;">
-        Intended major: <strong>${esc(majorParts)}</strong>
+        <div>Major: <strong>${esc(JAMES.primaryMajor)}</strong></div>${minorLine}
        </div>`);
   }
 
@@ -4751,7 +4760,7 @@ function renderStats() {
         </select>
       </div>
       <div class="stat-edit-field" style="grid-column:1/-1;">
-        <label>Potential majors <span style="font-weight:400;font-size:0.78em;color:var(--muted);">select up to 2 — shapes the academic section of your deep dives</span></label>
+        <label>Major &amp; Minor <span style="font-weight:400;font-size:0.78em;color:var(--muted);">select a major, then optionally add a minor</span></label>
         <div id="major-picker"></div>
       </div>
     </div>
