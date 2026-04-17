@@ -36,3 +36,4 @@ OUTPUT FORMAT
 Write only the minor section. Use EXACTLY this heading on its own line: "Minor in [X]" (replace [X] with the actual minor name from the input). Then write the one-paragraph body immediately.
 
 No introduction, no meta-commentary, no second paragraph.
+Never include search narration, internal reasoning, or phrases like "I'll search for" or "Based on my research" or "Let me search" in the output. Start writing the section immediately.

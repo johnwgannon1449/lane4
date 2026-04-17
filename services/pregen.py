@@ -89,6 +89,38 @@ def _call_haiku(system: str, user_message: str) -> str:
 # Internal: response parsers
 # ---------------------------------------------------------------------------
 
+_SEARCH_NARRATION_PREFIXES = (
+    "i'll search",
+    "let me search",
+    "now let me search",
+    "based on my research",
+    "based on the search",
+    "i'll look",
+    "let me look",
+    "i'll find",
+    "searching for",
+    "i've searched",
+    "i've found",
+    "my research shows",
+    "from my research",
+)
+
+def _strip_narration(text: str) -> str:
+    """Remove lines that are search narration leaking into generated output.
+
+    Matches lines whose lowercased content starts with any prefix in
+    _SEARCH_NARRATION_PREFIXES. Logs each removed line for visibility.
+    """
+    clean_lines = []
+    for line in text.splitlines():
+        lowered = line.strip().lower()
+        if any(lowered.startswith(p) for p in _SEARCH_NARRATION_PREFIXES):
+            print(f'[pregen] stripped narration line: {line.strip()!r}')
+        else:
+            clean_lines.append(line)
+    return '\n'.join(clean_lines).strip()
+
+
 def _split_on_heading(text: str, heading: str) -> tuple:
     """Split text into (before_heading, from_heading_onward). Case-sensitive."""
     idx = text.find(heading)
@@ -112,7 +144,7 @@ def _generate_known_for(school_name: str, division: str, conference: str,
         f"Research {school_name} using web search, then write the "
         f"'What School Is Known For' section following the rules and exemplar above."
     )
-    return _call_haiku(SCHOOL_KNOWN_FOR_PROMPT, user_msg).strip()
+    return _strip_narration(_call_haiku(SCHOOL_KNOWN_FOR_PROMPT, user_msg))
 
 
 def _generate_campus_life(school_name: str, division: str, conference: str,
@@ -131,7 +163,7 @@ def _generate_campus_life(school_name: str, division: str, conference: str,
           f"school paper), then write the Campus Life section and the "
           f"'More: Life Outside the Pool' expansion following the rules and exemplar above."
     )
-    raw = _call_haiku(CAMPUS_LIFE_PROMPT, user_msg)
+    raw = _strip_narration(_call_haiku(CAMPUS_LIFE_PROMPT, user_msg))
     return _split_on_heading(raw, 'More: Life Outside the Pool')
 
 
@@ -145,7 +177,7 @@ def _generate_major(school_name: str, division: str, major: str) -> tuple:
         f"then write the Academic Program section and 'More: Going Deeper' expansion "
         f"following the rules and exemplars above."
     )
-    raw = _call_haiku(MAJOR_PROMPT, user_msg)
+    raw = _strip_narration(_call_haiku(MAJOR_PROMPT, user_msg))
     return _split_on_heading(raw, 'More: Going Deeper')
 
 
@@ -158,7 +190,7 @@ def _generate_minor(school_name: str, major: str, minor: str) -> str:
         f"(academic catalog, department pages), then write the Minor section "
         f"following the rules above."
     )
-    return _call_haiku(MINOR_PROMPT, user_msg).strip()
+    return _strip_narration(_call_haiku(MINOR_PROMPT, user_msg))
 
 
 # ---------------------------------------------------------------------------

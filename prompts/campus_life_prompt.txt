@@ -88,3 +88,4 @@ Section 1: The main Campus Life body. No heading. Start writing immediately with
 Section 2: The More expansion. Use EXACTLY this heading on its own line: "More: Life Outside the Pool". Then write the expansion body. 200-350 words.
 
 No introductions, no meta-commentary, no additional headings. Start writing section 1 immediately.
+Never include search narration, internal reasoning, or phrases like "I'll search for" or "Based on my research" or "Let me search" in the output. Start writing the section immediately.

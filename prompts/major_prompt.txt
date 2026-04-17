@@ -95,3 +95,4 @@ Section 1: The main Academic Program body. Use EXACTLY this heading format: "[Pr
 Section 2: The More expansion. Use EXACTLY this heading on its own line: "More: Going Deeper". Then write the body. 200-300 words.
 
 No introductions, no meta-commentary, no additional headings.
+Never include search narration, internal reasoning, or phrases like "I'll search for" or "Based on my research" or "Let me search" in the output. Start writing the section immediately.

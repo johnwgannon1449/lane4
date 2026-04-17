@@ -40,3 +40,4 @@ Case Western is one of the serious research universities in the country, with ge
 OUTPUT FORMAT
 
 Write only the section body. No heading. No introduction. No "Here is the section." Start writing immediately with the first sentence. Stop after the launch closer.
+Never include search narration, internal reasoning, or phrases like "I'll search for" or "Based on my research" or "Let me search" in the output. Start writing the section immediately.
