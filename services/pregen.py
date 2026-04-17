@@ -8,6 +8,8 @@ Model: claude-haiku-4-5-20251001 with web_search_20250305 enabled.
 Cache: reads before generating, writes after, keyed by school_name or (school_name, major, minor).
 """
 
+import concurrent.futures as _futures
+
 from db import get_db, using_sqlite
 from ai_client import _get_anthropic
 from prompts_config import (
@@ -17,8 +19,9 @@ from prompts_config import (
     MINOR_PROMPT,
 )
 
-_HAIKU_MODEL    = 'claude-haiku-4-5-20251001'
-_WEB_SEARCH     = {'type': 'web_search_20250305', 'name': 'web_search', 'max_uses': 5}
+_HAIKU_MODEL       = 'claude-haiku-4-5-20251001'
+_WEB_SEARCH        = {'type': 'web_search_20250305', 'name': 'web_search', 'max_uses': 5}
+_CALL_TIMEOUT_SECS = 60
 
 
 # ---------------------------------------------------------------------------
@@ -26,21 +29,35 @@ _WEB_SEARCH     = {'type': 'web_search_20250305', 'name': 'web_search', 'max_use
 # ---------------------------------------------------------------------------
 
 def _call_haiku(system: str, user_message: str) -> str:
-    """Call Haiku 4.5 with web search. Runs the tool loop until end_turn."""
+    """Call Haiku 4.5 with web search. Runs the tool loop until end_turn.
+
+    Each API round is capped at _CALL_TIMEOUT_SECS. TimeoutError propagates
+    to the caller (get_or_generate_*), which catches it and returns empty
+    strings so the deep dive falls back to live generation for those sections.
+    """
     client = _get_anthropic()
     if not client:
         raise RuntimeError('ANTHROPIC_API_KEY not configured')
 
     messages = [{'role': 'user', 'content': user_message}]
 
-    for _ in range(10):  # safety cap on tool rounds
-        response = client.messages.create(
+    def _single_round(msgs):
+        return client.messages.create(
             model=_HAIKU_MODEL,
             max_tokens=4000,
             system=system,
             tools=[_WEB_SEARCH],
-            messages=messages,
+            messages=msgs,
         )
+
+    for _ in range(10):  # safety cap on tool rounds
+        with _futures.ThreadPoolExecutor(max_workers=1) as executor:
+            future = executor.submit(_single_round, list(messages))
+            try:
+                response = future.result(timeout=_CALL_TIMEOUT_SECS)
+            except _futures.TimeoutError:
+                print(f'[pregen] Haiku API call timed out after {_CALL_TIMEOUT_SECS}s')
+                raise TimeoutError(f'Haiku call exceeded {_CALL_TIMEOUT_SECS}s')
 
         text = ''.join(b.text for b in response.content if hasattr(b, 'text'))
 
