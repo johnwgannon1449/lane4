@@ -38,6 +38,8 @@ Heading: use EXACTLY "More: Going Deeper"
 
 This section lives behind a "More about the program" button. The student is seriously considering this major. Go specific.
 
+The More section must not repeat any information from the main section. If the main section covers research access, the More section does not mention research access again. If the main section covers curriculum structure, the More section goes deeper into specific tracks, not the same overview. The four required beats (sub-tracks, two transformative courses, unexpected career path, advisor's last line) are the content. Nothing else.
+
 Must cover all four:
 1. Sub-track or signature program specifics: named concentrations, honors programs, research centers, or certificates worth knowing about. What makes the internal structure of this program distinctive.
 2. Two courses students consistently flag as transformative: name the courses if possible. One sentence each on why they matter and what they do to a student's thinking.

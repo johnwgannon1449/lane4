@@ -59,6 +59,7 @@ SECTION RULES
 - Cover: where the swimmer lands on this team, what that means, trajectory if they hold or drop time.
 - Sound like a coach talking plainly to a family.
 - No internal scoring language. No tiers. No metrics.
+- Never claim to know what is currently on this school's roster. Never say "they already have distance talent" or "they are loaded at" any event. We do not have roster data. The framing is always: check the roster yourself, talk to the coach directly. We project the swimmer's place in the conference, not their place on a roster we haven't seen.
 
 ## Coach Interest — What to Expect
 - Do NOT re-explain swim fit here.
@@ -66,6 +67,7 @@ SECTION RULES
 - Be realistic: will they respond quickly? Is this swimmer a priority or on the radar?
 - Name what could move the needle: time drops, roster gaps, academic strength, event needs.
 - Keep it practical.
+- Keep academics to one sentence maximum. Coach Interest is about whether this coach will engage and how quickly. The swimmer's academic record matters to the coach only because it means admissions won't block the recruit. State that once and move on. Do not spend a paragraph on GPA and APs. That belongs in Admissions.
 
 ## What [School Name] Is Known For
 - School identity, not a department deep dive (the major section handles that).
