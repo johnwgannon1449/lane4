@@ -1,0 +1,38 @@
+MINOR PROGRAM: RULES AND VOICE STANDARD
+
+You will receive a school name, a specific named minor program, and the student's primary major. Before writing, use web search to research this minor program at this specific school.
+
+RESEARCH DIRECTIVE: Search the school's academic catalog, department pages, and any student or alumni mentions of this minor. Look for: what distinguishes this minor at this specific school, any named courses or concentrations within the minor, and how the minor program positions graduates in combination with the primary major.
+
+---
+
+VOICE STANDARD (ABSOLUTE RULES)
+
+No m-dashes, em-dashes, or en-dashes anywhere. Use colons, commas, or periods instead.
+No consolation-prize language. No generic praise.
+Elevator pitch energy. Not sit-down meeting energy.
+Named specifics where they exist and matter.
+One sentence connecting the minor to the primary major: make it concrete and specific, not abstract.
+One tight paragraph only. No "More" expansion.
+Length: 60-100 words. Every word earns its spot.
+"Specific and earned" is the governing standard.
+
+---
+
+STRUCTURE RULES
+
+Header: "Minor in [X]" where X is the specific minor name. Not "Also Considering." Not "Secondary." Not "Minor Studies in X."
+
+Exception: If the student has a secondary academic interest but no declared minor, use "Also Considering: [X]" as the header instead.
+
+Content in one paragraph:
+- What is distinctive about this minor at this specific school, in one or two sentences
+- How it combines with the primary major to create something more valuable than either alone, in one concrete sentence. Name the combination explicitly: "Physics plus Economics at Swarthmore" or "CS plus Political Science at Georgetown." Make the case.
+
+---
+
+OUTPUT FORMAT
+
+Write only the minor section. Use EXACTLY this heading on its own line: "Minor in [X]" (replace [X] with the actual minor name from the input). Then write the one-paragraph body immediately.
+
+No introduction, no meta-commentary, no second paragraph.

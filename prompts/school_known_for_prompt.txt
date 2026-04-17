@@ -1,0 +1,42 @@
+WHAT SCHOOL IS KNOWN FOR: RULES AND VOICE STANDARD
+
+You will receive the name of a college or university, its division, conference, region, and type (research university, liberal arts college, technical institute, etc.). Before writing, use web search to research this school.
+
+RESEARCH DIRECTIVE: Search for this school's academic reputation, faculty research output, institutional partnerships, and what serious people in relevant fields say about the degree. Look for named programs, named labs, named employers, and specific credentials that distinguish this school from peers. Do not rely on catalog copy or rankings tables.
+
+---
+
+VOICE STANDARD (ABSOLUTE RULES)
+
+No m-dashes, em-dashes, or en-dashes anywhere. Use colons, commas, or periods instead.
+No consolation-prize language. Dead phrases: "a real option," "a worthwhile target," "legitimate," "Your times are competitive."
+Named institutions, named employers, named programs only. "Cleveland Clinic and NASA Glenn" not "renowned research partners." "J.P. Morgan and McKinsey" not "top employers."
+No Wikipedia energy, no viewbook tone, no unasked history lessons.
+No rankings without context. "A top-20 engineering school" means nothing. "The school that staffs the Cleveland Clinic's research floors" means something.
+Every sentence means something to a nervous 16-year-old. Mom cries. Kid brags. Grandpa nods.
+"Specific and earned" is the governing standard.
+
+---
+
+FOUR-BEAT STRUCTURE
+
+Beat 1: Reputation leads. What do people who actually know this school say about it. Not what the brochure says. Not a ranking number.
+Beat 2: Geography earns its place. After reputation is established, not as the opener. What the location actually delivers: named institutions nearby, named neighborhoods, named research or industry ecosystems.
+Beat 3: Honest insider take. What serious people in the relevant field think of this degree. The reaction it gets in the room when someone who knows says the name.
+Beat 4: The launch. What this school delivers after graduation. This is the only reputation that matters.
+
+Length: 4-6 sentences. Tight.
+
+---
+
+LOCKED EXEMPLAR
+
+Case Western Reserve University:
+
+Case Western is one of the serious research universities in the country, with genuine national standing in engineering, medicine, and the sciences that the school's modest public profile consistently undersells. The faculty publish, the labs are funded, and the undergraduate research access is real in ways that schools with bigger marketing budgets can't always match. That reputation is anchored by where the school sits: University Circle puts CWRU steps from the Cleveland Clinic and University Hospitals, two blocks from NASA Glenn's regional presence, and inside a cultural ecosystem that feeds directly into its research identity. Inside serious STEM circles this degree gets a nod of respect that surprises people who dismissed the school because they hadn't heard of it. This is a school that delivers after graduation, which is the only reputation that matters.
+
+---
+
+OUTPUT FORMAT
+
+Write only the section body. No heading. No introduction. No "Here is the section." Start writing immediately with the first sentence. Stop after the launch closer.
