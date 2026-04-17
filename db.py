@@ -77,6 +77,29 @@ def _init_db():
                         active        INTEGER NOT NULL DEFAULT 1
                     )
                 """)
+                conn.execute("""
+                    CREATE TABLE IF NOT EXISTS school_content_cache (
+                        id               INTEGER PRIMARY KEY AUTOINCREMENT,
+                        school_name      TEXT UNIQUE NOT NULL,
+                        known_for        TEXT,
+                        campus_life_main TEXT,
+                        campus_life_more TEXT,
+                        generated_at     TEXT DEFAULT CURRENT_TIMESTAMP
+                    )
+                """)
+                conn.execute("""
+                    CREATE TABLE IF NOT EXISTS program_content_cache (
+                        id                     INTEGER PRIMARY KEY AUTOINCREMENT,
+                        school_name            TEXT NOT NULL,
+                        major                  TEXT NOT NULL,
+                        minor                  TEXT NOT NULL DEFAULT '',
+                        academic_program_main  TEXT,
+                        academic_program_more  TEXT,
+                        minor_content          TEXT,
+                        generated_at           TEXT DEFAULT CURRENT_TIMESTAMP,
+                        UNIQUE (school_name, major, minor)
+                    )
+                """)
         return
 
     with get_db() as conn:
@@ -116,6 +139,29 @@ def _init_db():
             cur.execute("""
                 ALTER TABLE admins
                     ALTER COLUMN password_hash DROP NOT NULL
+            """)
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS school_content_cache (
+                    id               SERIAL PRIMARY KEY,
+                    school_name      TEXT UNIQUE NOT NULL,
+                    known_for        TEXT,
+                    campus_life_main TEXT,
+                    campus_life_more TEXT,
+                    generated_at     TIMESTAMPTZ DEFAULT NOW()
+                )
+            """)
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS program_content_cache (
+                    id                     SERIAL PRIMARY KEY,
+                    school_name            TEXT NOT NULL,
+                    major                  TEXT NOT NULL,
+                    minor                  TEXT NOT NULL DEFAULT '',
+                    academic_program_main  TEXT,
+                    academic_program_more  TEXT,
+                    minor_content          TEXT,
+                    generated_at           TIMESTAMPTZ DEFAULT NOW(),
+                    UNIQUE (school_name, major, minor)
+                )
             """)
         conn.commit()
 
