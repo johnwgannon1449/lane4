@@ -3,11 +3,11 @@ import re
 import json
 
 from flask import Blueprint, request, jsonify, Response, stream_with_context
-from prompts_config import LANE4_DEEP_DIVE_PROMPT, LANE4_BOTTOM_LINE_V2_PROMPT, BOTTOM_LINE_V2
+from prompts_config import LANE4_DEEP_DIVE_PROMPT, LANE4_BOTTOM_LINE_V2_PROMPT, BOTTOM_LINE_V2, COST_PROMPT
 from ai_client import _get_anthropic
 from services.pregen import get_or_generate_school_content, get_or_generate_program_content
 from models.swimmer_defaults import JAMES
-from models.school_data import _oou_lookup
+from models.school_data import _oou_lookup, SCHOOL_NAME_ALIASES
 from scoring.admission import _oou_admission
 from scoring.universe import build_school_universe
 from search.filters import _program_strength_desc
@@ -112,106 +112,302 @@ def deep_dive_academic():
 
 
 def _inject_cached_sections(sections, school_cached, program_cached,
-                             school_name, major, minor):
-    """Replace live-generated sections with cached pre-generated versions where available.
+                             school_name, major, minor, is_oou=False):
+    """Insert or replace cached pre-generated sections in the parsed sections list.
 
-    Cached content from pregen.py stores headings inside the text blobs:
-      academic_program_main  : "Physics at Case Western\\nbody..."
-      academic_program_more  : "More: Going Deeper\\nbody..."
-      campus_life_more       : "More: Life Outside the Pool\\nbody..."
-      known_for / campus_life_main / minor_content : body only (no embedded heading)
+    Handles two cases:
+      REPLACE — Claude generated a section but cache has better content (safety net).
+      INSERT  — Speed fix omitted section instructions from the prompt so Claude
+                skipped them; inject inserts cached content at the correct position.
+
+    Insert anchors:
+      Known For + Academic: after 'Coach Interest' (in-universe) or after bottom_line (OOU)
+      Campus Life + More:   after 'What It Costs'
     """
     if not school_cached and not program_cached:
         return sections
 
     def _split_hb(text):
-        """Split 'Heading\\nbody' into (heading, body). Returns (text, '') if no newline."""
         if not text:
             return '', ''
         parts = text.split('\n', 1)
         return parts[0].strip(), (parts[1].strip() if len(parts) > 1 else '')
 
+    # Pre-build cached section objects
+    c_kf   = school_cached.get('known_for', '')
+    c_cm   = school_cached.get('campus_life_main', '')
+    c_cmor = school_cached.get('campus_life_more', '')
+    c_am   = program_cached.get('academic_program_main', '')
+    c_amor = program_cached.get('academic_program_more', '')
+    c_min  = program_cached.get('minor_content', '')
+
+    def _sec_known_for():
+        return {'title': f"What {school_name} Is Known For", 'body': c_kf, 'type': 'content'}
+
+    def _sec_academic():
+        t, b = _split_hb(c_am)
+        return {'title': t or 'Academic Program', 'body': b or c_am, 'type': 'academic_program'}
+
+    def _sec_academic_more():
+        _, b = _split_hb(c_amor)
+        return {'title': 'More: Going Deeper', 'body': b or c_amor, 'type': 'more_academic'}
+
+    def _sec_campus():
+        return {'title': 'Campus Life', 'body': c_cm, 'type': 'student_experience'}
+
+    def _sec_campus_more():
+        _, b = _split_hb(c_cmor)
+        return {'title': 'More: Life Outside the Pool', 'body': b or c_cmor, 'type': 'more_student_experience'}
+
     result_sections = []
+    done = set()  # prevents duplicate insertions
+
+    def _insert_known_for_and_academic():
+        if c_kf and 'kf' not in done:
+            result_sections.append(_sec_known_for())
+            done.add('kf')
+        if c_am and 'am' not in done:
+            result_sections.append(_sec_academic())
+            done.add('am')
+            if c_amor:
+                result_sections.append(_sec_academic_more())
+                done.add('amor')
+
+    def _insert_campus():
+        if c_cm and 'cm' not in done:
+            result_sections.append(_sec_campus())
+            done.add('cm')
+        if c_cmor and 'cmor' not in done:
+            result_sections.append(_sec_campus_more())
+            done.add('cmor')
+
     for section in sections:
-        stype      = section.get('type', 'content')
-        title_low  = section.get('title', '').lower()
+        stype     = section.get('type', 'content')
+        title_low = section.get('title', '').lower()
 
-        # What School Is Known For
-        if 'is known for' in title_low and school_cached.get('known_for'):
-            result_sections.append({
-                'title': f"What {school_name} Is Known For",
-                'body':  school_cached['known_for'],
-                'type':  'content',
-            })
+        # REPLACE: Known For
+        if 'is known for' in title_low:
+            if c_kf and 'kf' not in done:
+                result_sections.append(_sec_known_for())
+                done.add('kf')
+                if c_am and 'am' not in done:
+                    result_sections.append(_sec_academic())
+                    done.add('am')
+                    if c_amor:
+                        result_sections.append(_sec_academic_more())
+                        done.add('amor')
+            else:
+                result_sections.append(section)
             continue
 
-        # Campus Life main body
-        if stype == 'student_experience' and school_cached.get('campus_life_main'):
-            result_sections.append({
-                'title': 'Campus Life',
-                'body':  school_cached['campus_life_main'],
-                'type':  'student_experience',
-            })
+        # REPLACE: Academic Program main
+        if stype == 'academic_program':
+            if c_am and 'am' not in done:
+                result_sections.append(_sec_academic())
+                done.add('am')
+                if c_amor:
+                    result_sections.append(_sec_academic_more())
+                    done.add('amor')
+            elif 'am' not in done:
+                result_sections.append(section)
             continue
 
-        # More: Student Experience  →  More: Life Outside the Pool
-        if stype == 'more_student_experience' and school_cached.get('campus_life_more'):
-            _, more_body = _split_hb(school_cached['campus_life_more'])
-            result_sections.append({
-                'title': 'More: Life Outside the Pool',
-                'body':  more_body or school_cached['campus_life_more'],
-                'type':  'more_student_experience',
-            })
+        # REPLACE: More: Going Deeper
+        if stype == 'more_academic':
+            if c_amor and 'amor' not in done:
+                result_sections.append(_sec_academic_more())
+                done.add('amor')
+            elif 'amor' not in done:
+                result_sections.append(section)
             continue
 
-        # Academic Program main body
-        if stype == 'academic_program' and program_cached.get('academic_program_main'):
-            acad_title, acad_body = _split_hb(program_cached['academic_program_main'])
-            result_sections.append({
-                'title': acad_title or 'Academic Program',
-                'body':  acad_body or program_cached['academic_program_main'],
-                'type':  'academic_program',
-            })
+        # REPLACE: Campus Life
+        if stype == 'student_experience':
+            if c_cm and 'cm' not in done:
+                result_sections.append(_sec_campus())
+                done.add('cm')
+            else:
+                result_sections.append(section)
             continue
 
-        # More: Academic  →  More: Going Deeper
-        if stype == 'more_academic' and program_cached.get('academic_program_more'):
-            _, more_body = _split_hb(program_cached['academic_program_more'])
-            result_sections.append({
-                'title': 'More: Going Deeper',
-                'body':  more_body or program_cached['academic_program_more'],
-                'type':  'more_academic',
-            })
+        # REPLACE: More: Student Experience / Life Outside the Pool
+        if stype == 'more_student_experience':
+            if c_cmor and 'cmor' not in done:
+                result_sections.append(_sec_campus_more())
+                done.add('cmor')
+            else:
+                result_sections.append(section)
             continue
 
         result_sections.append(section)
 
-    # Append Minor section (new type — never generated live)
-    if minor and program_cached.get('minor_content'):
-        minor_title, minor_body = _split_hb(program_cached['minor_content'])
+        # INSERT anchors — for speed fix where Claude skipped cached sections
+
+        # In-universe: insert Known For + Academic after Coach Interest
+        if 'coach interest' in title_low:
+            _insert_known_for_and_academic()
+
+        # OOU: insert Known For + Academic after bottom_line (no Coach Interest)
+        if is_oou and stype == 'bottom_line':
+            _insert_known_for_and_academic()
+
+        # Both paths: insert Campus Life + More after What It Costs
+        if 'what it costs' in title_low:
+            _insert_campus()
+
+    # Minor — always appended at end, never generated live
+    if minor and c_min and 'minor' not in done:
+        t, b = _split_hb(c_min)
         result_sections.append({
-            'title': minor_title or f'Minor in {minor}',
-            'body':  minor_body or program_cached['minor_content'],
+            'title': t or f'Minor in {minor}',
+            'body':  b or c_min,
             'type':  'minor',
         })
 
     return result_sections
 
 
+def _build_cost_instruction(school_name, school_cached, sat, gpa,
+                             sat25, sat75, gpa_mean, is_ivy, money_block):
+    """Build the ## What It Costs section instruction.
+
+    Uses Layer 1 cached cost data when available. Falls back to the existing
+    money_block behavior when cache is empty.
+    """
+    coa = school_cached.get('coa') if school_cached else None
+    if not coa:
+        return (
+            "## What It Costs\n"
+            "Use EXACTLY the MONEY DATA figures above. Do not change the numbers. "
+            "Cover COA, merit or no merit, net cost, aid philosophy. Practical family language.\n"
+        )
+
+    merit_offered = school_cached.get('merit_offered', False)
+    merit_low     = school_cached.get('merit_range_low')
+    merit_high    = school_cached.get('merit_range_high')
+    merit_notes   = school_cached.get('merit_notes') or ''
+    need_headline = school_cached.get('need_based_headline') or ''
+
+    # Compute merit projection signal from swimmer academics vs school ranges
+    merit_signal = 'unknown'
+    if sat and sat75 and sat > sat75:
+        merit_signal = 'above_75th'
+    elif sat and sat25 and sat > sat25:
+        merit_signal = 'above_median'
+    elif sat and sat25:
+        merit_signal = 'at_or_below_median'
+    elif gpa and gpa_mean and gpa > gpa_mean:
+        merit_signal = 'above_median'
+    elif gpa and gpa_mean:
+        merit_signal = 'at_or_below_median'
+
+    lines = [
+        "## What It Costs",
+        "Follow the Cost Section voice rules in your system prompt.",
+        "SCHOOL DATA (published facts — use as stated, do not alter):",
+        f"  COA: ${coa:,} per year",
+    ]
+
+    if is_ivy:
+        lines.append("  Merit: None. Ivy League. Need-based financial aid only.")
+    elif not merit_offered:
+        lines.append(f"  Merit: {school_name} does not offer merit scholarships to incoming freshmen.")
+    else:
+        range_str = ''
+        if merit_low and merit_high:
+            range_str = f"${merit_low:,} to ${merit_high:,} per year"
+        elif merit_high:
+            range_str = f"up to ${merit_high:,} per year"
+        lines.append(f"  Merit offered: Yes. Published range: {range_str}. {merit_notes}".rstrip())
+
+        if merit_low and merit_high:
+            if merit_signal == 'above_75th':
+                proj_low  = merit_low + int((merit_high - merit_low) * 0.55)
+                proj_high = merit_high
+                lines.append(
+                    f"SWIMMER MERIT PROJECTION: Swimmer academics sit above this school's 75th percentile. "
+                    f"Project merit in the upper range: *~${proj_low:,}-${proj_high:,}/year*. "
+                    f"Show estimated net cost (COA minus projected merit). Mark as estimate."
+                )
+            elif merit_signal == 'above_median':
+                proj_low  = merit_low + int((merit_high - merit_low) * 0.25)
+                proj_high = merit_low + int((merit_high - merit_low) * 0.60)
+                lines.append(
+                    f"SWIMMER MERIT PROJECTION: Swimmer academics are above the school's middle 50%. "
+                    f"Project merit in the mid range: *~${proj_low:,}-${proj_high:,}/year*. "
+                    f"Show estimated net cost. Mark as estimate."
+                )
+            elif merit_signal == 'at_or_below_median':
+                lines.append(
+                    "SWIMMER MERIT PROJECTION: Swimmer academics are at or below the school's middle 50%. "
+                    "Merit is possible but do not project a specific number. "
+                    "State that merit exists at this school but cannot be estimated without more information."
+                )
+            else:
+                lines.append(
+                    "SWIMMER MERIT PROJECTION: Insufficient academic data to project merit. "
+                    "State that merit is available but do not estimate a specific number."
+                )
+
+    if need_headline:
+        lines.append(f"NEED-BASED NOTE (include only if applicable): {need_headline}")
+    else:
+        lines.append("NEED-BASED: No notable need-based policy. Skip it entirely.")
+
+    lines.append(
+        "Write only the section body. Start with the COA number. "
+        "School facts in plain text. Projections marked with an asterisk. "
+        "No m-dashes. No 'significant investment.' Short and real."
+    )
+    return '\n'.join(lines) + '\n'
+
+
+def _slug_for_heading(title):
+    """Map a Claude ## heading to a stable section slug used by SSE events and frontend slots."""
+    t = title.lower().strip()
+    if 'bottom line'              in t: return 'bottom_line'
+    if 'in the pool'              in t: return 'in_the_pool'
+    if 'coach interest'           in t: return 'coach_interest'
+    if 'is known for'             in t: return 'known_for'
+    if t == 'academic program'       : return 'academic_program'
+    if 'are you admissible'       in t: return 'are_you_admissible'
+    if 'what it costs'            in t: return 'what_it_costs'
+    if t == 'campus life'            : return 'campus_life'
+    if t == 'outcomes'               : return 'outcomes'
+    if 'how it compares'          in t: return 'how_it_compares'
+    if 'more: going deeper'       in t: return 'more_going_deeper'
+    if 'more: academic'           in t: return 'more_going_deeper'
+    if 'more: student experience' in t: return 'more_student_experience'
+    if 'life outside the pool'    in t: return 'more_student_experience'
+    if 'more: career paths'       in t: return 'more_career_paths'
+    if 'minor'                    in t: return 'minor'
+    return 'unknown'
+
+
 def _parse_sections(raw_text):
     """Parse the raw deep dive text into structured sections."""
     def _classify_section(t):
-        t = t.lower().strip()
-        if 'bottom line' in t:                              return 'bottom_line'
-        if t == 'academic program':                         return 'academic_program'
-        if t == 'campus life':                              return 'student_experience'
-        if t == 'outcomes':                                 return 'outcomes'
-        if t == 'more: academic':                           return 'more_academic'
-        if t == 'more: going deeper':                       return 'more_academic'
-        if t == 'more: student experience':                 return 'more_student_experience'
-        if t == 'more: life outside the pool':              return 'more_student_experience'
-        if t == 'more: career paths':                       return 'more_career_paths'
-        return 'content'
+        slug = _slug_for_heading(t)
+        # Map new slugs back to legacy type names consumed by _inject_cached_sections
+        # and the existing frontend fallback renderer.
+        _slug_to_type = {
+            'bottom_line':            'bottom_line',
+            'in_the_pool':            'content',
+            'coach_interest':         'content',
+            'known_for':              'content',
+            'academic_program':       'academic_program',
+            'are_you_admissible':     'content',
+            'what_it_costs':          'content',
+            'campus_life':            'student_experience',
+            'outcomes':               'outcomes',
+            'how_it_compares':        'content',
+            'more_going_deeper':      'more_academic',
+            'more_student_experience':'more_student_experience',
+            'more_career_paths':      'more_career_paths',
+            'minor':                  'minor',
+            'unknown':                'content',
+        }
+        return _slug_to_type.get(slug, 'content')
 
     parts  = re.split(r'^## ', raw_text, flags=re.MULTILINE)
     sections = []
@@ -253,10 +449,30 @@ def deep_dive():
     act_score        = prof_ovr.get('actScore',         JAMES.get('actScore', 0)) or 0
     ap_count         = prof_ovr.get('apCount',          JAMES.get('apCount',  0)) or 0
     grad_year        = prof_ovr.get('gradYear',         '2026')
-    # ONE unified pool — all ~324 schools through the same builder
-    all_results = build_school_universe(times, sat, gpa)
-    result = next((r for r in all_results if r['school'] == school), None)
+    # Resolve name aliases (e.g. "UPenn" → "University of Pennsylvania")
+    _alias = SCHOOL_NAME_ALIASES.get(school.lower().strip())
+    if _alias:
+        school = _alias
+
+    # Use pre-scored card data from frontend when available — skips full universe rebuild.
+    # Fall back to build_school_universe() if cardResult is absent or missing required fields.
+    _card = data.get('cardResult') or {}
+    _card_valid = (
+        isinstance(_card, dict)
+        and _card.get('school')
+        and 'adjTier' in _card
+        and isinstance(_card.get('top3'), list)
+        and isinstance(_card.get('meta'), dict)
+    )
+
     is_oou = False
+    if _card_valid:
+        result = _card
+        is_oou = bool(_card.get('outOfUniverse'))
+    else:
+        # ONE unified pool — all ~324 schools through the same builder
+        all_results = build_school_universe(times, sat, gpa)
+        result = next((r for r in all_results if r['school'] == school), None)
 
     if result is None:
         # School not in the D3 universe — check out-of-universe well-known schools
@@ -394,9 +610,9 @@ def deep_dive():
         "- 2-3 sentences per section. Short paragraphs. Strong declarative sentences."
     )
     if BOTTOM_LINE_V2:
-        system_prompt = _base_system + "\n\n" + LANE4_BOTTOM_LINE_V2_PROMPT
+        system_prompt = _base_system + "\n\n" + LANE4_BOTTOM_LINE_V2_PROMPT + "\n\n" + COST_PROMPT
     else:
-        system_prompt = _base_system
+        system_prompt = _base_system + "\n\n" + COST_PROMPT
 
     ivy_note = '\nThis is an Ivy League school — need-based aid only, no merit scholarships.' if meta.get('ivyLeague') else ''
 
@@ -485,83 +701,7 @@ def deep_dive():
         _bl_oou_instruction        = "## Bottom Line\n2-3 sentences. School value + academic/personal fit + overall verdict.\n"
         _bl_inuniverse_instruction = "## Bottom Line\n2-3 sentences. Swim reality + school value + overall verdict. No hedging.\n"
 
-    if is_oou:
-        user_prompt = (
-            f"Write a deep dive for {swimmer_name} considering {result['school']}.\n\n"
-            f"SWIMMER: {swimmer_name}, Class of {grad_year}, GPA {gpa} unweighted, "
-            f"{sat_detail}{ap_detail}."
-            f"{vibe_block}\n"
-            f"SCHOOL: {result['school']}\n"
-            f"School vibe: {meta.get('vibe', '')}\n"
-            f"Location: {meta.get('location', '')}\n"
-            f"{admission_comparison}\n"
-            f"{money_block}\n"
-            f"{hidden_ivy_note}{ivy_note}{stem_note}\n\n"
-            "NOTE: This school is not in our swim recruiting database. The swimmer is comparing it "
-            "against D3 options — be honest about what choosing this school means for swim.\n\n"
-            "Write exactly these sections in this order:\n\n"
-            f"{_bl_oou_instruction}"
-            f"## What {result['school']} Is Known For\n"
-            "School identity. Make it feel important and real. Prestige when deserved. 3-4 sentences.\n"
-            f"{acad_section_instr}"
-            "## Are You Admissible?\n"
-            "Use the ADMISSION COMPARISON above. Compare swimmer numbers to school numbers. "
-            "Plain-English read. One brief note on whether swim support might help if applicable.\n"
-            "## What It Costs\n"
-            "Use EXACTLY the MONEY DATA figures above. Do not change the numbers. "
-            "Cover COA, merit or no merit, net cost, aid philosophy.\n"
-            "## Campus Life\n"
-            "What do four years here actually feel like? Size, energy, setting, social scene. 3-4 sentences.\n"
-            f"{_more_student_exp}"
-            "## How It Compares to Your D3 Options\n"
-            "Be honest — what does choosing this school mean for continuing to swim competitively?\n"
-            f"{_outcomes_section}"
-        )
-    else:
-        user_prompt = (
-            f"Write a deep dive for {swimmer_name} considering {result['school']}.\n\n"
-            f"SWIMMER: {swimmer_name}, Class of {grad_year}, GPA {gpa} unweighted, "
-            f"{sat_detail}{ap_detail}."
-            f"{vibe_block}\n"
-            f"SWIM DATA AT {result['school'].upper()} ({result['conference']}):\n"
-            f"Top events: {top3_text}\n"
-            f"Program strength: {prog_strength}\n"
-            f"{super_powerhouse_note}\n"
-            f"School vibe: {meta.get('vibe', '')}\n"
-            f"Location: {meta.get('location', '')}\n"
-            f"{admission_comparison}\n"
-            f"{money_block}\n"
-            f"{hidden_ivy_note}{ivy_note}{stem_note}\n\n"
-            "Write exactly these sections in this order. "
-            "Swim fit is explained ONCE in 'In the Pool' — do not repeat it elsewhere. "
-            "Use the free response lightly and naturally — no overpersonalization. "
-            "Use 'Hidden Ivy' naturally if applicable.\n\n"
-            f"{_bl_inuniverse_instruction}"
-            "## In the Pool\n"
-            "Where this swimmer lands on the team. What that means. Trajectory if they hold or drop time. "
-            "Sound like a coach talking plainly. No internal metrics. "
-            "Never claim to know what is on the roster. Never say they are loaded at any event or already have depth in any event. "
-            "We do not have roster data. Project the swimmer's place in the conference, not on a roster we haven't seen.\n"
-            "## Coach Interest — What to Expect\n"
-            "Likely level of recruiting engagement. Will they respond quickly? Is this swimmer a priority? "
-            "What moves the needle: time drops, roster gaps, academic strength, event needs. "
-            "Keep academics to one sentence maximum: state once that the academic record means admissions won't block the recruit, then move on.\n"
-            f"## What {result['school']} Is Known For\n"
-            "School identity. Make it feel important and real. Prestige and seriousness when deserved. 3-4 sentences.\n"
-            f"{acad_section_instr}"
-            "## Are You Admissible?\n"
-            "Use the ADMISSION COMPARISON above. Compare swimmer numbers to school numbers directly. "
-            "Plain-English read: in range, above, slightly below, or real reach. "
-            "If highly selective, say so. One brief sentence on whether swim recruit support helps, if applicable.\n"
-            "## What It Costs\n"
-            "Use EXACTLY the MONEY DATA figures above. Do not change the numbers. "
-            "Cover COA, merit or no merit, net cost, aid philosophy. Practical family language.\n"
-            "## Campus Life\n"
-            "What do four years here actually feel like? Size, energy, setting, social scene, "
-            "what kind of student thrives. No brochure copy. 3-4 sentences.\n"
-            f"{_more_student_exp}"
-            f"{_outcomes_section}"
-        )
+    # user_prompt is built inside the generator after pregen cache flags are known
 
     def _stream_deep_dive_response():
         """Generator function that streams deep dive chunks and sends final parsed result."""
@@ -597,9 +737,217 @@ def deep_dive():
             except Exception as _pregen_err:
                 print(f'[deep_dive] pregen error: {_pregen_err}')
 
-            full_text = ""
+            # Speed fix: omit section instructions for content already in cache.
+            # _inject_cached_sections will INSERT those sections at the right position.
+            _has_known_for   = bool(_school_cached.get('known_for'))
+            _has_campus_life = bool(_school_cached.get('campus_life_main'))
+            _has_academic    = bool(_program_cached.get('academic_program_main'))
+            _has_cost        = bool(_school_cached.get('coa'))
 
-            # Stream text chunks from Claude API
+            _kf_instr = (
+                '' if _has_known_for else
+                f"## What {result['school']} Is Known For\n"
+                "School identity. Make it feel important and real. Prestige and seriousness when deserved. 3-4 sentences.\n"
+            )
+            _acad_instr  = '' if _has_academic else acad_section_instr
+            _cost_instr  = _build_cost_instruction(
+                result['school'], _school_cached, sat, gpa,
+                sat25, sat75, gpa_mean, bool(meta.get('ivyLeague')), money_block,
+            )
+            # Include money_block preamble only when cost section falls back to it
+            _money_preamble = '' if _has_cost else f"{money_block}\n"
+
+            if is_oou:
+                _campus_instr = (
+                    '' if _has_campus_life else
+                    "## Campus Life\n"
+                    "What do four years here actually feel like? Size, energy, setting, social scene. 3-4 sentences.\n"
+                    + _more_student_exp
+                )
+                user_prompt = (
+                    f"Write a deep dive for {swimmer_name} considering {result['school']}.\n\n"
+                    f"SWIMMER: {swimmer_name}, Class of {grad_year}, GPA {gpa} unweighted, "
+                    f"{sat_detail}{ap_detail}."
+                    f"{vibe_block}\n"
+                    f"SCHOOL: {result['school']}\n"
+                    f"School vibe: {meta.get('vibe', '')}\n"
+                    f"Location: {meta.get('location', '')}\n"
+                    f"{admission_comparison}\n"
+                    f"{_money_preamble}"
+                    f"{hidden_ivy_note}{ivy_note}{stem_note}\n\n"
+                    "NOTE: This school is not in our swim recruiting database. The swimmer is comparing it "
+                    "against D3 options — be honest about what choosing this school means for swim.\n\n"
+                    "Write exactly these sections in this order:\n\n"
+                    f"{_bl_oou_instruction}"
+                    f"{_kf_instr}"
+                    f"{_acad_instr}"
+                    "## Are You Admissible?\n"
+                    "Use the ADMISSION COMPARISON above. Compare swimmer numbers to school numbers. "
+                    "Plain-English read. One brief note on whether swim support might help if applicable.\n"
+                    f"{_cost_instr}"
+                    f"{_campus_instr}"
+                    "## How It Compares to Your D3 Options\n"
+                    "Be honest — what does choosing this school mean for continuing to swim competitively?\n"
+                    f"{_outcomes_section}"
+                )
+            else:
+                _campus_instr = (
+                    '' if _has_campus_life else
+                    "## Campus Life\n"
+                    "What do four years here actually feel like? Size, energy, setting, social scene, "
+                    "what kind of student thrives. No brochure copy. 3-4 sentences.\n"
+                    + _more_student_exp
+                )
+                user_prompt = (
+                    f"Write a deep dive for {swimmer_name} considering {result['school']}.\n\n"
+                    f"SWIMMER: {swimmer_name}, Class of {grad_year}, GPA {gpa} unweighted, "
+                    f"{sat_detail}{ap_detail}."
+                    f"{vibe_block}\n"
+                    f"SWIM DATA AT {result['school'].upper()} ({result['conference']}):\n"
+                    f"Top events: {top3_text}\n"
+                    f"Program strength: {prog_strength}\n"
+                    f"{super_powerhouse_note}\n"
+                    f"School vibe: {meta.get('vibe', '')}\n"
+                    f"Location: {meta.get('location', '')}\n"
+                    f"{admission_comparison}\n"
+                    f"{_money_preamble}"
+                    f"{hidden_ivy_note}{ivy_note}{stem_note}\n\n"
+                    "Write exactly these sections in this order. "
+                    "Swim fit is explained ONCE in 'In the Pool' — do not repeat it elsewhere. "
+                    "Use the free response lightly and naturally — no overpersonalization. "
+                    "Use 'Hidden Ivy' naturally if applicable.\n\n"
+                    f"{_bl_inuniverse_instruction}"
+                    "## In the Pool\n"
+                    "Where this swimmer lands on the team. What that means. Trajectory if they hold or drop time. "
+                    "Sound like a coach talking plainly. No internal metrics. "
+                    "Never claim to know what is on the roster. Never say they are loaded at any event or already have depth in any event. "
+                    "We do not have roster data. Project the swimmer's place in the conference, not on a roster we haven't seen.\n"
+                    "## Coach Interest — What to Expect\n"
+                    "Likely level of recruiting engagement. Will they respond quickly? Is this swimmer a priority? "
+                    "What moves the needle: time drops, roster gaps, academic strength, event needs. "
+                    "Keep academics to one sentence maximum: state once that the academic record means admissions won't block the recruit, then move on.\n"
+                    f"{_kf_instr}"
+                    f"{_acad_instr}"
+                    "## Are You Admissible?\n"
+                    "Use the ADMISSION COMPARISON above. Compare swimmer numbers to school numbers directly. "
+                    "Plain-English read: in range, above, slightly below, or real reach. "
+                    "If highly selective, say so. One brief sentence on whether swim recruit support helps, if applicable.\n"
+                    f"{_cost_instr}"
+                    f"{_campus_instr}"
+                    f"{_outcomes_section}"
+                )
+
+            full_text = ""
+            print(f"[deep_dive] prompt word count: {len(user_prompt.split())}")
+
+            # ── Emit cached sections immediately before Claude starts ─────────
+            # Each cached blob is sent as a typed section event so the frontend
+            # can populate its named slots without waiting for the Claude stream.
+            def _split_hb(text):
+                if not text:
+                    return '', ''
+                parts = text.split('\n', 1)
+                return parts[0].strip(), (parts[1].strip() if len(parts) > 1 else '')
+
+            _cached_emit = []
+            _school_name = result['school']
+
+            if _school_cached.get('known_for'):
+                _cached_emit.append({
+                    'section': 'known_for',
+                    'title':   f'What {_school_name} Is Known For',
+                    'body':    _school_cached['known_for'],
+                    'cached':  True,
+                })
+            if _program_cached.get('academic_program_main'):
+                _t, _b = _split_hb(_program_cached['academic_program_main'])
+                _cached_emit.append({
+                    'section': 'academic_program',
+                    'title':   _t or 'Academic Program',
+                    'body':    _b or _program_cached['academic_program_main'],
+                    'cached':  True,
+                })
+            if _program_cached.get('academic_program_more'):
+                _, _b = _split_hb(_program_cached['academic_program_more'])
+                _cached_emit.append({
+                    'section': 'more_going_deeper',
+                    'title':   'More: Going Deeper',
+                    'body':    _b or _program_cached['academic_program_more'],
+                    'cached':  True,
+                })
+            if _school_cached.get('campus_life_main'):
+                _cached_emit.append({
+                    'section': 'campus_life',
+                    'title':   'Campus Life',
+                    'body':    _school_cached['campus_life_main'],
+                    'cached':  True,
+                })
+            if _school_cached.get('campus_life_more'):
+                _, _b = _split_hb(_school_cached['campus_life_more'])
+                _cached_emit.append({
+                    'section': 'more_student_experience',
+                    'title':   'More: Life Outside the Pool',
+                    'body':    _b or _school_cached['campus_life_more'],
+                    'cached':  True,
+                })
+            if minor and _program_cached.get('minor_content'):
+                _t, _b = _split_hb(_program_cached['minor_content'])
+                _cached_emit.append({
+                    'section': 'minor',
+                    'title':   _t or f'Minor in {minor}',
+                    'body':    _b or _program_cached['minor_content'],
+                    'cached':  True,
+                })
+
+            for _evt in _cached_emit:
+                yield f"data: {json.dumps(_evt)}\n\n"
+
+            # ── Heading-aware streaming loop ───────────────────────────────────
+            # Detects ## heading boundaries in the raw chunk stream and emits
+            # sectionStart / chunk / sectionEnd events so the frontend can stream
+            # live sections into named slots.
+            #
+            # Buffer strategy: hold back any trailing text that could be the start
+            # of a heading (ends with \n# or \n##) until the next chunk confirms
+            # or refutes it.  Everything before that prefix is safe to emit.
+
+            _cur_slug   = None   # slug of the section currently streaming
+            _head_buf   = ''     # accumulates potential heading text
+            # Matches a complete ## heading line anywhere in the buffer.
+            # Group 1 = everything before the heading (content to flush as chunk).
+            # Group 2 = heading title text.
+            # Group 3 = everything after the heading newline (remainder).
+            _HEAD_RE = re.compile(r'^(.*?)\n##\s+([^\n]+)\n(.*)$', re.DOTALL)
+            # Also matches a heading at the very start of the buffer (no leading content).
+            _HEAD_START_RE = re.compile(r'^##\s+([^\n]+)\n(.*)$', re.DOTALL)
+
+            def _flush_heading_buf(buf):
+                """Try to consume a complete ## heading from buf.
+                Returns (pre_content, slug, title, remainder) if found,
+                else (None, None, None, buf)."""
+                m = _HEAD_START_RE.match(buf)
+                if m:
+                    title = m.group(1).strip()
+                    return '', _slug_for_heading(title), title, m.group(2)
+                m = _HEAD_RE.match(buf)
+                if m:
+                    title = m.group(2).strip()
+                    return m.group(1), _slug_for_heading(title), title, m.group(3)
+                return None, None, None, buf
+
+            def _safe_prefix(text):
+                """Return the longest prefix of text that contains no partial heading.
+                Anything from the last \\n# onward is held back."""
+                idx = len(text)
+                for needle in ('\n##', '\n#'):
+                    pos = text.rfind(needle)
+                    if pos != -1:
+                        idx = min(idx, pos)
+                # Guard against a bare # at position 0
+                if text.startswith('#'):
+                    idx = 0
+                return text[:idx], text[idx:]
+
             with client.messages.stream(
                 model='claude-sonnet-4-6',
                 max_tokens=3200,
@@ -607,9 +955,56 @@ def deep_dive():
                 messages=[{'role': 'user', 'content': user_prompt}],
             ) as stream:
                 for text_chunk in stream.text_stream:
-                    # Yield each chunk as SSE format
-                    yield f"data: {json.dumps({'chunk': text_chunk})}\n\n"
-                    full_text += text_chunk
+                    full_text  += text_chunk
+                    _head_buf  += text_chunk
+
+                    # Consume all complete headings present in the buffer
+                    while True:
+                        pre, slug, title, _head_buf = _flush_heading_buf(_head_buf)
+                        if slug is None:
+                            break
+                        # Flush any content before the heading into the current section
+                        if pre:
+                            evt = {'chunk': pre}
+                            if _cur_slug:
+                                evt['section'] = _cur_slug
+                            yield f"data: {json.dumps(evt)}\n\n"
+                        # Close previous section, open new one
+                        if _cur_slug is not None:
+                            yield f"data: {json.dumps({'sectionEnd': _cur_slug})}\n\n"
+                        _cur_slug = slug
+                        yield f"data: {json.dumps({'sectionStart': slug, 'title': title})}\n\n"
+
+                    # Emit the safe prefix; hold back the potential partial heading
+                    safe, _head_buf = _safe_prefix(_head_buf)
+                    if safe:
+                        evt = {'chunk': safe}
+                        if _cur_slug:
+                            evt['section'] = _cur_slug
+                        yield f"data: {json.dumps(evt)}\n\n"
+
+            # Flush whatever remains in the buffer after the stream ends
+            while True:
+                pre, slug, title, _head_buf = _flush_heading_buf(_head_buf)
+                if slug is None:
+                    break
+                if pre:
+                    evt = {'chunk': pre}
+                    if _cur_slug:
+                        evt['section'] = _cur_slug
+                    yield f"data: {json.dumps(evt)}\n\n"
+                if _cur_slug is not None:
+                    yield f"data: {json.dumps({'sectionEnd': _cur_slug})}\n\n"
+                _cur_slug = slug
+                yield f"data: {json.dumps({'sectionStart': slug, 'title': title})}\n\n"
+            if _head_buf:
+                evt = {'chunk': _head_buf}
+                if _cur_slug:
+                    evt['section'] = _cur_slug
+                yield f"data: {json.dumps(evt)}\n\n"
+
+            if _cur_slug is not None:
+                yield f"data: {json.dumps({'sectionEnd': _cur_slug})}\n\n"
 
             # Parse sections from complete text
             sections = _parse_sections(full_text)
@@ -618,6 +1013,7 @@ def deep_dive():
             sections = _inject_cached_sections(
                 sections, _school_cached, _program_cached,
                 result['school'], academic_direction, minor,
+                is_oou=is_oou,
             )
 
             if not sections:

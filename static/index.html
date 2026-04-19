@@ -344,6 +344,25 @@
     .dd-more-btn { background: none; border: 1px solid var(--border); border-radius: 6px; padding: 4px 12px; font-size: 0.8rem; color: var(--blue); cursor: pointer; font-weight: 600; }
     .dd-more-btn:hover { background: var(--blue-l); }
     .dd-more-content { font-size: 0.88rem; line-height: 1.65; color: var(--slate); white-space: pre-wrap; margin-top: 0.6rem; padding: 0.75rem 1rem; background: #F8FAFF; border-left: 3px solid var(--blue); border-radius: 0 6px 6px 0; }
+    /* ── SLOT SKELETON / SHIMMER ──────────────────────────────── */
+    @keyframes dd-shimmer-sweep {
+      0%   { background-position: -400px 0; }
+      100% { background-position: 400px 0; }
+    }
+    .dd-shimmer {
+      background: linear-gradient(90deg, #EFF6FF 25%, #DBEAFE 50%, #EFF6FF 75%);
+      background-size: 800px 100%;
+      animation: dd-shimmer-sweep 1.4s ease-in-out infinite;
+      border-radius: 4px;
+      color: transparent !important;
+      min-height: 1.1em;
+      pointer-events: none;
+      user-select: none;
+    }
+    .dd-slot-pending .deep-section-title.dd-shimmer { min-height: 1em; width: 55%; }
+    .dd-slot-pending .deep-section-body.dd-shimmer,
+    .dd-slot-pending .adm-prose.dd-shimmer { min-height: 3.5em; }
+    .bottom-line.dd-slot-pending .bottom-line-text.dd-shimmer { min-height: 2.5em; }
     /* ── ADMISSIONS COMPARISON TABLE ─────────────────────────── */
     .adm-card { background: #fff; border-radius: 14px; box-shadow: 0 1px 8px rgba(15,23,42,0.07); padding: 1rem 1.2rem; margin-bottom: 0.85rem; }
     .adm-header { display: grid; grid-template-columns: 1.6fr 1fr 1.6fr; padding-bottom: 0.45rem; border-bottom: 1.5px solid #F1F5F9; margin-bottom: 0.1rem; }
@@ -3293,7 +3312,102 @@ const LOADING_LINES = [
   "Checking if the campus looks as good in February as it does in the viewbook. It does not."
 ];
 
-async function fetchDeepDiveStreaming(url, fetchBody, contentEl) {
+// ── Deep Dive slot order ──────────────────────────────────────────────────────
+// Defines the canonical display order for named slots.
+// isMore slots render inside their parent (parentSlug) — not as top-level cards.
+const DD_SLOTS_INUNIVERSE = [
+  { slug: 'bottom_line'            },
+  { slug: 'in_the_pool'            },
+  { slug: 'coach_interest'         },
+  { slug: 'known_for'              },
+  { slug: 'academic_program'       },
+  { slug: 'more_going_deeper',       isMore: true, parentSlug: 'academic_program' },
+  { slug: 'are_you_admissible'     },
+  { slug: 'what_it_costs'          },
+  { slug: 'campus_life'            },
+  { slug: 'more_student_experience', isMore: true, parentSlug: 'campus_life'      },
+  { slug: 'outcomes'               },
+  { slug: 'more_career_paths',       isMore: true, parentSlug: 'outcomes'         },
+  { slug: 'minor'                  },
+  { slug: 'unknown'                },
+];
+const DD_SLOTS_OOU = [
+  { slug: 'bottom_line'            },
+  { slug: 'known_for'              },
+  { slug: 'academic_program'       },
+  { slug: 'more_going_deeper',       isMore: true, parentSlug: 'academic_program' },
+  { slug: 'are_you_admissible'     },
+  { slug: 'what_it_costs'          },
+  { slug: 'campus_life'            },
+  { slug: 'more_student_experience', isMore: true, parentSlug: 'campus_life'      },
+  { slug: 'how_it_compares'        },
+  { slug: 'outcomes'               },
+  { slug: 'more_career_paths',       isMore: true, parentSlug: 'outcomes'         },
+  { slug: 'minor'                  },
+  { slug: 'unknown'                },
+];
+
+// Human-readable titles for each slot (used in shimmer and jump-nav)
+const DD_SLOT_TITLES = {
+  bottom_line:             'Bottom Line',
+  in_the_pool:             'In the Pool',
+  coach_interest:          'Coach Interest',
+  known_for:               'What This School Is Known For',
+  academic_program:        'Academic Program',
+  more_going_deeper:       'More: Going Deeper',
+  are_you_admissible:      'Are You Admissible?',
+  what_it_costs:           'What It Costs',
+  campus_life:             'Campus Life',
+  more_student_experience: 'More: Student Experience',
+  outcomes:                'Outcomes',
+  more_career_paths:       'More: Career Paths',
+  how_it_compares:         'How It Compares',
+  minor:                   'Minor',
+  unknown:                 '',
+};
+
+// Map backend section `type` values (used in done-event sections array) to slugs
+const DD_TYPE_TO_SLUG = {
+  bottom_line:             'bottom_line',
+  content:                 'unknown',       // refined by title match below
+  academic_program:        'academic_program',
+  student_experience:      'campus_life',
+  outcomes:                'outcomes',
+  more_academic:           'more_going_deeper',
+  more_student_experience: 'more_student_experience',
+  more_career_paths:       'more_career_paths',
+  minor:                   'minor',
+};
+
+function _ddSlugFromSection(s) {
+  // Try title-based slug resolution first (more precise than type)
+  const t = (s.title || '').toLowerCase();
+  if (t.includes('bottom line'))              return 'bottom_line';
+  if (t.includes('in the pool'))              return 'in_the_pool';
+  if (t.includes('coach interest'))           return 'coach_interest';
+  if (t.includes('is known for'))             return 'known_for';
+  if (t === 'academic program')               return 'academic_program';
+  if (t.includes('are you admissible'))       return 'are_you_admissible';
+  if (t.includes('what it costs'))            return 'what_it_costs';
+  if (t === 'campus life')                    return 'campus_life';
+  if (t === 'outcomes')                       return 'outcomes';
+  if (t.includes('how it compares'))          return 'how_it_compares';
+  if (t.includes('going deeper'))             return 'more_going_deeper';
+  if (t.includes('more: academic'))           return 'more_going_deeper';
+  if (t.includes('student experience') || t.includes('life outside the pool'))
+                                              return 'more_student_experience';
+  if (t.includes('career paths'))             return 'more_career_paths';
+  if (t.includes('minor'))                    return 'minor';
+  return DD_TYPE_TO_SLUG[s.type] || 'unknown';
+}
+
+// ── fetchDeepDiveStreaming ────────────────────────────────────────────────────
+// Now dispatches section/sectionStart/sectionEnd/chunk events to onEvent().
+// Returns the done event payload (unchanged contract with openDeepDive).
+//
+// onEvent signature: (eventData) => void
+// Called for every parsed SSE event before done.
+async function fetchDeepDiveStreaming(url, fetchBody, contentEl, onEvent) {
   const response = await fetch(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -3305,18 +3419,22 @@ async function fetchDeepDiveStreaming(url, fetchBody, contentEl) {
   const reader = response.body.getReader();
   const decoder = new TextDecoder();
   let buffer = '';
-  let loadingLinesCopy = [...LOADING_LINES];
-  let loadingInterval = null;
+  let receivedSlotEvent = false;   // tracks whether new-path events arrived
 
+  // Loading message rotation — only shown until first slot event arrives
+  let loadingLinesCopy = [...LOADING_LINES];
+  let loadingInterval  = null;
   const rotateLoadingLine = () => {
-    if (loadingLinesCopy.length > 0) {
-      const idx = Math.floor(Math.random() * loadingLinesCopy.length);
+    if (!receivedSlotEvent && loadingLinesCopy.length > 0) {
+      const idx  = Math.floor(Math.random() * loadingLinesCopy.length);
       const line = loadingLinesCopy[idx];
       loadingLinesCopy.splice(idx, 1);
-      contentEl.innerHTML = `<div class="loading-state"><span class="spinner"></span> ${line}</div>`;
+      // Only overwrite if skeleton hasn't been painted yet
+      const el = document.getElementById('dd-skeleton-loading');
+      if (el) el.textContent = line;
+      else contentEl.innerHTML = `<div class="loading-state"><span class="spinner"></span> ${line}</div>`;
     }
   };
-
   loadingInterval = setInterval(rotateLoadingLine, 1200);
   rotateLoadingLine();
 
@@ -3329,16 +3447,23 @@ async function fetchDeepDiveStreaming(url, fetchBody, contentEl) {
     buffer = lines.pop();
 
     for (const line of lines) {
-      if (line.startsWith('data: ')) {
-        try {
-          const eventData = JSON.parse(line.slice(6));
-          if (eventData.done) {
-            clearInterval(loadingInterval);
-            return eventData;
-          }
-        } catch (e) {
-          // Skip malformed JSON lines
+      if (!line.startsWith('data: ')) continue;
+      try {
+        const eventData = JSON.parse(line.slice(6));
+        if (eventData.done) {
+          clearInterval(loadingInterval);
+          return { ...eventData, _slotPathUsed: receivedSlotEvent };
         }
+        // Any section/sectionStart event means the new path is active
+        if (eventData.section || eventData.sectionStart) {
+          if (!receivedSlotEvent) {
+            receivedSlotEvent = true;
+            clearInterval(loadingInterval);
+          }
+        }
+        if (onEvent) onEvent(eventData);
+      } catch (e) {
+        // Skip malformed JSON lines
       }
     }
   }
@@ -3348,62 +3473,29 @@ async function fetchDeepDiveStreaming(url, fetchBody, contentEl) {
 }
 
 async function openDeepDive(school) {
-  document.getElementById('explore-search').style.display    = 'none';
-  document.getElementById('explore-deepdive').style.display  = 'block';
+  document.getElementById('explore-search').style.display   = 'none';
+  document.getElementById('explore-deepdive').style.display = 'block';
 
-  // Reset academic args cache for this new deep dive
   window._ddAcadArgs = {};
 
-  const content = document.getElementById('dd-content');
-  content.innerHTML = `<div class="loading-state"><span class="spinner"></span> Writing deep dive for ${esc(school)}…</div>`;
+  const content  = document.getElementById('dd-content');
+  const result   = ALL_RESULTS.find(r => r.school === school) || {};
+  const meta     = result.meta || {};
+  const adm      = result.admission || {};
+  const inList   = MY_LIST.includes(school);
+  const isOou    = !!(result.outOfUniverse);
+  const slots    = isOou ? DD_SLOTS_OOU : DD_SLOTS_INUNIVERSE;
 
-  try {
-    const data = await fetchDeepDiveStreaming('/api/deep-dive', {
-      school,
-      vibeAnswers:    VIBE_STATE,
-      otherPrefs:     OTHER_PREFS,
-      primaryMajor:   JAMES.primaryMajor || '',
-      minor:          JAMES.minor        || '',
-      profile:        buildCurrentProfile(),
-    }, content);
+  const _ddHero = _schoolPhoto(school, 'hero');
+  const _ddLife = _schoolPhoto(school, 'student_life');
+  const _ddSwim = _schoolPhoto(school, 'swim');
+  const _ddCrm  = CRM_DATA[school] || {};
+  _ddCrm.status = _migratePipelineStage(_ddCrm.status || 'interested');
+  const _ddCfg  = STATUS_CONFIG[_ddCrm.status] || STATUS_CONFIG.interested;
 
-    if (data.error) {
-      content.innerHTML = `<div class="err-box">⚠ ${esc(data.error)}</div>`;
-      return;
-    }
-
-    const result   = ALL_RESULTS.find(r => r.school === school) || {};
-    const meta     = result.meta || data.meta || {};
-    const adm      = result.admission || data.admission || {};
-    const inList   = MY_LIST.includes(school);
-    const sections = data.sections || [];
-
-    // Use explicit stable section types returned by the backend.
-    // Bottom line separates out; sections whose type starts with 'more_' are pre-generated expansions.
-    const bottomLine   = sections.find(s => s.type === 'bottom_line');
-    const moreByType   = Object.fromEntries(
-      sections.filter(s => s.type && s.type.startsWith('more_')).map(s => [s.type, s])
-    );
-    const mainSections = sections.filter(
-      s => s.type !== 'bottom_line' && !(s.type && s.type.startsWith('more_'))
-    );
-
-    const _ddHero = _schoolPhoto(school, 'hero');
-    const _ddLife = _schoolPhoto(school, 'student_life');
-    const _ddSwim = _schoolPhoto(school, 'swim');
-
-    // Look up the pre-generated expansion section for student_experience or outcomes
-    function _preGenSection(sectionType) {
-      if (sectionType === 'student_experience') return moreByType['more_student_experience'] || null;
-      if (sectionType === 'outcomes')           return moreByType['more_career_paths']       || null;
-      return null;
-    }
-
-    const _ddCrm = CRM_DATA[school] || {};
-    _ddCrm.status = _migratePipelineStage(_ddCrm.status || 'interested');
-    const _ddCfg = STATUS_CONFIG[_ddCrm.status] || STATUS_CONFIG.interested;
-
-    content.innerHTML = `
+  // ── _ddChrome: header + photos HTML (shared by skeleton and legacy render) ─
+  function _ddChrome() {
+    return `
       <div class="deep-dive-header">
         <div class="deep-dive-school">${esc(school)}</div>
         <div class="deep-dive-meta">
@@ -3430,98 +3522,17 @@ async function openDeepDive(school) {
           </div>` : ''}
         </div>` : ''}
       </div>
-
-      ${_ddHero ? `
-      <div class="dd-hero-wrap">
-        <img class="dd-hero" src="${esc(_ddHero)}" alt="${esc(school)} campus" loading="eager" onerror="this.closest('.dd-hero-wrap').remove()">
-      </div>` : ''}
-
+      ${_ddHero ? `<div class="dd-hero-wrap"><img class="dd-hero" src="${esc(_ddHero)}" alt="${esc(school)} campus" loading="eager" onerror="this.closest('.dd-hero-wrap').remove()"></div>` : ''}
       ${(_ddLife || _ddSwim) ? `
       <div class="dd-photos">
         ${_ddLife ? `<div class="dd-photo-wrap"><img class="dd-photo" src="${esc(_ddLife)}" alt="${esc(school)} student life" loading="lazy" onerror="this.closest('.dd-photo-wrap').remove()"><span class="dd-photo-label">Student Life</span></div>` : ''}
         ${_ddSwim ? `<div class="dd-photo-wrap"><img class="dd-photo" src="${esc(_ddSwim)}" alt="${esc(school)} pool" loading="lazy" onerror="this.closest('.dd-photo-wrap').remove()"><span class="dd-photo-label">Aquatics</span></div>` : ''}
-      </div>` : ''}
+      </div>` : ''}`;
+  }
 
-      ${mainSections.length > 2 ? `
-      <div class="dd-jump-nav">
-        ${mainSections.map(s => {
-          const _id = 'dds-' + s.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-          return `<button class="dd-jump-link" onclick="document.getElementById('${_id}')?.scrollIntoView({behavior:'smooth',block:'start'})">${esc(s.title)}</button>`;
-        }).join('')}
-      </div>` : ''}
-
-      ${bottomLine ? `
-        <div class="bottom-line">
-          <div class="bottom-line-label">Bottom Line</div>
-          <div class="bottom-line-text">${esc(bottomLine.body)}</div>
-        </div>` : ''}
-
-      ${mainSections.map(s => {
-        const isAdm   = s.title.toLowerCase().includes('admissible');
-        const admTable = isAdm
-          ? buildAdmTableHTML(meta, JAMES.gpa, JAMES.sat || 0, JAMES.actScore || 0)
-          : '';
-        const moreId = 'ddmore-' + Math.random().toString(36).slice(2, 8);
-        const _secId = 'dds-' + s.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-
-        // Section identity comes from the backend-assigned type — no title parsing.
-        const _sType = s.type || 'content';
-
-        let moreHtml = '';
-        if (_sType === 'academic_program') {
-          // Academic Program — "More about this program" button present when this section exists.
-          // Major from structured picker only: JAMES.primaryMajor (synced from potentialMajors).
-          const _major = JAMES.primaryMajor || '';
-          window._ddAcadArgs = window._ddAcadArgs || {};
-          window._ddAcadArgs[moreId] = {
-            school: school,
-            major:  _major,
-            loc:    meta.location || '',
-            vibe:   meta.vibe    || '',
-          };
-          moreHtml = `
-          <div class="dd-more-wrap">
-            <button class="dd-more-btn" id="btn-${moreId}"
-              onclick='_ddLoadAcademic(${JSON.stringify(moreId)})'>More about this program ▾</button>
-            <div class="dd-more-content" id="${moreId}" style="display:none;"></div>
-          </div>`;
-        } else if (_sType === 'student_experience' || _sType === 'outcomes') {
-          // Student Experience / Outcomes — visible when pre-generated expansion section exists.
-          const preGen = _preGenSection(_sType);
-          if (preGen) {
-            const moreLabel = _sType === 'student_experience' ? 'More about student life ▾' : 'More about career paths ▾';
-            moreHtml = `
-          <div class="dd-more-wrap">
-            <button class="dd-more-btn" onclick='_ddToggleMore("${moreId}", this, ${JSON.stringify(moreLabel)}, "Less ▴")'>${esc(moreLabel)}</button>
-            <div class="dd-more-content" id="${moreId}" style="display:none;">${esc(preGen.body)}</div>
-          </div>`;
-          }
-        }
-
-        // For academic_program sections, show "{major} at {school}" from structured data,
-        // not the fixed LLM header ("Academic Program") used for reliable classification.
-        const _dispMajor = JAMES.primaryMajor || '';
-        const _displayTitle = (_sType === 'academic_program' && _dispMajor)
-          ? esc(_dispMajor + ' at ' + school)
-          : esc(s.title);
-
-        const shouldCollapse = (_sType === 'student_experience' || _sType === 'outcomes');
-        const bodyId = 'dsb-' + moreId;
-
-        return `
-        <div class="deep-section ${shouldCollapse ? 'ds-collapsible' : ''}" id="${_secId}">
-          <div class="ds-toggle-row">
-            <div class="deep-section-title">${_displayTitle}</div>
-            ${shouldCollapse ? `<button class="ds-toggle-btn" onclick="_dsToggle('${bodyId}', this)" data-more="Show ▾" data-less="Hide ▴">Show ▾</button>` : ''}
-          </div>
-          <div id="${bodyId}" ${shouldCollapse ? 'style="display:none;"' : ''}>
-            ${admTable}
-            <div class="${isAdm ? 'adm-prose' : 'deep-section-body'}">${esc(s.body)}</div>
-            ${moreHtml}
-          </div>
-        </div>`;
-      }).join('')}
-
+  // ── _ddFooter: email section + action buttons ───────────────────────────
+  function _ddFooter() {
+    return `
       <div id="dd-email-section" style="display:none;margin-top:1.5rem;">
         <div class="section-label">Coach Email Draft</div>
         <div class="card">
@@ -3530,15 +3541,294 @@ async function openDeepDive(school) {
           <button class="btn btn-secondary" style="margin-top:0.75rem;" onclick="copyEmail()">Copy to clipboard</button>
         </div>
       </div>
-
       <div class="deep-dive-actions" style="border-top:1px solid var(--border);padding-top:1rem;margin-top:1.25rem;">
-        ${inList
-          ? `<button class="btn btn-added" disabled>✓ On My List</button>`
-          : `<button class="btn btn-primary" id="dd-add-btn" onclick='ddAddToList(${JSON.stringify(school)})'>+ Add to List</button>`}
+        ${inList ? `<button class="btn btn-added" disabled>✓ On My List</button>` : `<button class="btn btn-primary" id="dd-add-btn" onclick='ddAddToList(${JSON.stringify(school)})'>+ Add to List</button>`}
         <button class="btn btn-secondary" onclick='showCoachEmail(${JSON.stringify(school)})'>Draft Coach Email →</button>
         <button class="btn btn-secondary" onclick='printDeepDive(${JSON.stringify(school)})' style="margin-left:auto;">🖨 Save as PDF</button>
-      </div>
-    `;
+      </div>`;
+  }
+
+  // ── _finalizeSlot: post-content wiring (more buttons, adm table) ─────────
+  function _finalizeSlot(slug) {
+    const slotEl = document.getElementById('dd-slot-' + slug);
+    if (!slotEl) return;
+    slotEl.classList.remove('dd-slot-pending');
+    const bodyEl = document.getElementById('dd-body-' + slug);
+    if (bodyEl) bodyEl.classList.remove('dd-shimmer');
+
+    if (slug === 'academic_program' && JAMES.primaryMajor) {
+      // Update display title
+      const titleEl = slotEl.querySelector('.deep-section-title');
+      if (titleEl && !titleEl.dataset.titled) {
+        titleEl.textContent = JAMES.primaryMajor + ' at ' + school;
+        titleEl.dataset.titled = '1';
+      }
+      // Wire lazy-load "More about this program" button if not already present
+      const bodyDiv = document.getElementById('dsb-academic_program');
+      if (bodyDiv && !document.getElementById('ddmore-academic_program')) {
+        const moreId = 'ddmore-academic_program';
+        window._ddAcadArgs[moreId] = { school, major: JAMES.primaryMajor, loc: meta.location || '', vibe: meta.vibe || '' };
+        const wrap = document.createElement('div');
+        wrap.className = 'dd-more-wrap';
+        wrap.innerHTML = `<button class="dd-more-btn" id="btn-${moreId}" onclick='_ddLoadAcademic(${JSON.stringify(moreId)})'>More about this program ▾</button><div class="dd-more-content" id="${moreId}" style="display:none;"></div>`;
+        bodyDiv.appendChild(wrap);
+      }
+    }
+
+    if (slug === 'are_you_admissible') {
+      // Inject adm comparison table above prose if not already there
+      const bodyDiv = document.getElementById('dsb-are_you_admissible');
+      if (bodyDiv && !bodyDiv.querySelector('.adm-table-wrap, table')) {
+        const tableHtml = buildAdmTableHTML(meta, JAMES.gpa, JAMES.sat || 0, JAMES.actScore || 0);
+        if (tableHtml) bodyDiv.insertAdjacentHTML('afterbegin', tableHtml);
+      }
+    }
+  }
+
+  // ── _wireMoreSlot: attach a more_* expansion inside its parent slot ──────
+  function _wireMoreSlot(moreSlug, body) {
+    const parentMap = {
+      more_going_deeper:       'academic_program',
+      more_student_experience: 'campus_life',
+      more_career_paths:       'outcomes',
+    };
+    const parentSlug = parentMap[moreSlug];
+    if (!parentSlug) return;
+    const moreId    = 'ddmore-' + parentSlug;
+    if (document.getElementById(moreId)) return; // already wired
+    const bodyDiv   = document.getElementById('dsb-' + parentSlug);
+    if (!bodyDiv) return;
+    const label =
+      parentSlug === 'campus_life' ? 'More about student life ▾' : 'More about career paths ▾';
+    const wrap = document.createElement('div');
+    wrap.className = 'dd-more-wrap';
+    wrap.id = 'dd-more-wrap-' + parentSlug;
+    wrap.innerHTML = `<button class="dd-more-btn" onclick='_ddToggleMore("${moreId}",this,${JSON.stringify(label)},"Less ▴")'>${label}</button><div class="dd-more-content" id="${moreId}" style="display:none;">${esc(body)}</div>`;
+    bodyDiv.appendChild(wrap);
+  }
+
+  // ── Paint skeleton immediately ───────────────────────────────────────────
+  const topLevelSlots = slots.filter(s => !s.isMore && s.slug !== 'bottom_line' && s.slug !== 'unknown');
+  const skeletonSlots = slots.filter(s => !s.isMore).map(s => {
+    if (s.slug === 'bottom_line') return `
+      <div class="bottom-line dd-slot-pending" id="dd-slot-bottom_line">
+        <div class="bottom-line-label">Bottom Line</div>
+        <div class="bottom-line-text dd-shimmer" id="dd-body-bottom_line">&nbsp;</div>
+      </div>`;
+    if (s.slug === 'unknown') return `<div id="dd-slot-unknown"></div>`;
+    const isCollapse = (s.slug === 'campus_life' || s.slug === 'outcomes');
+    const bodyId     = 'dsb-' + s.slug;
+    const moreSlot   =
+      s.slug === 'academic_program' ? `<div id="dd-slot-more_going_deeper"></div>` :
+      s.slug === 'campus_life'      ? `<div id="dd-slot-more_student_experience"></div>` :
+      s.slug === 'outcomes'         ? `<div id="dd-slot-more_career_paths"></div>` : '';
+    return `
+      <div class="deep-section dd-slot-pending ${isCollapse ? 'ds-collapsible' : ''}" id="dd-slot-${s.slug}">
+        <div class="ds-toggle-row">
+          <div class="deep-section-title dd-shimmer">${esc(DD_SLOT_TITLES[s.slug] || '')}</div>
+          ${isCollapse ? `<button class="ds-toggle-btn" onclick="_dsToggle('${bodyId}',this)" data-more="Show ▾" data-less="Hide ▴">Show ▾</button>` : ''}
+        </div>
+        <div id="${bodyId}" ${isCollapse ? 'style="display:none;"' : ''}>
+          <div class="${s.slug === 'are_you_admissible' ? 'adm-prose' : 'deep-section-body'} dd-shimmer" id="dd-body-${s.slug}">&nbsp;</div>
+          ${moreSlot}
+        </div>
+      </div>`;
+  }).join('');
+
+  content.innerHTML = `
+    ${_ddChrome()}
+    <div class="dd-jump-nav">
+      ${topLevelSlots.map(s => `<button class="dd-jump-link" onclick="document.getElementById('dd-slot-${s.slug}')?.scrollIntoView({behavior:'smooth',block:'start'})">${esc(DD_SLOT_TITLES[s.slug] || s.slug)}</button>`).join('')}
+    </div>
+    ${skeletonSlots}
+    ${_ddFooter()}`;
+
+  // ── Active streaming state ────────────────────────────────────────────────
+  let _activeSlug   = null;
+  let _activeBodyEl = null;
+
+  // ── onEvent: handle slot/sectionStart/chunk/sectionEnd events ────────────
+  function _onEvent(evt) {
+
+    // Cached section (arrives before Claude starts)
+    if (evt.cached && evt.section) {
+      const slug = evt.section;
+
+      // more_* slots: wire into parent
+      if (slug === 'more_going_deeper' || slug === 'more_student_experience' || slug === 'more_career_paths') {
+        _wireMoreSlot(slug, evt.body || '');
+        const plEl = document.getElementById('dd-slot-' + slug);
+        if (plEl) plEl.style.display = 'none'; // placeholder div; content is in parent
+        return;
+      }
+
+      const slotEl = document.getElementById('dd-slot-' + slug);
+      const bodyEl = document.getElementById('dd-body-' + slug);
+      if (!slotEl || !bodyEl) return;
+
+      slotEl.classList.remove('dd-slot-pending');
+      bodyEl.classList.remove('dd-shimmer');
+
+      if (slug === 'bottom_line') {
+        bodyEl.textContent = evt.body || '';
+        return;
+      }
+      if (evt.title) {
+        const titleEl = slotEl.querySelector('.deep-section-title');
+        if (titleEl) { titleEl.classList.remove('dd-shimmer'); titleEl.textContent = evt.title; }
+      }
+      bodyEl.textContent = evt.body || '';
+      _finalizeSlot(slug);
+      return;
+    }
+
+    // sectionStart — Claude just started a new section
+    if (evt.sectionStart) {
+      const slug   = evt.sectionStart;
+      const slotEl = document.getElementById('dd-slot-' + slug);
+      const bodyEl = document.getElementById('dd-body-' + slug);
+      if (!slotEl) return;
+      slotEl.classList.remove('dd-slot-pending');
+      if (bodyEl) { bodyEl.classList.remove('dd-shimmer'); bodyEl.textContent = ''; }
+      if (evt.title) {
+        const titleEl = slotEl.querySelector('.deep-section-title');
+        if (titleEl) { titleEl.classList.remove('dd-shimmer'); titleEl.textContent = evt.title; }
+      }
+      // Inject adm table before prose starts streaming into are_you_admissible
+      if (slug === 'are_you_admissible') {
+        const bodyDiv = document.getElementById('dsb-are_you_admissible');
+        if (bodyDiv && !bodyDiv.querySelector('.adm-table-wrap, table')) {
+          const t = buildAdmTableHTML(meta, JAMES.gpa, JAMES.sat || 0, JAMES.actScore || 0);
+          if (t) bodyDiv.insertAdjacentHTML('afterbegin', t);
+        }
+      }
+      _activeSlug   = slug;
+      _activeBodyEl = bodyEl;
+      return;
+    }
+
+    // chunk — append text to active slot
+    if (evt.chunk !== undefined && _activeBodyEl) {
+      _activeBodyEl.textContent += evt.chunk;
+      return;
+    }
+
+    // sectionEnd — finalize the slot
+    if (evt.sectionEnd) {
+      if (_activeSlug) _finalizeSlot(_activeSlug);
+      _activeSlug = null; _activeBodyEl = null;
+      return;
+    }
+  }
+
+  try {
+    const data = await fetchDeepDiveStreaming('/api/deep-dive', {
+      school,
+      vibeAnswers:  VIBE_STATE,
+      otherPrefs:   OTHER_PREFS,
+      primaryMajor: JAMES.primaryMajor || '',
+      minor:        JAMES.minor        || '',
+      profile:      buildCurrentProfile(),
+      cardResult:   ALL_RESULTS.find(r => r.school === school) || null,
+    }, content, _onEvent);
+
+    if (data.error) {
+      content.innerHTML = `<div class="err-box">⚠ ${esc(data.error)}</div>`;
+      return;
+    }
+
+    const sections = data.sections || [];
+
+    // ── If no slot events arrived: full legacy render ─────────────────────
+    if (!data._slotPathUsed) {
+      const bottomLine   = sections.find(s => s.type === 'bottom_line');
+      const moreByType   = Object.fromEntries(
+        sections.filter(s => s.type && s.type.startsWith('more_')).map(s => [s.type, s])
+      );
+      const mainSections = sections.filter(
+        s => s.type !== 'bottom_line' && !(s.type && s.type.startsWith('more_'))
+      );
+      function _preGenSection(sType) {
+        if (sType === 'student_experience') return moreByType['more_student_experience'] || null;
+        if (sType === 'outcomes')           return moreByType['more_career_paths']       || null;
+        return null;
+      }
+      content.innerHTML = `
+        ${_ddChrome()}
+        ${mainSections.length > 2 ? `<div class="dd-jump-nav">${mainSections.map(s => {
+          const _id = 'dds-' + s.title.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+          return `<button class="dd-jump-link" onclick="document.getElementById('${_id}')?.scrollIntoView({behavior:'smooth',block:'start'})">${esc(s.title)}</button>`;
+        }).join('')}</div>` : ''}
+        ${bottomLine ? `<div class="bottom-line"><div class="bottom-line-label">Bottom Line</div><div class="bottom-line-text">${esc(bottomLine.body)}</div></div>` : ''}
+        ${mainSections.map(s => {
+          const isAdm    = s.title.toLowerCase().includes('admissible');
+          const admTable = isAdm ? buildAdmTableHTML(meta, JAMES.gpa, JAMES.sat || 0, JAMES.actScore || 0) : '';
+          const moreId   = 'ddmore-' + Math.random().toString(36).slice(2,8);
+          const _secId   = 'dds-' + s.title.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+          const _sType   = s.type || 'content';
+          let moreHtml   = '';
+          if (_sType === 'academic_program') {
+            const _major = JAMES.primaryMajor || '';
+            window._ddAcadArgs[moreId] = { school, major: _major, loc: meta.location||'', vibe: meta.vibe||'' };
+            moreHtml = `<div class="dd-more-wrap"><button class="dd-more-btn" id="btn-${moreId}" onclick='_ddLoadAcademic(${JSON.stringify(moreId)})'>More about this program ▾</button><div class="dd-more-content" id="${moreId}" style="display:none;"></div></div>`;
+          } else if (_sType === 'student_experience' || _sType === 'outcomes') {
+            const preGen = _preGenSection(_sType);
+            if (preGen) {
+              const moreLabel = _sType === 'student_experience' ? 'More about student life ▾' : 'More about career paths ▾';
+              moreHtml = `<div class="dd-more-wrap"><button class="dd-more-btn" onclick='_ddToggleMore("${moreId}",this,${JSON.stringify(moreLabel)},"Less ▴")'>${esc(moreLabel)}</button><div class="dd-more-content" id="${moreId}" style="display:none;">${esc(preGen.body)}</div></div>`;
+            }
+          }
+          const _dispMajor     = JAMES.primaryMajor || '';
+          const _displayTitle  = (_sType === 'academic_program' && _dispMajor) ? esc(_dispMajor + ' at ' + school) : esc(s.title);
+          const shouldCollapse = (_sType === 'student_experience' || _sType === 'outcomes');
+          const bodyId         = 'dsb-' + moreId;
+          return `
+          <div class="deep-section ${shouldCollapse ? 'ds-collapsible' : ''}" id="${_secId}">
+            <div class="ds-toggle-row">
+              <div class="deep-section-title">${_displayTitle}</div>
+              ${shouldCollapse ? `<button class="ds-toggle-btn" onclick="_dsToggle('${bodyId}',this)" data-more="Show ▾" data-less="Hide ▴">Show ▾</button>` : ''}
+            </div>
+            <div id="${bodyId}" ${shouldCollapse ? 'style="display:none;"' : ''}>
+              ${admTable}
+              <div class="${isAdm ? 'adm-prose' : 'deep-section-body'}">${esc(s.body)}</div>
+              ${moreHtml}
+            </div>
+          </div>`;
+        }).join('')}
+        ${_ddFooter()}`;
+      return;
+    }
+
+    // ── Slot-path reconciliation ──────────────────────────────────────────
+    // Fill any slots that events didn't reach, wire pending more_* expansions,
+    // then hide slots that have no content for this school.
+
+    const bySlug = {};
+    for (const s of sections) bySlug[_ddSlugFromSection(s)] = s;
+
+    // Pass 1: fill empty top-level slots from done sections
+    for (const [slug, s] of Object.entries(bySlug)) {
+      const bodyEl = document.getElementById('dd-body-' + slug);
+      if (!bodyEl || bodyEl.textContent.trim()) continue; // already has content
+      bodyEl.classList.remove('dd-shimmer');
+      bodyEl.textContent = s.body || '';
+      const slotEl = document.getElementById('dd-slot-' + slug);
+      if (slotEl) slotEl.classList.remove('dd-slot-pending');
+      _finalizeSlot(slug);
+    }
+
+    // Pass 2: wire any more_* sections not yet attached to their parent
+    for (const moreSlug of ['more_going_deeper', 'more_student_experience', 'more_career_paths']) {
+      const s = bySlug[moreSlug];
+      if (s) _wireMoreSlot(moreSlug, s.body || '');
+    }
+
+    // Pass 3: hide slots that are still pending (section absent for this school)
+    for (const slotDef of slots) {
+      if (slotDef.isMore) continue;
+      const slotEl = document.getElementById('dd-slot-' + slotDef.slug);
+      if (slotEl && slotEl.classList.contains('dd-slot-pending')) slotEl.style.display = 'none';
+    }
 
   } catch (e) {
     console.error('[deep-dive] render error:', e);
