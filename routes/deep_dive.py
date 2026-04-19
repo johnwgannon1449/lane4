@@ -1,11 +1,15 @@
 """routes/deep_dive.py — Deep dive and coach-email content generation endpoints."""
 import re
 import json
+import threading
 
 from flask import Blueprint, request, jsonify, Response, stream_with_context
 from prompts_config import LANE4_DEEP_DIVE_PROMPT, LANE4_BOTTOM_LINE_V2_PROMPT, BOTTOM_LINE_V2, COST_PROMPT
 from ai_client import _get_anthropic
-from services.pregen import get_or_generate_school_content, get_or_generate_program_content
+from services.pregen import (
+    read_school_cache, read_program_cache,
+    get_or_generate_school_content, get_or_generate_program_content,
+)
 from models.swimmer_defaults import JAMES
 from models.school_data import _oou_lookup, SCHOOL_NAME_ALIASES
 from scoring.admission import _oou_admission
@@ -711,33 +715,53 @@ def deep_dive():
             # Send keepalive comment to confirm connection is live before Claude starts generating
             yield ": keepalive\n\n"
 
-            # Fetch pre-generated cached sections (or trigger Haiku generation on first miss).
-            # This blocks before the Claude stream starts, but the SSE connection is already
-            # open so the client shows a loading state. On a cache hit this is near-instant.
+            # Read cache only — never blocks. On a hit this is a single DB query.
+            # On a miss, fire a background thread to generate and cache for next visit.
+            # The Claude stream starts immediately either way.
             _school_cached  = {}
             _program_cached = {}
             try:
-                _school_cached = get_or_generate_school_content(
-                    school_name=result['school'],
-                    division=result.get('division', ''),
-                    conference=result.get('conference', ''),
-                    region=meta.get('location', ''),
-                    school_type=meta.get('type', ''),
-                    meta={k: meta.get(k, '') for k in (
-                        'freshmanHousing', 'greekLife', 'residentialPattern',
-                        'athleteIntegration', 'genderRatio', 'townVibe',
-                        'campusTemperature',
-                    )},
-                )
-                if academic_direction:
-                    _program_cached = get_or_generate_program_content(
+                _school_cached  = read_school_cache(result['school'])
+                _program_cached = read_program_cache(
+                    result['school'], academic_direction, minor or ''
+                ) if academic_direction else {}
+            except Exception as _pregen_err:
+                print(f'[deep_dive] cache read error: {_pregen_err}')
+
+            # Background generation on cache miss — does not block the stream.
+            if not _school_cached:
+                threading.Thread(
+                    target=get_or_generate_school_content,
+                    kwargs=dict(
+                        school_name=result['school'],
+                        division=result.get('division', ''),
+                        conference=result.get('conference', ''),
+                        region=meta.get('location', ''),
+                        school_type=meta.get('type', ''),
+                        meta={k: meta.get(k, '') for k in (
+                            'freshmanHousing', 'greekLife', 'residentialPattern',
+                            'athleteIntegration', 'genderRatio', 'townVibe',
+                            'campusTemperature',
+                        )},
+                    ),
+                    daemon=True,
+                    name=f'pregen-school-{result["school"]}',
+                ).start()
+                print(f'[deep_dive] background pregen started: school={result["school"]}')
+
+            if academic_direction and not _program_cached:
+                threading.Thread(
+                    target=get_or_generate_program_content,
+                    kwargs=dict(
                         school_name=result['school'],
                         major=academic_direction,
                         minor=minor or '',
                         division=result.get('division', ''),
-                    )
-            except Exception as _pregen_err:
-                print(f'[deep_dive] pregen error: {_pregen_err}')
+                    ),
+                    daemon=True,
+                    name=f'pregen-program-{result["school"]}-{academic_direction}',
+                ).start()
+                print(f'[deep_dive] background pregen started: program={academic_direction} at {result["school"]}')
 
             # Speed fix: omit section instructions for content already in cache.
             # _inject_cached_sections will INSERT those sections at the right position.

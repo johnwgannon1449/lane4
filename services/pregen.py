@@ -441,6 +441,18 @@ def _write_program_cache(school_name: str, major: str, minor: str,
 # Public API
 # ---------------------------------------------------------------------------
 
+def read_school_cache(school_name: str) -> dict:
+    """Read-only cache lookup. Returns empty dict (not None) on miss — never generates."""
+    return _read_school_cache(school_name) or {}
+
+
+def read_program_cache(school_name: str, major: str, minor: str = '') -> dict:
+    """Read-only cache lookup. Returns empty dict (not None) on miss — never generates."""
+    if not major:
+        return {}
+    return _read_program_cache(school_name, major, minor) or {}
+
+
 def get_or_generate_school_content(school_name: str, division: str = '',
                                     conference: str = '', region: str = '',
                                     school_type: str = '', meta: dict = None) -> dict:
