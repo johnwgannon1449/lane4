@@ -19,7 +19,7 @@ from prompts_config import (
     MINOR_PROMPT,
 )
 
-_PREGEN_MODEL      = 'claude-sonnet-4-6-20250514'
+_PREGEN_MODEL      = 'claude-sonnet-4-6'
 _WEB_SEARCH        = {'type': 'web_search_20250305', 'name': 'web_search', 'max_uses': 5}
 _CALL_TIMEOUT_SECS = 60
 
