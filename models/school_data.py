@@ -1754,53 +1754,32 @@ SCHOOL_META = {
 }
 
 # ── Out-of-universe well-known schools ───────────────────────────────────────
-# Metadata for commonly searched schools outside our scored pool.
-# Keys are the canonical display names (title-cased as users would type them).
-# Fields match SCHOOL_META conventions; ivyLeague=True adds the Ivy badge.
+# Only schools that are NOT in the scored swim-universe snapshot.
+# Most elite schools (Ivies, NESCAC, etc.) are in the universe — handled there.
 OOU_SCHOOL_META = {
-    # Ivy League
-    "Harvard":      {"accept": 4,  "satMedian": 1580, "ivyLeague": True,  "merit": "none",     "location": "Cambridge, MA",     "vibe": "The most storied name in higher education — ultra-selective by any measure."},
-    "Yale":         {"accept": 5,  "satMedian": 1570, "ivyLeague": True,  "merit": "none",     "location": "New Haven, CT",      "vibe": "World-class academics, drama, and debate — near-impossible odds."},
-    "Princeton":    {"accept": 4,  "satMedian": 1580, "ivyLeague": True,  "merit": "none",     "location": "Princeton, NJ",      "vibe": "Legendary campus, no-loan financial aid, and 4% acceptance."},
-    "Columbia":     {"accept": 4,  "satMedian": 1560, "ivyLeague": True,  "merit": "none",     "location": "New York, NY",       "vibe": "Ivy in the heart of Manhattan — urban energy meets academic prestige."},
-    "Brown":        {"accept": 6,  "satMedian": 1555, "ivyLeague": True,  "merit": "none",     "location": "Providence, RI",     "vibe": "Open Curriculum gives students unusual freedom to design their education."},
-    "Dartmouth":    {"accept": 6,  "satMedian": 1560, "ivyLeague": True,  "merit": "none",     "location": "Hanover, NH",        "vibe": "Tight-knit Ivy with a strong outdoors culture and fierce alumni loyalty."},
-    "Cornell":      {"accept": 9,  "satMedian": 1510, "ivyLeague": True,  "merit": "none",     "location": "Ithaca, NY",         "vibe": "The most accessible Ivy — broad programs, engineering powerhouse."},
-    "Penn":         {"accept": 7,  "satMedian": 1535, "ivyLeague": True,  "merit": "none",     "location": "Philadelphia, PA",   "vibe": "Wharton business, Penn Medicine, and strong interdisciplinary programs."},
-    "UPenn":        {"accept": 7,  "satMedian": 1535, "ivyLeague": True,  "merit": "none",     "location": "Philadelphia, PA",   "vibe": "Wharton business, Penn Medicine, and strong interdisciplinary programs."},
-    # Elite non-Ivy
-    "MIT":          {"accept": 4,  "satMedian": 1580, "stem": True,       "merit": "none",     "location": "Cambridge, MA",      "vibe": "Global STEM leader — demanding, collaborative, and transformative."},
-    "Stanford":     {"accept": 4,  "satMedian": 1560, "stem": True,       "merit": "none",     "location": "Stanford, CA",       "vibe": "Silicon Valley's university — entrepreneurship and research at scale."},
-    "Duke":         {"accept": 6,  "satMedian": 1540, "merit": "none",    "location": "Durham, NC",       "vibe": "Elite academics meets ACC athletics in a beautiful residential campus."},
-    "Northwestern": {"accept": 7,  "satMedian": 1530, "merit": "none",    "location": "Evanston, IL",     "vibe": "Quarter system, Big Ten athletics, and one of the strongest journalism schools."},
-    "Georgetown":   {"accept": 12, "satMedian": 1470, "merit": "none",    "location": "Washington, DC",   "vibe": "Jesuit traditions, global affairs, and unmatched access to DC institutions."},
-    "Notre Dame":   {"accept": 13, "satMedian": 1480, "merit": "none",    "location": "Notre Dame, IN",   "vibe": "Catholic identity, storied football, and a fiercely loyal alumni network."},
-    "Vanderbilt":   {"accept": 7,  "satMedian": 1540, "merit": "moderate","location": "Nashville, TN",    "vibe": "Southern hospitality meets elite academics in a vibrant music city."},
-    "Emory":        {"accept": 11, "satMedian": 1480, "hiddenIvy": True,  "merit": "moderate", "location": "Atlanta, GA",        "vibe": "Hidden Ivy with top pre-med programs and CDC proximity."},
-    "Tufts":        {"accept": 11, "satMedian": 1490, "hiddenIvy": True,  "merit": "none",     "location": "Medford, MA",        "vibe": "Hidden Ivy bridging liberal arts and research, just outside Boston."},
-    "Wake Forest":  {"accept": 21, "satMedian": 1400, "sat25": 1290, "sat75": 1480, "gpaMean": 3.82, "merit": "moderate","location": "Winston-Salem, NC","vibe": "Small research university with a pro-human motto and strong business school."},
-    "Boston College": {"accept": 15,"satMedian": 1430,"sat25": 1360,"sat75": 1520,"gpaMean": 3.87,"merit": "none",    "location": "Chestnut Hill, MA","vibe": "Jesuit institution with strong business, nursing, and law programs."},
-    "Boston University": {"accept": 19,"satMedian": 1400,"sat25": 1350,"sat75": 1500,"gpaMean": 3.73,"merit": "moderate","location": "Boston, MA",   "vibe": "Large urban research university with 300+ programs along the Charles River."},
-    "Northeastern": {"accept": 7,  "satMedian": 1490,"sat25": 1440,"sat75": 1550,"gpaMean": 3.84,"stem": True,       "merit": "moderate", "location": "Boston, MA",         "vibe": "Co-op powerhouse — students graduate with up to two years of work experience."},
-    "Rice":         {"accept": 9,  "satMedian": 1540, "sat25": 1490, "sat75": 1570, "gpaMean": 3.92, "stem": True,       "merit": "none",     "location": "Houston, TX",        "vibe": "Tiny but mighty — residential college system and elite engineering."},
-    "University of Chicago": {"accept": 7,"satMedian": 1560,"hiddenIvy": True,"merit": "none","location": "Chicago, IL",         "vibe": "Rigorously intellectual — the life of the mind in the heart of Chicago."},
-    "UChicago":     {"accept": 7,  "satMedian": 1560, "hiddenIvy": True,  "merit": "none",     "location": "Chicago, IL",        "vibe": "Rigorously intellectual — the life of the mind in the heart of Chicago."},
-    "Carnegie Mellon": {"accept": 11,"satMedian": 1530,"stem": True,      "merit": "none",     "location": "Pittsburgh, PA",     "vibe": "CS and engineering titan with one of the world's top drama programs."},
-    "WashU":        {"accept": 12, "satMedian": 1530, "hiddenIvy": True,  "merit": "moderate", "location": "St. Louis, MO",      "vibe": "Washington University — Hidden Ivy with generous merit aid and strong med school."},
-    "Washington University": {"accept": 12,"satMedian": 1530,"hiddenIvy": True,"merit": "moderate","location": "St. Louis, MO",  "vibe": "Hidden Ivy with generous merit aid and a strong medical school."},
-    "Bowdoin":      {"accept": 9,  "satMedian": 1490, "hiddenIvy": True,  "merit": "none",     "location": "Brunswick, ME",      "vibe": "Stunning Maine campus, need-blind admissions, and a powerhouse swim tradition."},
-    "Middlebury":   {"accept": 13, "satMedian": 1430, "hiddenIvy": True,  "merit": "none",     "location": "Middlebury, VT",     "vibe": "World-renowned language programs and a stunning Vermont campus."},
-    "Colby":        {"accept": 10, "satMedian": 1420, "hiddenIvy": True,  "merit": "none",     "location": "Waterville, ME",     "vibe": "NESCAC liberal arts with need-blind admissions and strong athletics."},
-    "Colgate":      {"accept": 21, "satMedian": 1400, "hiddenIvy": True,  "merit": "none",     "location": "Hamilton, NY",       "vibe": "Strong academics in a tight-knit upstate NY community."},
+    "Wake Forest":  {"accept": 21, "satMedian": 1400, "sat25": 1290, "sat75": 1480, "gpaMean": 3.82, "merit": "moderate", "location": "Winston-Salem, NC", "vibe": "Small research university with a pro-human motto and strong business school."},
+    "Rice":         {"accept": 9,  "satMedian": 1540, "sat25": 1490, "sat75": 1570, "gpaMean": 3.92, "stem": True, "merit": "none", "location": "Houston, TX", "vibe": "Tiny but mighty — residential college system and elite engineering."},
 }
 
-# Case-insensitive lookup helper
+# Aliases that should route to their canonical in-universe name instead of OOU.
+# Values are the exact school names returned by build_school_universe / SCHOOL_META.
+SCHOOL_NAME_ALIASES = {
+    "upenn":                "University of Pennsylvania",
+    "u penn":               "University of Pennsylvania",
+    "uchicago":             "Chicago",
+    "u chicago":            "Chicago",
+    "washu":                "Washington (Mo)",
+    "wash u":               "Washington (Mo)",
+    "washington university": "Washington (Mo)",
+}
+
+# Case-insensitive lookup helper — returns OOU metadata or None
 def _oou_lookup(name: str) -> dict | None:
     name_l = name.lower().strip()
     for k, v in OOU_SCHOOL_META.items():
         if k.lower() == name_l:
             return v
-    # partial: e.g. "Harvard University" → "Harvard"
+    # partial match: e.g. "Wake Forest University" → "Wake Forest"
     for k, v in OOU_SCHOOL_META.items():
         if k.lower() in name_l or name_l in k.lower():
             return v

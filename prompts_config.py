@@ -20,11 +20,12 @@ LANE4_LANGUAGE_PROMPT        = _load_file('lane4_language_prompt.txt')
 LANE4_DEEP_DIVE_PROMPT       = _load_file('lane4_deep_dive_prompt.txt')
 LANE4_BOTTOM_LINE_V2_PROMPT  = _load_file('lane4_bottom_line_v2_prompt.txt')
 
-# Phase 1b: pre-generation prompt files (Haiku 4.5 + web search)
+# Phase 1b: pre-generation prompt files (Sonnet + web search)
 SCHOOL_KNOWN_FOR_PROMPT = _load_file('school_known_for_prompt.txt')
 CAMPUS_LIFE_PROMPT      = _load_file('campus_life_prompt.txt')
 MAJOR_PROMPT            = _load_file('major_prompt.txt')
 MINOR_PROMPT            = _load_file('minor_prompt.txt')
+COST_PROMPT             = _load_file('cost_prompt.txt')
 
 # Feature flag: set to True to use upgraded Bottom Line voice (Phase 1a).
 # Set to False to revert to original Bottom Line behavior.

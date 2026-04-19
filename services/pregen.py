@@ -1,10 +1,10 @@
 """services/pregen.py — Pre-generation service for cached deep dive sections.
 
-Generates four section types lazily on first request per school or school-program pair:
-  school_content_cache   : What School Is Known For, Campus Life (main + More)
+Generates five content types lazily on first request per school or school-program pair:
+  school_content_cache   : What School Is Known For, Campus Life (main + More), Cost Layer 1
   program_content_cache  : Academic Program (main + More: Going Deeper), Minor
 
-Model: claude-haiku-4-5-20251001 with web_search_20250305 enabled.
+Model: claude-sonnet-4-6-20250514 with web_search_20250305 enabled.
 Cache: reads before generating, writes after, keyed by school_name or (school_name, major, minor).
 """
 
@@ -193,9 +193,64 @@ def _generate_minor(school_name: str, major: str, minor: str) -> str:
     return _strip_narration(_call_haiku(MINOR_PROMPT, user_msg))
 
 
+_COST_LAYER1_SYSTEM = """You are a research assistant extracting cost data for a college planning tool.
+Use web search to find current official data for the school provided.
+Return ONLY a JSON object with exactly these fields — no preamble, no explanation, no markdown:
+
+{
+  "coa": <integer: total annual cost of attendance in dollars, rounded to nearest 1000>,
+  "merit_offered": <boolean: true if this school offers merit scholarships to incoming freshmen>,
+  "merit_range_low": <integer or null: minimum annual merit scholarship amount in dollars>,
+  "merit_range_high": <integer or null: maximum annual merit scholarship amount in dollars>,
+  "merit_notes": <string or null: names and amounts of notable named scholarships, null if none>,
+  "need_based_headline": <string or null: ONLY a specific, notable need-based policy worth calling out.
+    Good examples: "Families earning under $75,000 pay zero tuition."
+    "Meets 100% of demonstrated financial need."
+    Bad examples (use null): "Offers need-based financial aid." "Generous aid packages available."
+    If no specific notable policy exists, use null.>
+}
+
+Return only valid JSON. No other text."""
+
+
+def _generate_cost_data(school_name: str) -> dict:
+    """Fetch and parse Layer 1 cost data for a school. Returns dict with 6 fields."""
+    import json as _json
+    user_msg = (
+        f"School: {school_name}\n\n"
+        f"Use web search to find current cost of attendance and financial aid data for {school_name}. "
+        f"Return the JSON object as specified."
+    )
+    raw = _call_haiku(_COST_LAYER1_SYSTEM, user_msg).strip()
+    # Strip markdown code fences if the model wrapped the JSON
+    if raw.startswith('```'):
+        raw = raw.split('```')[1]
+        if raw.startswith('json'):
+            raw = raw[4:]
+    try:
+        data = _json.loads(raw)
+        return {
+            'coa':                int(data.get('coa') or 0) or None,
+            'merit_offered':      bool(data.get('merit_offered', False)),
+            'merit_range_low':    int(data['merit_range_low']) if data.get('merit_range_low') else None,
+            'merit_range_high':   int(data['merit_range_high']) if data.get('merit_range_high') else None,
+            'merit_notes':        str(data['merit_notes']) if data.get('merit_notes') else None,
+            'need_based_headline': str(data['need_based_headline']) if data.get('need_based_headline') else None,
+        }
+    except Exception as e:
+        print(f'[pregen] cost JSON parse error for {school_name}: {e} | raw: {raw[:200]!r}')
+        return {}
+
+
 # ---------------------------------------------------------------------------
 # Internal: cache read/write
 # ---------------------------------------------------------------------------
+
+_SCHOOL_CACHE_COLS = (
+    'known_for, campus_life_main, campus_life_more, '
+    'coa, merit_offered, merit_range_low, merit_range_high, merit_notes, need_based_headline'
+)
+
 
 def _read_school_cache(school_name: str):
     """Return cached school content dict or None if not cached."""
@@ -204,7 +259,7 @@ def _read_school_cache(school_name: str):
             if using_sqlite():
                 cur = conn.cursor()
                 cur.execute(
-                    'SELECT known_for, campus_life_main, campus_life_more '
+                    f'SELECT {_SCHOOL_CACHE_COLS} '
                     'FROM school_content_cache WHERE school_name = ?',
                     (school_name,)
                 )
@@ -212,7 +267,7 @@ def _read_school_cache(school_name: str):
             else:
                 with conn.cursor() as cur:
                     cur.execute(
-                        'SELECT known_for, campus_life_main, campus_life_more '
+                        f'SELECT {_SCHOOL_CACHE_COLS} '
                         'FROM school_content_cache WHERE school_name = %s',
                         (school_name,)
                     )
@@ -220,9 +275,15 @@ def _read_school_cache(school_name: str):
         if row is None:
             return None
         return {
-            'known_for':        row[0] or '',
-            'campus_life_main': row[1] or '',
-            'campus_life_more': row[2] or '',
+            'known_for':           row[0] or '',
+            'campus_life_main':    row[1] or '',
+            'campus_life_more':    row[2] or '',
+            'coa':                 row[3],
+            'merit_offered':       bool(row[4]) if row[4] is not None else None,
+            'merit_range_low':     row[5],
+            'merit_range_high':    row[6],
+            'merit_notes':         row[7],
+            'need_based_headline': row[8],
         }
     except Exception as e:
         print(f'[pregen] school cache read error: {e}')
@@ -236,33 +297,61 @@ def _write_school_cache(school_name: str, content: dict) -> None:
                 with conn:
                     conn.execute(
                         'INSERT INTO school_content_cache '
-                        '(school_name, known_for, campus_life_main, campus_life_more) '
-                        'VALUES (?, ?, ?, ?) '
+                        '(school_name, known_for, campus_life_main, campus_life_more, '
+                        ' coa, merit_offered, merit_range_low, merit_range_high, '
+                        ' merit_notes, need_based_headline) '
+                        'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) '
                         'ON CONFLICT(school_name) DO UPDATE SET '
                         'known_for = excluded.known_for, '
                         'campus_life_main = excluded.campus_life_main, '
                         'campus_life_more = excluded.campus_life_more, '
+                        'coa = excluded.coa, '
+                        'merit_offered = excluded.merit_offered, '
+                        'merit_range_low = excluded.merit_range_low, '
+                        'merit_range_high = excluded.merit_range_high, '
+                        'merit_notes = excluded.merit_notes, '
+                        'need_based_headline = excluded.need_based_headline, '
                         'generated_at = CURRENT_TIMESTAMP',
                         (school_name,
                          content.get('known_for', ''),
                          content.get('campus_life_main', ''),
-                         content.get('campus_life_more', ''))
+                         content.get('campus_life_more', ''),
+                         content.get('coa'),
+                         content.get('merit_offered'),
+                         content.get('merit_range_low'),
+                         content.get('merit_range_high'),
+                         content.get('merit_notes'),
+                         content.get('need_based_headline'))
                     )
             else:
                 with conn.cursor() as cur:
                     cur.execute(
                         'INSERT INTO school_content_cache '
-                        '(school_name, known_for, campus_life_main, campus_life_more) '
-                        'VALUES (%s, %s, %s, %s) '
+                        '(school_name, known_for, campus_life_main, campus_life_more, '
+                        ' coa, merit_offered, merit_range_low, merit_range_high, '
+                        ' merit_notes, need_based_headline) '
+                        'VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s) '
                         'ON CONFLICT(school_name) DO UPDATE SET '
                         'known_for = EXCLUDED.known_for, '
                         'campus_life_main = EXCLUDED.campus_life_main, '
                         'campus_life_more = EXCLUDED.campus_life_more, '
+                        'coa = EXCLUDED.coa, '
+                        'merit_offered = EXCLUDED.merit_offered, '
+                        'merit_range_low = EXCLUDED.merit_range_low, '
+                        'merit_range_high = EXCLUDED.merit_range_high, '
+                        'merit_notes = EXCLUDED.merit_notes, '
+                        'need_based_headline = EXCLUDED.need_based_headline, '
                         'generated_at = NOW()',
                         (school_name,
                          content.get('known_for', ''),
                          content.get('campus_life_main', ''),
-                         content.get('campus_life_more', ''))
+                         content.get('campus_life_more', ''),
+                         content.get('coa'),
+                         content.get('merit_offered'),
+                         content.get('merit_range_low'),
+                         content.get('merit_range_high'),
+                         content.get('merit_notes'),
+                         content.get('need_based_headline'))
                     )
                 conn.commit()
     except Exception as e:
@@ -366,21 +455,28 @@ def get_or_generate_school_content(school_name: str, division: str = '',
         return cached
 
     print(f'[pregen] school cache miss, generating: {school_name}')
+    content = {
+        'known_for': '', 'campus_life_main': '', 'campus_life_more': '',
+        'coa': None, 'merit_offered': None, 'merit_range_low': None,
+        'merit_range_high': None, 'merit_notes': None, 'need_based_headline': None,
+    }
     try:
-        known_for = _generate_known_for(school_name, division, conference,
-                                        region, school_type)
+        content['known_for'] = _generate_known_for(school_name, division, conference,
+                                                    region, school_type)
         campus_main, campus_more = _generate_campus_life(school_name, division,
                                                           conference, region,
                                                           school_type, meta or {})
+        content['campus_life_main'] = campus_main
+        content['campus_life_more'] = campus_more
     except Exception as e:
-        print(f'[pregen] generation error for {school_name}: {e}')
-        return {'known_for': '', 'campus_life_main': '', 'campus_life_more': ''}
+        print(f'[pregen] content generation error for {school_name}: {e}')
 
-    content = {
-        'known_for':        known_for,
-        'campus_life_main': campus_main,
-        'campus_life_more': campus_more,
-    }
+    try:
+        cost = _generate_cost_data(school_name)
+        content.update(cost)
+    except Exception as e:
+        print(f'[pregen] cost generation error for {school_name}: {e}')
+
     _write_school_cache(school_name, content)
     return content
 

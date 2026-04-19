@@ -87,6 +87,20 @@ def _init_db():
                         generated_at     TEXT DEFAULT CURRENT_TIMESTAMP
                     )
                 """)
+                # Cost Layer 1 columns — added via ALTER TABLE so existing DBs migrate safely.
+                # SQLite does not support ADD COLUMN IF NOT EXISTS; catch duplicate errors.
+                for _col in [
+                    'ALTER TABLE school_content_cache ADD COLUMN coa INTEGER',
+                    'ALTER TABLE school_content_cache ADD COLUMN merit_offered INTEGER',
+                    'ALTER TABLE school_content_cache ADD COLUMN merit_range_low INTEGER',
+                    'ALTER TABLE school_content_cache ADD COLUMN merit_range_high INTEGER',
+                    'ALTER TABLE school_content_cache ADD COLUMN merit_notes TEXT',
+                    'ALTER TABLE school_content_cache ADD COLUMN need_based_headline TEXT',
+                ]:
+                    try:
+                        conn.execute(_col)
+                    except Exception:
+                        pass  # column already exists
                 conn.execute("""
                     CREATE TABLE IF NOT EXISTS program_content_cache (
                         id                     INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -150,6 +164,16 @@ def _init_db():
                     generated_at     TIMESTAMPTZ DEFAULT NOW()
                 )
             """)
+            # Cost Layer 1 columns — ADD COLUMN IF NOT EXISTS is safe on PostgreSQL
+            for _col in [
+                'ALTER TABLE school_content_cache ADD COLUMN IF NOT EXISTS coa INTEGER',
+                'ALTER TABLE school_content_cache ADD COLUMN IF NOT EXISTS merit_offered BOOLEAN',
+                'ALTER TABLE school_content_cache ADD COLUMN IF NOT EXISTS merit_range_low INTEGER',
+                'ALTER TABLE school_content_cache ADD COLUMN IF NOT EXISTS merit_range_high INTEGER',
+                'ALTER TABLE school_content_cache ADD COLUMN IF NOT EXISTS merit_notes TEXT',
+                'ALTER TABLE school_content_cache ADD COLUMN IF NOT EXISTS need_based_headline TEXT',
+            ]:
+                cur.execute(_col)
             cur.execute("""
                 CREATE TABLE IF NOT EXISTS program_content_cache (
                     id                     SERIAL PRIMARY KEY,
