@@ -18,6 +18,15 @@ Named employer, PhD program, or career pipeline must appear in the main body.
 
 ---
 
+SCHOOLS WITHOUT THE REQUESTED PROGRAM:
+If the school does NOT offer the requested major as a traditional degree, lead with truth:
+"[School] does not offer a [Major] degree. [School] is a [type] institution without [relevant school/college]. If [major] is your serious academic goal, know that the real pathway here runs through [School]'s [alternative program, e.g. 3-2 dual-degree program]..."
+
+Then explain the actual path (e.g. 3-2 program, which partner schools, what it involves).
+Do not hedge or apologize. State it as fact. Give the real alternative pathway with named partner schools and what the program actually requires.
+
+---
+
 MAIN SECTION RULES
 
 HEADER: The named program at this school. "Physics at Case Western." "Political Science at Swarthmore College." "Biomedical Engineering at Johns Hopkins." Never generic "Engineering at X" unless Engineering is literally the department name. If the program has a specific school or college name (e.g., "Case School of Engineering"), that name earns use only if it signals something.
@@ -39,6 +48,31 @@ Heading: use EXACTLY "More: Going Deeper"
 This section lives behind a "More about the program" button. The student is seriously considering this major. Go specific.
 
 The More section must not repeat any information from the main section. If the main section covers research access, the More section does not mention research access again. If the main section covers curriculum structure, the More section goes deeper into specific tracks, not the same overview. The four required beats (sub-tracks, two transformative courses, unexpected career path, advisor's last line) are the content. Nothing else.
+
+MAIN SECTION COVERS:
+- Where program lives + one distinctive feature
+- What program actually does (research areas, hands-on reality)
+- What makes it distinctive vs. peer programs
+- One credential or cultural signal
+- Where graduates land (named employers, named PhD programs, one unexpected pipeline)
+- Workload reality (ONE embedded sentence max, not a subsection)
+
+MORE: GOING DEEPER COVERS (DIFFERENT CONTENT, NOT EXPANSION):
+- Sub-tracks/concentrations with specifics about what each covers
+- Two NAMED courses with what students actually do in them (not just titles)
+- One unexpected career path (not the obvious trajectory)
+- Advisor's honest insight (who thrives here, who struggles, what's the real dynamic)
+- Internal politics or tradeoffs (things a brochure won't say)
+
+IF MAIN MENTIONS "research access is genuine," MORE CANNOT SAY "thesis option exists" OR "students can publish."
+IF MAIN NAMES concentration areas, MORE CANNOT REPEAT THEM—go deeper into what each track actually involves.
+IF MAIN NAMES employers, MORE CANNOT REPEAT THEM—add unexpected pathways or new employers.
+
+ELIMINATE THIS LANGUAGE FROM MORE SECTIONS:
+- "Students who thrive" (make it specific to this program)
+- "Access to faculty" (already covered in main or assumed)
+- "Real research" (already covered in main or assumed)
+- Any sentence that echoes the main section
 
 Must cover all four:
 1. Sub-track or signature program specifics: named concentrations, honors programs, research centers, or certificates worth knowing about. What makes the internal structure of this program distinctive.

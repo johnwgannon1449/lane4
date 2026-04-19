@@ -23,16 +23,33 @@ Every sentence means something to a nervous 16-year-old thinking about where the
 
 MAIN SECTION REQUIREMENTS
 
-Cover all six in any order that flows naturally. Do not use sub-headers or bullet points. Flowing prose only.
+Opener must answer: "Why would this kid actually want to live here?" Sell the experience, not the amenities.
+Use specifics ONLY if they explain something he'd care about. Never list features.
+  ❌ "Bowdoin has freshman dorms in the residential college system"
+  ✅ "Freshman year you're in tight-knit dorms but isolated from the party scene—by design"
+  ❌ "Portland is 30 minutes away"
+  ✅ "Students bike to Portland Thursday nights for the bar scene, which means Friday is recovery/study"
 
-1. Geography and setting: college town vs city, walkability, whether a car is needed and when, what access to the surrounding area looks like in daily practice
-2. Living situation: freshman housing called out specifically by name or dorm type, sophomore and junior scatter patterns, whether the campus stays residential or empties out
-3. Social architecture: Greek life weight (dominant, present, minimal, or none), where Friday nights actually happen, what freshman week one looks like, what creates social anchors
-4. Campus energy: is this a football-Saturday school or a ghost-town weekend campus, what creates shared identity, what brings the campus together or does not
-5. Vibe and culture: competitive vs collaborative, political temperature, gender ratio if notable, what kind of student self-selects here and what kind does not
-6. Athlete integration: celebrated, respected, neutral, or invisible on this campus, with a specific observation rather than a label
+Cover all of the following in any order that flows naturally. Do not use sub-headers or bullet points. Flowing prose only.
+
+MAIN CAMPUS LIFE COVERS:
+1. What makes this place actually different (the vibe, the social truth) — not geography facts
+2. Where/when social life actually happens (and what that means for daily life)
+3. How freshman housing works and what that experience is actually like
+4. Where athletes fit in the social picture (are they central, peripheral, respected, isolated?)
+5. Geography/setting ONLY if it shapes daily life (not just "location facts")
+6. Campus energy and culture in concrete terms, not adjectives
+
+Cannot be generic. If this section could describe 40 schools, it fails.
+Must read like synthesized student voice, not a viewbook. Tell him what the viewbook won't.
 
 Length: 400-600 words. The opener must stop scrolling.
+
+LANGUAGE TO KILL:
+- "Students who thrive here tend to be..." ❌ (make it specific: "Students who want [X] thrive; students who want [Y] struggle")
+- Generic adjectives: "vibrant," "energetic," "welcoming," "tight-knit" ❌ (show, don't tell)
+- Feature lists: "The campus has a gym, library, student center..." ❌ (nobody cares)
+- Viewbook tone: "Beautiful campus," "Strong traditions," "Engaged community" ❌
 
 ---
 
@@ -40,11 +57,13 @@ MORE: LIFE OUTSIDE THE POOL (EXPANSION SECTION)
 
 This section lives behind a "More about student life" button. The family has read the main section and wants more. Go deeper on the texture of life here.
 
-Must cover:
-- The local bubble phenomenon, if students name it: does the campus create its own world, and what happens to students who stay inside it vs those who use the city or town deliberately
-- Specific neighborhoods, traditions, and late-night food mythology that actual students mention by name
-- What the viewbook will not say: the honest friction, the complaint that shows up on every review site, the thing that surprises students freshman year
-- The sorting line: who thrives here, who does not. This is the most important sentence in this section. Be specific and honest.
+MORE: LIFE OUTSIDE THE POOL COVERS (DIFFERENT ANGLE FROM MAIN):
+- The sorting line: who actually thrives here, who doesn't, why — this is the most important sentence in this section. Be specific and honest.
+- What the viewbook will not say (the honest reality, the complaint that shows up on every review site)
+- Local specifics only if they matter (the neighborhood where students actually go, what happens there)
+- Internal dynamics (is Greek life the social center or fringe? Do athletes have their own thing or are they integrated?)
+- The real tradeoffs (what you get, what you lose, who's okay with that)
+- The local bubble phenomenon if students name it: does the campus create its own world, and what happens to students who stay inside it vs those who use the city or town deliberately
 
 Heading: use EXACTLY "More: Life Outside the Pool"
 Length: 200-350 words.
