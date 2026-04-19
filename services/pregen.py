@@ -19,17 +19,17 @@ from prompts_config import (
     MINOR_PROMPT,
 )
 
-_HAIKU_MODEL       = 'claude-sonnet-4-6-20250514'
+_PREGEN_MODEL      = 'claude-sonnet-4-6-20250514'
 _WEB_SEARCH        = {'type': 'web_search_20250305', 'name': 'web_search', 'max_uses': 5}
 _CALL_TIMEOUT_SECS = 60
 
 
 # ---------------------------------------------------------------------------
-# Internal: Haiku API call with web search agentic loop
+# Internal: Sonnet API call with web search agentic loop
 # ---------------------------------------------------------------------------
 
-def _call_haiku(system: str, user_message: str) -> str:
-    """Call Haiku 4.5 with web search. Runs the tool loop until end_turn.
+def _call_pregen(system: str, user_message: str) -> str:
+    """Call Sonnet with web search. Runs the tool loop until end_turn.
 
     Each API round is capped at _CALL_TIMEOUT_SECS. TimeoutError propagates
     to the caller (get_or_generate_*), which catches it and returns empty
@@ -43,7 +43,7 @@ def _call_haiku(system: str, user_message: str) -> str:
 
     def _single_round(msgs):
         return client.messages.create(
-            model=_HAIKU_MODEL,
+            model=_PREGEN_MODEL,
             max_tokens=4000,
             system=system,
             tools=[_WEB_SEARCH],
@@ -56,8 +56,8 @@ def _call_haiku(system: str, user_message: str) -> str:
             try:
                 response = future.result(timeout=_CALL_TIMEOUT_SECS)
             except _futures.TimeoutError:
-                print(f'[pregen] Haiku API call timed out after {_CALL_TIMEOUT_SECS}s')
-                raise TimeoutError(f'Haiku call exceeded {_CALL_TIMEOUT_SECS}s')
+                print(f'[pregen] Sonnet API call timed out after {_CALL_TIMEOUT_SECS}s')
+                raise TimeoutError(f'Sonnet call exceeded {_CALL_TIMEOUT_SECS}s')
 
         text = ''.join(b.text for b in response.content if hasattr(b, 'text'))
 
@@ -144,7 +144,7 @@ def _generate_known_for(school_name: str, division: str, conference: str,
         f"Research {school_name} using web search, then write the "
         f"'What School Is Known For' section following the rules and exemplar above."
     )
-    return _strip_narration(_call_haiku(SCHOOL_KNOWN_FOR_PROMPT, user_msg))
+    return _strip_narration(_call_pregen(SCHOOL_KNOWN_FOR_PROMPT, user_msg))
 
 
 def _generate_campus_life(school_name: str, division: str, conference: str,
@@ -163,7 +163,7 @@ def _generate_campus_life(school_name: str, division: str, conference: str,
           f"school paper), then write the Campus Life section and the "
           f"'More: Life Outside the Pool' expansion following the rules and exemplar above."
     )
-    raw = _strip_narration(_call_haiku(CAMPUS_LIFE_PROMPT, user_msg))
+    raw = _strip_narration(_call_pregen(CAMPUS_LIFE_PROMPT, user_msg))
     return _split_on_heading(raw, 'More: Life Outside the Pool')
 
 
@@ -177,7 +177,7 @@ def _generate_major(school_name: str, division: str, major: str) -> tuple:
         f"then write the Academic Program section and 'More: Going Deeper' expansion "
         f"following the rules and exemplars above."
     )
-    raw = _strip_narration(_call_haiku(MAJOR_PROMPT, user_msg))
+    raw = _strip_narration(_call_pregen(MAJOR_PROMPT, user_msg))
     return _split_on_heading(raw, 'More: Going Deeper')
 
 
@@ -190,7 +190,7 @@ def _generate_minor(school_name: str, major: str, minor: str) -> str:
         f"(academic catalog, department pages), then write the Minor section "
         f"following the rules above."
     )
-    return _strip_narration(_call_haiku(MINOR_PROMPT, user_msg))
+    return _strip_narration(_call_pregen(MINOR_PROMPT, user_msg))
 
 
 _COST_LAYER1_SYSTEM = """You are a research assistant extracting cost data for a college planning tool.
@@ -221,7 +221,7 @@ def _generate_cost_data(school_name: str) -> dict:
         f"Use web search to find current cost of attendance and financial aid data for {school_name}. "
         f"Return the JSON object as specified."
     )
-    raw = _call_haiku(_COST_LAYER1_SYSTEM, user_msg).strip()
+    raw = _call_pregen(_COST_LAYER1_SYSTEM, user_msg).strip()
     # Strip markdown code fences if the model wrapped the JSON
     if raw.startswith('```'):
         raw = raw.split('```')[1]
