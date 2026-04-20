@@ -18,9 +18,12 @@ import sys
 import json
 import time
 import concurrent.futures as _futures
+from dotenv import load_dotenv
 
 # Add project root to path so imports work
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+load_dotenv()
 
 try:
     import psycopg2
@@ -341,6 +344,11 @@ def _pregen_minor_content(school_name: str, minor: str) -> None:
 # ---------------------------------------------------------------------------
 
 def main():
+    SCHOOLS = [
+        'Worcester Polytechnic Institute',
+        'Rose-Hulman Institute of Technology',
+    ]
+
     print('=' * 65)
     print('LANE4 PRE-GENERATION SCRIPT')
     print(f'Schools: {len(SCHOOLS)}  |  Majors: {len(MAJORS)}  |  Minors: {len(MINORS)}')
