@@ -30,3 +30,7 @@ COST_PROMPT             = _load_file('cost_prompt.txt')
 # Feature flag: set to True to use upgraded Bottom Line voice (Phase 1a).
 # Set to False to revert to original Bottom Line behavior.
 BOTTOM_LINE_V2 = True
+
+import sys
+print(f"[PROMPTS_CONFIG] Loaded at {sys.argv[0]}", file=sys.stderr)
+print(f"[PROMPTS_CONFIG] BOTTOM_LINE_V2_PROMPT length: {len(LANE4_BOTTOM_LINE_V2_PROMPT)}", file=sys.stderr)
