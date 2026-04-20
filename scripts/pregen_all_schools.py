@@ -23,7 +23,8 @@ from dotenv import load_dotenv
 # Add project root to path so imports work
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-load_dotenv()
+# Load .env from project root regardless of where the script is run from
+load_dotenv(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), '.env'))
 
 try:
     import psycopg2
