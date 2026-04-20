@@ -444,8 +444,12 @@ def deep_dive():
         return jsonify({'error': 'school is required'}), 400
 
     times = prof_ovr.get('times') or JAMES['times']
-    sat   = int(prof_ovr.get('sat')  or JAMES['sat'])
-    gpa   = float(prof_ovr.get('gpa') or JAMES['gpa'])
+    _profile_sat = prof_ovr.get('sat')
+    _profile_gpa = prof_ovr.get('gpa')
+    sat   = int(_profile_sat   or JAMES['sat'])
+    gpa   = float(_profile_gpa or JAMES['gpa'])
+    _has_profile_sat = bool(_profile_sat)
+    _has_profile_gpa = bool(_profile_gpa)
     swimmer_name = prof_ovr.get('name') or JAMES['name']
     math_sat         = prof_ovr.get('mathSat',          JAMES.get('mathSat', ''))
     sat_projected    = prof_ovr.get('satProjected',     JAMES.get('satProjected', ''))
@@ -519,7 +523,7 @@ def deep_dive():
     other_prefs  = data.get('otherPrefs', '')
     vibe_lines   = _build_vibe_lines(vibe_answers, other_prefs)
 
-    _merit_sat = sat or (_act_to_sat(act_score) if act_score else 0)
+    _merit_sat = (sat if _has_profile_sat else 0) or (_act_to_sat(act_score) if act_score else 0)
     money = _estimate_merit_block(
         merit_level = meta.get('merit', 'moderate'),
         sat         = _merit_sat,
@@ -543,15 +547,25 @@ def deep_dive():
             f"(use these to personalize Campus Life and tone):\n{vibe_lines}\n"
         )
 
-    hidden_ivy_note = '\nThis is a Hidden Ivy — academically elite, employer-respected, without the brand tax.' if meta.get('hiddenIvy') else ''
+    hidden_ivy_note = '\nThis school is academically elite and employer-respected without the Stanford-level rejection rate. Convey that reality without using the phrase "Hidden Ivy."' if meta.get('hiddenIvy') else ''
     stem_note       = '\nStrong STEM programs.' if meta.get('stem') else ''
 
-    sat_detail = f"SAT {sat}" if sat else ""
-    if sat and math_sat:
+    sat_detail = f"SAT {sat}" if (sat and _has_profile_sat) else ""
+    if sat and _has_profile_sat and math_sat:
         sat_detail += f" (math {math_sat})"
     if act_score:
         sat_detail += (", " if sat_detail else "") + f"ACT {act_score}"
     ap_detail = f", {ap_count} projected APs" if ap_count else ""
+
+    # Academic credentials string for prompts — only includes fields actually provided
+    _acad_parts = []
+    if _has_profile_gpa:
+        _acad_parts.append(f"GPA {gpa} unweighted")
+    if sat_detail:
+        _acad_parts.append(sat_detail)
+    if ap_detail.strip(', '):
+        _acad_parts.append(ap_detail.strip(', '))
+    _swimmer_acad_str = (", " + ", ".join(_acad_parts)) if _acad_parts else ""
 
     # Structured major inputs (take priority over vibe career/academic fallback)
     primary_major   = (prof_ovr.get('primaryMajor')   or data.get('primaryMajor',   '')).strip()
@@ -573,11 +587,14 @@ def deep_dive():
     sat75        = meta.get('sat75', 0)
     gpa_mean     = meta.get('gpaMean', 0)
     accept_rate  = meta.get('accept', 0)
-    adm_swimmer  = f"GPA {gpa} unweighted"
-    if sat:
-        adm_swimmer += f", SAT {sat}"
+    adm_parts = []
+    if _has_profile_gpa:
+        adm_parts.append(f"GPA {gpa} unweighted")
+    if _has_profile_sat and sat:
+        adm_parts.append(f"SAT {sat}")
     if act_score:
-        adm_swimmer += f", ACT {act_score}"
+        adm_parts.append(f"ACT {act_score}")
+    adm_swimmer = ", ".join(adm_parts) if adm_parts else "academics not provided"
     adm_school_parts = [f"~{accept_rate}% acceptance rate"]
     if sat_median:
         adm_school_parts.append(f"SAT median ~{sat_median}")
@@ -595,19 +612,20 @@ def deep_dive():
     prog_strength = _program_strength_desc(result)
     conf_tier_short = result.get('confTierShort', '')
     super_powerhouse_note = (
-        f"\nIMPORTANT: {result['school']} is a Super Powerhouse — they dominate their conference "
-        f"and recruit well above what most peer schools in {result['conference']} can attract. "
+        f"\nIMPORTANT: {result['school']} dominates {result['conference']} and recruits well "
+        "above what most peer schools in that conference can attract. "
         "In 'In the Pool', call this out directly and tell the swimmer to look closely "
-        "at the current roster and committed recruits before assuming a spot."
+        "at the current roster and committed recruits before assuming a spot. "
+        "Do not use the phrase 'Super Powerhouse.'"
     ) if conf_tier_short == '1A' else ''
 
     _base_system = (
         LANE4_DEEP_DIVE_PROMPT + "\n\n"
-        "Lane4 Technical Vocabulary (always apply):\n"
-        "- Never use the word 'tier' — describe programs as 'Super Powerhouse', 'Powerhouse', "
-        "'dominant in conference', 'competitive', etc.\n"
-        "- 'Hidden Ivy' = academically elite and employer-respected without the Stanford rejection "
-        "rate. Use naturally when applicable.\n"
+        "Lane4 Output Rules (always apply):\n"
+        "- Never use internal tier labels in output text: no 'Super Powerhouse', 'Powerhouse', "
+        "'Hidden Ivy', 'Priority Recruit', 'Serious Recruit', 'Recruitable', or any recruiting "
+        "likelihood label. Describe programs and fit in natural language instead.\n"
+        "- Never use the word 'tier'.\n"
         "- Never use the words 'profile', 'good school', 'strong fit', or 'also'.\n"
         "- No em dashes anywhere in the output.\n"
         "- Respond using markdown sections starting with ## for each section title.\n"
@@ -658,22 +676,25 @@ def deep_dive():
     # Outcomes + Career Paths — always included
     _outcomes_section = (
         "\n## Outcomes\n"
-        "3-4 sentences. Where do graduates from this school typically land? "
-        "Use named employers, named graduate programs. "
-        "Include honest geographic limits (e.g. 'alumni network is strongest in the Northeast'). "
-        "Do not read like a brochure. Include one unexpected career path. "
-        "Be specific to this school. No generic statements.\n"
+        "Your job: Explain what happens after graduation, specifically to this school's graduates.\n"
+        "1. Named employers, not generic: 'McKinsey, Deloitte, Goldman' not 'consulting firms.'\n"
+        "2. Named graduate schools: 'Johns Hopkins Medical, Penn Medical, UCSF' not 'top medical schools.'\n"
+        "3. Career paths: Where do graduates in the swimmer's likely field actually go? Name specific paths.\n"
+        "4. Geographic limits: Be honest — 'Alumni network strongest in Northeast, thin on West Coast' if true.\n"
+        "5. One unexpected path per school: health policy, startup, nonprofit, government, etc.\n"
+        "6. Graduate school pipelines: If strong, name them. If thinner, be honest.\n"
+        "7. Do not oversell the network. Be honest about where it is strong and where it is weak.\n"
         "\n## More: Career Paths\n"
         "Use EXACTLY this heading: 'More: Career Paths'\n"
         "Expanded career section (shown behind a 'More about career paths' button). 6-8 sentences:\n"
-        "- Typical employers by name if known (not just 'finance' but specific firms)\n"
+        "- Typical employers by name (not just 'finance' but specific firms)\n"
         "- Graduate school pipelines: where graduates apply, acceptance rates if known\n"
         "- Industry concentrations this school is known for placing into\n"
-        "- Geographic career advantages: does location or alumni base help in specific cities\n"
-        "- Alumni network strength and how alumni engage with undergraduates\n"
+        "- Geographic career advantages: does location or alumni base help in specific cities?\n"
+        "- Alumni network strength and how alumni actually engage with undergraduates\n"
         "- On-campus recruiting, employer partnerships, or career center strengths\n"
         "- Honest gaps: industries or regions where this school's network is thin\n"
-        "Sound informed. Name specifics where possible. Do not promote.\n"
+        "Sound informed. Name specifics. Do not promote.\n"
     )
 
     # Bottom Line instruction — v2 (label-aware) or v1 (original)
@@ -792,8 +813,7 @@ def deep_dive():
                 )
                 user_prompt = (
                     f"Write a deep dive for {swimmer_name} considering {result['school']}.\n\n"
-                    f"SWIMMER: {swimmer_name}, Class of {grad_year}, GPA {gpa} unweighted, "
-                    f"{sat_detail}{ap_detail}."
+                    f"SWIMMER: {swimmer_name}, Class of {grad_year}{_swimmer_acad_str}."
                     f"{vibe_block}\n"
                     f"SCHOOL: {result['school']}\n"
                     f"School vibe: {meta.get('vibe', '')}\n"
@@ -808,11 +828,15 @@ def deep_dive():
                     f"{_kf_instr}"
                     f"{_acad_instr}"
                     "## Are You Admissible?\n"
-                    "Use the ADMISSION COMPARISON above. Compare swimmer numbers to school numbers. "
-                    "Show the swimmer's numbers vs the school's range. State the acceptance rate and median scores. "
-                    "Be honest about reach vs realistic vs safety. "
-                    "Do not predict admission outcomes. For hyper-selective schools (MIT, Harvard, Stanford, Caltech), never say 'you're a lock.' "
-                    "One brief note on whether swim support might help if applicable.\n"
+                    "Your job: Be brutally honest about admissions odds.\n"
+                    "1. Show the numbers: GPA vs. median, SAT vs. range, acceptance rate (exact %, no 'approximately'). "
+                    "If academic data was not provided, state that and focus on acceptance rate context.\n"
+                    "2. Call it clearly: If acceptance rate is under 10%, say 'this is a reach.'\n"
+                    "3. If SAT is notably below median AND acceptance is under 15%, say: "
+                    "'This is a reach by any honest reading.'\n"
+                    "4. Coach context: Mention coach support only if relevant. Do NOT oversell.\n"
+                    "5. Do NOT use euphemism: 'competitive,' 'ambitious,' 'stretch' — use reach/realistic/safety.\n"
+                    "6. If the numbers do not support admission, say so plainly.\n"
                     f"{_cost_instr}"
                     f"{_campus_instr}"
                     "## How It Compares to Your D3 Options\n"
@@ -829,8 +853,7 @@ def deep_dive():
                 )
                 user_prompt = (
                     f"Write a deep dive for {swimmer_name} considering {result['school']}.\n\n"
-                    f"SWIMMER: {swimmer_name}, Class of {grad_year}, GPA {gpa} unweighted, "
-                    f"{sat_detail}{ap_detail}."
+                    f"SWIMMER: {swimmer_name}, Class of {grad_year}{_swimmer_acad_str}."
                     f"{vibe_block}\n"
                     f"SWIM DATA AT {result['school'].upper()} ({result['conference']}):\n"
                     f"Top events: {top3_text}\n"
@@ -847,26 +870,37 @@ def deep_dive():
                     "Use 'Hidden Ivy' naturally if applicable.\n\n"
                     f"{_bl_inuniverse_instruction}"
                     "## In the Pool\n"
-                    "Where this swimmer lands on the team. What that means. Trajectory if they hold or drop time. "
-                    "Sound like a coach talking plainly. No internal metrics. "
-                    "CRITICAL: Do not claim to know what is on the school's current roster. "
-                    "Do not say 'they already have distance talent' or 'they are loaded at [event].' "
-                    "Frame as: check the roster yourself, talk to the coach. "
-                    "Use projected conference places (Contender, A Final, Podium) not raw times. "
-                    "Project the swimmer's place in the conference, not on a roster we haven't seen.\n"
+                    "Your job: Explain pool fit honestly, no hedging.\n"
+                    "1. Conference level: What conference is this, and where do the swimmer's times sit?\n"
+                    "2. Event reality: Is this an A final? B final? Contributing piece? "
+                    "State actual conference placement. No vague projections.\n"
+                    "3. Roster check: Direct them to verify depth at their events. "
+                    "Do NOT claim to know what is on the current roster.\n"
+                    "4. Time drop language: ONLY mention time improvement if the swimmer is BORDERLINE or REACH. "
+                    "If they are a solid recruit at this program, do NOT say 'a drop makes it better' — they already belong.\n"
+                    "5. Be specific to THIS school and THIS conference. Do not repeat generic language across schools.\n"
                     "## Coach Interest — What to Expect\n"
-                    "Likely level of recruiting engagement. Will they respond quickly? Is this swimmer a priority? "
-                    "What moves the needle: time drops, roster gaps, event needs. "
-                    "Academics: one sentence maximum. State once that the academic record means admissions won't block the recruit, then move on. Do not spend a paragraph on GPA and APs.\n"
+                    "Your job: Explain what this coach will actually do, honestly.\n"
+                    "1. Coach profile: What do coaches at this program want? What is their recruiting style?\n"
+                    "2. Academic check: One sentence maximum. If academics clear admission, say so and move on. "
+                    "If no academic data was provided, skip this entirely.\n"
+                    "3. Swimming reality: Will this coach move fast or be patient? What triggers urgency?\n"
+                    "4. Time drop: ONLY mention trajectory if the swimmer is currently on the fence at this school. "
+                    "Do not mention it if they are already a solid recruit.\n"
+                    "5. Concrete action: Give a specific next step — 'Email the coach with your times' or 'Reach out before [season].'\n"
+                    "6. Do not repeat 'course rigor matters' or generic academic language across outputs.\n"
                     f"{_kf_instr}"
                     f"{_acad_instr}"
                     "## Are You Admissible?\n"
-                    "Use the ADMISSION COMPARISON above. Compare swimmer numbers to school numbers directly. "
-                    "Plain-English read: in range, above, slightly below, or real reach. "
-                    "Show the swimmer's numbers vs the school's range. State the acceptance rate and median scores. "
-                    "Be honest about reach vs realistic vs safety. "
-                    "Do not predict admission outcomes. For hyper-selective schools (MIT, Harvard, Stanford, Caltech), never say 'you're a lock.' "
-                    "One brief sentence on whether swim recruit support helps, if applicable.\n"
+                    "Your job: Be brutally honest about admissions odds.\n"
+                    "1. Show the numbers: GPA vs. median, SAT vs. range, acceptance rate (exact %, no 'approximately'). "
+                    "If academic data was not provided, state that and focus on acceptance rate context.\n"
+                    "2. Call it clearly: If acceptance rate is under 10%, say 'this is a reach.'\n"
+                    "3. If SAT is notably below median AND acceptance is under 15%, say: "
+                    "'This is a reach by any honest reading.'\n"
+                    "4. Coach context: Mention coach support only if relevant. Do NOT oversell at D3 level.\n"
+                    "5. Do NOT use euphemism: 'competitive,' 'ambitious,' 'stretch' — use reach/realistic/safety.\n"
+                    "6. If the numbers do not support admission, say so plainly.\n"
                     f"{_cost_instr}"
                     f"{_campus_instr}"
                     f"{_outcomes_section}"

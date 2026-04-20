@@ -1,100 +1,58 @@
 CAMPUS LIFE: RULES AND VOICE STANDARD
 
-You will receive the name of a college or university, its location, type, division, conference, and any available SCHOOL_META fields (freshmanHousing, greekLife, residentialPattern, athleteIntegration, genderRatio, townVibe, campusTemperature). Before writing, use web search to research this school.
+Your job: Answer one question only: "What is daily life actually like here for this specific school?"
 
-RESEARCH DIRECTIVE: Search Reddit (r/[schoolname], r/applyingtocollege posts mentioning this school), Niche, Unigo, student reviews, and the school's student newspaper. Look for: what students say about freshman year, Greek life weight, where social life actually happens on Friday nights, what campus energy feels like on a normal weekend, how athletes are perceived, specific neighborhoods students name, traditions students mention, complaints that show up consistently, and what surprises students after they arrive. Named specifics beat generalities at every turn.
-
-SCHOOL_META fields are guardrails, not content. They tell you what the school's social architecture looks like. The writing comes from what students actually say.
+Not: What amenities exist? What location? What features?
+Yes: What does a student wake up to? Where do people gather? What's the social rhythm? Who fits, who doesn't?
 
 ---
 
-VOICE STANDARD (ABSOLUTE RULES)
+STRUCTURE
 
+MAIN SECTION (4-6 sentences):
+- Dorm/housing reality for freshmen (what's the living situation, what community forms there)
+- Where and when social life actually happens (Friday nights, weekends, weekday hangouts)
+- Campus size/feel and whether it's integrated with city or isolated
+- One honest detail about who thrives here and who doesn't
+
+MORE: LIFE OUTSIDE THE POOL (DIFFERENT ANGLE — 4-6 sentences):
+- Social infrastructure reality (Greek? Teams? Clubs? What's the actual anchor?)
+- Academic pressure and workload (how it shapes daily life)
+- City access if relevant (how often do students actually leave campus)
+- Honest friction (insularity, limited nightlife, competitiveness, gender ratio, diversity gaps)
+- Tradeoff clarity (what you get, what you lose)
+
+---
+
+LANGUAGE RULES
+
+Never use: "vibrant," "welcoming," "tight-knit," "energetic," "engaged," "community"
+Never list amenities: "has a gym," "student center," "dining hall"
+Never use generic: "students can," "opportunities abound," "real culture"
+Use specifics that matter: dorm names only if they explain something (e.g., "freshman dorms are separate and tight but isolating by design")
+Name actual places: "students bike to [neighborhood] on Thursday nights," not "the city is accessible"
+Be honest about sorting: "pre-med students cluster in science houses and the competitive vibe is real," not "students who thrive are collaborative"
 No m-dashes, em-dashes, or en-dashes anywhere. Use colons, commas, or periods instead.
-No consolation-prize language. No generic praise.
 No viewbook tone. If this sentence could appear in the school's admissions brochure, rewrite it.
-Named specifics only. The name of a specific dining hall, neighborhood, tradition, or late-night spot beats any generic description.
-Opens with energy that sells the place before the kid writes it off. The skimmer has to stop scrolling.
-Synthesizes real student voice. Do not promote. Do not deflate. Report.
-Every sentence means something to a nervous 16-year-old thinking about where they want to live for four years.
-"Specific and earned" is the governing standard.
 
 ---
 
-MAIN SECTION REQUIREMENTS
+EXAMPLES OF WHAT WE WANT
 
-Opener must answer: "Why would this kid actually want to live here?" Sell the experience, not the amenities.
-Use specifics ONLY if they explain something he'd care about. Never list features.
-  ❌ "Bowdoin has freshman dorms in the residential college system"
-  ✅ "Freshman year you're in tight-knit dorms but isolated from the party scene—by design"
-  ❌ "Portland is 30 minutes away"
-  ✅ "Students bike to Portland Thursday nights for the bar scene, which means Friday is recovery/study"
+Hopkins Homewood:
+"Homewood campus is contained in north Baltimore, with genuine green space and gothic architecture. Freshmen live separately from upperclassmen, which creates tight dorm communities but isolates them from the main social scene for a year. The student body skews heavily STEM and research-focused, and the academic intensity is real from week one. The swim team provides a social anchor for athletes; outside of that, students build community through labs, clubs, and intentional effort. Baltimore has museums and culture; students who want it use it. Students who expect it to deliver social life will be disappointed."
 
-Cover all of the following in any order that flows naturally. Do not use sub-headers or bullet points. Flowing prose only.
+Case Western University Circle:
+"Case sits in University Circle, Cleveland's concentrated cultural neighborhood, which means museums, concert halls, and art access are literal walking distance. The campus itself is compact. Freshmen and upperclassmen mix, and the residence halls house heavy STEM and pre-med students with a real academic intensity. Social life requires intentional construction: Greek life is active, but a significant portion of students build community through labs and project teams. Students who thrive here are self-directed and don't need a ready-made social scene. Students expecting a traditional college social scene often struggle."
 
-MAIN CAMPUS LIFE COVERS:
-1. What makes this place actually different (the vibe, the social truth) — not geography facts
-2. Where/when social life actually happens (and what that means for daily life)
-3. How freshman housing works and what that experience is actually like
-4. Where athletes fit in the social picture (are they central, peripheral, respected, isolated?)
-5. Geography/setting ONLY if it shapes daily life (not just "location facts")
-6. Campus energy and culture in concrete terms, not adjectives
+Swarthmore:
+"Swarthmore's campus is small (1,600 students) and contained in suburban Philadelphia, which creates a tight residential community. Freshmen live in residential colleges that are genuinely communal; that dorm experience shapes the school's tight social fabric. The intellectual culture bleeds into daily life in ways that attract students who want to talk about ideas. Outside of class, students use Philadelphia (accessible by train) for concerts and food, but campus is where most life happens. Students who want deep intellectual engagement and close faculty relationships thrive. Students who want anonymity or a large university energy struggle."
 
-Cannot be generic. If this section could describe 40 schools, it fails.
-Must read like synthesized student voice, not a viewbook. Tell him what the viewbook won't.
+WPI Worcester:
+"WPI's campus is compact, which creates a tight community feel despite Worcester being a real city. The project-based curriculum shapes social life too: project teams and collaboration are where bonds form. Seven-week terms mean the pace is fast and intense; students praise the faculty access and the sense that work connects to something real. Greek life exists and is visible. Students who thrive like working on real problems with other people. Students who prefer traditional lectures and independent study find the pace frustrating."
 
-Length: 400-600 words. The opener must stop scrolling.
-
-LANGUAGE TO KILL:
-- "Students who thrive here tend to be..." ❌ (make it specific: "Students who want [X] thrive; students who want [Y] struggle")
-- Generic adjectives: "vibrant," "energetic," "welcoming," "tight-knit" ❌ (show, don't tell)
-- Feature lists: "The campus has a gym, library, student center..." ❌ (nobody cares)
-- Viewbook tone: "Beautiful campus," "Strong traditions," "Engaged community" ❌
-
----
-
-MORE: LIFE OUTSIDE THE POOL (EXPANSION SECTION)
-
-This section lives behind a "More about student life" button. The family has read the main section and wants more. Go deeper on the texture of life here.
-
-MORE: LIFE OUTSIDE THE POOL COVERS (DIFFERENT ANGLE FROM MAIN):
-- The sorting line: who actually thrives here, who doesn't, why — this is the most important sentence in this section. Be specific and honest.
-- What the viewbook will not say (the honest reality, the complaint that shows up on every review site)
-- Local specifics only if they matter (the neighborhood where students actually go, what happens there)
-- Internal dynamics (is Greek life the social center or fringe? Do athletes have their own thing or are they integrated?)
-- The real tradeoffs (what you get, what you lose, who's okay with that)
-- The local bubble phenomenon if students name it: does the campus create its own world, and what happens to students who stay inside it vs those who use the city or town deliberately
-
-Heading: use EXACTLY "More: Life Outside the Pool"
-Length: 200-350 words.
-
----
-
-LOCKED EXEMPLAR
-
-Case Western Reserve University:
-
-Main section:
-
-University Circle is one of the most underrated places to spend four years in America: world-class museums, great food, a real city with professional sports and genuine neighborhoods, all wrapped around a compact walkable campus where getting anywhere doesn't require a car or a plan. Cleveland beyond that bubble does require both, and the kids who thrive here figure that out early and build a life that uses the city deliberately. The ones who don't can feel marooned.
-
-Freshman year, most students land in the North Residential Village: suite-style dorms, newer construction, and a first-year community that forms fast because everyone is in the same academic pressure cooker together. The shared grind is real social glue. By sophomore year some students move to older on-campus housing and by junior year a meaningful number scatter into nearby apartments, but campus doesn't go dark. The research culture and team commitments keep people around.
-
-Greek life exists and provides some social infrastructure, but it doesn't run the campus. Nobody feels left out for skipping it. The real social gravity is the cohort: the people in your major, your lab, your team. Friday nights range from house parties in the Juniper residential area to low-key nights in Little Italy, which is a genuinely great neighborhood sitting right on campus's edge with real restaurants and a walkable human scale that surprises most families on the visit. Coventry Village in Cleveland Heights is twenty minutes away and worth knowing about: indie bookstores, coffee shops, a different energy entirely.
-
-Cleveland itself has professional sports, a serious restaurant scene, and more cultural infrastructure than its reputation suggests. The Cavs, Guardians, and Browns are all real parts of student life for the kids who seek it. The museums in University Circle are world class and literally across the street, and get used less than they should. The weather is the weather. Lake effect snow is not a rumor and January through March requires a psychological adjustment that nobody fully prepares for.
-
-This is not a football Saturday campus. D3 sports exist and athletes are respected. The academic culture here doesn't look down on swimmers, it just doesn't organize itself around them either. The shared identity at CWRU is the grind itself. These kids bond over problem sets and all-nighters and the particular pride of surviving a program that doesn't curve its way to happy outcomes. The social temperature is collaborative, occasionally intense, politically mixed without being activist, and almost universally driven by people who are serious about where they're going.
-
-More: Life Outside the Pool:
-
-The Case bubble is a real phenomenon that students name without being asked. The campus is self-contained enough that weeks can go by without leaving University Circle if you let them. The students who report loving Cleveland are almost always the ones who made a deliberate decision early to get off campus regularly. They found a neighborhood, a coffee shop, a running route through Lakeview Cemetery which is genuinely beautiful and not as strange as it sounds. The ones who report feeling isolated usually didn't.
-
-Little Italy deserves more than a mention. It's walkable, has a neighborhood feel that most urban campuses don't have access to, and functions as a genuine off-campus social scene without requiring a car or an Uber. Mayfield Road has late night food options that become part of the freshman year mythology pretty quickly.
-
-The gender ratio skews slightly male given the STEM composition of the student body, not dramatically but noticeably. Worth knowing before you arrive with expectations shaped by a different kind of campus.
-
-One thing that doesn't show up in the viewbook: CWRU students have an unusually strong sense of shared identity built around academic seriousness. It's not a party school and it doesn't pretend to be. The kids who are happiest here arrived knowing that and decided it was exactly what they wanted. The ones who needed something else figured it out by Thanksgiving of freshman year.
+MIT Cambridge:
+"MIT sits directly across from Boston, and the city is part of student life in ways it isn't at most colleges. The student body is small, intensely focused, and self-selecting: people here genuinely enjoy hard problems. Dorms are integral to MIT culture and shape social life significantly. Outside of classes and problem sets, students engage through student clubs, making, performing, and actual city exploration. The social environment feels less like traditional college and more like a community of people who picked each other. Students who find that energizing thrive. Students who want to escape intensity struggle."
 
 ---
 
@@ -102,9 +60,9 @@ OUTPUT FORMAT
 
 Write two sections in sequence.
 
-Section 1: The main Campus Life body. No heading. Start writing immediately with the opener sentence. 400-600 words.
+Section 1: The main Campus Life body. No heading. Start writing immediately with the first sentence. 4-6 sentences.
 
-Section 2: The More expansion. Use EXACTLY this heading on its own line: "More: Life Outside the Pool". Then write the expansion body. 200-350 words.
+Section 2: The More expansion. Use EXACTLY this heading on its own line: "More: Life Outside the Pool". Then write the body. 4-6 sentences covering a different angle from the main section.
 
 No introductions, no meta-commentary, no additional headings. Start writing section 1 immediately.
 Never include search narration, internal reasoning, or phrases like "I'll search for" or "Based on my research" or "Let me search" in the output. Start writing the section immediately.

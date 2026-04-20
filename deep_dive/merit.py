@@ -16,17 +16,21 @@ def _estimate_merit_block(merit_level, sat, gpa, sat_median, accept):
     Compute deterministic merit estimates for The Money Conversation.
     Returns a dict with coa, merit, net, note, has_merit.
     """
-    # COA estimate from acceptance rate
-    if accept <= 20:
-        coa = 72000
+    # COA fallback estimate from acceptance rate (used only when no cached COA exists).
+    # Private university COA tracks prestige more than selectivity — these bands are
+    # conservative estimates. Pregen generates real COA via web search on first visit.
+    if accept <= 10:
+        coa = 90000
+    elif accept <= 20:
+        coa = 87000
     elif accept <= 35:
-        coa = 67000
+        coa = 82000
     elif accept <= 55:
-        coa = 61000
+        coa = 75000
     elif accept <= 70:
-        coa = 56000
+        coa = 65000
     else:
-        coa = 51000
+        coa = 58000
     coa_str = f"~${coa:,}"
 
     if merit_level == 'none':

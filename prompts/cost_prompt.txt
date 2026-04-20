@@ -83,6 +83,21 @@ CRITICAL RULES:
    - Each Cost section should be tightly written for that specific school
    - Do not use identical templates that feel copy-pasted
 
+6. HYPER-SELECTIVE NEED-BASED SCHOOLS WITH PUBLISHED THRESHOLDS
+   Harvard (families earning under $85,000 pay zero tuition), MIT (under $75,000 often near-zero),
+   Stanford (under $100,000 near-zero cost), Emory (under $200,000 free tuition, Fall 2026+):
+   Format: "[School]'s cost of attendance is $[X] per year. The school meets 100% of demonstrated
+   need and has published thresholds: families under $[threshold] have zero or near-zero cost.
+   If your family falls below that threshold, the cost is substantially lower. If you're above it,
+   run the Net Price Calculator with your actual numbers."
+
+7. SPECIAL CASES
+   - Georgetown (D1, athletic scholarships available): Mention that athletic aid is separate from
+     academic need-based aid and ask the coach directly about scholarship availability.
+   - Schools with no-loan policies (Harvard, Amherst, Dartmouth, etc.): Mention it as a real
+     differentiator — "replaces loans with grants."
+   - D3 schools: Never mention athletic scholarships — they do not exist at D3.
+
 ---
 
 OUTPUT EXAMPLES

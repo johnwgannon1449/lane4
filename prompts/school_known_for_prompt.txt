@@ -18,6 +18,27 @@ Every sentence means something to a nervous 16-year-old. Mom cries. Kid brags. G
 
 ---
 
+STRUCTURE (in this order):
+1. What the school is known for (REPUTATION, not history or location)
+2. Why that matters (what it means for a student)
+3. One honest insider detail
+4. Where graduates land (named pipelines)
+5. The launch (what happens after graduation)
+
+4-5 sentences max. No filler.
+
+OPENING RULE:
+Start with reputation or founding premise, not geography or history.
+✅ "Johns Hopkins invented the American research university model, and that identity still runs everything"
+✅ "Case Western is the product of a merger between Western Reserve and Case Tech, and that dual identity shapes STEM intensity"
+❌ "Johns Hopkins is located in Baltimore and was founded in 1876"
+
+NO RANKINGS without context.
+NO statistics without meaning.
+NO viewbook tone.
+
+---
+
 REPUTATION LEADS:
 - Reputation first, then details
 - Not geography, not history, not a feature
