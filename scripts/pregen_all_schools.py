@@ -1,18 +1,20 @@
 #!/usr/bin/env python3
-"""scripts/pregen_all_schools.py — Batch pre-generate all school content for 14 schools.
+"""scripts/pregen_all_schools.py — Batch pre-generate all school content.
 
 Generates and caches:
-  - school_content_cache: Known For + Campus Life (main + More) + Cost data  (14 items)
-  - program_content_cache: Academic Program (main + More: Going Deeper) per major (28 items)
-  - minor_content_cache: Minor paragraph per minor (14 items)
-
-Total target: 56 items. Takes ~20 minutes. Run once before sleep.
+  - school_content_cache: Known For + Campus Life (main + More) + Cost data
+  - program_content_cache: Academic Program (main + More: Going Deeper) per major
+  - minor_content_cache: Minor paragraph per minor
 
 Usage:
-    python scripts/pregen_all_schools.py
+    python scripts/pregen_all_schools.py                              # all 14 schools
+    python scripts/pregen_all_schools.py --schools 2                  # first 2 schools
+    python scripts/pregen_all_schools.py --majors "Biomedical Engineering,Astrophysics"
+    python scripts/pregen_all_schools.py --schools 2 --majors "Biomedical Engineering"
 
 Requires: DATABASE_URL and ANTHROPIC_API_KEY environment variables.
 """
+import argparse
 import os
 import sys
 import json
@@ -24,7 +26,7 @@ from dotenv import load_dotenv
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 # Load .env from project root regardless of where the script is run from
-load_dotenv(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), '.env'))
+load_dotenv(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), '.env'), override=True)
 
 try:
     import psycopg2
@@ -115,7 +117,8 @@ def _split_on_heading(text: str, heading: str):
 
 
 def _call_claude(system: str, user_message: str, max_tokens: int = 2000) -> str:
-    """Call Claude Sonnet with web search. Runs the tool loop until end_turn."""
+    """Call Claude Sonnet with web search. Runs the tool loop until end_turn.
+    Retries on 429 rate limit errors with exponential backoff."""
     api_key = os.environ.get('ANTHROPIC_API_KEY')
     if not api_key:
         raise RuntimeError('ANTHROPIC_API_KEY environment variable is not set')
@@ -124,21 +127,33 @@ def _call_claude(system: str, user_message: str, max_tokens: int = 2000) -> str:
     messages = [{'role': 'user', 'content': user_message}]
 
     def _single_round(msgs):
-        return client.messages.create(
-            model=_PREGEN_MODEL,
-            max_tokens=max_tokens,
-            system=system,
-            tools=[_WEB_SEARCH],
-            messages=msgs,
-        )
+        # Retry loop for 429 rate limit errors
+        for attempt in range(5):
+            try:
+                return client.messages.create(
+                    model=_PREGEN_MODEL,
+                    max_tokens=max_tokens,
+                    system=system,
+                    tools=[_WEB_SEARCH],
+                    messages=msgs,
+                )
+            except Exception as e:
+                err_str = str(e)
+                if '429' in err_str or 'rate_limit' in err_str:
+                    wait = 60 * (2 ** attempt)  # 60s, 120s, 240s, 480s, 960s
+                    print(f'    [rate_limit] 429 hit — waiting {wait}s before retry {attempt + 1}/5')
+                    time.sleep(wait)
+                else:
+                    raise
+        raise RuntimeError('Rate limit retries exhausted')
 
     for _round in range(10):  # safety cap on tool-use rounds
         with _futures.ThreadPoolExecutor(max_workers=1) as pool:
             future = pool.submit(_single_round, list(messages))
             try:
-                response = future.result(timeout=120)
+                response = future.result(timeout=300)  # extended for retry waits
             except _futures.TimeoutError:
-                raise TimeoutError('Claude API call timed out after 120s')
+                raise TimeoutError('Claude API call timed out after 300s')
 
         text = ''.join(b.text for b in response.content if hasattr(b, 'text'))
 
@@ -176,7 +191,7 @@ def _pregen_school_content(school_name: str) -> None:
         f"'What School Is Known For' section following the rules and exemplar above.",
         max_tokens=600,
     ))
-    time.sleep(10)  # Rate limit - increased to avoid 429 errors
+    time.sleep(30)  # Rate limit pause between items
 
     print(f'    [campus_life] {school_name}')
     campus_raw = _strip_narration(_call_claude(
@@ -187,7 +202,7 @@ def _pregen_school_content(school_name: str) -> None:
         max_tokens=1200,
     ))
     campus_main, campus_more = _split_on_heading(campus_raw, 'More: Life Outside the Pool')
-    time.sleep(10)  # Rate limit - increased to avoid 429 errors
+    time.sleep(30)  # Rate limit pause between items
 
     print(f'    [cost_data]   {school_name}')
     cost_json_raw = _strip_narration(_call_claude(
@@ -211,7 +226,7 @@ Return only valid JSON. No other text.""",
         f"financial aid data for {school_name}. Return the JSON object as specified.",
         max_tokens=400,
     ))
-    time.sleep(10)  # Rate limit - increased to avoid 429 errors
+    time.sleep(30)  # Rate limit pause between items
 
     cost_data = {}
     try:
@@ -345,15 +360,28 @@ def _pregen_minor_content(school_name: str, minor: str) -> None:
 # ---------------------------------------------------------------------------
 
 def main():
-    SCHOOLS = [
-        'Worcester Polytechnic Institute',
-        'Rose-Hulman Institute of Technology',
-    ]
+    parser = argparse.ArgumentParser(description='Pre-generate Lane4 school content')
+    parser.add_argument(
+        '--schools', type=int, default=None,
+        metavar='N',
+        help='Number of schools to process (default: all). Uses first N from the SCHOOLS list.',
+    )
+    parser.add_argument(
+        '--majors', type=str, default=None,
+        metavar='MAJOR1,MAJOR2',
+        help='Comma-separated list of majors to generate (default: all). '
+             'Also controls which minors are generated.',
+    )
+    args = parser.parse_args()
+
+    schools = SCHOOLS[:args.schools] if args.schools is not None else SCHOOLS
+    majors  = [m.strip() for m in args.majors.split(',')] if args.majors else MAJORS
+    minors  = majors  # minors mirror majors unless separately specified
 
     print('=' * 65)
     print('LANE4 PRE-GENERATION SCRIPT')
-    print(f'Schools: {len(SCHOOLS)}  |  Majors: {len(MAJORS)}  |  Minors: {len(MINORS)}')
-    total_target = len(SCHOOLS) + len(SCHOOLS) * len(MAJORS) + len(SCHOOLS) * len(MINORS)
+    print(f'Schools: {len(schools)}  |  Majors: {len(majors)}  |  Minors: {len(minors)}')
+    total_target = len(schools) + len(schools) * len(majors) + len(schools) * len(minors)
     print(f'Target items: {total_target}')
     print('=' * 65)
 
@@ -361,8 +389,8 @@ def main():
     total_cached = 0
     errors       = []
 
-    for i, school in enumerate(SCHOOLS, 1):
-        print(f'\n[{i:02d}/{len(SCHOOLS)}] {school}')
+    for i, school in enumerate(schools, 1):
+        print(f'\n[{i:02d}/{len(schools)}] {school}')
 
         # School-level content (known_for + campus_life + cost)
         try:
@@ -374,8 +402,8 @@ def main():
             errors.append(msg)
 
         # Program content for each major
-        for major in MAJORS:
-            time.sleep(10)  # Rate limit - increased to avoid 429 errors
+        for major in majors:
+            time.sleep(30)  # Rate limit pause between items
             try:
                 _pregen_program_content(school, major)
                 total_cached += 1
@@ -385,8 +413,8 @@ def main():
                 errors.append(msg)
 
         # Minor content for each minor
-        for minor in MINORS:
-            time.sleep(10)  # Rate limit - increased to avoid 429 errors
+        for minor in minors:
+            time.sleep(30)  # Rate limit pause between items
             try:
                 _pregen_minor_content(school, minor)
                 total_cached += 1
