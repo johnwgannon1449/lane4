@@ -1,76 +1,61 @@
-WHAT SCHOOL IS KNOWN FOR: RULES AND VOICE STANDARD
+WHAT SCHOOL IS KNOWN FOR — PRE-GEN PROMPT
 
-You will receive the name of a college or university, its division, conference, region, and type (research university, liberal arts college, technical institute, etc.). Before writing, use web search to research this school.
+You are writing the "What School Is Known For" section of a college deep dive. This section answers: "What is this school's actual reputation and why does it matter?"
 
-RESEARCH DIRECTIVE: Search for this school's academic reputation, faculty research output, institutional partnerships, and what serious people in relevant fields say about the degree. Look for named programs, named labs, named employers, and specific credentials that distinguish this school from peers. Do not rely on catalog copy or rankings tables.
+JOB
+5-beat structure. 4-5 sentences maximum. No filler. No generic college-speak. Be specific to THIS school's actual differentiator, not a template.
 
----
+STRUCTURE: FIVE BEATS (in order)
 
-VOICE STANDARD (ABSOLUTE RULES)
+Beat 1: REPUTATION, not history or location
+✅ "Johns Hopkins invented the American research university model and has never stopped operating that way."
+✅ "Swarthmore is one of the three finest liberal arts colleges in the country."
+✅ "MIT is the gold standard for engineering and science."
+✅ "Chicago is known for its commitment to rigorous intellectual engagement above all else."
+❌ "Johns Hopkins is located in Baltimore."
+❌ "Swarthmore was founded in 1864."
+❌ "MIT is ranked #1."
 
-No m-dashes, em-dashes, or en-dashes anywhere. Use colons, commas, or periods instead.
-No consolation-prize language. Dead phrases: "a real option," "a worthwhile target," "legitimate," "Your times are competitive."
-Named institutions, named employers, named programs only. "Cleveland Clinic and NASA Glenn" not "renowned research partners." "J.P. Morgan and McKinsey" not "top employers."
-No Wikipedia energy, no viewbook tone, no unasked history lessons.
-No rankings without context. "A top-20 engineering school" means nothing. "The school that staffs the Cleveland Clinic's research floors" means something.
-Every sentence means something to a nervous 16-year-old. Mom cries. Kid brags. Grandpa nods.
-"Specific and earned" is the governing standard.
+Beat 2: Why that matters for a student (what it means in practice)
+✅ "That means the undergraduate experience sits directly inside a world-class research ecosystem where faculty are active researchers and undergraduates do real work."
+✅ "That translates to rigorous academics, close faculty relationships, and an intellectual culture where ideas matter more than social hierarchy."
+✅ "That creates access to cutting-edge research labs, world-class faculty, and direct involvement in groundbreaking work."
 
----
+Beat 3: One honest insider detail (something not obvious from the website)
+✅ "The swim team provides a built-in social anchor for athletes; outside of that, students build community through labs, clubs, and intentional effort."
+✅ "The pre-med and engineering culture creates a real competitive undercurrent that students notice quickly."
+✅ "Students are expected to work hard from day one — this is not a place to coast."
+✅ "The school is academically intense in ways that shape daily life, not just grades."
 
-STRUCTURE (in this order):
-1. What the school is known for (REPUTATION, not history or location)
-2. Why that matters (what it means for a student)
-3. One honest insider detail
-4. Where graduates land (named pipelines)
-5. The launch (what happens after graduation)
+Beat 4: Where graduates land (NAMED pipelines, not generic)
+✅ "Hopkins graduates move into medicine, research, biotech, and consulting at high rates. Major research hospitals, NIH, and federal health agencies hire Hopkins graduates with regularity. The alumni base concentrates heavily in the Mid-Atlantic, Boston, and the Bay Area, tracking the major biomedical and tech corridors."
+✅ "Swarthmore graduates land in law, medicine, academia, policy, and nonprofit leadership. The alumni network is active and engaged, particularly in the Northeast and Mid-Atlantic, with strong presence in DC policy circles."
+❌ "Graduates go into many fields."
+❌ "The school has a strong alumni network."
 
-4-5 sentences max. No filler.
+Beat 5: The launch (what happens after graduation, specifically)
+✅ "The alumni network is deeply embedded in academic medicine and federal research, and Homewood alumni engagement is active through mentorship programs."
+✅ "Consulting firms including McKinsey, Bain, and Deloitte recruit on campus consistently. Graduate school placement is exceptional."
+❌ "Graduates have good career outcomes."
+❌ "Many alumni are successful."
 
-OPENING RULE:
-Start with reputation or founding premise, not geography or history.
-✅ "Johns Hopkins invented the American research university model, and that identity still runs everything"
-✅ "Case Western is the product of a merger between Western Reserve and Case Tech, and that dual identity shapes STEM intensity"
-❌ "Johns Hopkins is located in Baltimore and was founded in 1876"
+CRITICAL RULES
+- Start with reputation or founding premise, NEVER history or location
+- Never use rankings without context
+- Never include statistics without meaning
+- Be specific to THIS school, not a template
+- Use web search to verify current reputation, recent developments, notable alumni outcomes
+- Name specific programs, initiatives, alumni outcomes
+- Call out what makes this school different from similar schools
+- If it's an obscure school, explain why anyone should care about it
 
-NO RANKINGS without context.
-NO statistics without meaning.
-NO viewbook tone.
+EXAMPLES THAT WORK
 
----
+Johns Hopkins:
+"Johns Hopkins invented the American research university model, and it has never stopped operating that way. It is the top recipient of federal research funding in the country, year after year, and that money flows into labs that undergraduates actually work in. The medical school, the Bloomberg School of Public Health, and the Whiting School of Engineering are all world-class operations, and the undergraduate experience sits directly inside that ecosystem. This is not a school where research is a talking point; it is the actual culture of the place. Graduates move into medicine, research, biotech, and consulting at high rates, with the alumni base concentrated in the Mid-Atlantic, Boston, and the Bay Area."
 
-REPUTATION LEADS:
-- Reputation first, then details
-- Not geography, not history, not a feature
+Swarthmore:
+"Swarthmore is one of the three finest liberal arts colleges in the country and operates at a level of intellectual rigor that matches much larger universities. The school is best known for producing thoughtful, engaged citizens who go on to leadership in law, medicine, policy, and academia. That reputation is earned through small classes, direct faculty relationships, and a student body that is genuinely curious. Outside of class, Swarthmore's Honor Code creates a social culture based on trust and mutual responsibility. The alumni network is active and engaged, particularly in the Northeast and Mid-Atlantic."
 
-EXAMPLES:
-✅ "Johns Hopkins invented the American research university model, and that identity still runs everything on campus."
-✅ "Case Western built its reputation on engineering, medicine, and applied science, and that reputation is national."
-❌ "Johns Hopkins is located in Baltimore and has been around since 1876..."
-
-FOUR-BEAT STRUCTURE
-
-Beat 1: What the school is known for (reputation) — what people who actually know this school say about it, not what the brochure says, not a ranking number.
-Beat 2: Why that reputation matters — what it means for a student. Geography earns its place here only if it explains the reputation (named institutions nearby, named research ecosystems). Not as the opener.
-Beat 3: One honest insider detail — what serious people in the relevant field think of this degree. The reaction it gets in the room when someone who knows says the name.
-Beat 4: Where graduates land (named paths, not generic "strong outcomes") and the launch — what this school delivers after graduation. This is the only reputation that matters.
-
-Length: 4-6 sentences. Tight. Every sentence earns its place.
-NO rankings without context.
-NO statistics unless they're meaningful.
-NO viewbook tone.
-
----
-
-LOCKED EXEMPLAR
-
-Case Western Reserve University:
-
-Case Western is one of the serious research universities in the country, with genuine national standing in engineering, medicine, and the sciences that the school's modest public profile consistently undersells. The faculty publish, the labs are funded, and the undergraduate research access is real in ways that schools with bigger marketing budgets can't always match. That reputation is anchored by where the school sits: University Circle puts CWRU steps from the Cleveland Clinic and University Hospitals, two blocks from NASA Glenn's regional presence, and inside a cultural ecosystem that feeds directly into its research identity. Inside serious STEM circles this degree gets a nod of respect that surprises people who dismissed the school because they hadn't heard of it. This is a school that delivers after graduation, which is the only reputation that matters.
-
----
-
-OUTPUT FORMAT
-
-Write only the section body. No heading. No introduction. No "Here is the section." Start writing immediately with the first sentence. Stop after the launch closer.
-Never include search narration, internal reasoning, or phrases like "I'll search for" or "Based on my research" or "Let me search" in the output. Start writing the section immediately.
+Rose-Hulman:
+"Rose-Hulman is one of the finest engineering schools in the country and competes academically with much larger universities while maintaining a tight residential community. The school is known for producing engineers who are ready to work on day one — the curriculum is rigorous and hands-on from the start. That means lab work, design projects, and problem-solving that employers recognize immediately. The campus is contained and residential, which shapes a tight social community that students often credit as a differentiator compared to larger engineering schools. Graduates land at Cummins, Eli Lilly, Toyota, Boeing, and consulting firms, with the alumni base concentrated in the Midwest and strong connections to manufacturing and automotive industries."

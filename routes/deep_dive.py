@@ -1,11 +1,53 @@
 """routes/deep_dive.py — Deep dive and coach-email content generation endpoints."""
+import os
 import re
 import json
 import threading
 
 from flask import Blueprint, request, jsonify, Response, stream_with_context
-from prompts_config import LANE4_DEEP_DIVE_PROMPT, LANE4_BOTTOM_LINE_V2_PROMPT, BOTTOM_LINE_V2, COST_PROMPT
 from ai_client import _get_anthropic
+
+_PROMPTS_DIR = os.path.join(os.path.dirname(__file__), '..', 'prompts')
+
+
+def _load_prompt(filename: str) -> str:
+    """Load a prompt file fresh from disk on every call. No caching."""
+    path = os.path.join(_PROMPTS_DIR, filename)
+    try:
+        with open(path, encoding='utf-8') as f:
+            return f.read().strip()
+    except FileNotFoundError:
+        print(f'[deep_dive] prompt file not found: {filename}')
+        return ''
+
+
+def _read_minor_cache(school_name: str, minor_name: str) -> str:
+    """Read minor content from minor_content_cache. Returns '' on miss."""
+    if not school_name or not minor_name:
+        return ''
+    try:
+        from db import get_db, using_sqlite
+        with get_db() as conn:
+            if using_sqlite():
+                cur = conn.cursor()
+                cur.execute(
+                    'SELECT minor_content FROM minor_content_cache '
+                    'WHERE school_name = ? AND minor_name = ?',
+                    (school_name, minor_name)
+                )
+                row = cur.fetchone()
+            else:
+                with conn.cursor() as cur:
+                    cur.execute(
+                        'SELECT minor_content FROM minor_content_cache '
+                        'WHERE school_name = %s AND minor_name = %s',
+                        (school_name, minor_name)
+                    )
+                    row = cur.fetchone()
+        return (row[0] or '') if row else ''
+    except Exception as e:
+        print(f'[deep_dive] minor_content_cache read error: {e}')
+        return ''
 from services.pregen import (
     read_school_cache, read_program_cache,
     get_or_generate_school_content, get_or_generate_program_content,
@@ -619,8 +661,15 @@ def deep_dive():
         "Do not use the phrase 'Super Powerhouse.'"
     ) if conf_tier_short == '1A' else ''
 
+    # Load prompts fresh from disk on every request — never cached at module load.
+    _deep_dive_prompt   = _load_prompt('lane4_deep_dive_prompt.txt')
+    _bottom_line_prompt = _load_prompt('lane4_bottom_line_v2_prompt.txt')
+    _cost_prompt        = _load_prompt('cost_prompt.txt')
+    print(f'[deep_dive] prompts loaded: deep_dive={len(_deep_dive_prompt)}c '
+          f'bottom_line={len(_bottom_line_prompt)}c cost={len(_cost_prompt)}c')
+
     _base_system = (
-        LANE4_DEEP_DIVE_PROMPT + "\n\n"
+        _deep_dive_prompt + "\n\n"
         "Lane4 Output Rules (always apply):\n"
         "- Never use internal tier labels in output text: no 'Super Powerhouse', 'Powerhouse', "
         "'Hidden Ivy', 'Priority Recruit', 'Serious Recruit', 'Recruitable', or any recruiting "
@@ -631,10 +680,7 @@ def deep_dive():
         "- Respond using markdown sections starting with ## for each section title.\n"
         "- 2-3 sentences per section. Short paragraphs. Strong declarative sentences."
     )
-    if BOTTOM_LINE_V2:
-        system_prompt = _base_system + "\n\n" + LANE4_BOTTOM_LINE_V2_PROMPT + "\n\n" + COST_PROMPT
-    else:
-        system_prompt = _base_system + "\n\n" + COST_PROMPT
+    system_prompt = _base_system + "\n\n" + _bottom_line_prompt + "\n\n" + _cost_prompt
 
     ivy_note = '\nThis is an Ivy League school — need-based aid only, no merit scholarships.' if meta.get('ivyLeague') else ''
 
@@ -702,31 +748,27 @@ def deep_dive():
     _division  = result.get('division', '')
     _conf_name = result.get('conference', '')
 
-    if BOTTOM_LINE_V2:
-        _bl_oou_instruction = (
-            "## Bottom Line\n"
-            "No swim data for this school. Focus on academic and personal fit.\n"
-            "Follow the Bottom Line v2 voice standard in your system prompt.\n"
-            "Structure: (1) Open with what makes the school elite, specific and earned. "
-            "(2) Academic fit sentence: honest, specific, not generic praise. "
-            "(3) What choosing this school means for swimming, honestly. "
-            "(4) Closing line that lands. No filler.\n"
-            "Roughly 3-5 sentences. No m-dashes. No money talk. No consolation-prize language.\n"
-        )
-        _bl_inuniverse_instruction = (
-            "## Bottom Line\n"
-            f"RECRUITING LIKELIHOOD: {_adj_tier} | DIVISION: {_division} | CONFERENCE: {_conf_name}\n"
-            "Follow the Bottom Line v2 voice standard and seven-label voice matrix in your system prompt.\n"
-            "Structure: (1) Open with what makes the school elite, specific and earned. "
-            "(2) Pool sentence(s): meat not raw data, voice register matches the recruiting likelihood label above exactly. "
-            "(3) Academic fit sentence. "
-            "(4) Closing line that lands. No filler.\n"
-            "Roughly 3-5 sentences. No m-dashes. No money talk. No consolation-prize language.\n"
-        )
-    else:
-        # v1 original instructions (rollback path)
-        _bl_oou_instruction        = "## Bottom Line\n2-3 sentences. School value + academic/personal fit + overall verdict.\n"
-        _bl_inuniverse_instruction = "## Bottom Line\n2-3 sentences. Swim reality + school value + overall verdict. No hedging.\n"
+    # Bottom Line v2 is always active — prompts loaded fresh above enforce the voice standard.
+    _bl_oou_instruction = (
+        "## Bottom Line\n"
+        "No swim data for this school. Focus on academic and personal fit.\n"
+        "Follow the Bottom Line v2 voice standard in your system prompt.\n"
+        "Structure: (1) Open with what makes the school elite, specific and earned. "
+        "(2) Academic fit sentence: honest, specific, not generic praise. "
+        "(3) What choosing this school means for swimming, honestly. "
+        "(4) Closing line that lands. No filler.\n"
+        "Roughly 3-5 sentences. No m-dashes. No money talk. No consolation-prize language.\n"
+    )
+    _bl_inuniverse_instruction = (
+        "## Bottom Line\n"
+        f"RECRUITING LIKELIHOOD: {_adj_tier} | DIVISION: {_division} | CONFERENCE: {_conf_name}\n"
+        "Follow the Bottom Line v2 voice standard and tier voice matrix in your system prompt.\n"
+        "Structure: (1) Open with what makes the school elite, specific and earned. "
+        "(2) Pool sentence(s): meat not raw data, voice register matches the recruiting likelihood label above exactly. "
+        "(3) Academic fit sentence. "
+        "(4) Closing line that lands. No filler.\n"
+        "Roughly 3-5 sentences. No m-dashes. No money talk. No consolation-prize language.\n"
+    )
 
     # user_prompt is built inside the generator after pregen cache flags are known
 
@@ -959,14 +1001,19 @@ def deep_dive():
                     'body':    _b or _school_cached['campus_life_more'],
                     'cached':  True,
                 })
-            if minor and _program_cached.get('minor_content'):
-                _t, _b = _split_hb(_program_cached['minor_content'])
-                _cached_emit.append({
-                    'section': 'minor',
-                    'title':   _t or f'Minor in {minor}',
-                    'body':    _b or _program_cached['minor_content'],
-                    'cached':  True,
-                })
+            if minor:
+                # Check program_content_cache.minor_content first, then minor_content_cache
+                _minor_text = _program_cached.get('minor_content') or ''
+                if not _minor_text:
+                    _minor_text = _read_minor_cache(_school_name, minor)
+                if _minor_text:
+                    _t, _b = _split_hb(_minor_text)
+                    _cached_emit.append({
+                        'section': 'minor',
+                        'title':   _t or f'Minor in {minor}',
+                        'body':    _b or _minor_text,
+                        'cached':  True,
+                    })
 
             for _evt in _cached_emit:
                 yield f"data: {json.dumps(_evt)}\n\n"

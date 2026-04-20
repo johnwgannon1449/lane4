@@ -111,7 +111,41 @@ def _init_db():
                         academic_program_more  TEXT,
                         minor_content          TEXT,
                         generated_at           TEXT DEFAULT CURRENT_TIMESTAMP,
+                        updated_at             TEXT DEFAULT CURRENT_TIMESTAMP,
                         UNIQUE (school_name, major, minor)
+                    )
+                """)
+                for _col in [
+                    'ALTER TABLE school_content_cache ADD COLUMN updated_at TEXT DEFAULT CURRENT_TIMESTAMP',
+                    'ALTER TABLE program_content_cache ADD COLUMN updated_at TEXT DEFAULT CURRENT_TIMESTAMP',
+                ]:
+                    try:
+                        conn.execute(_col)
+                    except Exception:
+                        pass  # column already exists
+                conn.execute("""
+                    CREATE TABLE IF NOT EXISTS minor_content_cache (
+                        id           INTEGER PRIMARY KEY AUTOINCREMENT,
+                        school_name  TEXT NOT NULL,
+                        minor_name   TEXT NOT NULL,
+                        minor_content TEXT,
+                        generated_at TEXT DEFAULT CURRENT_TIMESTAMP,
+                        updated_at   TEXT DEFAULT CURRENT_TIMESTAMP,
+                        UNIQUE (school_name, minor_name)
+                    )
+                """)
+                conn.execute("""
+                    CREATE TABLE IF NOT EXISTS school_swim_cache (
+                        id                    INTEGER PRIMARY KEY AUTOINCREMENT,
+                        school_name           TEXT UNIQUE NOT NULL,
+                        conference            TEXT,
+                        division              TEXT,
+                        program_strength_desc TEXT,
+                        is_super_powerhouse   INTEGER,
+                        top_event_benchmarks  TEXT,
+                        roster_depth_info     TEXT,
+                        generated_at          TEXT DEFAULT CURRENT_TIMESTAMP,
+                        updated_at            TEXT DEFAULT CURRENT_TIMESTAMP
                     )
                 """)
         return
@@ -184,7 +218,38 @@ def _init_db():
                     academic_program_more  TEXT,
                     minor_content          TEXT,
                     generated_at           TIMESTAMPTZ DEFAULT NOW(),
+                    updated_at             TIMESTAMPTZ DEFAULT NOW(),
                     UNIQUE (school_name, major, minor)
+                )
+            """)
+            for _col in [
+                'ALTER TABLE school_content_cache ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT NOW()',
+                'ALTER TABLE program_content_cache ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT NOW()',
+            ]:
+                cur.execute(_col)
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS minor_content_cache (
+                    id            SERIAL PRIMARY KEY,
+                    school_name   TEXT NOT NULL,
+                    minor_name    TEXT NOT NULL,
+                    minor_content TEXT,
+                    generated_at  TIMESTAMPTZ DEFAULT NOW(),
+                    updated_at    TIMESTAMPTZ DEFAULT NOW(),
+                    UNIQUE (school_name, minor_name)
+                )
+            """)
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS school_swim_cache (
+                    id                    SERIAL PRIMARY KEY,
+                    school_name           TEXT UNIQUE NOT NULL,
+                    conference            TEXT,
+                    division              TEXT,
+                    program_strength_desc TEXT,
+                    is_super_powerhouse   BOOLEAN,
+                    top_event_benchmarks  JSONB,
+                    roster_depth_info     JSONB,
+                    generated_at          TIMESTAMPTZ DEFAULT NOW(),
+                    updated_at            TIMESTAMPTZ DEFAULT NOW()
                 )
             """)
         conn.commit()

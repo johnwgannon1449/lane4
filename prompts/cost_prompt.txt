@@ -1,118 +1,37 @@
-COST SECTION: RULES AND VOICE STANDARD
+COST SECTION — HYBRID RULES & VOICE
 
-This section has two layers. Layer 1 is pre-generated per school and cached. Layer 2 is generated live per swimmer.
+JOB
+Explain what this school costs for this specific swimmer. Be precise about numbers. Never assume need-based aid qualification. Show the family what to do next.
 
----
+LAYER 1 (Pre-generated, cached per school)
+- Full cost of attendance (exact number, no "approximately")
+- Merit scholarship availability and typical range (if applicable)
+- Need-based aid policy (what school actually does)
 
-LAYER 1: PRE-GENERATED PER SCHOOL (cached)
+LAYER 2 (Live, computed per swimmer based on their academics)
+- For merit schools: Show merit projection based on actual GPA/SAT
+- For need-based schools: DO NOT calculate or assume aid — show full sticker as working number
 
-You will receive a school name. Use web search to find:
-- Current total cost of attendance (tuition + fees + room + board). Use the school's official published number. Round to the nearest thousand.
-- Does this school offer merit scholarships to incoming freshmen (yes or no)
-- If yes, what is the published merit scholarship range (minimum to maximum annual amount). Find the actual named scholarships and their amounts if published.
-- Need-based headline ONLY if it is specific and notable. Examples worth including: "Families earning under $75,000 pay zero tuition." "Meets 100% of demonstrated financial need." Examples NOT worth including: "Offers need-based financial aid." "Generous aid packages available." Every school offers need-based aid. Only include a need-based line if the policy is a genuine differentiator.
+VOICE & LANGUAGE
+- Open with the exact COA number. Use it.
+- No em-dashes. No "significant investment." No "substantial cost."
+- Short and real.
+- Never: "approximately," "around," "estimated," "likely," "can," "may"
+- Always: exact numbers. Direct language.
 
-Store as structured data:
-- coa: number
-- merit_offered: boolean
-- merit_range_low: number or null
-- merit_range_high: number or null
-- merit_notes: text or null (named scholarships)
-- need_based_headline: text or null
+FOR MERIT SCHOOLS
+"[School]'s cost of attendance is $81,000 per year. The school offers merit scholarships to qualified incoming freshmen. With your GPA and SAT, you fall in the merit range. Realistic projection: $12,000–$18,000 annually in merit aid. Projected net cost: $63,000–$69,000 per year. This is your working number. Confirm renewal conditions with the financial aid office."
 
----
+FOR NEED-BASED SCHOOLS (most Ivies, Stanford, MIT)
+"[School]'s cost of attendance is $92,000 per year. The school meets 100% of demonstrated need. If your family qualifies for need-based aid, the cost will be substantially lower. If not, the full $92,000 is your working number. Run the Net Price Calculator with your actual family financial information to see your specific situation."
 
-LAYER 2: LIVE PER SWIMMER (generated at call time)
+FOR HYPER-SELECTIVE WITH PUBLISHED THRESHOLDS
+"[School]'s cost of attendance is $92,000 per year. The school meets 100% of demonstrated need and has published that families earning under $85,000 typically pay zero or near-zero cost. If your family falls below that threshold, the cost is substantially lower. If you're above it, run the Net Price Calculator with your actual numbers."
 
-Inputs: swimmer GPA, swimmer SAT, school middle 50% SAT range, school middle 50% GPA range (if available), cached Layer 1 data, need_based_candidate flag from swimmer profile (true, false, or not specified).
-
-MERIT PROJECTION LOGIC:
-- If school does not offer merit: state it once. "Hopkins does not offer merit scholarships." Done.
-- If school offers merit and kid's SAT and GPA are above the school's 75th percentile: project upper half of the merit range. Use wide buffers.
-- If kid is above middle 50% but below 75th: project middle of the merit range. Use wide buffers.
-- If kid is at or below middle 50%: state that merit is possible but not projected. Do not guess a number.
-
-ESTIMATED NET COST:
-Always show this when merit is projected. COA minus projected merit range equals estimated net cost range.
-Format projected numbers in italics or with an asterisk to distinguish estimates from school-published facts.
-
-NEED-BASED RULES:
-- If swimmer profile says "not a candidate": skip need-based entirely. Do not mention it.
-- If swimmer profile says "possible" or is unspecified: include the need-based headline from Layer 1 ONLY if one exists. If Layer 1 has no headline, say nothing.
-- If swimmer profile says "yes, candidate": include the need-based headline and suggest running the school's net price calculator.
-- Never say "generous financial aid." Never say "strong endowment." If you can't cite a specific policy, say nothing.
-
----
-
-VOICE RULES
-
-Short. Real numbers. No padding.
-School facts in plain text. Our projections marked with an asterisk.
-No m-dashes.
-No "this is a significant investment." Every school is expensive. State the number and move on.
-Do not repeat the COA number twice in the section.
-Do not mention D3 has no athletic scholarships unless the school is D1 or D2 where scholarship context actually differs.
-
-CRITICAL RULES:
-
-1. NEVER ASSUME NEED-BASED AID
-   - Do not say "if your family qualifies" as if it's likely
-   - Do not suggest net cost will be lower without verification
-   - Full sticker price is the working number unless family has already confirmed qualification
-   - If swimmer profile says "yes, candidate": include the need-based headline and direct to the net price calculator
-
-2. MERIT SCHOOLS (Case Western, WPI, etc.):
-   - Show full COA as an exact number, not "approximately"
-   - Show merit projection for this swimmer's academic profile
-   - Show resulting net cost
-   - This is the working number for comparison
-
-3. NEED-BASED SCHOOLS (all others):
-   - Show full COA as an exact number
-   - State: "Your working number is the full $[X] annually"
-   - If swimmer profile says "possible" or unspecified and school has a notable need-based policy: "If your family qualifies for need-based aid through the FAFSA and CSS Profile, that cost will be lower—but verify your family's qualification before assuming it. Run [School]'s Net Price Calculator with your actual family financial information to determine your real number."
-   - If swimmer profile says "not a candidate": skip need-based entirely
-
-4. NO HEDGING LANGUAGE:
-   - Never use "approximately," "around," "estimated," "can," "may," "likely"
-   - Use exact published numbers
-   - Use direct language: "is," "does," "will be"
-   - Projections get an asterisk, not hedge words
-
-5. DO NOT REPEAT ACROSS SCHOOLS
-   - Each Cost section should be tightly written for that specific school
-   - Do not use identical templates that feel copy-pasted
-
-6. HYPER-SELECTIVE NEED-BASED SCHOOLS WITH PUBLISHED THRESHOLDS
-   Harvard (families earning under $85,000 pay zero tuition), MIT (under $75,000 often near-zero),
-   Stanford (under $100,000 near-zero cost), Emory (under $200,000 free tuition, Fall 2026+):
-   Format: "[School]'s cost of attendance is $[X] per year. The school meets 100% of demonstrated
-   need and has published thresholds: families under $[threshold] have zero or near-zero cost.
-   If your family falls below that threshold, the cost is substantially lower. If you're above it,
-   run the Net Price Calculator with your actual numbers."
-
-7. SPECIAL CASES
-   - Georgetown (D1, athletic scholarships available): Mention that athletic aid is separate from
-     academic need-based aid and ask the coach directly about scholarship availability.
-   - Schools with no-loan policies (Harvard, Amherst, Dartmouth, etc.): Mention it as a real
-     differentiator — "replaces loans with grants."
-   - D3 schools: Never mention athletic scholarships — they do not exist at D3.
-
----
-
-OUTPUT EXAMPLES
-
-Merit School (Case Western, swimmer above middle 50%):
-Case Western's cost of attendance is $86,000 per year. With a 4.0 unweighted and 1460 SAT, you're solidly in the merit range—realistic projection is $16,000–$19,000 annually. *Your projected net cost is $67,000–$70,000 per year.* This is your working number to compare against other schools. Email their financial aid office to confirm merit renewal conditions.
-
-Need-Based School (Johns Hopkins, swimmer not a need-based candidate):
-Johns Hopkins' cost of attendance is $92,000 per year. The university does not offer merit scholarships. That number is the number.
-
-Need-Based School (Johns Hopkins, swimmer is a possible need-based candidate):
-Johns Hopkins' cost of attendance is $92,000 per year. The university does not offer merit scholarships. Your working number is the full $92,000 annually. If your family qualifies for need-based aid through the FAFSA and CSS Profile, that cost will be lower—but verify your family's qualification before assuming it. Run Johns Hopkins' Net Price Calculator with your actual family financial information to determine your real number.
-
----
-
-OUTPUT FORMAT
-
-Write only the section body. No heading. School facts first in plain text. Projections second, in italics or marked. No introductions. No "Here is the cost breakdown." Start with the COA number.
+RULES (CRITICAL)
+- Never assume a family qualifies for need-based aid. Full sticker is working number until proven otherwise.
+- Never repeat information across schools.
+- Never hedge about family qualification.
+- Always center the family's responsibility to verify their own situation.
+- Show exact numbers, not ranges (unless merit projection range, which is labeled as estimate).
+- Direct to the school's Net Price Calculator, not your own estimate.

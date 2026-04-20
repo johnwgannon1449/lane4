@@ -13,6 +13,8 @@ except ImportError:
     _HAS_PSYCOPG2 = False
 from werkzeug.security import generate_password_hash, check_password_hash
 
+from routes.deep_dive import deep_dive_bp
+
 load_dotenv()
 app = Flask(__name__, static_folder='static', static_url_path='')
 app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
@@ -4959,8 +4961,8 @@ def _estimate_merit_block(merit_level, sat, gpa, sat_median, accept):
     }
 
 
-@app.route('/api/deep-dive/academic', methods=['POST'])
-def deep_dive_academic():
+@app.route('/api/_legacy/deep-dive/academic', methods=['POST'])
+def _deep_dive_academic_legacy():
     """
     Lazy-load the "More about this program" academic expansion for a school.
 
@@ -5053,8 +5055,8 @@ def deep_dive_academic():
         return jsonify({'error': str(e)}), 200
 
 
-@app.route('/api/deep-dive', methods=['POST'])
-def deep_dive():
+@app.route('/api/_legacy/deep-dive', methods=['POST'])
+def _deep_dive_legacy():
     """
     Generate the 8-section deep dive narrative for one school.
 
@@ -5436,8 +5438,8 @@ def deep_dive():
         return jsonify({'error': 'Deep dive failed', 'detail': str(e)}), 200
 
 
-@app.route('/api/coach-email', methods=['POST'])
-def coach_email():
+@app.route('/api/_legacy/coach-email', methods=['POST'])
+def _coach_email_legacy():
     """
     Generate deterministic coach email for one school. No AI call.
 
@@ -6376,6 +6378,8 @@ def api_dbcheck():
         info['error'] = str(e)
     return jsonify(info)
 
+
+app.register_blueprint(deep_dive_bp)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

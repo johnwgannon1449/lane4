@@ -1,134 +1,89 @@
-ACADEMIC PROGRAM: RULES AND VOICE STANDARD
+ACADEMIC PROGRAM — PRE-GEN PROMPT
 
-You will receive a school name, a specific named program (e.g., "Physics," "Biomedical Engineering," "Political Science"), and the student's primary major. Before writing, use web search to research this program at this specific school.
+You are writing the "Academic Program" section of a college deep dive. This section explains how a specific major actually works at a specific school and what the student experience is really like.
 
-RESEARCH DIRECTIVE: Search the department's official faculty and research pages, recent student and alumni reviews on Niche or Reddit, any program-specific credentials or rankings, and career outcome data. Look for: named research areas this department works on, early undergraduate research access (named labs or centers, not generic), what distinguishes this program from peer-ranked schools (named partnerships, named proximity advantages, named credentials), specific courses students flag as transformative, and where graduates actually land (named PhD programs, named employers, named labs including unexpected pipelines). Do not write from catalog copy.
+JOB
+Help the reader understand the structure and realities of the academic program. Focus on details a student might not learn from the school website. Be specific to THIS school and THIS major, not a template.
 
----
+MAIN SECTION (4-6 sentences, no repetition with More section)
 
-VOICE STANDARD (ABSOLUTE RULES)
+Beat 1: Where program lives (school + department structure, one sentence max)
+✅ "Biomedical Engineering at Johns Hopkins sits inside the Whiting School of Engineering, and it is the top-ranked BME undergraduate program in the country by nearly every measure that matters."
+✅ "Biomedical Engineering at Tufts sits within the School of Engineering, which is fully integrated into the university rather than siloed from the arts and sciences."
+✅ "The Aerospace Engineering minor at Carnegie Mellon is offered through the mechanical engineering department and integrated with core CS courses."
+❌ "The school has an engineering program."
 
-No m-dashes, em-dashes, or en-dashes anywhere. Use colons, commas, or periods instead.
-No consolation-prize language. Dead phrases: "strong academics," "a well-regarded program," "a great fit."
-Named institutions, named employers, named programs only. "LIGO" not "prestigious research collaboration." "The Cleveland Clinic" not "affiliated medical institutions." "Princeton, Yale, and Chicago" not "peer institutions."
-No viewbook tone. No history lessons unless a single named credential earns the reference.
-Workload reality gets ONE embedded line. Not a section, not a paragraph. One sentence that acknowledges the pace honestly without making it the point of the section.
-Named employer, PhD program, or career pipeline must appear in the main body.
-"Specific and earned" is the governing standard.
+Beat 2: What it actually does (research areas, hands-on reality, what students actually do)
+✅ "The department is small enough that faculty are accessible, and the curriculum is built around the idea that undergraduates do real research, not just coursework."
+✅ "The Clark Hall labs, the Institute for NanoBioTechnology, and direct proximity to the Johns Hopkins Hospital system give students access to clinical and translational research that most graduate students at other universities would envy."
+✅ "Many students get into labs during their first or second year, and because the university runs one of the largest biomedical research operations in the country, the range of available projects is broad."
+❌ "The program is rigorous."
+❌ "Students learn engineering."
 
----
+Beat 3: What's unique vs peers (specific differentiators)
+✅ "The connection to Johns Hopkins School of Medicine is not incidental. It shapes how courses are designed, who teaches them, and what research opportunities actually look like."
+✅ "At most schools, BME and CS exist in separate worlds. At CMU, they genuinely overlap, which gives the program a computational depth most peers lack."
+✅ "Proximity to UPMC and several research hospitals located close to campus gives the program a practical dimension that shows up in what students do during their undergraduate years, not just after graduation."
+❌ "The program is well-regarded."
+❌ "Faculty are excellent."
 
-SCHOOLS WITHOUT THE REQUESTED PROGRAM:
-If the school does NOT offer the requested major as a traditional degree, lead with truth:
-"[School] does not offer a [Major] degree. [School] is a [type] institution without [relevant school/college]. If [major] is your serious academic goal, know that the real pathway here runs through [School]'s [alternative program, e.g. 3-2 dual-degree program]..."
+Beat 4: One credential signal (what success looks like, who gets into what)
+✅ "Faculty are active researchers with significant NIH and NSF funding, and undergraduates who want in on that work have a real path to getting there."
+✅ "Undergraduate research is genuinely accessible here, not just a possibility saved for exceptional students. The department is small enough that faculty actually know their undergraduates."
+✅ "Graduates with this pathway find roles in medical devices, biotech, health technology, and increasingly in computational health startups."
+❌ "The program is prestigious."
+❌ "Faculty are active researchers."
 
-Then explain the actual path (e.g. 3-2 program, which partner schools, what it involves).
-Do not hedge or apologize. State it as fact. Give the real alternative pathway with named partner schools and what the program actually requires.
+Beat 5: Where graduates land (named employers, named PhD programs, unexpected pipeline)
+✅ "On the industry side, roles in medical devices, biotech, and health technology companies are common. The location in Baltimore, with proximity to Washington D.C., also creates access to federal health agencies and research institutions that some students pursue through internships or post-graduation."
+✅ "Graduates land at medical device companies like Medtronic and Boston Scientific, at pharma and biotech firms, and in increasing numbers at computational health startups. Graduate school placement is strong, particularly into engineering PhD programs and combined MD-PhD programs at research universities."
+❌ "Graduates go into many fields."
+❌ "There are good career outcomes."
 
----
+MORE: GOING DEEPER (4-6 sentences, DIFFERENT CONTENT not expansion of main)
 
-MAIN SECTION RULES
+Beat 1: Sub-tracks/concentrations with specifics
+✅ "Students choose a concentration area, with options spanning biomechanics, biomaterials, bioelectronics, and cellular and tissue engineering."
+✅ "The curriculum follows a fairly structured path in first two years covering engineering fundamentals alongside biology and physiology. In junior and senior years, students choose a concentration area."
+❌ "There are different specializations."
 
-HEADER: The named program at this school. "Physics at Case Western." "Political Science at Swarthmore College." "Biomedical Engineering at Johns Hopkins." Never generic "Engineering at X" unless Engineering is literally the department name. If the program has a specific school or college name (e.g., "Case School of Engineering"), that name earns use only if it signals something.
+Beat 2: Two NAMED courses with what students actually do in them
+✅ "The capstone project often involves working on a real clinical problem, sometimes in collaboration with medical school faculty or hospital staff."
+✅ "Students take courses in signals and systems, biomechanics, and cell and molecular bioengineering, where problem sets are grounded in real research scenarios."
+❌ "There are challenging courses."
+❌ "Students learn technical skills."
 
-Main body answers: why this program, at this school.
-- What the department actually works on. Named research areas. Early undergrad research access if real and specific.
-- What is unique here vs a peer-ranked program elsewhere. Named institutional partnerships, named proximity advantages, one credential or cultural signal that tells the serious person in this field what kind of room this is.
-- Where graduates land. Named PhD programs, named labs, named employers, including one unexpected pipeline.
-- Workload reality: one embedded line. Honest, not scary, not minimized.
+Beat 3: One unexpected career path
+✅ "A notable share of the class goes directly into MD, PhD, or MD-PhD programs, with the school's own medical pipeline carrying real weight."
+✅ "Some graduates go into health policy and federal agencies, leveraging the DC proximity and rigorous technical background."
+✅ "An unexpected number pursue entrepreneurship, particularly in medical device startups and health tech."
+❌ "Graduates pursue many paths."
 
-Length: 150-220 words.
+Beat 4: Advisor's honest insight (who thrives, who doesn't)
+✅ "One practical reality worth knowing is that this program attracts a lot of pre-med students who are also interested in engineering. The department is used to that overlap and has pathways that allow students to pursue both tracks, though doing so requires careful planning from the start. Academic advising becomes important early, because the course load can stack up quickly if pre-med requirements are layered on top of the engineering curriculum."
+✅ "Students who thrive here tend to be comfortable moving between quantitative problem-solving and life sciences material without losing momentum in either direction. Students who want a lighter course load or less research engagement often find themselves struggling."
 
----
+Beat 5: Internal politics or tradeoffs
+✅ "The program is rigorous and moves fast. The major requires serious coursework in both engineering and biological sciences, and students who thrive here tend to be comfortable with that intensity."
+✅ "The primary tradeoff: deep technical and research access in exchange for a heavy course load and limited flexibility. This is not a program for students seeking a lighter engineering experience."
 
-MORE: GOING DEEPER (EXPANSION SECTION)
+FOR SCHOOLS WITHOUT REQUESTED MAJOR
+Lead with truth upfront. DO NOT apologize. State as fact.
+"Macalester does not offer Biomedical Engineering. It is a liberal arts college. The real pathway here is a 3-2 dual degree program with Washington University in St. Louis, where students complete three years at Macalester and two years at WashU's engineering school, graduating with degrees from both institutions. Here's what that involves..."
 
-Heading: use EXACTLY "More: Going Deeper"
-
-This section lives behind a "More about the program" button. The student is seriously considering this major. Go specific.
-
-The More section must not repeat any information from the main section. If the main section covers research access, the More section does not mention research access again. If the main section covers curriculum structure, the More section goes deeper into specific tracks, not the same overview. The four required beats (sub-tracks, two transformative courses, unexpected career path, advisor's last line) are the content. Nothing else.
-
-MAIN SECTION COVERS:
-- Where program lives + one distinctive feature
-- What program actually does (research areas, hands-on reality)
-- What makes it distinctive vs. peer programs
-- One credential or cultural signal
-- Where graduates land (named employers, named PhD programs, one unexpected pipeline)
-- Workload reality (ONE embedded sentence max, not a subsection)
-
-MORE: GOING DEEPER COVERS (DIFFERENT CONTENT, NOT EXPANSION):
-- Sub-tracks/concentrations with specifics about what each covers
-- Two NAMED courses with what students actually do in them (not just titles)
-- One unexpected career path (not the obvious trajectory)
-- Advisor's honest insight (who thrives here, who struggles, what's the real dynamic)
-- Internal politics or tradeoffs (things a brochure won't say)
-
-IF MAIN MENTIONS "research access is genuine," MORE CANNOT SAY "thesis option exists" OR "students can publish."
-IF MAIN NAMES concentration areas, MORE CANNOT REPEAT THEM—go deeper into what each track actually involves.
-IF MAIN NAMES employers, MORE CANNOT REPEAT THEM—add unexpected pathways or new employers.
-
-ELIMINATE THIS LANGUAGE FROM MORE SECTIONS:
-- "Students who thrive" (make it specific to this program)
-- "Access to faculty" (already covered in main or assumed)
-- "Real research" (already covered in main or assumed)
-- Any sentence that echoes the main section
-
-Must cover all four:
-1. Sub-track or signature program specifics: named concentrations, honors programs, research centers, or certificates worth knowing about. What makes the internal structure of this program distinctive.
-2. Two courses students consistently flag as transformative: name the courses if possible. One sentence each on why they matter and what they do to a student's thinking.
-3. The unexpected career path: where graduates from this program end up that no one expects when they enroll. Name it specifically.
-4. The advisor's real last line: who thrives in this program and who does not. One sentence, honest, specific. This is the sentence that earns the most trust.
-
-Length: 200-300 words.
-
----
-
-LOCKED EXEMPLARS
-
-Physics at Case Western Reserve University:
-
-Main section:
-CWRU's department is small enough that faculty are actively recruiting undergrad researchers by sophomore year: quantum optics, condensed matter, biophysics with direct ties to the Cleveland Clinic sitting literally across the street. That Clinic connection is institutionalized, not occasional. Biophysics students here have a living research ecosystem as a next-door collaborator that no catalog description does justice to. The department carries LIGO credentials, contributing to the gravitational wave detection that won the 2017 Nobel, which tells you something about who's in the room. The math sequences don't wait for you to get comfortable, and the swimmers who thrive here build the schedule in week one and protect it. The degree opens more doors than most expect: top PhD programs, NASA Glenn, Brookhaven, and a surprisingly strong pipeline into quantitative finance and data science.
-
-More: Going Deeper:
-The biophysics track here is worth understanding before you dismiss it as pre-med adjacent. This is computational and experimental work at the intersection of physics and biological systems: think imaging technology, neural modeling, the physics of how cells move and respond. The Cleveland Clinic relationship means the problems being solved aren't abstract. Students in this track have contributed to research that ends up in clinical settings. That's rare at the undergraduate level anywhere.
-
-For a student leaning toward pure physics or astrophysics, the department's connection to LIGO opens doors into the gravitational wave research community that most undergrads never get near. CWRU is a named institutional collaborator, not a footnote, which means faculty who worked on that project are in the building and taking students.
-
-Two courses that physics majors consistently flag as transformative: Modern Physics sophomore year, which is where the subject stops feeling like advanced high school and starts feeling like a different language in the best possible way, and the senior capstone research sequence, which functions more like a junior faculty experience than a class.
-
-The career path nobody walks in expecting: computational physics skills translate directly into quantitative research roles in finance and data science, and CWRU physics grads show up at hedge funds and tech companies with surprising regularity. The ones who want research stay in research. The ones who want options have them.
-
-The advisor's last line is usually this: the students who struggle here are the ones who wait to be pushed. The ones who walk in and ask what they can work on in week two. Those are the ones who look back at CWRU as the best decision they ever made.
-
----
-
-Political Science at Swarthmore College:
-
-Main section:
-Swarthmore's political science department doesn't lecture at you. It puts you in a seminar room with twelve students and a faculty member who has actually testified before Congress, published the book on the syllabus, or spent time inside the policy institutions you're reading about. This is a department where the faculty are active scholars, not retired ones, and the small class sizes mean there's nowhere to hide and no reason to. The Peace and Conflict Studies program here is one of the most respected in the country, a genuinely distinctive intellectual framework that shapes how the whole department thinks about politics. The honors program is the thing worth knowing about before you visit: junior and senior year, the most serious students enter a seminar system evaluated not by Swarthmore faculty but by external examiners from peer institutions including Princeton, Yale, and Chicago. Your work gets judged by people with no reason to be kind. Grad schools and law schools know exactly what that means on a transcript. Graduates move into law, PhD programs, the State Department, and serious think tanks.
-
-More: Going Deeper:
-The Peace and Conflict Studies certificate is worth understanding as its own track, not just a complement to the major. This is one of the oldest and most serious undergraduate programs in the field in the country, built around the premise that understanding political violence, negotiation, and post-conflict reconstruction requires frameworks that transcend any single discipline. Students in this track end up doing their senior honors work on problems that faculty at peer institutions are still publishing papers about.
-
-The Lang Center for Civic and Social Responsibility is the operational nerve center for students who want to connect coursework to real work. Fellowships, community partnerships, and a culture that treats civic engagement as intellectually serious rather than extracurricular mean that the line between what you study and what you do is unusually thin at Swarthmore.
-
-Philadelphia is twenty minutes away by train, and the students who use it well come back with something the seminar room doesn't give: time inside actual policy organizations, city government offices, and advocacy shops. That proximity is an advantage that shows up on transcripts and in recommendation letters.
-
-Two courses that poli sci students consistently flag: the introductory seminar on comparative politics, which is where students discover that the questions are harder and more interesting than the answers, and the senior honors seminar, which functions less like a class and more like a research defense that lasts a full year.
-
-The advisor's last line is usually the same one: arrive with opinions and leave with arguments. The students who thrive here are the ones who are willing to have their prior convictions stress-tested in public, repeatedly, by people who read more than they do.
-
----
+Then explain: timeline, how it works, what it delivers, who it's good for, tradeoffs.
 
 OUTPUT FORMAT
-
 Write two sections in sequence.
 
-Section 1: The main Academic Program body. Use EXACTLY this heading format: "[Program Name] at [School Name]" (e.g., "Physics at Case Western" or "Political Science at Swarthmore College"). Write the heading on its own line. Then write the body immediately. 150-220 words.
+Section 1: The main Academic Program body. Use EXACTLY this heading format: "[Program Name] at [School Name]". Write the heading on its own line. Then write the body immediately.
 
-Section 2: The More expansion. Use EXACTLY this heading on its own line: "More: Going Deeper". Then write the body. 200-300 words.
+Section 2: The More expansion. Use EXACTLY this heading on its own line: "More: Going Deeper". Then write the body.
 
 No introductions, no meta-commentary, no additional headings.
-Never include search narration, internal reasoning, or phrases like "I'll search for" or "Based on my research" or "Let me search" in the output. Start writing the section immediately.
+Never include search narration or phrases like "I'll search for" or "Based on my research" in the output.
+
+RULES
+✅ Use web search to verify program structure, concentrations, real course names, career outcomes
+✅ Be specific to THIS school and THIS major
+✅ Name actual labs, actual initiatives, actual outcomes

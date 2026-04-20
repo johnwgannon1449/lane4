@@ -1,39 +1,39 @@
-MINOR PROGRAM: RULES AND VOICE STANDARD
+MINOR PROGRAM — PRE-GEN PROMPT
 
-You will receive a school name, a specific named minor program, and the student's primary major. Before writing, use web search to research this minor program at this specific school.
+You are writing a brief minor description for a college deep dive. One paragraph only. 3-4 sentences.
 
-RESEARCH DIRECTIVE: Search the school's academic catalog, department pages, and any student or alumni mentions of this minor. Look for: what distinguishes this minor at this specific school, any named courses or concentrations within the minor, and how the minor program positions graduates in combination with the primary major.
+JOB
+Explain the minor briefly and specifically. What does the minor involve? Workload? Integration with major? What does it enable?
 
----
+STRUCTURE (one paragraph, 3-4 sentences)
 
-VOICE STANDARD (ABSOLUTE RULES)
+Sentence 1: The minor exists and what it covers (specific details)
+✅ "The Aerospace Engineering minor at Carnegie Mellon covers fundamentals in aerodynamics, flight mechanics, and aircraft design, integrated with the core mechanical engineering curriculum."
+✅ "The Biomedical Engineering minor at Case Western provides depth in biomechanics and medical device design alongside the major."
+❌ "The school offers an aerospace engineering minor."
 
-No m-dashes, em-dashes, or en-dashes anywhere. Use colons, commas, or periods instead.
-No consolation-prize language. No generic praise.
-Elevator pitch energy. Not sit-down meeting energy.
-Named specifics where they exist and matter.
-One sentence connecting the minor to the primary major: make it concrete and specific, not abstract.
-One tight paragraph only. No "More" expansion.
-Length: 60-100 words. Every word earns its spot.
-"Specific and earned" is the governing standard.
+Sentence 2: Workload and integration with major (how does it actually work?)
+✅ "It requires 4-5 additional courses beyond the BME major, and can be completed in four years with careful planning."
+✅ "The minor is designed so students can complete it without significantly extending time to graduation, though careful course sequencing is required."
+❌ "The minor is available to interested students."
 
----
+Sentence 3: What the minor enables or leads to (why take it?)
+✅ "Graduates with this minor find roles in aerospace, defense, and advanced robotics."
+✅ "The minor positions graduates for roles in medical device design and bioinstrumentation."
+❌ "The minor is valuable for career preparation."
 
-STRUCTURE RULES
-
-Header: "Minor in [X]" where X is the specific minor name. Not "Also Considering." Not "Secondary." Not "Minor Studies in X."
-
-Exception: If the student has a secondary academic interest but no declared minor, use "Also Considering: [X]" as the header instead.
-
-Content in one paragraph:
-- What is distinctive about this minor at this specific school, in one or two sentences
-- How it combines with the primary major to create something more valuable than either alone, in one concrete sentence. Name the combination explicitly: "Physics plus Economics at Swarthmore" or "CS plus Political Science at Georgetown." Make the case.
-
----
+FOR SCHOOLS WITHOUT MINOR
+State clearly. No apology. Explain actual pathway.
+"Macalester does not offer an Aerospace Engineering minor. As a liberal arts college, the pathway would be a dual-degree program (3-2) with a partner engineering school..."
 
 OUTPUT FORMAT
-
-Write only the minor section. Use EXACTLY this heading on its own line: "Minor in [X]" (replace [X] with the actual minor name from the input). Then write the one-paragraph body immediately.
+Write only the minor section. Use EXACTLY this heading on its own line: "Minor in [X]" (replace [X] with the actual minor name). Then write the one-paragraph body immediately.
 
 No introduction, no meta-commentary, no second paragraph.
-Never include search narration, internal reasoning, or phrases like "I'll search for" or "Based on my research" or "Let me search" in the output. Start writing the section immediately.
+Never include search narration or phrases like "I'll search for" or "Based on my research" in the output.
+
+RULES
+✅ One paragraph only, period
+✅ Be specific to THIS school and THIS minor
+✅ Use web search to verify minor structure and actual availability
+✅ If minor doesn't exist, state that and explain pathway

@@ -1,63 +1,85 @@
-CAMPUS LIFE: RULES AND VOICE STANDARD
+CAMPUS LIFE — PRE-GEN PROMPT
 
-Your job: Answer one question only: "What is daily life actually like here for this specific school?"
+You are writing the "Campus Life" section of a college deep dive. This section answers ONE question only: "What is daily life actually like here for students?"
 
-Not: What amenities exist? What location? What features?
-Yes: What does a student wake up to? Where do people gather? What's the social rhythm? Who fits, who doesn't?
+CRITICAL: Not "What amenities exist?" Not "What location?" Not "What features?"
+YES: What does a student wake up to? Where do people gather? What's the social rhythm? Who thrives, who doesn't?
 
----
+JOB
+Describe the actual lived experience at this school, with specific detail and honest tradeoffs. Make a reader think "Oh, I see who would love this place" and "I see who would struggle."
 
-STRUCTURE
+MAIN SECTION (4-6 sentences)
 
-MAIN SECTION (4-6 sentences):
-- Dorm/housing reality for freshmen (what's the living situation, what community forms there)
-- Where and when social life actually happens (Friday nights, weekends, weekday hangouts)
-- Campus size/feel and whether it's integrated with city or isolated
-- One honest detail about who thrives here and who doesn't
+Beat 1: Dorm/housing reality for freshmen (what's the living situation? what community forms?)
+✅ "Freshmen live separately from upperclassmen, which creates tight dorm communities but isolates them from the main social scene for a year."
+✅ "Freshmen and upperclassmen mix in the residence halls, which house heavy STEM and pre-med students with real academic intensity."
+✅ "Students live in residential colleges that are genuinely communal; that dorm experience shapes the school's tight social fabric."
+❌ "Freshmen live in dorms."
+❌ "Housing is available for freshmen."
 
-MORE: LIFE OUTSIDE THE POOL (DIFFERENT ANGLE — 4-6 sentences):
-- Social infrastructure reality (Greek? Teams? Clubs? What's the actual anchor?)
-- Academic pressure and workload (how it shapes daily life)
-- City access if relevant (how often do students actually leave campus)
-- Honest friction (insularity, limited nightlife, competitiveness, gender ratio, diversity gaps)
-- Tradeoff clarity (what you get, what you lose)
+Beat 2: Where and when social life actually happens (Friday nights, weekends, weekday hangouts — be specific)
+✅ "Friday nights, students cluster at house parties and in small groups; weekends are split between campus and the city 20 minutes away."
+✅ "Greek life is active and draws a real portion of the student body, but it doesn't dominate. A significant portion of students build community through labs, project teams, and student organizations."
+✅ "Students bike to nearby neighborhoods on Thursday nights for concerts and food. Campus is where most social life happens on weekdays."
+❌ "There is social life."
+❌ "Students have many social options."
 
----
+Beat 3: Campus size/feel and city integration (isolated? integrated? how often do students leave?)
+✅ "The campus is small (1,600 students) and contained in suburban Philadelphia, which creates a tight residential community. Students use Philadelphia (accessible by train) for concerts and food, but campus is where most life happens."
+✅ "The campus is contained in north Baltimore with genuine green space and gothic architecture. Baltimore has museums and culture; students who want it use it. Students who expect it to deliver social life will be disappointed."
+✅ "The campus is compact and located in Pittsburgh's Oakland neighborhood, which has real urban energy. Social life is campus-anchored more than city-anchored."
+❌ "The campus is near a city."
+❌ "Students can access the city."
 
-LANGUAGE RULES
+Beat 4: One honest detail about who thrives and who doesn't
+✅ "Students who thrive here are intellectually serious, genuinely curious about research, and comfortable in an environment where academic ambition is the default setting. Students who expect warm campus culture will struggle."
+✅ "Students who want deep intellectual engagement and close faculty relationships thrive. Students who want anonymity or a large university energy struggle."
+✅ "Students who are self-directed and don't need a ready-made social scene thrive. Students expecting a traditional college social scene often struggle."
+❌ "Many students thrive here."
+❌ "Different students find community in different ways."
 
-Never use: "vibrant," "welcoming," "tight-knit," "energetic," "engaged," "community"
-Never list amenities: "has a gym," "student center," "dining hall"
-Never use generic: "students can," "opportunities abound," "real culture"
-Use specifics that matter: dorm names only if they explain something (e.g., "freshman dorms are separate and tight but isolating by design")
-Name actual places: "students bike to [neighborhood] on Thursday nights," not "the city is accessible"
-Be honest about sorting: "pre-med students cluster in science houses and the competitive vibe is real," not "students who thrive are collaborative"
-No m-dashes, em-dashes, or en-dashes anywhere. Use colons, commas, or periods instead.
-No viewbook tone. If this sentence could appear in the school's admissions brochure, rewrite it.
+MORE: LIFE OUTSIDE THE POOL (4-6 sentences, DIFFERENT ANGLE from main, not expansion)
 
----
+Beat 1: Social infrastructure reality (Greek? Teams? Clubs? What's the actual anchor?)
+✅ "Greek life is active, but a significant portion of students build community through labs and project teams. The swim team provides a built-in social anchor for athletes; outside of that, students build community through intentional effort."
+✅ "The residential college system creates natural peer groups. Teams, clubs, and research groups form the primary social structure."
+❌ "There are many clubs."
+❌ "Social life is robust."
 
-EXAMPLES OF WHAT WE WANT
+Beat 2: Academic pressure and workload (how it shapes daily life)
+✅ "The academic pressure is real and consistent. Problem sets are substantial, the grading is serious, and the pre-med culture creates a competitive undercurrent. That said, engineering students tend to develop collaborative culture because the coursework demands it."
+✅ "The academic pressure is intense from week one. The STEM-heavy student body means labs and problem sets consume significant time, and students often study in groups rather than alone."
+❌ "The academics are challenging."
+❌ "Students work hard."
 
-Hopkins Homewood:
-"Homewood campus is contained in north Baltimore, with genuine green space and gothic architecture. Freshmen live separately from upperclassmen, which creates tight dorm communities but isolates them from the main social scene for a year. The student body skews heavily STEM and research-focused, and the academic intensity is real from week one. The swim team provides a social anchor for athletes; outside of that, students build community through labs, clubs, and intentional effort. Baltimore has museums and culture; students who want it use it. Students who expect it to deliver social life will be disappointed."
+Beat 3: City access if relevant (how often do students actually leave campus?)
+✅ "Students who want city culture access it; students who don't won't feel left out. Baltimore has museums, Fells Point for food, but it requires intentional navigation."
+✅ "Boston is 20 minutes away by subway. Students use it, especially upper years, but the NESCAC schedule structures fall and spring heavily, so many students stay on campus."
+❌ "The city is nearby."
+❌ "Students can visit the city."
 
-Case Western University Circle:
-"Case sits in University Circle, Cleveland's concentrated cultural neighborhood, which means museums, concert halls, and art access are literal walking distance. The campus itself is compact. Freshmen and upperclassmen mix, and the residence halls house heavy STEM and pre-med students with a real academic intensity. Social life requires intentional construction: Greek life is active, but a significant portion of students build community through labs and project teams. Students who thrive here are self-directed and don't need a ready-made social scene. Students expecting a traditional college social scene often struggle."
+Beat 4: Honest friction (insularity, limited nightlife, competitiveness, gender ratio, diversity gaps, workload-burnout patterns)
+✅ "The campus can feel socially contained on weekends when students don't make effort to get into the city. Social life requires intentional construction."
+✅ "The pre-med culture creates real competitiveness that some students find energizing and others find draining. Gender ratio is slightly skewed toward women in many pre-med tracks."
+✅ "Winter is gray and long. Students who thrive are those who find meaning in academics and close peer relationships, not in external stimulation."
+❌ "The campus is quiet."
+❌ "Some students find it isolated."
 
-Swarthmore:
-"Swarthmore's campus is small (1,600 students) and contained in suburban Philadelphia, which creates a tight residential community. Freshmen live in residential colleges that are genuinely communal; that dorm experience shapes the school's tight social fabric. The intellectual culture bleeds into daily life in ways that attract students who want to talk about ideas. Outside of class, students use Philadelphia (accessible by train) for concerts and food, but campus is where most life happens. Students who want deep intellectual engagement and close faculty relationships thrive. Students who want anonymity or a large university energy struggle."
+Beat 5: Tradeoff clarity (what you get, what you lose)
+✅ "What you get: genuine intellectual culture, close faculty relationships, tight peer bonds. What you lose: anonymity, large-university resources and scale, easy party culture."
+✅ "What you get: research access, world-class faculty, intensity of purpose. What you lose: traditional college social scene, low academic pressure, anonymity."
 
-WPI Worcester:
-"WPI's campus is compact, which creates a tight community feel despite Worcester being a real city. The project-based curriculum shapes social life too: project teams and collaboration are where bonds form. Seven-week terms mean the pace is fast and intense; students praise the faculty access and the sense that work connects to something real. Greek life exists and is visible. Students who thrive like working on real problems with other people. Students who prefer traditional lectures and independent study find the pace frustrating."
+NEVER USE
+❌ "vibrant," "welcoming," "tight-knit," "energetic," "engaged," "community"
+❌ "has a gym," "student center," "dining hall"
+❌ "students can," "opportunities abound," "real culture"
 
-MIT Cambridge:
-"MIT sits directly across from Boston, and the city is part of student life in ways it isn't at most colleges. The student body is small, intensely focused, and self-selecting: people here genuinely enjoy hard problems. Dorms are integral to MIT culture and shape social life significantly. Outside of classes and problem sets, students engage through student clubs, making, performing, and actual city exploration. The social environment feels less like traditional college and more like a community of people who picked each other. Students who find that energizing thrive. Students who want to escape intensity struggle."
-
----
+DO USE
+✅ Specifics that matter (dorm names only if they explain something; "residential colleges" is specific)
+✅ Named places with purpose ("students bike to [neighborhood] on Thursday nights")
+✅ Honest sorting ("pre-med students cluster in science houses and the competitive vibe is real")
 
 OUTPUT FORMAT
-
 Write two sections in sequence.
 
 Section 1: The main Campus Life body. No heading. Start writing immediately with the first sentence. 4-6 sentences.
@@ -65,4 +87,15 @@ Section 1: The main Campus Life body. No heading. Start writing immediately with
 Section 2: The More expansion. Use EXACTLY this heading on its own line: "More: Life Outside the Pool". Then write the body. 4-6 sentences covering a different angle from the main section.
 
 No introductions, no meta-commentary, no additional headings. Start writing section 1 immediately.
-Never include search narration, internal reasoning, or phrases like "I'll search for" or "Based on my research" or "Let me search" in the output. Start writing the section immediately.
+Never include search narration or phrases like "I'll search for" or "Based on my research" in the output.
+
+EXAMPLES THAT WORK
+
+Hopkins Homewood:
+"Homewood campus is contained in north Baltimore, with genuine green space and gothic architecture. Freshmen live separately from upperclassmen, which creates tight dorm communities but isolates them from the main social scene for a year. The student body skews heavily STEM and research-focused, and the academic intensity is real from week one. The swim team provides a social anchor for athletes; outside of that, students build community through labs, clubs, and intentional effort. Baltimore has museums and culture; students who want it use it. Students who expect it to deliver social life will be disappointed."
+
+Swarthmore:
+"Swarthmore's campus is small (1,600 students) and contained in suburban Philadelphia, which creates a tight residential community. Freshmen live in residential colleges that are genuinely communal; that dorm experience shapes the school's tight social fabric. The intellectual culture bleeds into daily life in ways that attract students who want to talk about ideas. Outside of class, students use Philadelphia (accessible by train) for concerts and food, but campus is where most life happens. Students who want deep intellectual engagement and close faculty relationships thrive. Students who want anonymity or a large university energy struggle."
+
+Case Western University Circle:
+"Case sits in University Circle, Cleveland's concentrated cultural neighborhood, which means museums, concert halls, and art access are literal walking distance. The campus itself is compact. Freshmen and upperclassmen mix, and the residence halls house heavy STEM and pre-med students with real academic intensity. Social life requires intentional construction: Greek life is active, but a significant portion of students build community through labs and project teams. Students who thrive here are self-directed and don't need a ready-made social scene. Students expecting a traditional college social scene often struggle."
