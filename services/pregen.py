@@ -442,8 +442,15 @@ def _write_program_cache(school_name: str, major: str, minor: str,
 # ---------------------------------------------------------------------------
 
 def read_school_cache(school_name: str) -> dict:
-    """Read-only cache lookup. Returns empty dict (not None) on miss — never generates."""
-    return _read_school_cache(school_name) or {}
+    """Read-only cache lookup. Returns empty dict on miss OR if narrative fields are unpopulated.
+
+    A row seeded with only COA data (empty known_for / campus_life_main) is treated as
+    a miss so the background thread in deep_dive.py fires and generates the narrative.
+    """
+    result = _read_school_cache(school_name) or {}
+    if result.get('known_for') or result.get('campus_life_main'):
+        return result
+    return {}
 
 
 def read_program_cache(school_name: str, major: str, minor: str = '') -> dict:
@@ -462,11 +469,14 @@ def get_or_generate_school_content(school_name: str, division: str = '',
     Any key may be an empty string if generation fails.
     """
     cached = _read_school_cache(school_name)
-    if cached:
+    # Only treat as a hit if the key narrative fields are actually populated.
+    # A row seeded with only COA data (known_for='', campus_life_main='') must regenerate.
+    _narrative_ok = bool(cached and (cached.get('known_for') or cached.get('campus_life_main')))
+    if _narrative_ok:
         print(f'[pregen] school cache hit: {school_name}')
         return cached
 
-    print(f'[pregen] school cache miss, generating: {school_name}')
+    print(f'[pregen] school cache miss (narrative empty), generating: {school_name}')
     content = {
         'known_for': '', 'campus_life_main': '', 'campus_life_more': '',
         'coa': None, 'merit_offered': None, 'merit_range_low': None,
