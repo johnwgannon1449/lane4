@@ -172,7 +172,7 @@ def _pregen_school_content(school_name: str) -> None:
         f"'What School Is Known For' section following the rules and exemplar above.",
         max_tokens=600,
     ))
-    time.sleep(1)
+    time.sleep(10)  # Rate limit - increased to avoid 429 errors
 
     print(f'    [campus_life] {school_name}')
     campus_raw = _strip_narration(_call_claude(
@@ -183,7 +183,7 @@ def _pregen_school_content(school_name: str) -> None:
         max_tokens=1200,
     ))
     campus_main, campus_more = _split_on_heading(campus_raw, 'More: Life Outside the Pool')
-    time.sleep(1)
+    time.sleep(10)  # Rate limit - increased to avoid 429 errors
 
     print(f'    [cost_data]   {school_name}')
     cost_json_raw = _strip_narration(_call_claude(
@@ -207,7 +207,7 @@ Return only valid JSON. No other text.""",
         f"financial aid data for {school_name}. Return the JSON object as specified.",
         max_tokens=400,
     ))
-    time.sleep(1)
+    time.sleep(10)  # Rate limit - increased to avoid 429 errors
 
     cost_data = {}
     try:
@@ -366,7 +366,7 @@ def main():
 
         # Program content for each major
         for major in MAJORS:
-            time.sleep(1)
+            time.sleep(10)  # Rate limit - increased to avoid 429 errors
             try:
                 _pregen_program_content(school, major)
                 total_cached += 1
@@ -377,7 +377,7 @@ def main():
 
         # Minor content for each minor
         for minor in MINORS:
-            time.sleep(1)
+            time.sleep(10)  # Rate limit - increased to avoid 429 errors
             try:
                 _pregen_minor_content(school, minor)
                 total_cached += 1
