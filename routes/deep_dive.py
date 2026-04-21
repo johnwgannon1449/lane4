@@ -732,15 +732,14 @@ def deep_dive():
         "7. Do not oversell the network. Be honest about where it is strong and where it is weak.\n"
         "\n## More: Career Paths\n"
         "Use EXACTLY this heading: 'More: Career Paths'\n"
-        "Expanded career section (shown behind a 'More about career paths' button). 6-8 sentences:\n"
-        "- Typical employers by name (not just 'finance' but specific firms)\n"
-        "- Graduate school pipelines: where graduates apply, acceptance rates if known\n"
-        "- Industry concentrations this school is known for placing into\n"
-        "- Geographic career advantages: does location or alumni base help in specific cities?\n"
-        "- Alumni network strength and how alumni actually engage with undergraduates\n"
-        "- On-campus recruiting, employer partnerships, or career center strengths\n"
-        "- Honest gaps: industries or regions where this school's network is thin\n"
-        "Sound informed. Name specifics. Do not promote.\n"
+        "Focus on network strength and alumni engagement (not employers again):\n"
+        "- Alumni network depth: size, how organized, how engaged with undergraduates\n"
+        "- Alumni mentorship, internship connections, job placement help\n"
+        "- Geographic concentrations of alumni: where are they densest?\n"
+        "- How alumni actually help current students (recruiting events, office hours, referrals)\n"
+        "- Industries where the alumni network is deepest\n"
+        "- Honest assessment: where is the network thin or absent?\n"
+        "Sound informed. Use specifics. Do not repeat employer names from Outcomes section.\n"
     )
 
     # Bottom Line instruction — v2 (label-aware) or v1 (original)
