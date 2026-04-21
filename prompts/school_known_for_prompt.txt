@@ -59,3 +59,9 @@ Swarthmore:
 
 Rose-Hulman:
 "Rose-Hulman is one of the finest engineering schools in the country and competes academically with much larger universities while maintaining a tight residential community. The school is known for producing engineers who are ready to work on day one — the curriculum is rigorous and hands-on from the start. That means lab work, design projects, and problem-solving that employers recognize immediately. The campus is contained and residential, which shapes a tight social community that students often credit as a differentiator compared to larger engineering schools. Graduates land at Cummins, Eli Lilly, Toyota, Boeing, and consulting firms, with the alumni base concentrated in the Midwest and strong connections to manufacturing and automotive industries."
+
+OUTPUT FORMAT
+- Do NOT include any preamble like "Here is the..." or "Here's the section for..."
+- Do NOT include the heading "What School Is Known For"
+- Start directly with the content (e.g., "WPI built its reputation on...")
+- Keep it to 2000 characters max.
